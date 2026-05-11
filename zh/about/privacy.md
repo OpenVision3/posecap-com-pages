@@ -1,4 +1,4 @@
-# 隐私政策 — moved
+﻿# 隐私政策 — moved
 
 This document is no longer maintained at this URL.
 

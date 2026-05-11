@@ -1,4 +1,4 @@
-# Terms of service — moved
+﻿# Terms of service — moved
 
 This document is no longer maintained at this URL.
 
