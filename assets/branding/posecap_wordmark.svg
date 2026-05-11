@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 220" fill="none">
+  <g font-family="'Helvetica Neue', 'Inter', 'Arial', sans-serif" font-weight="600" letter-spacing="-4">
+    <!-- "PoseCap" — solid dark navy -->
+    <text x="40" y="165" font-size="170" fill="#0A1F44">PoseCap</text>
+
+    <!-- "Inc." — bright blue, lighter weight -->
+    <text x="790" y="165" font-size="95" font-weight="500" fill="#1FA0FF" letter-spacing="-1">Inc.</text>
+  </g>
+</svg>

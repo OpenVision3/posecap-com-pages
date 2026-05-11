@@ -1,0 +1,90 @@
+/* Smash Trainer site styles */
+:root{
+  --green:#4CAF50;
+  --blue:#2196F3;
+  --ink:#0f172a;
+  --muted:#6b7280;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --ring:rgba(33,150,243,.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans',sans-serif;color:var(--ink);background:var(--bg)}
+.container{max-width:1100px;margin:0 auto;padding:0px 24px 0px 24px}
+.center{text-align:center}
+.site-header{position:sticky;top:0;background:rgba(255,255,255,.85);backdrop-filter:saturate(150%) blur(8px);border-bottom:1px solid #eef2f7;z-index:50}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font-weight:800;letter-spacing:.3px}
+.nav img {
+  height: 80px; /* 设置 logo 高度 */
+  vertical-align: middle;
+  margin: 0px; /* 给 logo 和文字留间距 */
+}
+.logo img {
+  height: 80px; /* 设置 logo 高度 */
+  align-items: center;
+  margin: 0px; /* 给 logo 和文字留间距 */
+}
+.logo span{color:var(--blue)}
+nav a{margin:0 10px;text-decoration:none;color:var(--ink);font-weight:600}
+nav a.btn{margin-left:16px}
+
+.hero{padding:32px 0 12px;background:linear-gradient(135deg, rgba(76,175,80,.08), rgba(33,150,243,.08))}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:center}
+.hero-copy h1{font-size:40px;line-height:1.1;margin:0 0 12px}
+.hero-copy p{font-size:18px;color:#334155;margin:0 0 16px}
+.cta-row{display:flex;gap:12px;margin:6px 0 12px}
+.ticks{list-style:none;padding:0;margin:12px 0 0}
+.ticks li{padding-left:24px;position:relative;margin:6px 0;color:#334155}
+.ticks li::before{content:'✓';position:absolute;left:0;top:0;color:var(--green);font-weight:800}
+.hero-visual img{width:100%;border-radius:20px;box-shadow:0 8px 24px rgba(2,6,23,.15)}
+
+.features{padding:24px 0}
+.features .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--card);border:1px solid #e5e7eb;border-radius:18px;padding:18px;box-shadow:0 6px 18px rgba(2,6,23,.06)}
+.card h3{margin:0 0 6px;font-size:18px}
+.card p{margin:0;color:#334155}
+
+.pricing{padding:10px 0 24px}
+.pricing-table{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.col{background:var(--card);border:1px solid #e5e7eb;border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.col-head{padding:14px 18px;color:white;font-weight:800;letter-spacing:.5px}
+.col-head.free{background:linear-gradient(90deg,#5fbf64,#4CAF50)}
+.col-head.pro{background:linear-gradient(90deg,#2196F3,#2563eb)}
+.col-head.coach{background:linear-gradient(90deg,#0ea5e9,#06b6d4)}
+.col ul{list-style:none;margin:0;padding:14px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
+.col ul li{color:#1f2937}
+.col ul li.muted{color:var(--muted)}
+.col.highlight{transform:translateY(-6px);box-shadow:0 12px 28px rgba(2,6,23,.1);border-color:transparent}
+.legal{margin-top:8px;color:var(--muted);font-size:12px}
+
+/* .coach{padding:10px 0 24px} */
+.coach-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+.coach-card{background:var(--card);border:1px solid #e5e7eb;border-radius:18px;padding:18px}
+.coach-card h3{margin:0 0 10px}
+.coach-card ol{margin:0;padding-left:18px;color:#334155}
+
+.download{padding:24px 0}
+.store-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.store-badge{border:2px solid var(--ink);padding:10px 16px;border-radius:12px;text-decoration:none;color:var(--ink);font-weight:700}
+.store-badge:hover{box-shadow:0 6px 16px rgba(2,6,23,.12)}
+
+.site-footer{border-top:1px solid #e5e7eb;background:white}
+.footer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.footer-logo{display:grid;grid-template-columns:0.5fr 1fr;gap:8px;align-items: center;}
+
+.btn{display:inline-block;border:none;padding:12px 16px;border-radius:12px;text-decoration:none;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(2,6,23,.08)}
+.btn.primary{background:var(--green);color:white}
+.btn.secondary{background:var(--blue);color:white}
+.btn.ghost{background:white;color:var(--blue);border:2px solid var(--blue)}
+.btn.block{display:block;text-align:center;margin:14px 18px}
+.btn:focus{outline:3px solid var(--ring);outline-offset:2px}
+
+@media (max-width: 980px){
+  .hero-grid{grid-template-columns:1fr}
+  .features .cards{grid-template-columns:1fr 1fr}
+  .pricing-table{grid-template-columns:1fr}
+  .coach-grid{grid-template-columns:1fr}
+  .col.highlight{transform:none}
+  .hero-copy h1{font-size:32px}
+}

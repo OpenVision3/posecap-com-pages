@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pose CLI — Motion analysis platform for researchers — PoseCap Inc.</title>
+  <meta name="description" content="Pose CLI turns 3D pose data into reproducible motion reports. A command-line + MCP toolkit for sports scientists, PE programs, and performance analysts. Currently in Early Access.">
+  <link rel="alternate" hreflang="en" href="https://posecap.com/posecli/en/">
+  <link rel="alternate" hreflang="zh" href="https://posecap.com/posecli/zh/">
+  <link rel="alternate" hreflang="x-default" href="https://posecap.com/posecli/en/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Pose CLI — Motion analysis platform for researchers">
+  <meta property="og:description" content="Pose CLI turns 3D pose data into reproducible motion reports. A command-line + MCP toolkit for sports scientists, PE programs, and performance analysts. Currently in Early Access.">
+  <meta property="og:url" content="https://posecap.com/posecli/en/">
+  <meta property="og:site_name" content="PoseCap Inc.">
+  <meta property="og:locale" content="en_US">
+
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="/assets/css/tailwind.css">
+</head>
+<body class="min-h-screen flex flex-col">
+  
+
+  
+  
+  
+
+<header class="border-b border-ink-100 bg-white/80 backdrop-blur dark:border-ink-800 dark:bg-ink-950/80 sticky top-0 z-40">
+  <div class="container-page flex h-16 items-center gap-6">
+    <a href="/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap Inc.">
+      <img src="/assets/branding/posecap-inc-mark.png" alt="" class="h-7 w-7 rounded-md object-cover">
+      <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap Inc." class="h-7 w-auto block dark:hidden">
+      <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap Inc.</span>
+    </a>
+    <nav class="ml-auto hidden md:flex items-center gap-6 text-sm">
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="/#products">Products</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="/about/en/">About</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="mailto:contact@posecap.com">Contact</a>
+      <span class="text-ink-300 dark:text-ink-700">|</span>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white font-semibold text-ink-900 dark:text-white" href="/posecli/en/">EN</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white " href="/posecli/zh/">中文</a>
+    </nav>
+    <a class="md:hidden ml-auto text-ink-600 dark:text-ink-300 text-sm" href="/#products">Products</a>
+  </div>
+</header>
+
+  <main class="flex-1">
+    <section class="section bg-gradient-to-br from-posecli/10 via-transparent to-transparent dark:from-posecli/20">
+  <div class="container-page grid gap-10 md:grid-cols-12 items-center">
+    <div class="md:col-span-7 space-y-6">
+      <div class="flex items-center gap-3">
+        <img src="/posecli/images/logo.svg" alt="Pose CLI" class="h-12 w-12 rounded-xl shadow-sm">
+        <span class="badge-early">Early access</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">Pose CLI — motion analysis for serious work.</h1>
+      <p class="max-w-prose text-lg text-ink-600 dark:text-ink-300">A command-line and MCP toolkit that turns 3D pose data into reproducible motion reports. Built for sports scientists, PE programs, performance analysts, and the teams who need to ship findings — not slide decks.</p>
+      <div class="flex flex-wrap items-center gap-3 pt-2">
+        <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Early%20Access" class="btn-primary">Request early access</a>
+        <a href="/posecli/docs/" class="btn-secondary">View docs</a>
+      </div>
+    </div>
+    <div class="md:col-span-5">
+      <pre class="codeblock"><span class="text-ink-400">$</span> pose analyze data/session.csv \
+    --tool detect_velocity
+<span class="text-ink-400">→</span> 38 swings detected
+<span class="text-ink-400">→</span> peak velocity 28.4 m/s
+<span class="text-ink-400">→</span> stability index 0.72
+
+<span class="text-ink-400">$</span> pose chat ./data
+<span class="text-ink-400">→</span> Launching Claude Code with MCP tools…</pre>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page">
+    <div class="space-y-3 mb-10">
+      <h2 class="section-title">Built for the people who study motion</h2>
+      <p class="section-lead">Three groups we hear from most.</p>
+    </div>
+    <div class="grid gap-6 md:grid-cols-3">
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">Sports scientists</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Run reproducible analysis across sessions and athletes, export markdown / JSON for papers and reports.</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">PE programs</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Standardized motion statistics for student cohorts — quality flags, joint amplitude, swing counts.</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">Performance analysts</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Sport-specific rule evaluation (badminton today, more sports next), batch processing, CI-friendly JSON output.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-ink-50 dark:bg-ink-900/40">
+  <div class="container-page">
+    <div class="space-y-3 mb-10">
+      <h2 class="section-title">Capabilities</h2>
+      <p class="section-lead">Pluggable analysis tools with a consistent interface.</p>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Motion statistics</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Frame rate, jitter ratio, joint amplitude, data-quality assessment.</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Swing detection</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Multi-feature: velocity peaks, shoulder engagement, direction consistency, arm-involvement filtering.</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Energy analysis</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Peak energy detection and velocity profiling with configurable time windows.</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Sport-specific rules</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Badminton rule compliance today, more sports planned. Bring-your-own rule sets supported.</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">AI chat (MCP)</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code>pose chat</code> launches Claude Code with all analysis tools pre-loaded for interactive exploration.</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Gap registry</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Crowdsourced capability requests; temporary implementations auto-generated for unsupported analyses.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page grid gap-10 md:grid-cols-2 items-start">
+    <div class="space-y-4">
+      <h2 class="section-title">Architecture</h2>
+      <p class="section-lead">A familiar Python stack built around pluggable MCP tools.</p>
+      <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+        <li>FastAPI REST API for batch and CI workflows</li>
+        <li>MCP Server with pluggable analysis tools</li>
+        <li>PostgreSQL for session metadata, feedback, gap registry</li>
+        <li>Docker on Railway (staging + prod), local dev on <code>localhost:8000</code></li>
+        <li>Single JointData3D format shared with PoseCoach</li>
+      </ul>
+    </div>
+    <div class="space-y-4">
+      <h2 class="section-title">Data format</h2>
+      <p class="section-lead">Bring your own pose data — Pose CLI works with our compact 13-column CSV.</p>
+      <pre class="codeblock">timestamp, joint, wx, wy, wz,
+mx, my, mz,
+ldx, ldy, ldz,
+oreason, jitter</pre>
+      <p class="text-sm text-ink-500 dark:text-ink-400">Binary <code>.bin</code> from PoseCoach is also accepted natively. Output as Markdown reports or CI-friendly JSON.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-ink-50 dark:bg-ink-900/40">
+  <div class="container-page text-center space-y-6">
+    <h2 class="section-title">Ready to put your motion data to work?</h2>
+    <p class="section-lead mx-auto">Pose CLI is in early access while we onboard partners. Drop us a line and tell us what you want to study.</p>
+    <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+      <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Early%20Access" class="btn-primary">Email contact@posecap.com</a>
+      <a href="/posecli/docs/" class="btn-secondary">View docs</a>
+    </div>
+  </div>
+</section>
+
+  </main>
+  
+
+  
+  
+  
+  
+
+<footer class="border-t border-ink-100 bg-ink-50 dark:border-ink-800 dark:bg-ink-950">
+  <div class="container-page py-12 grid gap-8 md:grid-cols-4">
+    <div class="space-y-3">
+      <a href="/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap Inc.">
+        <img src="/assets/branding/posecap-inc-mark.png" alt="" class="h-6 w-6 rounded-md object-cover">
+        <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap Inc." class="h-6 w-auto block dark:hidden">
+        <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap Inc.</span>
+      </a>
+      <p class="text-sm text-ink-500 dark:text-ink-400 max-w-xs">Precise motion intelligence for every athlete.</p>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">Resources</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/en/">About PoseCap Inc.</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/privacy/en/">Privacy policy</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/tos/en/">Terms of service</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">Languages</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 font-semibold" href="/posecli/en/">English</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/posecli/zh/">中文</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">Connect</h4>
+      <ul class="space-y-2 text-sm">
+        <li><span class="text-ink-500 dark:text-ink-400">Email:</span> <a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="mailto:contact@posecap.com">contact@posecap.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-ink-100 dark:border-ink-800">
+    <div class="container-page py-6 text-xs text-ink-500 dark:text-ink-400">
+      © 2026 PoseCap Inc. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+  <script>
+    // YouTube facade: swap thumbnail+button for iframe on click.
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-yt-id]');
+      if (!btn) return;
+      e.preventDefault();
+      var id = btn.dataset.ytId;
+      var title = btn.dataset.ytTitle || 'YouTube video';
+      var iframe = document.createElement('iframe');
+      var p = [
+        'autoplay=1',
+        'controls=0',
+        'modestbranding=1',
+        'rel=0',
+        'playsinline=1',
+        'iv_load_policy=3',
+        'disablekb=1',
+        'loop=1',
+        'playlist=' + encodeURIComponent(id)
+      ].join('&');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?' + p;
+      iframe.title = title;
+      iframe.className = 'w-full h-full';
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+      iframe.setAttribute('allowfullscreen', '');
+      var wrap = document.createElement('div');
+      wrap.className = 'aspect-video w-full rounded-2xl overflow-hidden shadow-soft ring-1 ring-ink-200 dark:ring-ink-800';
+      wrap.appendChild(iframe);
+      btn.replaceWith(wrap);
+    });
+  </script>
+</body>
+</html>

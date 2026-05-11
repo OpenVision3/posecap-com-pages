@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pose CLI — 面向研究者的动作分析平台 — PoseCap Inc.</title>
+  <meta name="description" content="Pose CLI 把 3D 姿态数据转化为可复现的运动分析报告。面向运动科研人员、体育院校与表现分析师的命令行 + MCP 工具集。当前为早期访问阶段。">
+  <link rel="alternate" hreflang="en" href="https://posecap.com/posecli/en/">
+  <link rel="alternate" hreflang="zh" href="https://posecap.com/posecli/zh/">
+  <link rel="alternate" hreflang="x-default" href="https://posecap.com/posecli/en/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Pose CLI — 面向研究者的动作分析平台">
+  <meta property="og:description" content="Pose CLI 把 3D 姿态数据转化为可复现的运动分析报告。面向运动科研人员、体育院校与表现分析师的命令行 + MCP 工具集。当前为早期访问阶段。">
+  <meta property="og:url" content="https://posecap.com/posecli/zh/">
+  <meta property="og:site_name" content="PoseCap Inc.">
+  <meta property="og:locale" content="zh_CN">
+
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="/assets/css/tailwind.css">
+</head>
+<body class="min-h-screen flex flex-col">
+  
+
+  
+  
+  
+
+<header class="border-b border-ink-100 bg-white/80 backdrop-blur dark:border-ink-800 dark:bg-ink-950/80 sticky top-0 z-40">
+  <div class="container-page flex h-16 items-center gap-6">
+    <a href="/zh/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap Inc.">
+      <img src="/assets/branding/posecap-inc-mark.png" alt="" class="h-7 w-7 rounded-md object-cover">
+      <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap Inc." class="h-7 w-auto block dark:hidden">
+      <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap Inc.</span>
+    </a>
+    <nav class="ml-auto hidden md:flex items-center gap-6 text-sm">
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="/zh/#products">产品</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="/about/zh/">关于</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="mailto:contact@posecap.com">联系我们</a>
+      <span class="text-ink-300 dark:text-ink-700">|</span>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white " href="/posecli/en/">EN</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white font-semibold text-ink-900 dark:text-white" href="/posecli/zh/">中文</a>
+    </nav>
+    <a class="md:hidden ml-auto text-ink-600 dark:text-ink-300 text-sm" href="/zh/#products">产品</a>
+  </div>
+</header>
+
+  <main class="flex-1">
+    <section class="section bg-gradient-to-br from-posecli/10 via-transparent to-transparent dark:from-posecli/20">
+  <div class="container-page grid gap-10 md:grid-cols-12 items-center">
+    <div class="md:col-span-7 space-y-6">
+      <div class="flex items-center gap-3">
+        <img src="/posecli/images/logo.svg" alt="Pose CLI" class="h-12 w-12 rounded-xl shadow-sm">
+        <span class="badge-early">早期访问</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">Pose CLI — 面向严肃工作的动作分析。</h1>
+      <p class="max-w-prose text-lg text-ink-600 dark:text-ink-300">命令行与 MCP 工具集，把 3D 姿态数据转化为可复现的运动分析报告。为运动科研人员、体育院校、表现分析师以及那些需要交付结论而不是 PPT 的团队而生。</p>
+      <div class="flex flex-wrap items-center gap-3 pt-2">
+        <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Early%20Access" class="btn-primary">申请早期访问</a>
+        <a href="/posecli/docs/" class="btn-secondary">查看文档</a>
+      </div>
+    </div>
+    <div class="md:col-span-5">
+      <pre class="codeblock"><span class="text-ink-400">$</span> pose analyze data/session.csv \
+    --tool detect_velocity
+<span class="text-ink-400">→</span> 检测到 38 次挥拍
+<span class="text-ink-400">→</span> 峰值速度 28.4 m/s
+<span class="text-ink-400">→</span> 稳定性指数 0.72
+
+<span class="text-ink-400">$</span> pose chat ./data
+<span class="text-ink-400">→</span> 启动 Claude Code，加载 MCP 工具…</pre>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page">
+    <div class="space-y-3 mb-10">
+      <h2 class="section-title">为研究运动的人而生</h2>
+      <p class="section-lead">我们最常听到的三类用户。</p>
+    </div>
+    <div class="grid gap-6 md:grid-cols-3">
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">运动科研人员</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">在不同 session 与运动员之间运行可复现分析，并以 markdown / JSON 导出，便于论文与报告。</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">体育院校</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">为学生群体提供标准化动作统计 — 数据质量标记、关节幅度、挥拍次数。</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">表现分析师</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">运动专属规则评估（目前为羽毛球，后续支持更多项目）、批量处理、CI 友好的 JSON 输出。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-ink-50 dark:bg-ink-900/40">
+  <div class="container-page">
+    <div class="space-y-3 mb-10">
+      <h2 class="section-title">核心能力</h2>
+      <p class="section-lead">界面统一、可插拔的分析工具。</p>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">动作统计</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">帧率、抖动比例、关节幅度、数据质量评估。</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">挥拍检测</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">多特征：速度峰值、肩部参与、方向一致性、手臂参与过滤。</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">能量分析</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">峰值能量检测与可配置时间窗口的速度分布。</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">运动专属规则</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">目前覆盖羽毛球，后续支持更多项目。可使用自定义规则集。</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">AI 对话（MCP）</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code>pose chat</code> 启动 Claude Code 并预加载所有分析工具，支持交互式探索。</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">能力缺口登记</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">众包能力请求；遇到未覆盖的分析时自动生成临时实现。</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page grid gap-10 md:grid-cols-2 items-start">
+    <div class="space-y-4">
+      <h2 class="section-title">架构</h2>
+      <p class="section-lead">熟悉的 Python 技术栈，围绕可插拔的 MCP 工具构建。</p>
+      <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+        <li>FastAPI REST API，适用于批处理与 CI 流程</li>
+        <li>MCP Server 与可插拔的分析工具</li>
+        <li>PostgreSQL 存储 session 元数据、反馈与能力缺口</li>
+        <li>Docker 部署在 Railway（staging 与 prod），本地开发 <code>localhost:8000</code></li>
+        <li>与 PoseCoach 共享同一套 JointData3D 数据格式</li>
+      </ul>
+    </div>
+    <div class="space-y-4">
+      <h2 class="section-title">数据格式</h2>
+      <p class="section-lead">沿用我们的 13 列 CSV 即可使用 Pose CLI 分析你的数据。</p>
+      <pre class="codeblock">timestamp, joint, wx, wy, wz,
+mx, my, mz,
+ldx, ldy, ldz,
+oreason, jitter</pre>
+      <p class="text-sm text-ink-500 dark:text-ink-400">PoseCoach 导出的 <code>.bin</code> 二进制文件原生支持。可输出 Markdown 报告或 CI 友好的 JSON。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-ink-50 dark:bg-ink-900/40">
+  <div class="container-page text-center space-y-6">
+    <h2 class="section-title">让你的动作数据派上用场</h2>
+    <p class="section-lead mx-auto">Pose CLI 处于早期访问阶段，我们正在按需求接入合作伙伴。来信告诉我们你想研究什么。</p>
+    <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+      <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Early%20Access" class="btn-primary">邮件联系 contact@posecap.com</a>
+      <a href="/posecli/docs/" class="btn-secondary">查看文档</a>
+    </div>
+  </div>
+</section>
+
+  </main>
+  
+
+  
+  
+  
+  
+
+<footer class="border-t border-ink-100 bg-ink-50 dark:border-ink-800 dark:bg-ink-950">
+  <div class="container-page py-12 grid gap-8 md:grid-cols-4">
+    <div class="space-y-3">
+      <a href="/zh/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap Inc.">
+        <img src="/assets/branding/posecap-inc-mark.png" alt="" class="h-6 w-6 rounded-md object-cover">
+        <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap Inc." class="h-6 w-auto block dark:hidden">
+        <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap Inc.</span>
+      </a>
+      <p class="text-sm text-ink-500 dark:text-ink-400 max-w-xs">为每一位运动爱好者，提供精准的动作分析。</p>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">资源</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/zh/">关于 PoseCap Inc.</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/privacy/zh/">隐私政策</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/tos/zh/">服务条款</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">语言</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/posecli/en/">English</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 font-semibold" href="/posecli/zh/">中文</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">关注我们</h4>
+      <ul class="space-y-2 text-sm">
+        <li><span class="text-ink-500 dark:text-ink-400">邮箱:</span> <a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="mailto:contact@posecap.com">contact@posecap.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-ink-100 dark:border-ink-800">
+    <div class="container-page py-6 text-xs text-ink-500 dark:text-ink-400">
+      © 2026 PoseCap Inc. 保留所有权利。
+    </div>
+  </div>
+</footer>
+
+  <script>
+    // YouTube facade: swap thumbnail+button for iframe on click.
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-yt-id]');
+      if (!btn) return;
+      e.preventDefault();
+      var id = btn.dataset.ytId;
+      var title = btn.dataset.ytTitle || 'YouTube video';
+      var iframe = document.createElement('iframe');
+      var p = [
+        'autoplay=1',
+        'controls=0',
+        'modestbranding=1',
+        'rel=0',
+        'playsinline=1',
+        'iv_load_policy=3',
+        'disablekb=1',
+        'loop=1',
+        'playlist=' + encodeURIComponent(id)
+      ].join('&');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?' + p;
+      iframe.title = title;
+      iframe.className = 'w-full h-full';
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+      iframe.setAttribute('allowfullscreen', '');
+      var wrap = document.createElement('div');
+      wrap.className = 'aspect-video w-full rounded-2xl overflow-hidden shadow-soft ring-1 ring-ink-200 dark:ring-ink-800';
+      wrap.appendChild(iframe);
+      btn.replaceWith(wrap);
+    });
+  </script>
+</body>
+</html>
