@@ -61,7 +61,7 @@
         <a href="https://testflight.apple.com/join/sghRYAc8" rel="noopener" target="_blank" class="btn-primary">加入 TestFlight 公测</a>
         <a href="#features" class="btn-secondary">查看核心能力</a>
       </div>
-      <p class="text-xs text-ink-500 dark:text-ink-400">需要 iPhone（A12 仿生芯片或更新），iOS 13 及以上。Apple Watch 可选（watchOS 7+）。</p>
+      <p class="text-xs text-ink-500 dark:text-ink-400">需要 iPhone（iOS 17 及以上）。Apple Watch 可选，用于遥控录制。</p>
     </div>
     <div class="flex items-center justify-center">
       <img src="/posecoach/images/pose_coach_sprint_zh.png" alt="PoseCoach 应用截图" class="max-h-[640px] w-auto rounded-[36px] shadow-2xl ring-1 ring-ink-200 dark:ring-ink-800">
@@ -77,28 +77,28 @@
     </div>
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">3D 动作捕捉</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">ARKit 实时追踪 91 个关节的 3D 世界坐标与四元数旋转 — 全身、全程、无须穿戴标记点。</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">AR 实时动作捕捉</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">ARKit 实时追踪全身 21 个关节点，录制时骨架实时叠加，回放时帧级同步显示。支持同一训练会话内多段录制。</p>
       </div>
       <div class="card">
         <h3 class="font-semibold text-ink-900 dark:text-white">AI 教练对话</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">围绕你的动作多轮对话 — 询问反馈、训练建议、动作对比。支持中文与英文。</p>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">流式实时反馈，支持多轮追问——点击 AI 回复中的时间戳，直接跳转至对应录像画面。iOS 26+ 设备支持设备端推理。</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">动作自动识别</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">PoseCoach 自动识别每一次动作——无论挥拍还是冲刺步频——并拆解为峰值能量、肢体速度、动作阶段等节段。</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">挥拍评分卡 — 羽毛球</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">头顶挥拍动作 S/A/B/C/D 五级评分，涵盖完整性、速度节奏、关节角度、稳定性四维度，并给出逐拍评分与三条改进建议。</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">四维评分</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">每一次动作获得 0-100 的速度、稳定性、节奏、技术四维评分，方便逐场追踪进步。</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">速度评级 — 短跑</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">实测峰值与平均速度，对比中国、美国、加拿大三国年龄别标准，并预测 100m / 50m 参考完成时间。</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">慢动作回放 + AI 时间轴</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">慢动作回放每一次动作，AI 评论锚定到每一个阶段，让反馈更直观。</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">高光时刻自动识别</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">AI 自动定位录像中能量最高的关键片段，无需手动翻找，适用所有运动项目。点击时间戳即可跳转。</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">Apple Watch 联动</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">可选融合心率数据与运动健身环。也可用 Watch 远程监控录制状态。</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">Apple Watch 遥控</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">在 Watch 上点击即可远程开始或停止 iPhone 录制——一人也能独立完成完整训练录制。</p>
       </div>
     </div>
   </div>
@@ -110,15 +110,19 @@
       <h2 class="section-title">隐私优先</h2>
       <p class="section-lead">姿态识别、评分与回放全部在设备端运行。AI 教练分析时仅上传<strong>匿名骨架数据</strong>到我们的服务器 — 原始视频与图像始终保留在你的 iPhone 上，绝不上传。</p>
       <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
-        <li>姿态识别与评分在设备端完成（在受支持的硬件上使用 Apple Foundation Models）</li>
-        <li>AI 教练仅上传匿名骨架数据；原始视频与图像不上传</li>
-        <li>无须账号</li>
-        <li>支持以二进制 (.bin) 或 CSV 格式通过隔空投送、照片、文件或 ZIP 导出</li>
+        <li>姿态识别与评分在设备端完成（iOS 26+ 使用 Apple Foundation Models）</li>
+        <li>AI 教练仅上传轻量骨架坐标数据——原始视频始终保留在你的 iPhone 上</li>
+        <li>全部核心功能支持完全匿名使用，无须账号。支持 Sign in with Apple。</li>
       </ul>
     </div>
     <div class="space-y-4">
       <h2 class="section-title">追踪你的进步</h2>
       <p class="section-lead">每场训练都保存在设备本地。浏览长期动作历史，看见自己的分数一点点变好。</p>
+      <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+        <li>会话列表按日期排列，含运动类型与录制时长</li>
+        <li>随时编辑会话标题或修改运动项目类型</li>
+        <li>删除的会话进入回收站，30 天内可恢复</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -126,7 +130,7 @@
 <section class="section">
   <div class="container-page text-center space-y-6">
     <h2 class="section-title">准备好开练了吗？</h2>
-    <p class="section-lead mx-auto">PoseCoach 已开放 TestFlight 公测——目前覆盖羽毛球与短跑，更多运动陆续支持。我们每隔几周就会推送更新。</p>
+    <p class="section-lead mx-auto">PoseCoach 已开放 TestFlight 公测——目前覆盖羽毛球、短跑、健身与自由训练，更多运动陆续支持。我们每隔几周就会推送更新。</p>
     <div class="pt-2">
       <a href="https://testflight.apple.com/join/sghRYAc8" rel="noopener" target="_blank" class="btn-primary">加入 TestFlight 公测</a>
     </div>

@@ -61,7 +61,7 @@
         <a href="https://testflight.apple.com/join/sghRYAc8" rel="noopener" target="_blank" class="btn-primary">Join the TestFlight beta</a>
         <a href="#features" class="btn-secondary">See what's inside</a>
       </div>
-      <p class="text-xs text-ink-500 dark:text-ink-400">Requires iPhone with A12 Bionic or later, iOS 13+. Apple Watch optional (watchOS 7+).</p>
+      <p class="text-xs text-ink-500 dark:text-ink-400">Requires iPhone with iOS 17 or later. Apple Watch optional for remote recording.</p>
     </div>
     <div class="flex items-center justify-center">
       <img src="/posecoach/images/pose_coach_sprint_en.png" alt="PoseCoach app screenshot" class="max-h-[640px] w-auto rounded-[36px] shadow-2xl ring-1 ring-ink-200 dark:ring-ink-800">
@@ -77,28 +77,28 @@
     </div>
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">3D motion capture</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">ARKit tracks 91 joints in 3D world coordinates with quaternion rotation — full-body, full-motion, no markers.</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">AR real-time motion capture</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">ARKit tracks 21 body joints in real time with a skeleton overlay — visible during recording and synced frame-accurately in playback. Multi-segment recording in a single session.</p>
       </div>
       <div class="card">
         <h3 class="font-semibold text-ink-900 dark:text-white">AI coach chat</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Multi-turn conversation about your motion — ask for feedback, drills, or comparisons. Available in English and Chinese.</p>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Streaming, personalized feedback on your session — ask follow-ups, tap timestamp links to jump to the exact moment discussed. On-device AI available on iOS 26+.</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">Automatic motion detection</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">PoseCoach finds each rep — every swing or stride — and breaks it into peak energy, limb velocity, and phase segments, automatically.</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">Swing score card — Badminton</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Overhead swings graded S/A/B/C/D across completeness, tempo, joint angles, and stability — with per-swing scores and the top 3 actionable tips to improve.</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">Four-dimension scoring</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Each rep gets a 0–100 score across speed, stability, tempo and technique — easy to track session over session.</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">Speed rating — Sprint</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Measures peak and average speed; benchmarks against age-group standards from China, the US, and Canada; and predicts your 100m / 50m reference times.</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">Slow-motion replay with AI timeline</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Scrub through each rep in slow motion with the AI's commentary anchored to every phase of the action.</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">Auto highlight detection</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">AI automatically finds the peak-energy moment in your recording — no manual scrubbing. Works for all sports. Tap the timestamp to jump directly to it.</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">Apple Watch integration</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Optional heart-rate fusion and exercise-ring credit during capture. Use your Watch to monitor remotely.</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">Apple Watch remote</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Start and stop recording from your wrist — train solo without anyone to operate the phone.</p>
       </div>
     </div>
   </div>
@@ -110,15 +110,19 @@
       <h2 class="section-title">Private by design</h2>
       <p class="section-lead">Pose detection, scoring, and playback all run on your device. The AI coach analyzes <strong>anonymous skeleton data</strong> on our servers — your raw video and images never leave your iPhone.</p>
       <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
-        <li>On-device pose recognition and scoring (Apple Foundation Models on supported hardware)</li>
-        <li>AI coach uploads only anonymized skeleton data; raw video and images are never uploaded</li>
-        <li>No account required</li>
-        <li>Export sessions as binary (.bin) or CSV via AirDrop, Photos, Files or ZIP</li>
+        <li>On-device pose recognition and scoring (Apple Foundation Models on iOS 26+)</li>
+        <li>AI coach uploads only lightweight skeleton coordinate data — raw video never leaves your device</li>
+        <li>Use all core features anonymously — no account required. Sign in with Apple available.</li>
       </ul>
     </div>
     <div class="space-y-4">
       <h2 class="section-title">Track your progress</h2>
       <p class="section-lead">Every session is saved on-device. Browse a long-term motion history and watch your scores improve.</p>
+      <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+        <li>Sessions listed by date with sport type and recording duration</li>
+        <li>Edit session title or change sport type at any time</li>
+        <li>Deleted sessions recoverable within 30 days</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -126,7 +130,7 @@
 <section class="section">
   <div class="container-page text-center space-y-6">
     <h2 class="section-title">Ready to train?</h2>
-    <p class="section-lead mx-auto">PoseCoach is in public TestFlight beta — badminton and sprint today, more sports on the way. We ship updates every few weeks.</p>
+    <p class="section-lead mx-auto">PoseCoach is in public TestFlight beta — badminton, sprint, fitness, and freeplay today, more sports on the way. We ship updates every few weeks.</p>
     <div class="pt-2">
       <a href="https://testflight.apple.com/join/sghRYAc8" rel="noopener" target="_blank" class="btn-primary">Join the TestFlight beta</a>
     </div>
