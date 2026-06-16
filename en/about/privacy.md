@@ -2,7 +2,7 @@
 
 This document is no longer maintained at this URL.
 
-The current Privacy policy for PoseCap Inc. (covering PoseCap, PoseCoach, and Pose CLI) lives at:
+The current Privacy policy for PoseCap Inc. (covering PoseCap, Pose Coach, and Pose CLI) lives at:
 
 <https://posecap.com/about/privacy/en/>
 
