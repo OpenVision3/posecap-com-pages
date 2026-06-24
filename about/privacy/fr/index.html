@@ -30,7 +30,7 @@
   
 
 <header class="border-b border-ink-100 bg-white/80 backdrop-blur dark:border-ink-800 dark:bg-ink-950/80 sticky top-0 z-40">
-  <div class="container-page flex h-16 items-center gap-6">
+  <div class="container-page flex h-10 items-center gap-6">
     <a href="/fr/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap">
       <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap" class="h-7 w-auto block dark:hidden">
       <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap</span>
@@ -116,6 +116,7 @@
   
   
   
+  
 
 <footer class="border-t border-ink-100 bg-ink-50 dark:border-ink-800 dark:bg-ink-950">
   <div class="container-page py-12 grid gap-8 md:grid-cols-4">
@@ -130,6 +131,7 @@
       <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">Ressources</h4>
       <ul class="space-y-2 text-sm">
         <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/fr/">À propos de PoseCap Inc.</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/methodology/fr/">Méthodologie d&#39;analyse</a></li>
         <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/privacy/fr/">Politique de confidentialité</a></li>
         <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/tos/fr/">Conditions d&#39;utilisation</a></li>
       </ul>
@@ -187,6 +189,52 @@
       wrap.appendChild(iframe);
       btn.replaceWith(wrap);
     });
+  </script>
+  <script>
+    // Hero showcase carousel: auto-rotate synced photo + caption stacks; no-op when absent.
+    (function () {
+      var root = document.querySelector('[data-carousel]');
+      if (!root) return;
+      var slice = function (n) { return Array.prototype.slice.call(n); };
+      var photos = slice(root.querySelectorAll('[data-photo]'));
+      var captions = slice(root.querySelectorAll('[data-caption]'));
+      var dots = slice(root.querySelectorAll('[data-dot]'));
+      var count = Math.max(photos.length, captions.length);
+      if (count < 2) return;
+      var i = 0, timer = null;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function fade(el, on) {
+        el.classList.toggle('opacity-100', on);
+        el.classList.toggle('opacity-0', !on);
+        el.classList.toggle('pointer-events-none', !on);
+        if (on) { el.removeAttribute('aria-hidden'); } else { el.setAttribute('aria-hidden', 'true'); }
+      }
+      function show(n) {
+        i = (n + count) % count;
+        photos.forEach(function (el, idx) { fade(el, idx === i); });
+        captions.forEach(function (el, idx) { fade(el, idx === i); });
+        dots.forEach(function (d, idx) {
+          var on = idx === i;
+          d.classList.toggle('w-4', on);
+          d.classList.toggle('bg-posecoach', on);
+          d.classList.toggle('w-2', !on);
+          d.classList.toggle('bg-ink-300', !on);
+          d.classList.toggle('dark:bg-ink-600', !on);
+        });
+      }
+      function next() { show(i + 1); }
+      function start() { if (!reduce && !timer) timer = setInterval(next, 5000); }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      dots.forEach(function (d, idx) {
+        d.addEventListener('click', function () { show(idx); stop(); start(); });
+      });
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+      root.addEventListener('focusin', stop);
+      root.addEventListener('focusout', start);
+      show(0);
+      start();
+    })();
   </script>
 </body>
 </html>

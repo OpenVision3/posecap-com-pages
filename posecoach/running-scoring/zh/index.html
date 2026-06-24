@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>短跑跑姿评分原理 — Pose Coach — PoseCap Inc.</title>
+  <meta name="description" content="Pose Coach 如何给跑姿打分——对称性、躯干前倾、髋关节伸展、摆臂四维度 0–100 分与 S/A/B/C/D 等级。这是跑姿技术的方向性读数，不测量速度或成绩。">
+  <meta name="apple-itunes-app" content="app-id=6760837820, app-argument=posecoach-home">
+  <link rel="alternate" hreflang="en" href="https://posecap.com/posecoach/running-scoring/en/">
+  <link rel="alternate" hreflang="zh" href="https://posecap.com/posecoach/running-scoring/zh/">
+  <link rel="alternate" hreflang="fr" href="https://posecap.com/posecoach/running-scoring/fr/">
+  <link rel="alternate" hreflang="x-default" href="https://posecap.com/posecoach/running-scoring/en/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="短跑跑姿评分原理 — Pose Coach">
+  <meta property="og:description" content="Pose Coach 如何给跑姿打分——对称性、躯干前倾、髋关节伸展、摆臂四维度 0–100 分与 S/A/B/C/D 等级。这是跑姿技术的方向性读数，不测量速度或成绩。">
+  <meta property="og:url" content="https://posecap.com/posecoach/running-scoring/zh/">
+  <meta property="og:site_name" content="PoseCap Inc.">
+  <meta property="og:locale" content="zh_CN">
+
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="/assets/css/tailwind.css">
+</head>
+<body class="min-h-screen flex flex-col">
+  
+
+  
+  
+  
+
+<header class="border-b border-ink-100 bg-white/80 backdrop-blur dark:border-ink-800 dark:bg-ink-950/80 sticky top-0 z-40">
+  <div class="container-page flex h-10 items-center gap-6">
+    <a href="/zh/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap">
+      <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap" class="h-7 w-auto block dark:hidden">
+      <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap</span>
+    </a>
+    <nav class="ml-auto hidden md:flex items-center gap-6 text-sm">
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="/zh/#products">产品</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="/about/zh/">关于</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="mailto:contact@posecap.com">联系我们</a>
+      <span class="text-ink-300 dark:text-ink-700">|</span>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white " href="/posecoach/running-scoring/en/">EN</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white font-semibold text-ink-900 dark:text-white" href="/posecoach/running-scoring/zh/">中文</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white " href="/posecoach/running-scoring/fr/">FR</a>
+    </nav>
+    <a class="md:hidden ml-auto text-ink-600 dark:text-ink-300 text-sm" href="/zh/#products">产品</a>
+  </div>
+</header>
+
+  <main class="flex-1">
+    <section class="section pt-10 sm:pt-14 bg-gradient-to-br from-posecoach/10 via-transparent to-transparent dark:from-posecoach/20">
+  <div class="container-page space-y-6 max-w-3xl">
+    <div class="flex flex-wrap items-center gap-3">
+      <a href="/methodology/zh/" class="inline-flex items-center gap-2 text-sm text-posecoach hover:underline">← 分析方法论</a>
+      <span class="text-xs font-medium uppercase tracking-wider text-ink-400">跑姿评分</span>
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">看清你<span class="text-posecoach">怎么跑</span>——不只是跑了多快。</h1>
+    <p class="text-lg text-ink-600 dark:text-ink-300">录一段跑步，Pose Coach 用四个技术维度给你的<strong>跑姿</strong>打分，评出 S–D 等级，并指出最该调整的那一件事。这是对动作技术的读数——<strong>不是</strong>对你速度或成绩的测量。</p>
+    <div class="flex flex-wrap items-center gap-3 pt-2">
+      <a href="https://apps.apple.com/app/id6760837820" rel="noopener" target="_blank" class="btn-primary">给我的跑姿打个分</a>
+      <a href="#how" class="btn-secondary">看看评分怎么来</a>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="section">
+  <div class="container-page max-w-3xl space-y-6">
+    <h2 class="section-title">一个综合分，四件关于跑姿的事——和配速无关。</h2>
+    <p class="section-lead mt-0 max-w-none">根据跑步<strong>起步 / 加速 / 最高速</strong>三个阶段的 3D 骨架数据，Pose Coach 读取<strong>四个技术维度</strong>，各打 0–100 分，再<strong>等权</strong>合成一个 <strong>0–100 综合分</strong>和 <strong>S/A/B/C/D 等级</strong>。测的是你的动作是否对称、躯干前倾是否合理、髋关节是否充分伸展、摆臂是否规范——独立于你跑了多快。</p>
+
+    <div class="grid gap-6 sm:grid-cols-3 items-center rounded-2xl border border-ink-100 dark:border-ink-800 bg-ink-50 dark:bg-ink-900/40 p-6">
+      <div class="flex flex-col items-center justify-center">
+        <div class="flex h-28 w-28 items-center justify-center rounded-full border-[6px] border-posecoach text-ink-900 dark:text-white">
+          <div class="text-center leading-none"><div class="text-3xl font-semibold">78</div><div class="text-xs text-ink-500">/ 100</div></div>
+        </div>
+        <div class="mt-2 inline-flex items-center rounded-full bg-posecoach/15 px-3 py-0.5 text-sm font-semibold text-posecoach ring-1 ring-posecoach/30">B · 基础就位</div>
+      </div>
+      <div class="sm:col-span-2 text-sm text-ink-600 dark:text-ink-300">
+        <p>四个维度<strong>等权——各占 25%</strong>，无偏权；对称性、躯干前倾、髋关节伸展、摆臂同等重要。某维度数据缺失时跳过，并重新归一权重。</p>
+        <p class="mt-2 text-ink-500 dark:text-ink-400">与羽毛球评分共用同一套 S–D 等级——你的羽毛球 B 和跑步 B 是同一把尺子。</p>
+      </div>
+    </div>
+
+    <div class="overflow-hidden rounded-xl border border-ink-100 dark:border-ink-800">
+      <table class="w-full text-sm">
+        <thead class="bg-ink-50 dark:bg-ink-900/40 text-ink-500 dark:text-ink-400">
+          <tr><th class="px-4 py-2 text-left font-medium">等级</th><th class="px-4 py-2 text-left font-medium">技术定性</th><th class="px-4 py-2 text-right font-medium">综合分</th></tr>
+        </thead>
+        <tbody class="divide-y divide-ink-100 dark:divide-ink-800 text-ink-700 dark:text-ink-200">
+          <tr><td class="px-4 py-2 font-semibold">S</td><td class="px-4 py-2">精英级技术</td><td class="px-4 py-2 text-right">≥ 90</td></tr>
+          <tr><td class="px-4 py-2 font-semibold">A</td><td class="px-4 py-2">扎实跑姿</td><td class="px-4 py-2 text-right">≥ 80</td></tr>
+          <tr><td class="px-4 py-2 font-semibold">B</td><td class="px-4 py-2">基础就位</td><td class="px-4 py-2 text-right">≥ 70</td></tr>
+          <tr><td class="px-4 py-2 font-semibold">C</td><td class="px-4 py-2">明显短板</td><td class="px-4 py-2 text-right">≥ 60</td></tr>
+          <tr><td class="px-4 py-2 font-semibold">D</td><td class="px-4 py-2">需打基础</td><td class="px-4 py-2 text-right">&lt; 60</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-ink-50 dark:bg-ink-900/40">
+  <div class="container-page max-w-4xl space-y-8">
+    <div class="space-y-3">
+      <h2 class="section-title">四个维度详解</h2>
+      <p class="section-lead mt-0">每个维度回答三件事：<strong>测什么</strong>、<strong>好的样子</strong>、<strong>怎么改</strong>。维度顺序固定——与评分卡一致。下文所有「理想角度」是教练级参考量级，不是个体诊断阈值。</p>
+    </div>
+    <div class="grid gap-6 md:grid-cols-2">
+
+      <div class="card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-lime-400"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">对称性</h3></div>
+          <span class="badge bg-lime-100 text-lime-800 dark:bg-lime-950/60 dark:text-lime-300">权重 25%</span>
+        </div>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么——</strong>你的左右两侧是否匹配，对比<strong>前膝提腿</strong>和<strong>后髋伸展</strong>的左右角度差。如果步态数据也采集到，左右<strong>步态时间对称性</strong>也会折入（角度对称 + 时间对称各 50%）。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">好的样子——</strong>双侧角度差越小越好（差值越大扣分越多，80° 归零）。App 内显示：<span class="font-mono text-xs">角度对称：左右平均差 {v}°</span>。</p>
+        <ul class="text-sm text-ink-600 dark:text-ink-300 list-disc pl-5 space-y-1">
+          <li>加入单腿专项训练（弓步蹲、单腿跳）均衡双侧力量与节律</li>
+        </ul>
+      </div>
+
+      <div class="card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-cyan-400"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">躯干前倾</h3></div>
+          <span class="badge bg-cyan-100 text-cyan-800 dark:bg-cyan-950/60 dark:text-cyan-300">权重 25%</span>
+        </div>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么——</strong>每个阶段的躯干前倾角度是否合适。起步阶段需要明显前倾；最高速阶段躯干接近直立——测的是实际角度与理想值的偏差。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">好的样子——</strong>起步阶段约 <strong>45° 前倾</strong>，最高速阶段轻微前倾（约 10°）。偏差越大扣分越多（偏差 40° 归零）。App 内显示：<span class="font-mono text-xs">躯干前倾偏差 {v}°</span>。</p>
+        <ul class="text-sm text-ink-600 dark:text-ink-300 list-disc pl-5 space-y-1">
+          <li>起步阶段前倾约 45°</li>
+          <li>最高速阶段接近直立（约 10°），以获得高效推进力</li>
+        </ul>
+      </div>
+
+      <div class="card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-violet-400"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">髋关节伸展</h3></div>
+          <span class="badge bg-violet-100 text-violet-800 dark:bg-violet-950/60 dark:text-violet-300">权重 25%</span>
+        </div>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么——</strong>最高速阶段离地瞬间<strong>后腿髋关节是否充分伸展</strong>。伸展越充分，地面推进力越大。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">好的样子——</strong>离地瞬间后腿髋关节<strong>目标约 175°</strong>。偏差越大扣分越多。App 内显示：<span class="font-mono text-xs">髋关节伸展偏差 {v}°</span>。</p>
+        <ul class="text-sm text-ink-600 dark:text-ink-300 list-disc pl-5 space-y-1">
+          <li>离地时充分伸展后腿髋关节（约 175°），最大化地面推进力</li>
+        </ul>
+      </div>
+
+      <div class="card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-orange-400"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">摆臂</h3></div>
+          <span class="badge bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300">权重 25%</span>
+        </div>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么——</strong>最高速阶段的<strong>摆臂幅度及左右对称性</strong>（各占一半）。摆臂驱动躯干旋转并维持节律。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">好的样子——</strong>肘关节约 <strong>90° 弯曲</strong>，摆臂幅度 <strong>70–85°</strong>，双侧对称。偏差越大扣分越多（综合偏差 40° 归零）。App 内显示：<span class="font-mono text-xs">摆臂（综合）{v}°</span>。</p>
+        <ul class="text-sm text-ink-600 dark:text-ink-300 list-disc pl-5 space-y-1">
+          <li>保持肘关节约 90°，大幅摆臂（70–85°），驱动躯干旋转、维持节律</li>
+        </ul>
+      </div>
+
+    </div>
+    <p class="text-xs text-ink-500 dark:text-ink-400">角度参考文献：IAAF Basic Coaching Manual 2013 · Mann &amp; Murphy 2013（前侧力学）· Struzik et al. 2016。均为教练级参考量，不是个体诊断阈值。</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page max-w-3xl space-y-6">
+    <h2 class="section-title">你的评分卡，逐元素解读</h2>
+    <ul class="space-y-3 text-sm text-ink-600 dark:text-ink-300">
+      <li><strong class="text-ink-900 dark:text-white">评分环 + 等级徽章</strong>——综合分 0–100 及其 S/A/B/C/D 字母。</li>
+      <li><strong class="text-ink-900 dark:text-white">等级评语</strong>——由等级生成的一句定性；B/C/D 时点名你最弱的维度。</li>
+      <li><strong class="text-ink-900 dark:text-white">最弱维度专项练习</strong>——B/C/D 时，针对拉低分数那一维度的具体练习（见下文）。</li>
+      <li><strong class="text-ink-900 dark:text-white">四维度条</strong>——对称性 / 躯干前倾 / 髋关节伸展 / 摆臂，各附分数与一句说明，最弱项高亮。</li>
+      <li><strong class="text-ink-900 dark:text-white">逐段成绩</strong>——按跑步段落展示各段得分。</li>
+      <li><strong class="text-ink-900 dark:text-white">引擎版本 + 说明</strong>——评分引擎版本，以及「这是方向性跑姿读数、与成绩无关」的提示。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section bg-ink-50 dark:bg-ink-900/40">
+  <div class="container-page max-w-3xl space-y-6">
+    <h2 class="section-title">每个评分附带一句评语——以及最该练的那一项</h2>
+    <p class="section-lead mt-0">评分给出<strong>等级评语</strong>；在 <strong>B / C / D</strong> 等级时自动附加<strong>最弱维度的专项练习</strong>——告诉你练什么，不只是「加油」。</p>
+    <div class="overflow-hidden rounded-xl border border-ink-100 dark:border-ink-800 bg-white dark:bg-ink-900">
+      <table class="w-full text-sm">
+        <tbody class="divide-y divide-ink-100 dark:divide-ink-800 text-ink-700 dark:text-ink-200">
+          <tr><td class="px-4 py-2.5 w-8 font-semibold text-posecoach">S</td><td class="px-4 py-2.5">精英级技术，保持一致性。</td></tr>
+          <tr><td class="px-4 py-2.5 font-semibold text-posecoach">A</td><td class="px-4 py-2.5">跑姿扎实，专注最弱维度即可进阶。</td></tr>
+          <tr><td class="px-4 py-2.5 font-semibold text-posecoach">B</td><td class="px-4 py-2.5">基础就位，关注最弱维度可提升明显。</td></tr>
+          <tr><td class="px-4 py-2.5 font-semibold text-posecoach">C</td><td class="px-4 py-2.5">最弱维度存在明显短板，建议针对性训练。</td></tr>
+          <tr><td class="px-4 py-2.5 font-semibold text-posecoach">D</td><td class="px-4 py-2.5">技术基础待打牢，从最弱维度入手改进。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm text-ink-600 dark:text-ink-300">点击<strong>「生成训练计划」</strong>，把本次评分传给 AI 教练，获得围绕该最弱维度的针对性计划。</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page max-w-3xl space-y-6">
+    <div class="space-y-2">
+      <span class="inline-flex items-center rounded-full bg-[#ff5a3c]/10 px-3 py-1 text-xs font-semibold text-[#ff5a3c] ring-1 ring-[#ff5a3c]/30">请先读这段</span>
+      <h2 class="section-title">跑姿分，不是成绩分。</h2>
+    </div>
+    <div class="rounded-2xl border-2 border-posecoach/40 bg-posecoach/5 p-6">
+      <p class="text-base font-medium text-ink-800 dark:text-ink-100">这是跑姿技术<em>质量</em>的方向性读数。它<strong>尚未与实际成绩时间标定——分数高不代表你跑得更快。</strong></p>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-posecoach mb-3">能做</h3>
+        <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+          <li>量化四个跑姿技术维度，指出最该调整的那一项</li>
+          <li>给出最弱维度的专项练习建议</li>
+          <li>跨跑步段落追踪技术一致性</li>
+          <li>与羽毛球评分在同一套等级下横向比较</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-[#ff5a3c] mb-3">说明</h3>
+        <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+          <li>评分<strong>尚未标定</strong>——只是「偏离参考值的方向性读数」，不是百分制技术等级</li>
+          <li>不替代人类教练的现场、个性化判断</li>
+          <li>角度用三点近似计算，数值是量级近似</li>
+          <li><strong>不测速度 / 成绩</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rounded-2xl border border-ink-100 dark:border-ink-800 bg-ink-50 dark:bg-ink-900/40 p-5">
+      <p class="text-sm text-ink-700 dark:text-ink-200"><strong class="text-ink-900 dark:text-white">跑姿分与速度分相互独立。</strong>Pose Coach 的<strong>「跑步速度」</strong>测你跑多快（并预测 50/100m 成绩）；这个<strong>跑姿评分</strong>测你的技术是否规范。两者独立——不要混淆。</p>
+    </div>
+    <p class="text-xs text-ink-500 dark:text-ink-400">未采集到完整跑步时，App 会请你录制完整跑步后重试。关节角度需要清晰侧视角（双侧均可见）；正面对镜时部分维度可能不可用——换个拍摄角度即可。</p>
+  </div>
+</section>
+
+<section class="section bg-gradient-to-br from-posecoach/10 via-transparent to-transparent dark:from-posecoach/20">
+  <div class="container-page text-center space-y-6">
+    <h2 class="section-title">你的跑姿，值得一次近距离审视。</h2>
+    <p class="section-lead mx-auto">录一段跑步，看到你的四个技术维度、你的等级，以及下一步最该调整的那一件事。</p>
+    <div class="pt-2">
+      <a href="https://apps.apple.com/app/id6760837820" rel="noopener" target="_blank" class="btn-primary">给我的跑姿打个分</a>
+    </div>
+    <p class="text-xs text-ink-400 dark:text-ink-500">评分引擎 v0.4.1 · 方向性跑姿参考，尚未与成绩标定、与速度无关。</p>
+  </div>
+</section>
+
+  </main>
+  
+
+  
+  
+  
+  
+  
+
+<footer class="border-t border-ink-100 bg-ink-50 dark:border-ink-800 dark:bg-ink-950">
+  <div class="container-page py-12 grid gap-8 md:grid-cols-4">
+    <div class="space-y-3">
+      <a href="/zh/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap">
+        <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap" class="h-6 w-auto block dark:hidden">
+        <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap</span>
+      </a>
+      <p class="text-sm text-ink-500 dark:text-ink-400 max-w-xs">为每一位运动爱好者，提供精准的动作分析。</p>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">资源</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/zh/">关于 PoseCap Inc.</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/methodology/zh/">分析方法论</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/privacy/zh/">隐私政策</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/tos/zh/">服务条款</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">语言</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/posecoach/running-scoring/en/">English</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 font-semibold" href="/posecoach/running-scoring/zh/">中文</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/posecoach/running-scoring/fr/">Français</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">关注我们</h4>
+      <ul class="space-y-2 text-sm">
+        <li><span class="text-ink-500 dark:text-ink-400">邮箱:</span> <a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="mailto:contact@posecap.com">contact@posecap.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-ink-100 dark:border-ink-800">
+    <div class="container-page py-6 text-xs text-ink-500 dark:text-ink-400">
+      © 2026 PoseCap Inc. 保留所有权利。
+    </div>
+  </div>
+</footer>
+
+  <script>
+    // YouTube facade: swap thumbnail+button for iframe on click.
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-yt-id]');
+      if (!btn) return;
+      e.preventDefault();
+      var id = btn.dataset.ytId;
+      var title = btn.dataset.ytTitle || 'YouTube video';
+      var iframe = document.createElement('iframe');
+      var p = [
+        'autoplay=1',
+        'controls=0',
+        'modestbranding=1',
+        'rel=0',
+        'playsinline=1',
+        'iv_load_policy=3',
+        'disablekb=1',
+        'loop=1',
+        'playlist=' + encodeURIComponent(id)
+      ].join('&');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?' + p;
+      iframe.title = title;
+      iframe.className = 'w-full h-full';
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+      iframe.setAttribute('allowfullscreen', '');
+      var wrap = document.createElement('div');
+      wrap.className = 'aspect-video w-full rounded-2xl overflow-hidden shadow-soft ring-1 ring-ink-200 dark:ring-ink-800';
+      wrap.appendChild(iframe);
+      btn.replaceWith(wrap);
+    });
+  </script>
+  <script>
+    // Hero showcase carousel: auto-rotate synced photo + caption stacks; no-op when absent.
+    (function () {
+      var root = document.querySelector('[data-carousel]');
+      if (!root) return;
+      var slice = function (n) { return Array.prototype.slice.call(n); };
+      var photos = slice(root.querySelectorAll('[data-photo]'));
+      var captions = slice(root.querySelectorAll('[data-caption]'));
+      var dots = slice(root.querySelectorAll('[data-dot]'));
+      var count = Math.max(photos.length, captions.length);
+      if (count < 2) return;
+      var i = 0, timer = null;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function fade(el, on) {
+        el.classList.toggle('opacity-100', on);
+        el.classList.toggle('opacity-0', !on);
+        el.classList.toggle('pointer-events-none', !on);
+        if (on) { el.removeAttribute('aria-hidden'); } else { el.setAttribute('aria-hidden', 'true'); }
+      }
+      function show(n) {
+        i = (n + count) % count;
+        photos.forEach(function (el, idx) { fade(el, idx === i); });
+        captions.forEach(function (el, idx) { fade(el, idx === i); });
+        dots.forEach(function (d, idx) {
+          var on = idx === i;
+          d.classList.toggle('w-4', on);
+          d.classList.toggle('bg-posecoach', on);
+          d.classList.toggle('w-2', !on);
+          d.classList.toggle('bg-ink-300', !on);
+          d.classList.toggle('dark:bg-ink-600', !on);
+        });
+      }
+      function next() { show(i + 1); }
+      function start() { if (!reduce && !timer) timer = setInterval(next, 5000); }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      dots.forEach(function (d, idx) {
+        d.addEventListener('click', function () { show(idx); stop(); start(); });
+      });
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+      root.addEventListener('focusin', stop);
+      root.addEventListener('focusout', start);
+      show(0);
+      start();
+    })();
+  </script>
+</body>
+</html>
