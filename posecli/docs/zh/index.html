@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pose CLI 文档 — PoseCap Inc.</title>
+  <meta name="description" content="Pose CLI 完整参考文档 — 安装、快速入门、数据格式、CLI 命令、工具参考、环境变量及贡献指南。">
+  <link rel="alternate" hreflang="en" href="https://posecap.com/posecli/docs/">
+  <link rel="alternate" hreflang="zh" href="https://posecap.com/posecli/docs/zh/">
+  <link rel="alternate" hreflang="x-default" href="https://posecap.com/posecli/docs/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Pose CLI 文档">
+  <meta property="og:description" content="Pose CLI 完整参考文档 — 安装、快速入门、数据格式、CLI 命令、工具参考、环境变量及贡献指南。">
+  <meta property="og:url" content="https://posecap.com/posecli/docs/zh/">
+  <meta property="og:site_name" content="PoseCap Inc.">
+  <meta property="og:locale" content="zh_CN">
+
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="/assets/css/tailwind.css">
+</head>
+<body class="min-h-screen flex flex-col">
+  
+
+  
+  
+  
+
+<header class="border-b border-ink-100 bg-white/80 backdrop-blur dark:border-ink-800 dark:bg-ink-950/80 sticky top-0 z-40">
+  <div class="container-page flex h-10 items-center gap-6">
+    <a href="/zh/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap">
+      <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap" width="76" height="28" class="h-7 w-auto block dark:hidden">
+      <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap</span>
+    </a>
+    <nav class="ml-auto hidden md:flex items-center gap-6 text-sm">
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="/zh/#products">产品</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="/about/zh/">关于</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="mailto:contact@posecap.com">联系我们</a>
+      <span class="text-ink-300 dark:text-ink-700">|</span>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white " href="/posecli/docs/">EN</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white font-semibold text-ink-900 dark:text-white" href="/posecli/docs/zh/">中文</a>
+      
+    </nav>
+    <a class="md:hidden ml-auto text-ink-600 dark:text-ink-300 text-sm" href="/zh/#products">产品</a>
+  </div>
+</header>
+
+  <main class="flex-1">
+    
+
+<section class="section bg-gradient-to-br from-posecli/10 via-transparent to-transparent dark:from-posecli/20">
+  <div class="container-page max-w-6xl">
+    <div class="flex items-center gap-3 mb-4">
+      <img src="/posecli/images/logo.svg" alt="Pose CLI" class="h-10 w-10 rounded-xl shadow-sm">
+      <span class="badge-early">早期访问</span>
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">Pose CLI 文档</h1>
+    <p class="mt-4 max-w-2xl text-lg text-ink-600 dark:text-ink-300">面向运动科学家的开源运动分析工具包。使用 20+ 内置工具分析 3D 骨骼数据，或构建你自己的工具 — 全部在本地机器上运行。</p>
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <a href="#quickstart" class="btn-primary">快速入门</a>
+      <a href="#installation" class="btn-secondary">安装指南</a>
+      <a href="/posecli/zh/" class="btn-secondary">返回 Pose CLI</a>
+    </div>
+  </div>
+</section>
+
+
+<section class="section !pt-12">
+  <div class="container-page max-w-6xl">
+    <div class="grid gap-10 lg:grid-cols-[240px_1fr]">
+
+      
+      <aside class="hidden lg:block">
+        <nav class="sticky top-[3.5rem] space-y-1 text-sm" aria-label="文档目录">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-ink-400 dark:text-ink-500">本页目录</p>
+          <a href="#overview" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">概览</a>
+          <a href="#quickstart" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">快速入门</a>
+          <a href="#installation" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">安装指南</a>
+          <a href="#data-format" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">数据格式</a>
+          <a href="#cli-commands" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">CLI 命令</a>
+          <a href="#tools" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">工具参考</a>
+          <a href="#env-vars" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">环境变量</a>
+          <a href="#llm-chat" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">LLM 对话</a>
+          <a href="#local-backend" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">本地后端</a>
+          <a href="#contributing" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">贡献指南</a>
+          <a href="#license" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">许可证</a>
+        </nav>
+      </aside>
+
+      
+      <div class="min-w-0 space-y-16">
+
+        
+        <section id="overview">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">概览</h2>
+          <div class="mt-4 space-y-4 text-ink-700 dark:text-ink-200 leading-relaxed">
+            <p>Pose CLI 将原始 3D 人体骨骼数据（来自 ARKit 或任何姿态估计系统）转化为可实践的运动分析报告。它<strong>完全在你的机器上运行</strong>：你的数据永远不会离开你的电脑。</p>
+            <div class="rounded-lg border border-ink-200 bg-ink-50 p-5 dark:border-ink-700 dark:bg-ink-900">
+              <pre class="text-sm text-ink-700 dark:text-ink-200 overflow-x-auto"><code>Pose Coach 录制 → JointData3D CSV → Pose CLI 工具 → JSON 输出
+                                              │
+                                              ├── stats
+                                              ├── detect_peak_energy
+                                              ├── segment_motion_phases
+                                              ├── detect_velocity
+                                              ├── detect_action_boundaries
+                                              ├── detect_highlight
+                                              └── ... 超过 15 个工具</code></pre>
+            </div>
+          </div>
+
+          
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">数据如何到达 Pose CLI</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">三种将录制数据从 iPhone（Pose Coach）传输到电脑的方式：</p>
+
+          <div class="mt-4 space-y-4">
+            
+            <div class="rounded-lg border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-800 dark:bg-emerald-950/30">
+              <h4 class="font-semibold text-emerald-800 dark:text-emerald-300">路径 A — iCloud Drive（零配置，始终可用）</h4>
+              <pre class="codeblock mt-2 !bg-emerald-950/60 dark:!bg-emerald-950/80">iPhone 录制 → 文件 App → iCloud Drive（自动同步）→ 电脑 → pose analyze
+✅ 全区域可用    ✅ 包含 .mov 视频    ⚠ 每次手动操作</pre>
+            </div>
+
+            
+            <div class="rounded-lg border border-violet-200 bg-violet-50/60 p-4 dark:border-violet-800 dark:bg-violet-950/30">
+              <h4 class="font-semibold text-violet-800 dark:text-violet-300">路径 B — 本地后端（一次配置，自动上传）</h4>
+              <pre class="codeblock mt-2 !bg-violet-950/60 dark:!bg-violet-950/80">iPhone 录制 → 你的电脑（同一 WiFi, uvicorn api:app --host 0.0.0.0）→ pose analyze
+✅ 全区域可用    ✅ 每次录制后自动上传    🔧 一次性配置
+（需要 TestFlight 版本 — 设置中的 Researcher Backend）</pre>
+            </div>
+
+            
+            <div class="rounded-lg border border-ink-200 bg-ink-50/60 p-4 dark:border-ink-700 dark:bg-ink-900/30">
+              <h4 class="font-semibold text-ink-800 dark:text-ink-200">路径 C — 云端后端（仅限美国/欧洲）</h4>
+              <pre class="codeblock mt-2">iPhone 录制 → Staging API（自动上传）→ pose data seed-session → 电脑 → pose analyze
+✅ 全自动化      ❌ 中国不可用    ⚠ 不含 .mov 视频</pre>
+            </div>
+          </div>
+
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">路径</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">配置</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">网络</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">区域</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">视频</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-semibold text-emerald-700 dark:text-emerald-400">A. iCloud Drive</td><td class="py-2 pr-4">无需</td><td class="py-2 pr-4">互联网（iCloud）</td><td class="py-2 pr-4">全部</td><td class="py-2">✅</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-semibold text-violet-700 dark:text-violet-400">B. 本地后端</td><td class="py-2 pr-4">5 分钟</td><td class="py-2 pr-4">仅同一 WiFi</td><td class="py-2 pr-4">全部</td><td class="py-2">❌</td></tr>
+                <tr><td class="py-2 pr-4 font-semibold text-ink-700 dark:text-ink-200">C. Staging</td><td class="py-2 pr-4">后端访问权限</td><td class="py-2 pr-4">互联网（美国/欧洲）</td><td class="py-2 pr-4">仅美国/欧洲</td><td class="py-2">❌</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><strong>推荐：</strong>首次录制从<strong>路径 A</strong>（iCloud Drive）开始。频繁录制时配置<strong>路径 B</strong>（本地后端）实现自动上传。<a href="#local-backend" class="underline">完整本地后端配置指南 →</a></p>
+
+          
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">为未支持运动录制</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">如果你想分析 Pose Coach 尚未正式支持的运动（如篮球、高尔夫、网球）：</p>
+          <ol class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>打开 Pose Coach → 选择 <strong>Freeplay</strong> 作为运动</li>
+            <li>正常录制 — 你会获得完整的 3D 骨骼数据</li>
+            <li>将数据传输到电脑（使用上述路径 A 或 B）</li>
+            <li>使用 Pose CLI 的通用工具（<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">stats</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">segment_motion_phases</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">detect_action_boundaries</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">detect_highlight</code>）进行分析</li>
+            <li>在此基础上构建运动专项工具 — 参见<a href="#contributing" class="underline">贡献指南</a></li>
+          </ol>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">适用人群</h3>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">角色</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">可做的事</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800">
+                  <td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">运动科学家 / 研究员</td>
+                  <td class="py-2">分析运动数据、发表论文、构建新的分析工具</td>
+                </tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800">
+                  <td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">教练 / 表现分析师</td>
+                  <td class="py-2">评估技术动作、追踪进步、对比运动员</td>
+                </tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800">
+                  <td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">运动科学学生</td>
+                  <td class="py-2">通过动手分析数据学习生物力学</td>
+                </tr>
+                <tr>
+                  <td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">开发者 / 实验室</td>
+                  <td class="py-2">构建自定义工具、集成到现有数据处理流程</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">支持的运动项目</h3>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">运动</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">状态</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">专用工具</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">freeplay</td><td class="py-2 pr-4">通用活动</td><td class="py-2">6（通用工具适用）</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">sprint</td><td class="py-2 pr-4">短跑</td><td class="py-2">10（速度、步态、效率、评分）</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">badminton</td><td class="py-2 pr-4">羽毛球</td><td class="py-2">13（挥拍、分类、评分、角度、对比、规则、训练计划）</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">fitness</td><td class="py-2 pr-4">健身</td><td class="py-2">6（通用工具适用）</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">basketball</td><td class="py-2 pr-4">开发中</td><td class="py-2">即将推出</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">核心原则</h3>
+          <ul class="mt-4 space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+            <li><strong class="text-ink-800 dark:text-ink-200">数据本地化。</strong>所有分析在你的机器上运行。无需上传到云端。</li>
+            <li><strong class="text-ink-800 dark:text-ink-200">一次编写，全平台使用。</strong>构建一个工具 — 即可在 CLI、Pose Coach 应用或你的自定义应用中使用。</li>
+            <li><strong class="text-ink-800 dark:text-ink-200">可扩展设计。</strong>每个工具都是一个 Python 类。编写你自己的，注册后即可随处使用。</li>
+            <li><strong class="text-ink-800 dark:text-ink-200">内置缓存。</strong>分析结果自动缓存。重复运行同一文件 → 即时返回结果。</li>
+          </ul>
+        </section>
+
+        
+        <section id="quickstart">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">快速入门 — 5 分钟</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">从零到完成首次分析。</p>
+
+          <div class="mt-6 space-y-6">
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">第一步：安装</h3>
+              <pre class="codeblock mt-2">pip install pose-platform
+pose version</pre>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">第二步：获取示例数据</h3>
+              <pre class="codeblock mt-2">curl -O https://posecap.com/samples/sample_sprint.csv</pre>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">第三步：运行首次分析</h3>
+              <pre class="codeblock mt-2">pose analyze sample_sprint.csv --tool stats</pre>
+              <p class="mt-3 text-sm text-ink-600 dark:text-ink-300">你将看到一份 JSON 报告，包含录制时长、帧率、关节数量、抖动比、数据质量评估以及每个关节的统计信息。</p>
+              <ul class="mt-2 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+                <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">data_quality: "good"</code> — 追踪质量可靠</li>
+                <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">tracking_coverage: 0.98</code> — 98% 的帧有有效骨骼数据</li>
+                <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">jitter_ratio &lt; 0.1</code> — 稳定性极佳</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">第四步：尝试更多工具</h3>
+              <pre class="codeblock mt-2"># 找出运动片段（短跑 vs 站立）
+pose analyze sample_sprint.csv --tool segment_motion_phases
+
+# 检测速度峰值
+pose analyze sample_sprint.csv --tool detect_velocity --param joint=body_position
+
+# 提取高光时刻
+pose analyze sample_sprint.csv --tool detect_highlight --param sport_id=sprint
+
+# 使用运动员档案测量短跑速度
+pose analyze sample_sprint.csv --tool measure_running_speed \
+    --param age=16 --param gender=male --param region=cn</pre>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">第五步：使用你自己的数据</h3>
+              <pre class="codeblock mt-2">pose analyze /path/to/your/data.csv --tool stats</pre>
+              <p class="mt-3 text-sm text-ink-600 dark:text-ink-300">将 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze</code> 指向你自己的 JointData3D CSV 文件。参见<a href="#data-format" class="underline">数据格式</a>了解如何从其他姿态估计系统准备数据。</p>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">第六步：用 Pose Coach 录制你自己的数据</h3>
+              <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">获取 JointData3D 文件最简单的方式是用 Pose Coach iOS App 录制。</p>
+
+              <div class="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-800 dark:bg-emerald-950/30">
+                <p class="text-sm font-semibold text-emerald-800 dark:text-emerald-300">快速上手（无需配置）：</p>
+                <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+                  <li>通过 TestFlight 安装 Pose Coach（联系我们获取邀请链接）</li>
+                  <li>录制一个会话 — 选择 <strong>Freeplay</strong> 作为运动</li>
+                  <li>录制完成后，点击导出 → <strong>保存到文件</strong> → iCloud Drive</li>
+                  <li>在电脑上，从 iCloud Drive 下载文件夹</li>
+                  <li>对 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">_3d.csv</code> 文件运行 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze</code></li>
+                </ol>
+              </div>
+
+              <div class="mt-3 rounded-lg border border-violet-200 bg-violet-50/60 p-4 dark:border-violet-800 dark:bg-violet-950/30">
+                <p class="text-sm font-semibold text-violet-800 dark:text-violet-300">自动上传（一次性配置）：</p>
+                <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+                  <li>在电脑上启动本地后端：</li>
+                </ol>
+                <pre class="codeblock mt-1 !bg-violet-950/60 dark:!bg-violet-950/80">uvicorn products.sports_assistant.backend.api:app --host 0.0.0.0 --port 8000</pre>
+                <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5" start="2">
+                  <li>在 Pose Coach 设置 → <strong>Researcher Backend</strong> → 自定义 URL → 输入你电脑的 IP</li>
+                  <li>开始录制 — 骨骼文件自动到达你的 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-data/</code> 目录</li>
+                </ol>
+              </div>
+              <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><a href="#local-backend" class="underline">完整本地后端指南 →</a></p>
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="installation">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">安装指南</h2>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">系统要求</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">依赖项</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">最低版本</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">推荐版本</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">Python</td><td class="py-2 pr-4">3.10</td><td class="py-2">3.12+</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">pip</td><td class="py-2 pr-4">22.0</td><td class="py-2">24.0+</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">操作系统</td><td class="py-2 pr-4" colspan="2">macOS 12+ / Linux (glibc 2.28+) / Windows WSL2</td></tr>
+                <tr><td class="py-2 pr-4">磁盘空间</td><td class="py-2 pr-4" colspan="2">约 500 MB（含依赖）</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">方式一：pip（推荐）</h3>
+          <pre class="codeblock mt-2">pip install pose-platform
+pose version</pre>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">方式二：从源码安装（适用于工具开发者）</h3>
+          <pre class="codeblock mt-2">git clone https://github.com/posecap/pose-platform.git
+cd pose-platform
+pip install -e .</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">-e</code> 参数表示"可编辑"模式 — 源码修改立即生效。</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">方式三：虚拟环境（干净隔离）</h3>
+          <pre class="codeblock mt-2">python3 -m venv pose-env
+source pose-env/bin/activate        # macOS / Linux
+# pose-env\Scripts\activate         # Windows
+
+pip install pose-platform</pre>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">可选依赖</h3>
+          <pre class="codeblock mt-2"># LLM 对话支持 — Claude、DeepSeek、Qwen
+pip install openai>=1.50 anthropic>=0.30
+
+# 数据库操作（seed-session、list-users）
+pip install psycopg2-binary>=2.9 sqlalchemy>=2.0
+
+# Claude Code 集成
+npm install -g @anthropic-ai/claude-code</pre>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">常见问题排查</h3>
+          <div class="mt-3 space-y-4 text-sm">
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200"><code>pip: command not found</code></p>
+              <pre class="codeblock mt-1">python3 -m ensurepip --upgrade</pre>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200"><code>error: externally-managed-environment</code>（macOS Homebrew Python）</p>
+              <p class="text-ink-600 dark:text-ink-300">使用虚拟环境（方式三）或：</p>
+              <pre class="codeblock mt-1">pip install --break-system-packages pose-platform</pre>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">pip 安装后 <code>pose: command not found</code></p>
+              <pre class="codeblock mt-1"># 添加到 ~/.zshrc 或 ~/.bashrc
+export PATH="$HOME/.local/bin:$PATH"
+
+# 替代方案 — 不通过 pose 命令运行
+python3 -m products.pose_cli.cli version</pre>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">Apple Silicon（M1/M2/M3）</p>
+              <p class="text-ink-600 dark:text-ink-300">平台原生支持 ARM 架构。验证：</p>
+              <pre class="codeblock mt-1">python3 -c "import platform; print(platform.machine())"
+# 应输出：arm64</pre>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">Windows</p>
+              <p class="text-ink-600 dark:text-ink-300">请使用 WSL2。原生 Windows 未经测试。</p>
+              <pre class="codeblock mt-1">wsl --install
+wsl
+# 然后按上述 Linux 方式操作</pre>
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="data-format">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">数据格式 — JointData3D</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">这是使用 Pose CLI 之前需要理解的最重要概念。每个工具都读取 JointData3D CSV 文件。</p>
+
+          <div class="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/40">
+            <p class="text-sm text-amber-800 dark:text-amber-200"><strong>⚠️ 重要：</strong>理解世界坐标与模型坐标的区别对于正确分析至关重要。详见下文。</p>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">12 列格式</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Pose CLI 接受<strong>无表头</strong>的 CSV 文件。每行代表一个时间戳上的一个关节。</p>
+          <pre class="codeblock mt-3">timestamp, joint, wx, wy, wz, mx, my, mz, ldq_x, ldq_y, ldq_z, ldq_w</pre>
+
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-2 font-medium text-ink-900 dark:text-white w-8">#</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">列名</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">类型</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">说明</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-2 text-ink-400">1</td><td class="py-2 pr-4 font-mono text-xs">timestamp</td><td class="py-2 pr-4">float</td><td class="py-2">自录制开始的秒数</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-2 text-ink-400">2</td><td class="py-2 pr-4 font-mono text-xs">joint</td><td class="py-2 pr-4">int 或 string</td><td class="py-2">关节标识符（名称或索引）</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-2 text-ink-400">3–5</td><td class="py-2 pr-4 font-mono text-xs">wx, wy, wz</td><td class="py-2 pr-4">float</td><td class="py-2"><strong>世界</strong>坐标（ARKit 世界锚点坐标）</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-2 text-ink-400">6–8</td><td class="py-2 pr-4 font-mono text-xs">mx, my, mz</td><td class="py-2 pr-4">float</td><td class="py-2"><strong>模型</strong>坐标（相对于身体质心）</td></tr>
+                <tr><td class="py-2 pr-2 text-ink-400">9–12</td><td class="py-2 pr-4 font-mono text-xs">ldq_x … ldq_w</td><td class="py-2 pr-4">float</td><td class="py-2">局部旋转四元数（x, y, z, w）</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">世界坐标 vs. 模型坐标</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">坐标系统</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">来源</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">适用场景</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">稳定性</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800">
+                  <td class="py-2 pr-4 font-mono text-xs">wx, wy, wz</td>
+                  <td class="py-2 pr-4">ARKit 世界锚点</td>
+                  <td class="py-2 pr-4">绝对场地位置、热力图</td>
+                  <td class="py-2">⚠️ 跨会话可能漂移</td>
+                </tr>
+                <tr>
+                  <td class="py-2 pr-4 font-mono text-xs">mx, my, mz</td>
+                  <td class="py-2 pr-4">身体质心相对坐标</td>
+                  <td class="py-2 pr-4">关节角度、相对运动、技术分析</td>
+                  <td class="py-2">✅ 单次会话内稳定</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-3 text-sm text-ink-600 dark:text-ink-300"><strong>经验法则：</strong>所有生物力学分析都使用模型坐标（<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">mx/my/mz</code>）。所有内置工具默认使用模型坐标。</p>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">数据质量检查清单</h3>
+          <ul class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+            <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">jitter_ratio</code> &lt; 0.3（运行 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze data.csv --tool stats</code>）</li>
+            <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">tracking_coverage</code> &gt; 0.5（大部分录制时间骨骼被追踪到）</li>
+            <li>录制距离 2–8 米（ARKit 最佳范围）</li>
+            <li>全身可见（未被物体或其他人遮挡）</li>
+            <li>画面中仅一人（ARKit 只能追踪一个身体）</li>
+            <li>设备保持静止（建议使用三脚架）</li>
+          </ul>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">从其他系统准备数据</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">如果你使用 OpenPose、MediaPipe、BlazePose 或动作捕捉系统，请将数据转换为 12 列格式。关键要求：</p>
+          <ol class="mt-2 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li><strong>时间戳：</strong>单调递增，自起始秒数</li>
+            <li><strong>关节顺序：</strong>必须匹配 19 关节 ARKit 人体骨骼（或使用字符串名称）</li>
+            <li><strong>模型坐标：</strong>如不可用，设为与世界坐标相同（部分工具精度会降低）</li>
+            <li><strong>四元数：</strong>如不可用，设为 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">ldq_x=0, ldq_y=0, ldq_z=0, ldq_w=1</code>（单位四元数）</li>
+          </ol>
+          <pre class="codeblock mt-3">import numpy as np
+
+# 你的数据：timestamps (T,), joint_names 列表, world_positions (T, J, 3)
+for t_idx, t in enumerate(timestamps):
+    for j_idx, jname in enumerate(joint_names):
+        wx, wy, wz = world_positions[t_idx, j_idx]
+        mx, my, mz = world_positions[t_idx, j_idx]  # 或计算模型坐标
+        # 单位四元数：无旋转数据
+        print(f"{t},{jname},{wx},{wy},{wz},{mx},{my},{mz},0,0,0,1")</pre>
+        </section>
+
+        
+        <section id="cli-commands">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">CLI 命令参考</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">所有命令在本地运行。分析命令无需网络连接。</p>
+
+          
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white"><code>pose analyze</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">对 JointData3D CSV 文件运行分析工具。</p>
+          <pre class="codeblock mt-2">pose analyze &lt;file.csv&gt; [--tool &lt;name&gt;] [--no-cache] [--param KEY=VALUE ...]</pre>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">选项</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">说明</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">&lt;file.csv&gt;</td><td class="py-2">JointData3D CSV 文件路径（必填）</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--tool &lt;name&gt;</td><td class="py-2">要运行的工具（默认：<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">stats</code>）</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--no-cache</td><td class="py-2">跳过缓存，强制重新计算</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--param KEY=VALUE</td><td class="py-2">向工具传递参数（可重复使用）。自动检测类型</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">--subject-id &lt;ID&gt;</td><td class="py-2">用于训练计划停滞检测（需要 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_API_TOKEN</code>）</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <pre class="codeblock mt-3"># 基本分析
+pose analyze data/session.csv
+
+# 指定工具
+pose analyze data/session.csv --tool detect_peak_energy
+
+# 带参数
+pose analyze data/session.csv --tool measure_running_speed \
+    --param age=16 --param gender=male --param region=cn
+
+# 强制重新计算
+pose analyze data/session.csv --tool stats --no-cache</pre>
+
+          
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white"><code>pose tools</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">列出所有已注册的工具。</p>
+          <pre class="codeblock mt-2">pose tools                  # 简洁表格
+pose tools --detail         # 每个工具的完整参数详情
+pose tools --sport &lt;id&gt;     # 按运动筛选（如 badminton、sprint）</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose sports</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">列出官方支持的运动及其可用工具。</p>
+          <pre class="codeblock mt-2">pose sports</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose gaps</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">管理能力缺口登记（功能请求、工具构想）。</p>
+          <pre class="codeblock mt-2">pose gaps list                           # 活跃的缺口
+pose gaps list --all-statuses            # 全部包括已解决的
+pose gaps submit "&lt;title&gt;"               # 登记新的缺口
+pose gaps show &lt;gap_id&gt;                  # 查看缺口详情及临时实现
+pose gaps summary                        # 统计摘要
+pose gaps promote &lt;gap_id&gt; --to &lt;status&gt; # 推进缺口状态
+pose gaps dismiss &lt;gap_id&gt; --note "..."  # 关闭为不计划</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose cache</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">管理分析结果缓存。当源文件或工具版本变更时缓存自动失效。</p>
+          <pre class="codeblock mt-2">pose cache list                          # 所有缓存条目
+pose cache clear                         # 清空全部缓存
+pose cache clear &lt;file.csv&gt;             # 清空特定文件的缓存</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose version</code></h3>
+          <pre class="codeblock mt-2">pose version                            # 平台 + 工具版本
+pose version --changelog                # 技术更新日志
+pose version --release-notes            # 面向用户的发布说明</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose chat</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">启动交互式 LLM 分析会话。配置方式见<a href="#llm-chat" class="underline">LLM 对话</a>。</p>
+          <pre class="codeblock mt-2">pose chat [data_dir]                    # 默认数据目录：../pose-data</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose telemetry</code></h3>
+          <pre class="codeblock mt-2">pose telemetry stats                    # 今日统计
+pose telemetry stats --since 7d         # 最近 7 天
+pose telemetry stats --since 24h        # 最近 24 小时</pre>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose data</code></h3>
+          <pre class="codeblock mt-2">pose data list-users                    # 列出本地开发数据库用户
+pose data seed-session &lt;stem&gt; \        # 从 staging 拉取会话
+    --user &lt;selector&gt; --sport &lt;id&gt;
+pose data delete &lt;file&gt; [--yes] [--dry-run]</pre>
+        </section>
+
+        
+        <section id="tools">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">工具参考</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI 拥有 20+ 内置工具。以下是三个主要的通用工具。运动专项工具文档见完整仓库。</p>
+
+          
+          <div class="mt-8 rounded-xl border border-ink-200 dark:border-ink-700 overflow-hidden">
+            <div class="bg-ink-50 dark:bg-ink-900 px-6 py-4 border-b border-ink-200 dark:border-ink-700">
+              <div class="flex items-center gap-3">
+                <h3 class="text-lg font-semibold text-ink-900 dark:text-white font-mono">stats</h3>
+                <span class="badge-released text-xs">稳定</span>
+                <span class="text-xs text-ink-400">Tier 1 · 全运动 · 自 v1.4.0</span>
+              </div>
+              <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">计算 JointData3D 录制的综合统计信息。<strong>任何新数据都应先运行此工具</strong> — 它是你的数据质量报告卡。</p>
+            </div>
+            <div class="px-6 py-4 space-y-4">
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">参数</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">参数</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">类型</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">默认值</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">说明</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">path</td><td class="py-1.5 pr-4">string</td><td class="py-1.5 pr-4">—</td><td class="py-1.5">JointData3D CSV 文件路径</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">video_duration_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">(自动)</td><td class="py-1.5">手动指定录制时长</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">关键输出字段</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">字段</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">说明</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">recording_duration_s</td><td class="py-1.5">总录制时长</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">tracking_coverage</td><td class="py-1.5">有效骨骼帧占比（&lt; 0.5 = 差）</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">jitter_ratio</td><td class="py-1.5">高抖动帧占比（&lt; 0.1 = 好，&gt; 0.3 = 差）</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">data_quality</td><td class="py-1.5">综合评定："good"、"acceptable" 或 "poor"</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">per_joint.&lt;name&gt;.motion_std</td><td class="py-1.5">模型坐标运动标准差</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <pre class="codeblock">pose analyze data/session.csv --tool stats</pre>
+            </div>
+          </div>
+
+          
+          <div class="mt-6 rounded-xl border border-ink-200 dark:border-ink-700 overflow-hidden">
+            <div class="bg-ink-50 dark:bg-ink-900 px-6 py-4 border-b border-ink-200 dark:border-ink-700">
+              <div class="flex items-center gap-3 flex-wrap">
+                <h3 class="text-lg font-semibold text-ink-900 dark:text-white font-mono">detect_action_boundaries</h3>
+                <span class="badge-released text-xs">稳定</span>
+                <span class="text-xs text-ink-400">Tier 1 · 全运动 · 自 v1.1.0</span>
+              </div>
+              <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">使用全身能量分析检测动作边界 — 离散运动的开始、峰值和结束。无需针对特定运动调参即可工作。</p>
+            </div>
+            <div class="px-6 py-4 space-y-4">
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">参数</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">参数</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">类型</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">默认值</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">说明</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">onset_energy_ratio</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.01</td><td class="py-1.5">动作起始的能量阈值比例</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">max_filter_win_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">1.0</td><td class="py-1.5">最大能量平滑窗口</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">prominence</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.1</td><td class="py-1.5">最小峰值显著性</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">min_action_duration_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.2</td><td class="py-1.5">最短动作持续时间</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">min_peak_gap_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.5</td><td class="py-1.5">检测动作之间的最短间隔</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">输出字段</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">字段</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">说明</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">actions[].start_s</td><td class="py-1.5">动作起始 — 身体能量开始上升的时刻</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">actions[].peak_s</td><td class="py-1.5">最大能量时刻</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">actions[].end_s</td><td class="py-1.5">动作结束 — 能量回归基线</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">actions[].peak_energy</td><td class="py-1.5">峰值归一化能量（1.0 = 录制中的最大值）</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">actions[].duration_s</td><td class="py-1.5">动作总持续时间</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <pre class="codeblock"># 篮球 — 找出跳跃、投篮、突破
+pose analyze data/basketball_play.csv --tool detect_action_boundaries \
+    --param min_action_duration_s=0.2 --param min_peak_gap_s=0.3
+
+# 短跑 — 找出发力阶段
+pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
+    --param onset_energy_ratio=0.01</pre>
+              <div class="rounded-lg border border-ink-200 bg-ink-50 p-4 dark:border-ink-700 dark:bg-ink-900">
+                <p class="text-sm text-ink-600 dark:text-ink-300"><strong>何时使用此工具而非运动专项工具：</strong>探索新数据或分析未支持的运动时使用 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">detect_action_boundaries</code>。需要动作分类（扣杀 vs 高远球、跳投 vs 上篮）时使用运动专项工具。</p>
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="mt-6 rounded-xl border border-ink-200 dark:border-ink-700 overflow-hidden">
+            <div class="bg-ink-50 dark:bg-ink-900 px-6 py-4 border-b border-ink-200 dark:border-ink-700">
+              <div class="flex items-center gap-3 flex-wrap">
+                <h3 class="text-lg font-semibold text-ink-900 dark:text-white font-mono">segment_motion_phases</h3>
+                <span class="badge-released text-xs">稳定</span>
+                <span class="text-xs text-ink-400">Tier 1 · 全运动 · 自 v1.5.0</span>
+              </div>
+              <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">将录制分解为三个层级：在场片段、运动/静止片段和暂停。是理解训练节奏的基础工具。</p>
+            </div>
+            <div class="px-6 py-4 space-y-4">
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">参数</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">参数</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">类型</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">默认值</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">说明</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">presence_gap_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">1.0</td><td class="py-1.5">拆分在场片段的最大时间戳间隔</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">static_threshold</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.03</td><td class="py-1.5">判定为静止的能量阈值</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">min_static_ms</td><td class="py-1.5 pr-4">int</td><td class="py-1.5 pr-4">500</td><td class="py-1.5">有效静止片段的最短时长</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">min_motion_ms</td><td class="py-1.5 pr-4">int</td><td class="py-1.5 pr-4">300</td><td class="py-1.5">有效运动片段的最短时长</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">pause_prominence</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.5</td><td class="py-1.5">运动片段内检测暂停的灵敏度</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">energy_filter</td><td class="py-1.5 pr-4">string</td><td class="py-1.5 pr-4">"mean"</td><td class="py-1.5">"mean" 或 "max" — 平滑滤波器</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">max_filter_win_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">1.0</td><td class="py-1.5">能量滤波窗口大小</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">motion_trailing_pad_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.3</td><td class="py-1.5">运动片段尾部额外填充（覆盖随挥动作）</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">输出字段</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">字段</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">说明</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">presence_segments</td><td class="py-1.5">画面中有人物的连续时间段</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">motion_segments</td><td class="py-1.5">活动时间段（挥拍、跑步、跳跃）</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">static_segments</td><td class="py-1.5">静止时间段（站立、等待）</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">pauses</td><td class="py-1.5">活动片段内的短暂停顿</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">summary.motion_ratio</td><td class="py-1.5">在场时间中运动所占比例</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <pre class="codeblock">pose analyze data/basketball_drill.csv --tool segment_motion_phases</pre>
+              <div class="rounded-lg border border-ink-200 bg-ink-50 p-4 dark:border-ink-700 dark:bg-ink-900">
+                <p class="text-sm text-ink-600 dark:text-ink-300"><strong>使用建议：</strong>爆发性运动（短跑、篮球突破）使用 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">energy_filter="max"</code>。默认 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">"mean"</code> 适合持续运动。结合 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">detect_action_boundaries</code> 可在运动片段中定位具体动作峰值。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="env-vars">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">环境变量</h2>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">分析与数据</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">变量</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">默认值</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">说明</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_DATA_DIR</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">../pose-data</code></td><td class="py-2">数据文件目录</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_ENABLE_WIP_TOOLS</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">0</code></td><td class="py-2">设为 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">1</code> 以启用在研工具</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">LLM 提供商（用于 <code>pose chat</code>）</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">变量</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">提供商</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">说明</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">ANTHROPIC_API_KEY</td><td class="py-2 pr-4">Claude（Anthropic）</td><td class="py-2">API key 来自 <a href="https://console.anthropic.com" class="underline">console.anthropic.com</a></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_DEEPSEEK_API_KEY</td><td class="py-2 pr-4">DeepSeek</td><td class="py-2">API key 来自 <a href="https://platform.deepseek.com" class="underline">platform.deepseek.com</a>（免费额度可用）</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_CN_API_KEY</td><td class="py-2 pr-4">Qwen（DashScope）</td><td class="py-2">API key 来自 <a href="https://dashscope.aliyun.com" class="underline">dashscope.aliyun.com</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">区域与语言</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">变量</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">默认值</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">说明</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_REGION</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">us</code></td><td class="py-2">LLM 路由区域：<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">us</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">eu</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">cn</code> 或 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">cloud</code></td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_LANG</td><td class="py-2 pr-4">(自动检测)</td><td class="py-2">输出语言。未设置时从 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">LANG</code>/<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">LC_ALL</code> 自动检测</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">后端访问（可选）</h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose data seed-session</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose gaps sync</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose feedback</code> 和 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose ops</code> 需要配置。</p>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">变量</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">说明</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_LOCAL_URL</td><td class="py-2">本地后端 URL（如 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">http://localhost:8000</code>）</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_STAGING_URL</td><td class="py-2">Staging 后端 URL</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_PROD_URL</td><td class="py-2">生产环境后端 URL</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_API_TOKEN</td><td class="py-2">用于认证后端调用的用户 JWT</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">ADMIN_API_KEY</td><td class="py-2">用于反馈/缺口管理的管理员 API key</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        
+        <section id="llm-chat">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">LLM 驱动的分析（<code>pose chat</code>）</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI 包含可选的 AI 对话模式，让你用自然语言询问数据问题。支持 Claude、DeepSeek 和 Qwen。</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">快速配置方案</h3>
+
+          <div class="mt-4 space-y-4">
+            <div class="card">
+              <h4 class="font-semibold text-ink-900 dark:text-white">使用 DeepSeek（推荐研究人员）</h4>
+              <pre class="codeblock mt-2">export POSE_DEEPSEEK_API_KEY=sk-xxx
+pose chat</pre>
+            </div>
+
+            <div class="card">
+              <h4 class="font-semibold text-ink-900 dark:text-white">使用 Claude</h4>
+              <pre class="codeblock mt-2">export ANTHROPIC_API_KEY=sk-xxx
+pose chat</pre>
+            </div>
+
+            <div class="card">
+              <h4 class="font-semibold text-ink-900 dark:text-white">使用 Qwen（中文优化）</h4>
+              <pre class="codeblock mt-2">export POSE_REGION=cn
+export POSE_CN_API_KEY=sk-xxx
+pose chat</pre>
+            </div>
+
+            <div class="card">
+              <h4 class="font-semibold text-ink-900 dark:text-white">开发者模式（启用在研工具）</h4>
+              <pre class="codeblock mt-2">export POSE_ENABLE_WIP_TOOLS=1
+pose tools</pre>
+            </div>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">示例会话</h3>
+          <pre class="codeblock mt-2">> session_20260720.csv 里有多少次挥拍？
+[Tool: detect_swing_multifeature] 检测到 14 次挥拍
+
+> 最快的一次是哪次？
+[Tool: detect_velocity] 峰值在 2.3 秒，18.5 m/s
+
+> 对比第 3 次和第 7 次挥拍
+[Tool: compare_with_reference] 肘部角度：差异 15°，...</pre>
+        </section>
+
+        
+        <section id="local-backend">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">本地后端配置</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">用 iPhone 上的 Pose Coach 录制运动数据，骨骼文件自动传输到你的电脑 — <strong>无需云端、无需 staging 服务器、无需 Mac。</strong></p>
+
+          <div class="mt-6">
+            <div class="flex flex-col md:flex-row items-stretch gap-0 md:gap-0">
+              
+              <div class="flex-1 rounded-xl border-2 border-ink-300 dark:border-ink-600 bg-white dark:bg-ink-900 overflow-hidden">
+                <div class="bg-ink-100 dark:bg-ink-800 px-4 py-2 text-center text-xs font-semibold text-ink-600 dark:text-ink-300 uppercase tracking-wider">iPhone (Pose Coach)</div>
+                <div class="px-4 py-3 space-y-1.5 text-sm text-ink-700 dark:text-ink-200">
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">1</span>录制会话</div>
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">↓</span><span class="text-violet-600 dark:text-violet-400 font-medium">自动上传 CSV</span></div>
+                </div>
+              </div>
+
+              
+              <div class="flex md:flex-col items-center justify-center px-0 py-2 md:px-2 md:py-0 min-w-[60px]">
+                <div class="hidden md:flex items-center gap-1 text-ink-400">
+                  <span class="text-lg">─</span><span class="text-lg">─</span><span class="text-lg">─</span><span class="text-lg">→</span>
+                </div>
+                <div class="flex md:hidden flex-col items-center gap-0 text-ink-400">
+                  <span class="text-lg">│</span><span class="text-lg">↓</span><span class="text-lg">│</span>
+                </div>
+                <span class="text-[10px] font-medium text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/60 px-1.5 py-0.5 rounded">WiFi :8000</span>
+              </div>
+
+              
+              <div class="flex-1 rounded-xl border-2 border-ink-300 dark:border-ink-600 bg-white dark:bg-ink-900 overflow-hidden">
+                <div class="bg-ink-100 dark:bg-ink-800 px-4 py-2 text-center text-xs font-semibold text-ink-600 dark:text-ink-300 uppercase tracking-wider">你的电脑 (Win / Linux / Mac)</div>
+                <div class="px-4 py-3 space-y-1.5 text-sm text-ink-700 dark:text-ink-200">
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">1</span><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">uvicorn api:app</code></div>
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">↓</span>保存到 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-data/</code></div>
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">↓</span><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze data.csv</code></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">前提条件</h3>
+          <ul class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+            <li><strong>iPhone</strong> 已通过 TestFlight 安装 Pose Coach（联系我们获取邀请链接）</li>
+            <li><strong>电脑</strong> 已安装 Pose CLI（在 pose_platform 仓库中 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install -e .</code>）</li>
+            <li>两台设备连接<strong>同一 WiFi 网络</strong></li>
+          </ul>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">步骤 1：启动本地后端</h3>
+          <pre class="codeblock mt-2"># 安装 Pose CLI（如尚未安装）
+pip install -e .
+
+# 启动后端 — dev 模式跳过 Supabase 认证，监听所有网络接口
+POSE_ENV=dev uvicorn products.sports_assistant.backend.api:app --host 0.0.0.0 --port 8000</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">保持此终端窗口打开。录制期间后端必须保持运行。</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">步骤 2：查找电脑的 IP 地址</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">操作系统</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">命令</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">示例输出</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">macOS</td><td class="py-2 pr-4 font-mono text-xs">ipconfig getifaddr en0</td><td class="py-2">192.168.1.42</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">Linux</td><td class="py-2 pr-4 font-mono text-xs">hostname -I | awk '{print $1}'</td><td class="py-2">192.168.1.42</td></tr>
+                <tr><td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">Windows</td><td class="py-2 pr-4 font-mono text-xs">ipconfig</td><td class="py-2">查找 "IPv4 地址"</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">步骤 3：在 iPhone 上配置 Pose Coach</h3>
+          <ol class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>在 iPhone 上打开 <strong>Pose Coach</strong></li>
+            <li>进入<strong>设置</strong>（齿轮图标）</li>
+            <li>滚动到 <strong>Researcher Backend</strong> 区域</li>
+            <li>选择<strong>自定义 URL</strong></li>
+            <li>输入 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">http://&lt;你的IP&gt;:8000</code>（例如 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">http://192.168.1.42:8000</code>）</li>
+            <li>点击<strong>应用</strong></li>
+            <li>按提示重启应用</li>
+          </ol>
+          <div class="mt-3 rounded-lg border border-ink-200 bg-ink-50 p-3 dark:border-ink-700 dark:bg-ink-900">
+            <p class="text-sm text-ink-600 dark:text-ink-300"><strong>注意：</strong>Researcher Backend 区域在 TestFlight 版本中自动可见。<strong>无需</strong>点击 logo 10 次或使用任何隐藏手势。</p>
+          </div>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">步骤 4：录制与分析</h3>
+          <ol class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>在 Pose Coach 中选择 <strong>Freeplay</strong>（任何尚未正式支持的运动都用此模式）</li>
+            <li>录制动作 — 停止录制后骨骼 CSV <strong>自动上传</strong></li>
+            <li>文件自动到达 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-data/</code> 目录</li>
+          </ol>
+          <pre class="codeblock mt-3"># 查看到达的文件
+ls pose-data/*_3d.csv | tail -5
+
+# 运行分析
+pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool stats
+pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool segment_motion_phases
+pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool detect_action_boundaries</pre>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">步骤 5（可选）：获取视频文件</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mov</code> 视频<strong>不会上传</strong>到后端（隐私保证）。获取方式：</p>
+          <ol class="mt-2 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>在 Pose Coach 录制后，点击导出按钮（分享图标）</li>
+            <li>选择<strong>保存到文件</strong> → iCloud Drive</li>
+            <li>在电脑上从 iCloud Drive 下载</li>
+            <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mov</code> 视频与 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">_3d.csv</code> 骨骼文件同名配对</li>
+          </ol>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">常见问题排查</h3>
+          <div class="mt-3 space-y-3 text-sm">
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">/auth/anonymous 返回 "503 Service Unavailable"</p>
+              <p class="text-ink-600 dark:text-ink-300">用 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_ENV=dev</code> 启动后端以跳过 Supabase 认证。</p>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">iPhone 上显示 "无法连接后端"</p>
+              <ul class="mt-1 space-y-0.5 list-disc pl-5 text-ink-600 dark:text-ink-300">
+                <li>确认两台设备在同一 WiFi 网络</li>
+                <li>检查防火墙：允许端口 8000 的入站连接</li>
+                <li>Windows：可能需要在 Windows 防火墙中允许 Python</li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">录制后 "上传失败"</p>
+              <p class="text-ink-600 dark:text-ink-300">确认 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">uvicorn</code> 仍在运行，且 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_DATA_DIR</code> 目录存在且可写。</p>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">设置中没有显示 Researcher Backend</p>
+              <p class="text-ink-600 dark:text-ink-300">请确认使用的是 Pose Coach 的 <strong>TestFlight</strong> 版本（非 App Store 版本）。TestFlight 版本中 Researcher Backend 区域会自动显示。</p>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">切换回正常使用</p>
+              <p class="text-ink-600 dark:text-ink-300">设置 → Researcher Backend → 选择 <strong>Staging</strong>（或 Production）→ 应用 → 重启应用。</p>
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="contributing">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">贡献指南</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI 被设计为可扩展的。构建新工具、添加运动支持或贡献代码。</p>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">构建新工具</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">一个工具就是一个 Python 类。编写一次，注册后即可在任何地方使用 — CLI、Pose Coach 应用、自定义应用。</p>
+
+          <div class="mt-4 space-y-3">
+            <p class="text-sm"><strong class="text-ink-800 dark:text-ink-200">步骤 1：</strong>在 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">capabilities/tools/my_tool.py</code> 中创建工具类</p>
+            <pre class="codeblock">from capabilities.tools.base import DirectTool
+from capabilities.tools.loader import load_pose
+import json
+from pathlib import Path
+
+
+class MyTool(DirectTool):
+    name = "my_tool"
+    description = "这个工具做什么"
+    input_schema = {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string", "description": "CSV 文件路径"},
+            "my_param": {"type": "number", "default": 1.0},
+        },
+        "required": ["path"]
+    }
+    status = "wip"                     # "wip" 或 "stable"
+    supported_sports = []              # [] = 所有运动
+    tier = 1                           # 1 = 主要, 2 = 备选
+
+    def run(self, tool_input: dict, output_dir: Path) -> str:
+        pose = load_pose(tool_input["path"])
+        result = {"your_field": 42}
+        return json.dumps(result, ensure_ascii=False)</pre>
+
+            <p class="text-sm"><strong class="text-ink-800 dark:text-ink-200">步骤 2：</strong>在 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">capabilities/tools/registry.py</code> 中注册 — 添加 import 和实例到 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">all_tools</code> 列表。</p>
+            <p class="text-sm"><strong class="text-ink-800 dark:text-ink-200">步骤 3：</strong>启用并测试：</p>
+            <pre class="codeblock">export POSE_ENABLE_WIP_TOOLS=1
+pose tools | grep my_tool
+pose analyze data/test.csv --tool my_tool</pre>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">扩展运动支持</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">三行代码添加一项新运动：</p>
+          <pre class="codeblock mt-2"># pose_platform_core/sports_catalog.py
+OFFICIAL_SPORTS = [
+    # ... 已有的 ...
+    SupportedSport(id="basketball", since_version="1.24.0"),
+]</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">然后构建工具时设置 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">supported_sports = ["basketball"]</code>。通用工具会自动适用。</p>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">将工具提升为稳定版</h3>
+          <ol class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>编写单元测试（≥ 1 个）— <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pytest tests/unit/</code></li>
+            <li>使用 10+ 个真实录制数据进行测试</li>
+            <li>测试边缘情况（空数据、单帧、缺失关节）</li>
+            <li>在 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">docs/features/&lt;tool_name&gt;.md</code> 中添加文档</li>
+            <li>将工具类中的 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">status = "stable"</code></li>
+            <li>在 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> → <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">tools</code> 中添加版本条目</li>
+          </ol>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">数据加载最佳实践</h3>
+          <ul class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+            <li>使用 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose.mpoints</code>（模型坐标）进行生物力学分析</li>
+            <li>Oreason 过滤是自动的 — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">load_pose()</code> 会排除异常帧</li>
+            <li>使用 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose.joint_names</code> 动态查找关节索引</li>
+            <li>在输出中返回 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">data_quality</code> 以帮助用户评估结果可靠性</li>
+            <li>算法变更时在 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> 中提升工具版本 — 旧缓存自动失效</li>
+          </ul>
+        </section>
+
+        
+        <section id="license">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">许可证</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI — 运动分析工具包 · 版权所有 &copy; 2026 PoseCap Inc. 保留所有权利。</p>
+
+          <div class="mt-6 space-y-5 text-sm text-ink-700 dark:text-ink-200 leading-relaxed">
+            <div>
+              <h3 class="text-lg font-semibold text-ink-900 dark:text-white">1. 研究许可（非商业用途）</h3>
+              <p class="mt-2">学术研究人员、教育机构和个人学习者被授予免版税、非排他、不可转让的许可，可为非商业研究和教育目的使用、修改和创作衍生作品，但须遵守以下条件：</p>
+              <ul class="mt-2 space-y-1 list-disc pl-5 text-ink-600 dark:text-ink-300">
+                <li><strong>署名</strong> — 任何出版物必须引用 Pose Platform（BibTeX 引用格式见下文）</li>
+                <li><strong>禁止再分发</strong> — 未经事先书面同意，不得向第三方再分发本软件或其核心算法</li>
+                <li><strong>禁止商业使用</strong> — 不得嵌入商业产品、提供基于本软件的付费服务或出售分析结果</li>
+                <li><strong>修改</strong> — 你开发的工具和扩展属于你自己的知识产权。向代码库贡献即授予 PoseCap Inc. 使用和分发你贡献的许可</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold text-ink-900 dark:text-white">2. 商业许可</h3>
+              <p class="mt-2">任何商业用途均需与 PoseCap Inc. 另行签订书面协议。联系 <a href="mailto:contact@posecap.com" class="underline">contact@posecap.com</a> 获取商业许可。</p>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold text-ink-900 dark:text-white">引用格式</h3>
+              <p class="mt-2">如在研究中使用 Pose CLI，请引用：</p>
+              <pre class="codeblock mt-2">@software{pose_platform,
+  title = {Pose Platform: Open Motion Analysis Toolkit},
+  author = {{PoseCap Inc.}},
+  year = {2026},
+  url = {https://github.com/posecap/pose-platform},
+}</pre>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold text-ink-900 dark:text-white">免责声明</h3>
+              <p class="mt-2 text-ink-600 dark:text-ink-300">本软件按"原样"提供，不提供任何明示或暗示的保证。在任何情况下，作者或版权持有人均不对因使用本软件而产生的任何索赔、损害或其他责任负责。</p>
+            </div>
+          </div>
+        </section>
+
+        
+        <div class="rounded-2xl border border-posecli/30 bg-gradient-to-br from-posecli/5 to-transparent p-8 text-center dark:border-posecli/20 dark:from-posecli/10">
+          <h3 class="text-xl font-semibold text-ink-900 dark:text-white">准备好分析你的运动数据了吗？</h3>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI 处于早期访问阶段。给我们发邮件，告诉我们你想研究什么。</p>
+          <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20%E6%97%A9%E6%9C%9F%E8%AE%BF%E9%97%AE" class="btn-primary">申请早期访问</a>
+            <a href="/posecli/zh/" class="btn-secondary">返回 Pose CLI</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+  </main>
+  
+
+  
+  
+  
+  
+  
+
+<footer class="border-t border-ink-100 bg-ink-50 dark:border-ink-800 dark:bg-ink-950">
+  <div class="container-page py-12 grid gap-8 md:grid-cols-4">
+    <div class="space-y-3">
+      <a href="/zh/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap">
+        <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap" width="65" height="24" class="h-6 w-auto block dark:hidden">
+        <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap</span>
+      </a>
+      <p class="text-sm text-ink-500 dark:text-ink-400 max-w-xs">为每一位运动爱好者，提供精准的动作分析。</p>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">资源</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/zh/">关于 PoseCap Inc.</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/methodology/zh/">分析方法论</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/privacy/zh/">隐私政策</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/tos/zh/">服务条款</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">语言</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/posecli/docs/">English</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 font-semibold" href="/posecli/docs/zh/">中文</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/fr/">Français</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">关注我们</h4>
+      <ul class="space-y-2 text-sm">
+        <li><span class="text-ink-500 dark:text-ink-400">邮箱:</span> <a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="mailto:contact@posecap.com">contact@posecap.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-ink-100 dark:border-ink-800">
+    <div class="container-page py-6 text-xs text-ink-500 dark:text-ink-400">
+      © 2026 PoseCap Inc. 保留所有权利。
+    </div>
+  </div>
+</footer>
+
+  <script>
+    // YouTube facade: swap thumbnail+button for iframe on click.
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-yt-id]');
+      if (!btn) return;
+      e.preventDefault();
+      var id = btn.dataset.ytId;
+      var title = btn.dataset.ytTitle || 'YouTube video';
+      var iframe = document.createElement('iframe');
+      var p = [
+        'autoplay=1',
+        'controls=0',
+        'modestbranding=1',
+        'rel=0',
+        'playsinline=1',
+        'iv_load_policy=3',
+        'disablekb=1',
+        'loop=1',
+        'playlist=' + encodeURIComponent(id)
+      ].join('&');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?' + p;
+      iframe.title = title;
+      iframe.className = 'w-full h-full';
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+      iframe.setAttribute('allowfullscreen', '');
+      var wrap = document.createElement('div');
+      wrap.className = 'aspect-video w-full rounded-2xl overflow-hidden shadow-soft ring-1 ring-ink-200 dark:ring-ink-800';
+      wrap.appendChild(iframe);
+      btn.replaceWith(wrap);
+    });
+  </script>
+  <script>
+    // Hero showcase carousel: auto-rotate synced photo + caption stacks; no-op when absent.
+    (function () {
+      var root = document.querySelector('[data-carousel]');
+      if (!root) return;
+      var slice = function (n) { return Array.prototype.slice.call(n); };
+      var photos = slice(root.querySelectorAll('[data-photo]'));
+      var captions = slice(root.querySelectorAll('[data-caption]'));
+      var dots = slice(root.querySelectorAll('[data-dot]'));
+      var count = Math.max(photos.length, captions.length);
+      if (count < 2) return;
+      var i = 0, timer = null;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function fade(el, on) {
+        el.classList.toggle('opacity-100', on);
+        el.classList.toggle('opacity-0', !on);
+        el.classList.toggle('pointer-events-none', !on);
+        if (on) { el.removeAttribute('aria-hidden'); } else { el.setAttribute('aria-hidden', 'true'); }
+      }
+      function show(n) {
+        i = (n + count) % count;
+        photos.forEach(function (el, idx) { fade(el, idx === i); });
+        captions.forEach(function (el, idx) { fade(el, idx === i); });
+        dots.forEach(function (d, idx) {
+          var on = idx === i;
+          d.classList.toggle('w-4', on);
+          d.classList.toggle('bg-posecoach', on);
+          d.classList.toggle('w-2', !on);
+          d.classList.toggle('bg-ink-300', !on);
+          d.classList.toggle('dark:bg-ink-600', !on);
+        });
+      }
+      function next() { show(i + 1); }
+      function start() { if (!reduce && !timer) timer = setInterval(next, 5000); }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      dots.forEach(function (d, idx) {
+        d.addEventListener('click', function () { show(idx); stop(); start(); });
+      });
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+      root.addEventListener('focusin', stop);
+      root.addEventListener('focusout', start);
+      show(0);
+      start();
+    })();
+  </script>
+</body>
+</html>

@@ -60,7 +60,7 @@
       <p class="max-w-prose text-lg text-ink-600 dark:text-ink-300">命令行与 MCP 工具集，把 3D 姿态数据转化为可复现的运动分析报告。为运动科研人员、体育院校、表现分析师以及那些需要交付结论而不是 PPT 的团队而生。</p>
       <div class="flex flex-wrap items-center gap-3 pt-2">
         <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Early%20Access" class="btn-primary">申请早期访问</a>
-        <a href="/posecli/docs/" class="btn-secondary">查看文档</a>
+        <a href="/posecli/docs/zh/" class="btn-secondary">查看文档</a>
       </div>
     </div>
     <div class="md:col-span-5">
@@ -131,11 +131,10 @@
     </div>
     <div class="space-y-4">
       <h2 class="section-title">数据格式</h2>
-      <p class="section-lead">沿用我们的 13 列 CSV 即可使用 Pose CLI 分析你的数据。</p>
+      <p class="section-lead">沿用我们的 12 列 CSV 即可使用 Pose CLI 分析你的数据。</p>
       <pre class="codeblock">timestamp, joint, wx, wy, wz,
 mx, my, mz,
-ldx, ldy, ldz,
-oreason, jitter</pre>
+ldq_x, ldq_y, ldq_z, ldq_w</pre>
       <p class="text-sm text-ink-500 dark:text-ink-400">Pose Coach 导出的 <code>.bin</code> 二进制文件原生支持。可输出 Markdown 报告或 CI 友好的 JSON。</p>
     </div>
   </div>
@@ -147,7 +146,7 @@ oreason, jitter</pre>
     <p class="section-lead mx-auto">Pose CLI 处于早期访问阶段，我们正在按需求接入合作伙伴。来信告诉我们你想研究什么。</p>
     <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
       <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Early%20Access" class="btn-primary">邮件联系 contact@posecap.com</a>
-      <a href="/posecli/docs/" class="btn-secondary">查看文档</a>
+      <a href="/posecli/docs/zh/" class="btn-secondary">查看文档</a>
     </div>
   </div>
 </section>

@@ -131,11 +131,10 @@
     </div>
     <div class="space-y-4">
       <h2 class="section-title">Data format</h2>
-      <p class="section-lead">Bring your own pose data — Pose CLI works with our compact 13-column CSV.</p>
+      <p class="section-lead">Bring your own pose data — Pose CLI works with our compact 12-column CSV.</p>
       <pre class="codeblock">timestamp, joint, wx, wy, wz,
 mx, my, mz,
-ldx, ldy, ldz,
-oreason, jitter</pre>
+ldq_x, ldq_y, ldq_z, ldq_w</pre>
       <p class="text-sm text-ink-500 dark:text-ink-400">Binary <code>.bin</code> from Pose Coach is also accepted natively. Output as Markdown reports or CI-friendly JSON.</p>
     </div>
   </div>

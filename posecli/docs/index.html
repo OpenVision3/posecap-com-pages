@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pose CLI documentation — PoseCap Inc.</title>
-  <meta name="description" content="Pose CLI documentation is on the way. In the meantime, email us for the current command reference and a session walkthrough.">
+  <title>Pose CLI Documentation — PoseCap Inc.</title>
+  <meta name="description" content="Complete reference for Pose CLI — installation, quickstart, data format, CLI commands, tool reference, environment variables, and contributing guide.">
   <link rel="alternate" hreflang="en" href="https://posecap.com/posecli/docs/">
-  <link rel="alternate" hreflang="zh" href="https://posecap.com/posecli/docs/">
+  <link rel="alternate" hreflang="zh" href="https://posecap.com/posecli/docs/zh/">
   <link rel="alternate" hreflang="x-default" href="https://posecap.com/posecli/docs/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Pose CLI documentation">
-  <meta property="og:description" content="Pose CLI documentation is on the way. In the meantime, email us for the current command reference and a session walkthrough.">
+  <meta property="og:title" content="Pose CLI Documentation">
+  <meta property="og:description" content="Complete reference for Pose CLI — installation, quickstart, data format, CLI commands, tool reference, environment variables, and contributing guide.">
   <meta property="og:url" content="https://posecap.com/posecli/docs/">
   <meta property="og:site_name" content="PoseCap Inc.">
   <meta property="og:locale" content="en_US">
@@ -40,7 +40,7 @@
       <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="mailto:contact@posecap.com">Contact</a>
       <span class="text-ink-300 dark:text-ink-700">|</span>
       <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white font-semibold text-ink-900 dark:text-white" href="/posecli/docs/">EN</a>
-      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white " href="/posecli/docs/">中文</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white " href="/posecli/docs/zh/">中文</a>
       
     </nav>
     <a class="md:hidden ml-auto text-ink-600 dark:text-ink-300 text-sm" href="/#products">Products</a>
@@ -48,14 +48,1096 @@
 </header>
 
   <main class="flex-1">
-    <section class="section">
-  <div class="container-page max-w-2xl space-y-6 text-center">
-    <span class="badge-early">Documentation coming soon</span>
-    <h1 class="text-4xl font-semibold tracking-tight text-ink-900 dark:text-white">We're polishing the docs.</h1>
-    <p class="text-lg text-ink-600 dark:text-ink-300">Public Pose CLI documentation is on the way. While we get it ready, we're happy to send the current command reference and walk you through a sample session.</p>
-    <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
-      <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Docs" class="btn-primary">Email contact@posecap.com</a>
+    
+
+<section class="section bg-gradient-to-br from-posecli/10 via-transparent to-transparent dark:from-posecli/20">
+  <div class="container-page max-w-6xl">
+    <div class="flex items-center gap-3 mb-4">
+      <img src="/posecli/images/logo.svg" alt="Pose CLI" class="h-10 w-10 rounded-xl shadow-sm">
+      <span class="badge-early">Early access</span>
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">Pose CLI Documentation</h1>
+    <p class="mt-4 max-w-2xl text-lg text-ink-600 dark:text-ink-300">Open motion-analysis toolkit for sports scientists. Analyze 3D skeleton data with 20+ built-in tools, or build your own — all running locally on your machine.</p>
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <a href="#quickstart" class="btn-primary">Jump to quickstart</a>
+      <a href="#installation" class="btn-secondary">Installation</a>
       <a href="/posecli/en/" class="btn-secondary">Back to Pose CLI</a>
+    </div>
+  </div>
+</section>
+
+
+<section class="section !pt-12">
+  <div class="container-page max-w-6xl">
+    <div class="grid gap-10 lg:grid-cols-[240px_1fr]">
+
+      
+      <aside class="hidden lg:block">
+        <nav class="sticky top-[3.5rem] space-y-1 text-sm" aria-label="Documentation sections">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-ink-400 dark:text-ink-500">On this page</p>
+          <a href="#overview" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Overview</a>
+          <a href="#quickstart" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Quickstart</a>
+          <a href="#installation" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Installation</a>
+          <a href="#data-format" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Data Format</a>
+          <a href="#cli-commands" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">CLI Commands</a>
+          <a href="#tools" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Tool Reference</a>
+          <a href="#env-vars" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Environment Variables</a>
+          <a href="#llm-chat" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">LLM Chat</a>
+          <a href="#local-backend" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Local Backend</a>
+          <a href="#contributing" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Contributing</a>
+          <a href="#license" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">License</a>
+        </nav>
+      </aside>
+
+      
+      <div class="min-w-0 space-y-16">
+
+        
+        <section id="overview">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">Overview</h2>
+          <div class="mt-4 space-y-4 text-ink-700 dark:text-ink-200 leading-relaxed">
+            <p>Pose CLI turns raw 3D body-skeleton data — from ARKit or any pose-estimation system — into actionable sports analytics. It runs <strong>entirely on your machine</strong>: your data never leaves your computer.</p>
+            <div class="rounded-lg border border-ink-200 bg-ink-50 p-5 dark:border-ink-700 dark:bg-ink-900">
+              <pre class="text-sm text-ink-700 dark:text-ink-200 overflow-x-auto"><code>Pose Coach Recording → JointData3D CSV → Pose CLI Tool → JSON Output
+                                              │
+                                              ├── stats
+                                              ├── detect_peak_energy
+                                              ├── segment_motion_phases
+                                              ├── detect_velocity
+                                              ├── detect_action_boundaries
+                                              ├── detect_highlight
+                                              └── ... 15+ more</code></pre>
+            </div>
+          </div>
+
+          
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">How Data Gets to Pose CLI</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Three ways to get recordings from an iPhone (Pose Coach) to your computer:</p>
+
+          <div class="mt-4 space-y-4">
+            
+            <div class="rounded-lg border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-800 dark:bg-emerald-950/30">
+              <h4 class="font-semibold text-emerald-800 dark:text-emerald-300">Path A — iCloud Drive (zero setup, always works)</h4>
+              <pre class="codeblock mt-2 !bg-emerald-950/60 dark:!bg-emerald-950/80">iPhone Record → Files App → iCloud Drive (auto-sync) → Computer → pose analyze
+✅ All regions    ✅ Includes .mov video    ⚠ Manual per-session</pre>
+            </div>
+
+            
+            <div class="rounded-lg border border-violet-200 bg-violet-50/60 p-4 dark:border-violet-800 dark:bg-violet-950/30">
+              <h4 class="font-semibold text-violet-800 dark:text-violet-300">Path B — Local Backend (one-time setup, automatic)</h4>
+              <pre class="codeblock mt-2 !bg-violet-950/60 dark:!bg-violet-950/80">iPhone Record → Your Computer (same WiFi, uvicorn api:app --host 0.0.0.0) → pose analyze
+✅ All regions    ✅ Auto upload after each recording    🔧 One-time setup
+(TestFlight build required — Researcher Backend in Settings)</pre>
+            </div>
+
+            
+            <div class="rounded-lg border border-ink-200 bg-ink-50/60 p-4 dark:border-ink-700 dark:bg-ink-900/30">
+              <h4 class="font-semibold text-ink-800 dark:text-ink-200">Path C — Cloud Backend (US/EU only)</h4>
+              <pre class="codeblock mt-2">iPhone Record → Staging API (auto upload) → pose data seed-session → Computer → pose analyze
+✅ Automated      ❌ CN not accessible    ⚠ .mov not included</pre>
+            </div>
+          </div>
+
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Path</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Setup</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Network</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Regions</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Video</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-semibold text-emerald-700 dark:text-emerald-400">A. iCloud Drive</td><td class="py-2 pr-4">None</td><td class="py-2 pr-4">Internet (iCloud)</td><td class="py-2 pr-4">All</td><td class="py-2">✅</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-semibold text-violet-700 dark:text-violet-400">B. Local Backend</td><td class="py-2 pr-4">5 min</td><td class="py-2 pr-4">Same WiFi only</td><td class="py-2 pr-4">All</td><td class="py-2">❌</td></tr>
+                <tr><td class="py-2 pr-4 font-semibold text-ink-700 dark:text-ink-200">C. Staging</td><td class="py-2 pr-4">Backend access</td><td class="py-2 pr-4">Internet (US/EU)</td><td class="py-2 pr-4">US/EU only</td><td class="py-2">❌</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><strong>Recommended:</strong> Start with <strong>Path A</strong> (iCloud Drive) for your first recordings. When you record frequently, set up <strong>Path B</strong> (Local Backend) for automatic uploads. <a href="#local-backend" class="underline">Full local backend setup guide →</a></p>
+
+          
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Recording for Unsupported Sports</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">If you want to analyze a sport that Pose Coach doesn't officially support yet (e.g., basketball, golf, tennis):</p>
+          <ol class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>Open Pose Coach → select <strong>Freeplay</strong> as the sport</li>
+            <li>Record as usual — you'll get full 3D skeleton data</li>
+            <li>Transfer the data to your computer (Path A or B above)</li>
+            <li>Use Pose CLI's generic tools (<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">stats</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">segment_motion_phases</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">detect_action_boundaries</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">detect_highlight</code>) to analyze</li>
+            <li>Build sport-specific tools on top — see <a href="#contributing" class="underline">Contributing</a></li>
+          </ol>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Who is this for?</h3>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">You are...</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">You can...</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800">
+                  <td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">Sports scientist / researcher</td>
+                  <td class="py-2">Analyze motion data, publish papers, build new analysis tools</td>
+                </tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800">
+                  <td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">Coach / performance analyst</td>
+                  <td class="py-2">Evaluate technique, track progress, compare athletes</td>
+                </tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800">
+                  <td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">Movement science student</td>
+                  <td class="py-2">Learn biomechanics through hands-on data analysis</td>
+                </tr>
+                <tr>
+                  <td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">Developer / lab</td>
+                  <td class="py-2">Build custom tools, integrate with existing pipelines</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Supported Sports</h3>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Sport</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Status</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Dedicated Tools</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">freeplay</td><td class="py-2 pr-4">General activity</td><td class="py-2">6 (generic tools apply)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">sprint</td><td class="py-2 pr-4">Running</td><td class="py-2">10 (speed, gait, efficiency, score)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">badminton</td><td class="py-2 pr-4">Racket sports</td><td class="py-2">13 (swing, classify, score, angles, compare, rules, training plan)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">fitness</td><td class="py-2 pr-4">General fitness</td><td class="py-2">6 (generic tools apply)</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">basketball</td><td class="py-2 pr-4">In development</td><td class="py-2">Coming soon</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Key Principles</h3>
+          <ul class="mt-4 space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+            <li><strong class="text-ink-800 dark:text-ink-200">Your data stays local.</strong> All analysis runs on your machine. No cloud upload required.</li>
+            <li><strong class="text-ink-800 dark:text-ink-200">One tool, all products.</strong> Build a tool once — it works in CLI, Pose Coach app, or your custom app.</li>
+            <li><strong class="text-ink-800 dark:text-ink-200">Extensible by design.</strong> Every tool is a Python class. Write your own, register it, and it's available everywhere.</li>
+            <li><strong class="text-ink-800 dark:text-ink-200">Cache built-in.</strong> Analysis results are automatically cached. Re-run the same file → instant result.</li>
+          </ul>
+        </section>
+
+        
+        <section id="quickstart">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">Quickstart — 5 Minutes</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Get from zero to your first analysis.</p>
+
+          <div class="mt-6 space-y-6">
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">Step 1: Install</h3>
+              <pre class="codeblock mt-2">pip install pose-platform
+pose version</pre>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">Step 2: Get sample data</h3>
+              <pre class="codeblock mt-2">curl -O https://posecap.com/samples/sample_sprint.csv</pre>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">Step 3: Run your first analysis</h3>
+              <pre class="codeblock mt-2">pose analyze sample_sprint.csv --tool stats</pre>
+              <p class="mt-3 text-sm text-ink-600 dark:text-ink-300">You'll see a JSON report with recording duration, frame rate, joint count, jitter ratio, data quality assessment, and per-joint statistics.</p>
+              <ul class="mt-2 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+                <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">data_quality: "good"</code> — tracking is reliable</li>
+                <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">tracking_coverage: 0.98</code> — 98% of frames have valid skeleton data</li>
+                <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">jitter_ratio &lt; 0.1</code> — excellent stability</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">Step 4: Try more tools</h3>
+              <pre class="codeblock mt-2"># Find motion segments (running vs standing)
+pose analyze sample_sprint.csv --tool segment_motion_phases
+
+# Detect velocity peaks
+pose analyze sample_sprint.csv --tool detect_velocity --param joint=body_position
+
+# Extract highlight moments
+pose analyze sample_sprint.csv --tool detect_highlight --param sport_id=sprint
+
+# Measure running speed with athlete profile
+pose analyze sample_sprint.csv --tool measure_running_speed \
+    --param age=16 --param gender=male --param region=cn</pre>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">Step 5: Use your own data</h3>
+              <pre class="codeblock mt-2">pose analyze /path/to/your/data.csv --tool stats</pre>
+              <p class="mt-3 text-sm text-ink-600 dark:text-ink-300">Point <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze</code> at your own JointData3D CSV. See <a href="#data-format" class="underline">Data Format</a> for how to prepare data from other pose-estimation systems.</p>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-ink-900 dark:text-white">Step 6: Record your own data with Pose Coach</h3>
+              <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">The easiest way to get JointData3D files is to record with the Pose Coach iOS app.</p>
+
+              <div class="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-800 dark:bg-emerald-950/30">
+                <p class="text-sm font-semibold text-emerald-800 dark:text-emerald-300">Quick start (no setup):</p>
+                <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+                  <li>Install Pose Coach via TestFlight (ask us for an invitation)</li>
+                  <li>Record a session — select <strong>Freeplay</strong> as the sport</li>
+                  <li>After recording, tap export → <strong>Save to Files</strong> → iCloud Drive</li>
+                  <li>On your computer, download the folder from iCloud Drive</li>
+                  <li>Run <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze</code> on the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">_3d.csv</code> file</li>
+                </ol>
+              </div>
+
+              <div class="mt-3 rounded-lg border border-violet-200 bg-violet-50/60 p-4 dark:border-violet-800 dark:bg-violet-950/30">
+                <p class="text-sm font-semibold text-violet-800 dark:text-violet-300">Automatic uploads (one-time setup):</p>
+                <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+                  <li>Start a local backend on your computer:</li>
+                </ol>
+                <pre class="codeblock mt-1 !bg-violet-950/60 dark:!bg-violet-950/80">uvicorn products.sports_assistant.backend.api:app --host 0.0.0.0 --port 8000</pre>
+                <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5" start="2">
+                  <li>In Pose Coach Settings → <strong>Researcher Backend</strong> → Custom URL → enter your computer's IP</li>
+                  <li>Record — skeleton files arrive automatically in your <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-data/</code> directory</li>
+                </ol>
+              </div>
+              <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><a href="#local-backend" class="underline">Full local backend guide →</a></p>
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="installation">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">Installation</h2>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Requirements</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Dependency</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Minimum</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Recommended</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">Python</td><td class="py-2 pr-4">3.10</td><td class="py-2">3.12+</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">pip</td><td class="py-2 pr-4">22.0</td><td class="py-2">24.0+</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">OS</td><td class="py-2 pr-4" colspan="2">macOS 12+ / Linux (glibc 2.28+) / Windows WSL2</td></tr>
+                <tr><td class="py-2 pr-4">Disk</td><td class="py-2 pr-4" colspan="2">~500 MB (with dependencies)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Method 1: pip (recommended)</h3>
+          <pre class="codeblock mt-2">pip install pose-platform
+pose version</pre>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Method 2: From Source (for tool developers)</h3>
+          <pre class="codeblock mt-2">git clone https://github.com/posecap/pose-platform.git
+cd pose-platform
+pip install -e .</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">The <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">-e</code> flag installs in "editable" mode — changes to source take effect immediately.</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Method 3: Virtual Environment</h3>
+          <pre class="codeblock mt-2">python3 -m venv pose-env
+source pose-env/bin/activate        # macOS / Linux
+# pose-env\Scripts\activate         # Windows
+
+pip install pose-platform</pre>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Optional Dependencies</h3>
+          <pre class="codeblock mt-2"># LLM chat support — Claude, DeepSeek, Qwen
+pip install openai>=1.50 anthropic>=0.30
+
+# Database operations (seed-session, list-users)
+pip install psycopg2-binary>=2.9 sqlalchemy>=2.0
+
+# Claude Code integration
+npm install -g @anthropic-ai/claude-code</pre>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Troubleshooting</h3>
+          <div class="mt-3 space-y-4 text-sm">
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200"><code>pip: command not found</code></p>
+              <pre class="codeblock mt-1">python3 -m ensurepip --upgrade</pre>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200"><code>error: externally-managed-environment</code> (macOS Homebrew Python)</p>
+              <p class="text-ink-600 dark:text-ink-300">Use a virtual environment (Method 3) or:</p>
+              <pre class="codeblock mt-1">pip install --break-system-packages pose-platform</pre>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200"><code>pose: command not found</code> after pip install</p>
+              <pre class="codeblock mt-1"># Add to ~/.zshrc or ~/.bashrc
+export PATH="$HOME/.local/bin:$PATH"
+
+# Alternative — run without the pose command
+python3 -m products.pose_cli.cli version</pre>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">Apple Silicon (M1/M2/M3)</p>
+              <p class="text-ink-600 dark:text-ink-300">The platform works natively on ARM. Verify with:</p>
+              <pre class="codeblock mt-1">python3 -c "import platform; print(platform.machine())"
+# Should print: arm64</pre>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">Windows</p>
+              <p class="text-ink-600 dark:text-ink-300">Use WSL2. Native Windows is not tested.</p>
+              <pre class="codeblock mt-1">wsl --install
+wsl
+# Then follow Linux instructions above</pre>
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="data-format">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">Data Format — JointData3D</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">This is the most important concept to understand before using Pose CLI. Every tool reads JointData3D CSV files.</p>
+
+          <div class="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/40">
+            <p class="text-sm text-amber-800 dark:text-amber-200"><strong>⚠️ Important:</strong> Understanding the difference between world coordinates and model coordinates is critical for correct analysis. See below.</p>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">The 12-Column Format</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Pose CLI expects CSV files <strong>without headers</strong>. Each row represents one joint at one timestamp.</p>
+          <pre class="codeblock mt-3">timestamp, joint, wx, wy, wz, mx, my, mz, ldq_x, ldq_y, ldq_z, ldq_w</pre>
+
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-2 font-medium text-ink-900 dark:text-white w-8">#</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Column</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Type</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Description</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-2 text-ink-400">1</td><td class="py-2 pr-4 font-mono text-xs">timestamp</td><td class="py-2 pr-4">float</td><td class="py-2">Seconds since recording start</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-2 text-ink-400">2</td><td class="py-2 pr-4 font-mono text-xs">joint</td><td class="py-2 pr-4">int or string</td><td class="py-2">Joint identifier (name or index)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-2 text-ink-400">3–5</td><td class="py-2 pr-4 font-mono text-xs">wx, wy, wz</td><td class="py-2 pr-4">float</td><td class="py-2"><strong>World</strong> position (ARKit world-anchor coordinates)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-2 text-ink-400">6–8</td><td class="py-2 pr-4 font-mono text-xs">mx, my, mz</td><td class="py-2 pr-4">float</td><td class="py-2"><strong>Model</strong> position (relative to body center-of-mass)</td></tr>
+                <tr><td class="py-2 pr-2 text-ink-400">9–12</td><td class="py-2 pr-4 font-mono text-xs">ldq_x … ldq_w</td><td class="py-2 pr-4">float</td><td class="py-2">Local rotation quaternion (x, y, z, w)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">World vs. Model Coordinates</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Coordinate System</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Source</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Use Case</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Stability</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800">
+                  <td class="py-2 pr-4 font-mono text-xs">wx, wy, wz</td>
+                  <td class="py-2 pr-4">ARKit world anchor</td>
+                  <td class="py-2 pr-4">Absolute court position, heatmaps</td>
+                  <td class="py-2">⚠️ Can drift across sessions</td>
+                </tr>
+                <tr>
+                  <td class="py-2 pr-4 font-mono text-xs">mx, my, mz</td>
+                  <td class="py-2 pr-4">Body center-of-mass relative</td>
+                  <td class="py-2 pr-4">Joint angles, relative motion, technique</td>
+                  <td class="py-2">✅ Stable within a session</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-3 text-sm text-ink-600 dark:text-ink-300"><strong>Rule of thumb:</strong> Use model coordinates (<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">mx/my/mz</code>) for all biomechanical analysis. All built-in tools default to model coordinates.</p>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Data Quality Checklist</h3>
+          <ul class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+            <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">jitter_ratio</code> &lt; 0.3 (run <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze data.csv --tool stats</code>)</li>
+            <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">tracking_coverage</code> &gt; 0.5 (skeleton was tracked for most of the recording)</li>
+            <li>Recording distance 2–8 meters from camera (ARKit optimal range)</li>
+            <li>Full body visible (not occluded by objects or other people)</li>
+            <li>Single person in frame (ARKit only tracks one body)</li>
+            <li>Device is stationary (tripod recommended)</li>
+          </ul>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Preparing Data from Other Systems</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">If you use OpenPose, MediaPipe, BlazePose, or motion capture, convert your data to the 12-column format. Key requirements:</p>
+          <ol class="mt-2 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li><strong>Timestamps:</strong> monotonically increasing, seconds from start</li>
+            <li><strong>Joint order:</strong> must match the 19-joint ARKit body skeleton (or use string names)</li>
+            <li><strong>Model coordinates:</strong> if unavailable, set equal to world coords (some tools will have reduced accuracy)</li>
+            <li><strong>Quaternions:</strong> if unavailable, set <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">ldq_x=0, ldq_y=0, ldq_z=0, ldq_w=1</code> (identity)</li>
+          </ol>
+          <pre class="codeblock mt-3">import numpy as np
+
+# Your data: timestamps (T,), joint_names list, world_positions (T, J, 3)
+for t_idx, t in enumerate(timestamps):
+    for j_idx, jname in enumerate(joint_names):
+        wx, wy, wz = world_positions[t_idx, j_idx]
+        mx, my, mz = world_positions[t_idx, j_idx]  # or compute model coords
+        # Identity quaternion: no rotation data
+        print(f"{t},{jname},{wx},{wy},{wz},{mx},{my},{mz},0,0,0,1")</pre>
+        </section>
+
+        
+        <section id="cli-commands">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">CLI Command Reference</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">All commands run locally. No network required for analysis commands.</p>
+
+          
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white"><code>pose analyze</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Run a tool on a JointData3D CSV file.</p>
+          <pre class="codeblock mt-2">pose analyze &lt;file.csv&gt; [--tool &lt;name&gt;] [--no-cache] [--param KEY=VALUE ...]</pre>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Option</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Description</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">&lt;file.csv&gt;</td><td class="py-2">JointData3D CSV file path (required)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--tool &lt;name&gt;</td><td class="py-2">Tool to run (default: <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">stats</code>)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--no-cache</td><td class="py-2">Skip cache, force recomputation</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--param KEY=VALUE</td><td class="py-2">Pass parameter to tool (repeatable). Auto-detects type</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">--subject-id &lt;ID&gt;</td><td class="py-2">For training plan stagnation detection (requires <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_API_TOKEN</code>)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <pre class="codeblock mt-3"># Basic analysis
+pose analyze data/session.csv
+
+# Specific tool
+pose analyze data/session.csv --tool detect_peak_energy
+
+# With parameters
+pose analyze data/session.csv --tool measure_running_speed \
+    --param age=16 --param gender=male --param region=cn
+
+# Force recomputation
+pose analyze data/session.csv --tool stats --no-cache</pre>
+
+          
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white"><code>pose tools</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">List all registered tools.</p>
+          <pre class="codeblock mt-2">pose tools                  # Compact table
+pose tools --detail         # Full parameter details
+pose tools --sport &lt;id&gt;     # Filter by sport (e.g., badminton, sprint)</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose sports</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">List supported sports and their available tools.</p>
+          <pre class="codeblock mt-2">pose sports</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose gaps</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Manage the capability gap registry (feature requests, tool ideas).</p>
+          <pre class="codeblock mt-2">pose gaps list                           # Active gaps
+pose gaps list --all-statuses            # All including resolved
+pose gaps submit "&lt;title&gt;"               # Register a new gap
+pose gaps show &lt;gap_id&gt;                  # View gap details + temp implementation
+pose gaps summary                        # Statistical summary
+pose gaps promote &lt;gap_id&gt; --to &lt;status&gt; # Advance gap state
+pose gaps dismiss &lt;gap_id&gt; --note "..."  # Close as not-planned</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose cache</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Manage analysis result cache. Cache invalidates automatically when source file or tool version changes.</p>
+          <pre class="codeblock mt-2">pose cache list                          # All cached entries
+pose cache clear                         # Clear all cache
+pose cache clear &lt;file.csv&gt;             # Clear cache for specific file</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose version</code></h3>
+          <pre class="codeblock mt-2">pose version                            # Platform + tool versions
+pose version --changelog                # Technical changelog
+pose version --release-notes            # User-facing release notes</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose chat</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Start an interactive LLM-powered analysis session. See <a href="#llm-chat" class="underline">LLM Chat</a> for setup.</p>
+          <pre class="codeblock mt-2">pose chat [data_dir]                    # Default data dir: ../pose-data</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose telemetry</code></h3>
+          <pre class="codeblock mt-2">pose telemetry stats                    # Today's stats
+pose telemetry stats --since 7d         # Last 7 days
+pose telemetry stats --since 24h        # Last 24 hours</pre>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose data</code></h3>
+          <pre class="codeblock mt-2">pose data list-users                    # List local dev database users
+pose data seed-session &lt;stem&gt; \        # Pull a session from staging
+    --user &lt;selector&gt; --sport &lt;id&gt;
+pose data delete &lt;file&gt; [--yes] [--dry-run]</pre>
+        </section>
+
+        
+        <section id="tools">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">Tool Reference</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI has 20+ built-in tools. Below are the three primary general-purpose tools. Sport-specific tools are documented in the full repository.</p>
+
+          
+          <div class="mt-8 rounded-xl border border-ink-200 dark:border-ink-700 overflow-hidden">
+            <div class="bg-ink-50 dark:bg-ink-900 px-6 py-4 border-b border-ink-200 dark:border-ink-700">
+              <div class="flex items-center gap-3">
+                <h3 class="text-lg font-semibold text-ink-900 dark:text-white font-mono">stats</h3>
+                <span class="badge-released text-xs">stable</span>
+                <span class="text-xs text-ink-400">Tier 1 · All sports · Since v1.4.0</span>
+              </div>
+              <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Computes comprehensive statistics for a JointData3D recording. <strong>Run this first</strong> on any new data — it's your data quality report card.</p>
+            </div>
+            <div class="px-6 py-4 space-y-4">
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">Parameters</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Parameter</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Type</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Default</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">path</td><td class="py-1.5 pr-4">string</td><td class="py-1.5 pr-4">—</td><td class="py-1.5">JointData3D CSV file path</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">video_duration_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">(auto)</td><td class="py-1.5">Override recording duration</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">Key Output Fields</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Field</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">recording_duration_s</td><td class="py-1.5">Total recording time</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">tracking_coverage</td><td class="py-1.5">Fraction of frames with valid skeleton (&lt; 0.5 = poor)</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">jitter_ratio</td><td class="py-1.5">Fraction of frames with high jitter (&lt; 0.1 = good, &gt; 0.3 = poor)</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">data_quality</td><td class="py-1.5">Summary: "good", "acceptable", or "poor"</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">per_joint.&lt;name&gt;.motion_std</td><td class="py-1.5">Standard deviation of model-coordinate movement</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <pre class="codeblock">pose analyze data/session.csv --tool stats</pre>
+            </div>
+          </div>
+
+          
+          <div class="mt-6 rounded-xl border border-ink-200 dark:border-ink-700 overflow-hidden">
+            <div class="bg-ink-50 dark:bg-ink-900 px-6 py-4 border-b border-ink-200 dark:border-ink-700">
+              <div class="flex items-center gap-3 flex-wrap">
+                <h3 class="text-lg font-semibold text-ink-900 dark:text-white font-mono">detect_action_boundaries</h3>
+                <span class="badge-released text-xs">stable</span>
+                <span class="text-xs text-ink-400">Tier 1 · All sports · Since v1.1.0</span>
+              </div>
+              <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Detects action boundaries — start, peak, and end of discrete movements — using full-body energy analysis. Works on any sport without tuning.</p>
+            </div>
+            <div class="px-6 py-4 space-y-4">
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">Parameters</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Parameter</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Type</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Default</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">onset_energy_ratio</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.01</td><td class="py-1.5">Energy threshold ratio for action onset</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">max_filter_win_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">1.0</td><td class="py-1.5">Window for max-energy smoothing</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">prominence</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.1</td><td class="py-1.5">Minimum peak prominence</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">min_action_duration_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.2</td><td class="py-1.5">Minimum action duration</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">min_peak_gap_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.5</td><td class="py-1.5">Minimum time between detected actions</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">Output Fields</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Field</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">actions[].start_s</td><td class="py-1.5">Action onset — when body energy starts rising</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">actions[].peak_s</td><td class="py-1.5">Moment of maximum energy</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">actions[].end_s</td><td class="py-1.5">Action ends — energy returns to baseline</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">actions[].peak_energy</td><td class="py-1.5">Normalized energy at peak (1.0 = max in recording)</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">actions[].duration_s</td><td class="py-1.5">Total action duration</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <pre class="codeblock"># Basketball — find jumps, shots, drives
+pose analyze data/basketball_play.csv --tool detect_action_boundaries \
+    --param min_action_duration_s=0.2 --param min_peak_gap_s=0.3
+
+# Sprint — find drive phases
+pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
+    --param onset_energy_ratio=0.01</pre>
+              <div class="rounded-lg border border-ink-200 bg-ink-50 p-4 dark:border-ink-700 dark:bg-ink-900">
+                <p class="text-sm text-ink-600 dark:text-ink-300"><strong>When to use this vs. sport-specific tools:</strong> Use <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">detect_action_boundaries</code> for exploring new data or unsupported sports. Use sport-specific tools when you need per-action classification (smash vs. clear, jump shot vs. layup).</p>
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="mt-6 rounded-xl border border-ink-200 dark:border-ink-700 overflow-hidden">
+            <div class="bg-ink-50 dark:bg-ink-900 px-6 py-4 border-b border-ink-200 dark:border-ink-700">
+              <div class="flex items-center gap-3 flex-wrap">
+                <h3 class="text-lg font-semibold text-ink-900 dark:text-white font-mono">segment_motion_phases</h3>
+                <span class="badge-released text-xs">stable</span>
+                <span class="text-xs text-ink-400">Tier 1 · All sports · Since v1.5.0</span>
+              </div>
+              <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Decomposes a recording into three hierarchical layers: presence segments, motion/static segments, and pauses. Essential for understanding session rhythm.</p>
+            </div>
+            <div class="px-6 py-4 space-y-4">
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">Parameters</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Parameter</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Type</th>
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Default</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">presence_gap_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">1.0</td><td class="py-1.5">Max timestamp gap before splitting presence segments</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">static_threshold</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.03</td><td class="py-1.5">Energy threshold for static classification</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">min_static_ms</td><td class="py-1.5 pr-4">int</td><td class="py-1.5 pr-4">500</td><td class="py-1.5">Minimum duration for a valid static segment</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">min_motion_ms</td><td class="py-1.5 pr-4">int</td><td class="py-1.5 pr-4">300</td><td class="py-1.5">Minimum duration for a valid motion segment</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">pause_prominence</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.5</td><td class="py-1.5">Sensitivity for detecting pauses within motion</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">energy_filter</td><td class="py-1.5 pr-4">string</td><td class="py-1.5 pr-4">"mean"</td><td class="py-1.5">"mean" or "max" — smoothing filter</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">max_filter_win_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">1.0</td><td class="py-1.5">Window size for energy filter</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">motion_trailing_pad_s</td><td class="py-1.5 pr-4">float</td><td class="py-1.5 pr-4">0.3</td><td class="py-1.5">Extra tail padding on motion segments</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-ink-800 dark:text-ink-200">Output Fields</h4>
+                <table class="mt-2 w-full text-sm text-left">
+                  <thead>
+                    <tr class="border-b border-ink-100 dark:border-ink-800">
+                      <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Field</th>
+                      <th class="py-1.5 font-medium text-ink-900 dark:text-white">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-ink-600 dark:text-ink-300">
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">presence_segments</td><td class="py-1.5">Continuous periods with a person in frame</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">motion_segments</td><td class="py-1.5">Periods of activity (swinging, running, jumping)</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">static_segments</td><td class="py-1.5">Periods of stillness (standing, waiting)</td></tr>
+                    <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4 font-mono text-xs">pauses</td><td class="py-1.5">Brief stops within an otherwise active segment</td></tr>
+                    <tr><td class="py-1.5 pr-4 font-mono text-xs">summary.motion_ratio</td><td class="py-1.5">Fraction of presence time spent in motion</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <pre class="codeblock">pose analyze data/basketball_drill.csv --tool segment_motion_phases</pre>
+              <div class="rounded-lg border border-ink-200 bg-ink-50 p-4 dark:border-ink-700 dark:bg-ink-900">
+                <p class="text-sm text-ink-600 dark:text-ink-300"><strong>Tips:</strong> Use <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">energy_filter="max"</code> for explosive sports (sprint, basketball drive). Default <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">"mean"</code> works well for sustained motion. Combine with <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">detect_action_boundaries</code> to find specific action peaks within motion segments.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="env-vars">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">Environment Variables</h2>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Analysis &amp; Data</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Variable</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Default</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Description</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_DATA_DIR</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">../pose-data</code></td><td class="py-2">Directory for data files</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_ENABLE_WIP_TOOLS</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">0</code></td><td class="py-2">Set to <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">1</code> to enable work-in-progress tools</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">LLM Providers (for <code>pose chat</code>)</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Variable</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Provider</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Description</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">ANTHROPIC_API_KEY</td><td class="py-2 pr-4">Claude (Anthropic)</td><td class="py-2">API key from <a href="https://console.anthropic.com" class="underline">console.anthropic.com</a></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_DEEPSEEK_API_KEY</td><td class="py-2 pr-4">DeepSeek</td><td class="py-2">API key from <a href="https://platform.deepseek.com" class="underline">platform.deepseek.com</a> (free tier available)</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_CN_API_KEY</td><td class="py-2 pr-4">Qwen (DashScope)</td><td class="py-2">API key from <a href="https://dashscope.aliyun.com" class="underline">dashscope.aliyun.com</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Region &amp; Language</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Variable</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Default</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Description</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_REGION</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">us</code></td><td class="py-2">LLM routing region: <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">us</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">eu</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">cn</code>, or <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">cloud</code></td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_LANG</td><td class="py-2 pr-4">(auto-detect)</td><td class="py-2">Output language. Auto-detected from <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">LANG</code>/<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">LC_ALL</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Backend Access (optional)</h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Required for <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose data seed-session</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose gaps sync</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose feedback</code>, and <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose ops</code>.</p>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Variable</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Description</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_LOCAL_URL</td><td class="py-2">Local backend URL (e.g., <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">http://localhost:8000</code>)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_STAGING_URL</td><td class="py-2">Staging backend URL</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_PROD_URL</td><td class="py-2">Production backend URL</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_API_TOKEN</td><td class="py-2">User JWT for authenticated backend calls</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">ADMIN_API_KEY</td><td class="py-2">Admin API key for feedback/gap management</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        
+        <section id="llm-chat">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">LLM-Powered Analysis (<code>pose chat</code>)</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI includes an optional AI chat mode that lets you ask natural-language questions about your data. Supports Claude, DeepSeek, and Qwen.</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Quick-Start Configurations</h3>
+
+          <div class="mt-4 space-y-4">
+            <div class="card">
+              <h4 class="font-semibold text-ink-900 dark:text-white">With DeepSeek Chat (recommended for researchers)</h4>
+              <pre class="codeblock mt-2">export POSE_DEEPSEEK_API_KEY=sk-xxx
+pose chat</pre>
+            </div>
+
+            <div class="card">
+              <h4 class="font-semibold text-ink-900 dark:text-white">With Claude Chat</h4>
+              <pre class="codeblock mt-2">export ANTHROPIC_API_KEY=sk-xxx
+pose chat</pre>
+            </div>
+
+            <div class="card">
+              <h4 class="font-semibold text-ink-900 dark:text-white">With Qwen (Chinese-optimized)</h4>
+              <pre class="codeblock mt-2">export POSE_REGION=cn
+export POSE_CN_API_KEY=sk-xxx
+pose chat</pre>
+            </div>
+
+            <div class="card">
+              <h4 class="font-semibold text-ink-900 dark:text-white">Developer (with WIP tools)</h4>
+              <pre class="codeblock mt-2">export POSE_ENABLE_WIP_TOOLS=1
+pose tools</pre>
+            </div>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Example Session</h3>
+          <pre class="codeblock mt-2">> How many swings are in session_20260720.csv?
+[Tool: detect_swing_multifeature] Found 14 swings
+
+> What was the fastest one?
+[Tool: detect_velocity] Peak at 2.3s, 18.5 m/s
+
+> Compare swing #3 with #7
+[Tool: compare_with_reference] Elbow angle: 15° difference, ...</pre>
+        </section>
+
+        
+        <section id="local-backend">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">Local Backend Setup</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Record motion data with Pose Coach on an iPhone and have skeleton files automatically land on your computer — <strong>no cloud, no staging server, no Mac required.</strong></p>
+
+          <div class="mt-6">
+            <div class="flex flex-col md:flex-row items-stretch gap-0 md:gap-0">
+              
+              <div class="flex-1 rounded-xl border-2 border-ink-300 dark:border-ink-600 bg-white dark:bg-ink-900 overflow-hidden">
+                <div class="bg-ink-100 dark:bg-ink-800 px-4 py-2 text-center text-xs font-semibold text-ink-600 dark:text-ink-300 uppercase tracking-wider">iPhone (Pose Coach)</div>
+                <div class="px-4 py-3 space-y-1.5 text-sm text-ink-700 dark:text-ink-200">
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">1</span>Record session</div>
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">↓</span><span class="text-violet-600 dark:text-violet-400 font-medium">Auto-upload CSV</span></div>
+                </div>
+              </div>
+
+              
+              <div class="flex md:flex-col items-center justify-center px-0 py-2 md:px-2 md:py-0 min-w-[60px]">
+                <div class="hidden md:flex items-center gap-1 text-ink-400">
+                  <span class="text-lg">─</span><span class="text-lg">─</span><span class="text-lg">─</span><span class="text-lg">→</span>
+                </div>
+                <div class="flex md:hidden flex-col items-center gap-0 text-ink-400">
+                  <span class="text-lg">│</span><span class="text-lg">↓</span><span class="text-lg">│</span>
+                </div>
+                <span class="text-[10px] font-medium text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/60 px-1.5 py-0.5 rounded">WiFi :8000</span>
+              </div>
+
+              
+              <div class="flex-1 rounded-xl border-2 border-ink-300 dark:border-ink-600 bg-white dark:bg-ink-900 overflow-hidden">
+                <div class="bg-ink-100 dark:bg-ink-800 px-4 py-2 text-center text-xs font-semibold text-ink-600 dark:text-ink-300 uppercase tracking-wider">Your Computer (Win / Linux / Mac)</div>
+                <div class="px-4 py-3 space-y-1.5 text-sm text-ink-700 dark:text-ink-200">
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">1</span><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">uvicorn api:app</code></div>
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">↓</span>Saves to <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-data/</code></div>
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">↓</span><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze data.csv</code></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Prerequisites</h3>
+          <ul class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+            <li><strong>iPhone</strong> with Pose Coach installed via TestFlight (ask us for an invitation link)</li>
+            <li><strong>Computer</strong> with Pose CLI installed (<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install -e .</code> in the pose_platform repo)</li>
+            <li>Both devices on the <strong>same WiFi network</strong></li>
+          </ul>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Step 1: Start the Local Backend</h3>
+          <pre class="codeblock mt-2"># Install Pose CLI (if not already)
+pip install -e .
+
+# Start the backend — dev mode skips Supabase auth, listens on all network interfaces
+POSE_ENV=dev uvicorn products.sports_assistant.backend.api:app --host 0.0.0.0 --port 8000</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Keep this terminal window open. The backend must stay running while you record.</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 2: Find Your Computer's IP Address</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">OS</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Command</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Example Output</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">macOS</td><td class="py-2 pr-4 font-mono text-xs">ipconfig getifaddr en0</td><td class="py-2">192.168.1.42</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">Linux</td><td class="py-2 pr-4 font-mono text-xs">hostname -I | awk '{print $1}'</td><td class="py-2">192.168.1.42</td></tr>
+                <tr><td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">Windows</td><td class="py-2 pr-4 font-mono text-xs">ipconfig</td><td class="py-2">Find "IPv4 Address"</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 3: Configure Pose Coach on iPhone</h3>
+          <ol class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>Open <strong>Pose Coach</strong> on your iPhone</li>
+            <li>Go to <strong>Settings</strong> (gear icon)</li>
+            <li>Scroll to <strong>Researcher Backend</strong> section</li>
+            <li>Select <strong>Custom URL</strong></li>
+            <li>Enter <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">http://&lt;YOUR_IP&gt;:8000</code> (e.g., <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">http://192.168.1.42:8000</code>)</li>
+            <li>Tap <strong>Apply</strong></li>
+            <li>Restart the app when prompted</li>
+          </ol>
+          <div class="mt-3 rounded-lg border border-ink-200 bg-ink-50 p-3 dark:border-ink-700 dark:bg-ink-900">
+            <p class="text-sm text-ink-600 dark:text-ink-300"><strong>Note:</strong> The Researcher Backend section is visible in TestFlight builds automatically. You do <strong>not</strong> need to tap the logo 10 times or use any hidden gesture.</p>
+          </div>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 4: Record &amp; Analyze</h3>
+          <ol class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>In Pose Coach, select <strong>Freeplay</strong> as the sport (use this for any sport not yet officially supported)</li>
+            <li>Record your motion — skeleton CSV is <strong>automatically uploaded</strong> after stopping</li>
+            <li>Files land in your <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-data/</code> directory</li>
+          </ol>
+          <pre class="codeblock mt-3"># Check what arrived
+ls pose-data/*_3d.csv | tail -5
+
+# Run analysis
+pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool stats
+pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool segment_motion_phases
+pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool detect_action_boundaries</pre>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 5 (Optional): Get the Video File</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">The <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mov</code> video is <strong>not uploaded</strong> to the backend (privacy guarantee). To get it:</p>
+          <ol class="mt-2 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>After recording in Pose Coach, tap the export button (share icon)</li>
+            <li>Choose <strong>Save to Files</strong> → iCloud Drive</li>
+            <li>On your computer, download from iCloud Drive</li>
+            <li>The <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mov</code> video pairs with the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">_3d.csv</code> skeleton (same filename stem)</li>
+          </ol>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Troubleshooting</h3>
+          <div class="mt-3 space-y-3 text-sm">
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">"503 Service Unavailable" on /auth/anonymous</p>
+              <p class="text-ink-600 dark:text-ink-300">Start the backend with <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_ENV=dev</code> to skip Supabase auth.</p>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">"Cannot connect to backend" on iPhone</p>
+              <ul class="mt-1 space-y-0.5 list-disc pl-5 text-ink-600 dark:text-ink-300">
+                <li>Verify both devices are on the same WiFi network</li>
+                <li>Check firewall: allow incoming connections on port 8000</li>
+                <li>On Windows: allow Python through Windows Firewall</li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">"Upload failed" after recording</p>
+              <p class="text-ink-600 dark:text-ink-300">Confirm <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">uvicorn</code> is still running and the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_DATA_DIR</code> directory exists and is writable.</p>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">Backend not showing in Settings</p>
+              <p class="text-ink-600 dark:text-ink-300">Make sure you're using the <strong>TestFlight</strong> version of Pose Coach (not App Store). The Researcher Backend section appears automatically in TestFlight builds.</p>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200">Switching back to normal use</p>
+              <p class="text-ink-600 dark:text-ink-300">Settings → Researcher Backend → select <strong>Staging</strong> (or Production) → Apply → restart the app.</p>
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="contributing">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">Contributing</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI is designed to be extended. Build new tools, add sport support, or contribute code.</p>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Building a New Tool</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">A tool is a Python class. Write it once, register it, and it works everywhere — CLI, Pose Coach app, custom apps.</p>
+
+          <div class="mt-4 space-y-3">
+            <p class="text-sm"><strong class="text-ink-800 dark:text-ink-200">Step 1:</strong> Create the tool class in <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">capabilities/tools/my_tool.py</code></p>
+            <pre class="codeblock">from capabilities.tools.base import DirectTool
+from capabilities.tools.loader import load_pose
+import json
+from pathlib import Path
+
+
+class MyTool(DirectTool):
+    name = "my_tool"
+    description = "What this tool does"
+    input_schema = {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string", "description": "CSV file path"},
+            "my_param": {"type": "number", "default": 1.0},
+        },
+        "required": ["path"]
+    }
+    status = "wip"                     # "wip" or "stable"
+    supported_sports = []              # [] = all sports
+    tier = 1                           # 1 = primary, 2 = fallback
+
+    def run(self, tool_input: dict, output_dir: Path) -> str:
+        pose = load_pose(tool_input["path"])
+        result = {"your_field": 42}
+        return json.dumps(result, ensure_ascii=False)</pre>
+
+            <p class="text-sm"><strong class="text-ink-800 dark:text-ink-200">Step 2:</strong> Register in <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">capabilities/tools/registry.py</code> — add import and instance to <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">all_tools</code> list.</p>
+            <p class="text-sm"><strong class="text-ink-800 dark:text-ink-200">Step 3:</strong> Enable and test:</p>
+            <pre class="codeblock">export POSE_ENABLE_WIP_TOOLS=1
+pose tools | grep my_tool
+pose analyze data/test.csv --tool my_tool</pre>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Extending Sport Support</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Add a new sport in 3 lines:</p>
+          <pre class="codeblock mt-2"># pose_platform_core/sports_catalog.py
+OFFICIAL_SPORTS = [
+    # ... existing ...
+    SupportedSport(id="basketball", since_version="1.24.0"),
+]</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Now build tools with <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">supported_sports = ["basketball"]</code>. Generic tools work automatically.</p>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Promoting a Tool to Stable</h3>
+          <ol class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>Write unit tests (≥ 1) — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pytest tests/unit/</code></li>
+            <li>Test with 10+ real recordings</li>
+            <li>Test edge cases (empty data, single frame, missing joints)</li>
+            <li>Add documentation in <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">docs/features/&lt;tool_name&gt;.md</code></li>
+            <li>Change <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">status = "stable"</code> in your tool class</li>
+            <li>Add version entry in <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> → <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">tools</code></li>
+          </ol>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Data Loading Best Practices</h3>
+          <ul class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+            <li>Use <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose.mpoints</code> (model coordinates) for biomechanical analysis</li>
+            <li>Oreason filtering is automatic — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">load_pose()</code> excludes anomalous frames</li>
+            <li>Use <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose.joint_names</code> to look up joint indices dynamically</li>
+            <li>Return <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">data_quality</code> in your output to help users assess reliability</li>
+            <li>Bump the tool version in <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> when algorithms change — old cache auto-invalidates</li>
+          </ul>
+        </section>
+
+        
+        <section id="license">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">License</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI — Motion Analysis Toolkit · Copyright &copy; 2026 PoseCap Inc. All rights reserved.</p>
+
+          <div class="mt-6 space-y-5 text-sm text-ink-700 dark:text-ink-200 leading-relaxed">
+            <div>
+              <h3 class="text-lg font-semibold text-ink-900 dark:text-white">1. Research License (Non-Commercial)</h3>
+              <p class="mt-2">Academic researchers, educational institutions, and individual learners are granted a royalty-free, non-exclusive, non-transferable license to use, modify, and create derivative works for non-commercial research and educational purposes, subject to:</p>
+              <ul class="mt-2 space-y-1 list-disc pl-5 text-ink-600 dark:text-ink-300">
+                <li><strong>Attribution</strong> — Any publication must cite the Pose Platform (BibTeX citation below)</li>
+                <li><strong>No Redistribution</strong> — You may not redistribute the software or its core algorithms without prior written consent</li>
+                <li><strong>No Commercial Use</strong> — You may not embed in commercial products, provide paid services, or sell access to analysis results</li>
+                <li><strong>Modifications</strong> — Tools and extensions you develop are your own IP. Contributing grants PoseCap Inc. a license to use and distribute your contributions</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold text-ink-900 dark:text-white">2. Commercial License</h3>
+              <p class="mt-2">Any commercial use requires a separate written agreement with PoseCap Inc. Contact <a href="mailto:contact@posecap.com" class="underline">contact@posecap.com</a> for commercial licensing.</p>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold text-ink-900 dark:text-white">Citation</h3>
+              <p class="mt-2">If you use Pose CLI in your research, please cite:</p>
+              <pre class="codeblock mt-2">@software{pose_platform,
+  title = {Pose Platform: Open Motion Analysis Toolkit},
+  author = {{PoseCap Inc.}},
+  year = {2026},
+  url = {https://github.com/posecap/pose-platform},
+}</pre>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold text-ink-900 dark:text-white">Disclaimer</h3>
+              <p class="mt-2 text-ink-600 dark:text-ink-300">This software is provided "AS IS", without warranty of any kind, express or implied. In no event shall the authors or copyright holders be liable for any claim, damages or other liability arising from the use of the software.</p>
+            </div>
+          </div>
+        </section>
+
+        
+        <div class="rounded-2xl border border-posecli/30 bg-gradient-to-br from-posecli/5 to-transparent p-8 text-center dark:border-posecli/20 dark:from-posecli/10">
+          <h3 class="text-xl font-semibold text-ink-900 dark:text-white">Ready to analyze your motion data?</h3>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI is in early access. Email us and tell us what you want to study.</p>
+          <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Early%20Access" class="btn-primary">Request early access</a>
+            <a href="/posecli/en/" class="btn-secondary">Back to Pose CLI</a>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </section>
@@ -91,7 +1173,7 @@
       <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">Languages</h4>
       <ul class="space-y-2 text-sm">
         <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 font-semibold" href="/posecli/docs/">English</a></li>
-        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/posecli/docs/">中文</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/posecli/docs/zh/">中文</a></li>
         <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/fr/">Français</a></li>
       </ul>
     </div>
