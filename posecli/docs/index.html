@@ -97,8 +97,11 @@
           <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">Overview</h2>
           <div class="mt-4 space-y-4 text-ink-700 dark:text-ink-200 leading-relaxed">
             <p>Pose CLI turns raw 3D body-skeleton data — from ARKit or any pose-estimation system — into actionable sports analytics. It runs <strong>entirely on your machine</strong>: your data never leaves your computer.</p>
+            <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/40">
+              <p class="text-sm text-amber-800 dark:text-amber-200"><strong>Early access:</strong> Pose CLI is distributed via PyPI. See <a href="#installation" class="underline">Installation</a> for details.</p>
+            </div>
             <div class="rounded-lg border border-ink-200 bg-ink-50 p-5 dark:border-ink-700 dark:bg-ink-900">
-              <pre class="text-sm text-ink-700 dark:text-ink-200 overflow-x-auto"><code>Pose Coach Recording → JointData3D CSV → Pose CLI Tool → JSON Output
+              <pre class="text-sm text-ink-700 dark:text-ink-200 overflow-x-auto"><code>Pose Coach Recording → JointData3D CSV → Pose CLI → JSON Output
                                               │
                                               ├── stats
                                               ├── detect_peak_energy
@@ -106,9 +109,18 @@
                                               ├── detect_velocity
                                               ├── detect_action_boundaries
                                               ├── detect_highlight
+                                              ├── annotate (web UI)
                                               └── ... 15+ more</code></pre>
             </div>
           </div>
+
+          
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Built-in Lightweight Backend</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Pose CLI includes <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code> — a zero-config local server that turns your computer into a development backend for the Pose Coach iOS app:</p>
+          <pre class="codeblock mt-2">pose serve
+# → http://0.0.0.0:8000
+# → LAN  →  http://192.168.1.x:8000  (configure this on iPhone)</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Record on iPhone → skeleton files arrive on your computer automatically. Analysis, AI coach chat, training plans, and comprehensive reports all work through the same local server. The Pose Coach iOS app connects to <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code> as a full-featured backend. No database, no cloud required. <a href="#local-backend" class="underline">Setup guide →</a></p>
 
           
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">How Data Gets to Pose CLI</h3>
@@ -117,16 +129,18 @@
           <div class="mt-4 space-y-4">
             
             <div class="rounded-lg border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-800 dark:bg-emerald-950/30">
-              <h4 class="font-semibold text-emerald-800 dark:text-emerald-300">Path A — iCloud Drive (zero setup, always works)</h4>
-              <pre class="codeblock mt-2 !bg-emerald-950/60 dark:!bg-emerald-950/80">iPhone Record → Files App → iCloud Drive (auto-sync) → Computer → pose analyze
-✅ All regions    ✅ Includes .mov video    ⚠ Manual per-session</pre>
+              <h4 class="font-semibold text-emerald-800 dark:text-emerald-300">Path A — Manual Transfer (zero setup, always works)</h4>
+              <pre class="codeblock mt-2 !bg-emerald-950/60 dark:!bg-emerald-950/80">iPhone Record → Files App → iCloud Drive or AirDrop → Computer → pose analyze
+✅ All regions    ✅ Full session folder (video + skeleton + sidecar)    ⚠ Manual per-session
+• iCloud Drive: Export folder via Files App → syncs to computer via iCloud
+• AirDrop: Export All Data → ZIP with all session files sent directly (Mac only)</pre>
             </div>
 
             
             <div class="rounded-lg border border-violet-200 bg-violet-50/60 p-4 dark:border-violet-800 dark:bg-violet-950/30">
-              <h4 class="font-semibold text-violet-800 dark:text-violet-300">Path B — Local Backend (one-time setup, automatic)</h4>
-              <pre class="codeblock mt-2 !bg-violet-950/60 dark:!bg-violet-950/80">iPhone Record → Your Computer (same WiFi, uvicorn api:app --host 0.0.0.0) → pose analyze
-✅ All regions    ✅ Auto upload after each recording    🔧 One-time setup
+              <h4 class="font-semibold text-violet-800 dark:text-violet-300">Path B — Local Backend (one command, automatic)</h4>
+              <pre class="codeblock mt-2 !bg-violet-950/60 dark:!bg-violet-950/80">iPhone Record → Your Computer (WiFi, pose serve) → pose analyze
+✅ All regions    ✅ Auto upload + analysis + chat    🔧 pip install pose-platform[server,llm]
 (TestFlight build required — Researcher Backend in Settings)</pre>
             </div>
 
@@ -146,17 +160,17 @@
                   <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Setup</th>
                   <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Network</th>
                   <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Regions</th>
-                  <th class="py-2 font-medium text-ink-900 dark:text-white">Video</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">What you get</th>
                 </tr>
               </thead>
               <tbody class="text-ink-600 dark:text-ink-300">
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-semibold text-emerald-700 dark:text-emerald-400">A. iCloud Drive</td><td class="py-2 pr-4">None</td><td class="py-2 pr-4">Internet (iCloud)</td><td class="py-2 pr-4">All</td><td class="py-2">✅</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-semibold text-violet-700 dark:text-violet-400">B. Local Backend</td><td class="py-2 pr-4">5 min</td><td class="py-2 pr-4">Same WiFi only</td><td class="py-2 pr-4">All</td><td class="py-2">❌</td></tr>
-                <tr><td class="py-2 pr-4 font-semibold text-ink-700 dark:text-ink-200">C. Staging</td><td class="py-2 pr-4">Backend access</td><td class="py-2 pr-4">Internet (US/EU)</td><td class="py-2 pr-4">US/EU only</td><td class="py-2">❌</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-semibold text-emerald-700 dark:text-emerald-400">A. Manual</td><td class="py-2 pr-4">None</td><td class="py-2 pr-4">iCloud or AirDrop</td><td class="py-2 pr-4">All</td><td class="py-2">Full session (video + skeleton + sidecar)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-semibold text-violet-700 dark:text-violet-400">B. Local Backend</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code></td><td class="py-2 pr-4">Same WiFi</td><td class="py-2 pr-4">All</td><td class="py-2">Skeleton + sidecar (auto per-recording)</td></tr>
+                <tr><td class="py-2 pr-4 font-semibold text-ink-700 dark:text-ink-200">C. Staging</td><td class="py-2 pr-4">Backend access</td><td class="py-2 pr-4">Internet (US/EU)</td><td class="py-2 pr-4">US/EU only</td><td class="py-2">Skeleton + sidecar (auto per-recording)</td></tr>
               </tbody>
             </table>
           </div>
-          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><strong>Recommended:</strong> Start with <strong>Path A</strong> (iCloud Drive) for your first recordings. When you record frequently, set up <strong>Path B</strong> (Local Backend) for automatic uploads. <a href="#local-backend" class="underline">Full local backend setup guide →</a></p>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><strong>Recommended:</strong> Start with <strong>AirDrop</strong> (Path A) for your first session — instant, no setup. For frequent recording, set up <strong>Path B</strong> with a single command: <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code>. <a href="#local-backend" class="underline">Full local backend setup guide →</a></p>
 
           
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Recording for Unsupported Sports</h3>
@@ -200,28 +214,75 @@
           </div>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Supported Sports</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Pose CLI ships with <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">freeplay</code> (general) and <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">sprint</code> as baseline. Researchers can add additional sports locally:</p>
+          <pre class="codeblock mt-3"># List official + custom sports
+pose sports
+
+# Badminton tools are built-in — just register the sport locally
+pose sports add badminton --since v1.0.0
+# → 14 tools available (7 dedicated + 7 generic)
+
+# Add your own sport
+pose sports add basketball --since v1.25.0
+# → 6 generic tools immediately available; build dedicated tools on top</pre>
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-sm text-left">
               <thead>
                 <tr class="border-b border-ink-200 dark:border-ink-700">
                   <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Sport</th>
-                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Status</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Source</th>
                   <th class="py-2 font-medium text-ink-900 dark:text-white">Dedicated Tools</th>
                 </tr>
               </thead>
               <tbody class="text-ink-600 dark:text-ink-300">
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">freeplay</td><td class="py-2 pr-4">General activity</td><td class="py-2">6 (generic tools apply)</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">sprint</td><td class="py-2 pr-4">Running</td><td class="py-2">10 (speed, gait, efficiency, score)</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">badminton</td><td class="py-2 pr-4">Racket sports</td><td class="py-2">13 (swing, classify, score, angles, compare, rules, training plan)</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">fitness</td><td class="py-2 pr-4">General fitness</td><td class="py-2">6 (generic tools apply)</td></tr>
-                <tr><td class="py-2 pr-4 font-mono text-xs">basketball</td><td class="py-2 pr-4">In development</td><td class="py-2">Coming soon</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">freeplay</td><td class="py-2 pr-4">baseline</td><td class="py-2">6 generic</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">sprint</td><td class="py-2 pr-4">baseline</td><td class="py-2">4 dedicated + 6 generic</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">badminton</td><td class="py-2 pr-4">platform (enable via <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports add</code>)</td><td class="py-2">7 dedicated + 6 generic</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">fitness</td><td class="py-2 pr-4">platform (Pose Coach)</td><td class="py-2">6 generic</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs italic">your sport</td><td class="py-2 pr-4">custom (<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports add</code>)</td><td class="py-2">6 generic + build your own</td></tr>
               </tbody>
             </table>
           </div>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><a href="#contributing" class="underline">Add your own sport →</a></p>
+
+          
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Web Annotation Tool</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Label recordings interactively in your browser with synchronized video + 2D skeleton overlay:</p>
+          <pre class="codeblock mt-2">pose annotate --serve data/session.csv
+# → opens http://localhost:8001</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Click and drag on the timeline to mark actions (sprint phases, swings, shots). Annotations serve as ground truth for calibration and algorithm validation.</p>
+
+          <h4 class="mt-4 text-sm font-semibold text-ink-800 dark:text-ink-200">Prerequisites</h4>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">The web annotator needs both the skeleton CSV AND the original video (<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mov</code>). Video is included via iCloud Drive or AirDrop (Path A), but NOT via local backend or staging (Paths B/C).</p>
+
+          <h4 class="mt-4 text-sm font-semibold text-ink-800 dark:text-ink-200">Interface</h4>
+          <ul class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+            <li><strong>Left panel:</strong> Video player with 2D skeleton overlay (15 bones, 21 joints) + playback controls</li>
+            <li><strong>Right panel:</strong> Annotations list + creation form (start/end time, label, quality, notes)</li>
+          </ul>
+
+          <h4 class="mt-4 text-sm font-semibold text-ink-800 dark:text-ink-200">CLI Commands</h4>
+          <pre class="codeblock mt-1"># Create an annotation
+pose annotate create data/session.csv --start 2.3 --end 3.1 --label "sprint_drive"
+
+# List all annotations
+pose annotate list data/session.csv
+
+# Open the web UI
+pose annotate --serve data/session.csv</pre>
+
+          <h4 class="mt-4 text-sm font-semibold text-ink-800 dark:text-ink-200">Calibration Workflow</h4>
+          <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
+            <li>Annotate recordings (web or CLI) — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose annotate --serve</code></li>
+            <li>Auto-score annotated strokes — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose calib auto-label</code></li>
+            <li>Review and correct scores (expert review)</li>
+            <li>Validate tool agreement — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose calib validate</code></li>
+          </ol>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Key Principles</h3>
           <ul class="mt-4 space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
             <li><strong class="text-ink-800 dark:text-ink-200">Your data stays local.</strong> All analysis runs on your machine. No cloud upload required.</li>
+            <li><strong class="text-ink-800 dark:text-ink-200">Built-in local backend.</strong> <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code> gives you a full development backend — iPhone auto-upload, analysis, and AI chat all work locally.</li>
             <li><strong class="text-ink-800 dark:text-ink-200">One tool, all products.</strong> Build a tool once — it works in CLI, Pose Coach app, or your custom app.</li>
             <li><strong class="text-ink-800 dark:text-ink-200">Extensible by design.</strong> Every tool is a Python class. Write your own, register it, and it's available everywhere.</li>
             <li><strong class="text-ink-800 dark:text-ink-200">Cache built-in.</strong> Analysis results are automatically cached. Re-run the same file → instant result.</li>
@@ -287,21 +348,32 @@ pose analyze sample_sprint.csv --tool measure_running_speed \
                 <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
                   <li>Install Pose Coach via TestFlight (ask us for an invitation)</li>
                   <li>Record a session — select <strong>Freeplay</strong> as the sport</li>
-                  <li>After recording, tap export → <strong>Save to Files</strong> → iCloud Drive</li>
-                  <li>On your computer, download the folder from iCloud Drive</li>
+                  <li>Transfer data to your computer:</li>
+                </ol>
+                <ul class="mt-1 space-y-0.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-8">
+                  <li><strong>AirDrop</strong> (fastest): playback menu → <strong>Export All Data</strong> → AirDrop to your Mac</li>
+                  <li><strong>iCloud Drive</strong>: tap export → <strong>Save to Files</strong> → iCloud Drive → download on computer</li>
+                </ul>
+                <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5" start="4">
                   <li>Run <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze</code> on the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">_3d.csv</code> file</li>
                 </ol>
               </div>
 
               <div class="mt-3 rounded-lg border border-violet-200 bg-violet-50/60 p-4 dark:border-violet-800 dark:bg-violet-950/30">
-                <p class="text-sm font-semibold text-violet-800 dark:text-violet-300">Automatic uploads (one-time setup):</p>
+                <p class="text-sm font-semibold text-violet-800 dark:text-violet-300">Automatic uploads (one command):</p>
                 <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
-                  <li>Start a local backend on your computer:</li>
+                  <li>Install with server extras:</li>
                 </ol>
-                <pre class="codeblock mt-1 !bg-violet-950/60 dark:!bg-violet-950/80">uvicorn products.sports_assistant.backend.api:app --host 0.0.0.0 --port 8000</pre>
+                <pre class="codeblock mt-1 !bg-violet-950/60 dark:!bg-violet-950/80">pip install 'pose-platform[server,llm]'</pre>
                 <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5" start="2">
-                  <li>In Pose Coach Settings → <strong>Researcher Backend</strong> → Custom URL → enter your computer's IP</li>
+                  <li>Start the local backend:</li>
+                </ol>
+                <pre class="codeblock mt-1 !bg-violet-950/60 dark:!bg-violet-950/80">pose serve
+# → LAN  →  http://192.168.1.x:8000</pre>
+                <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5" start="3">
+                  <li>In Pose Coach Settings → <strong>Researcher Backend</strong> → Custom URL → enter your computer's LAN IP</li>
                   <li>Record — skeleton files arrive automatically in your <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-data/</code> directory</li>
+                  <li>Analysis and AI coach chat work directly in the app (routed to your local server)</li>
                 </ol>
               </div>
               <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><a href="#local-backend" class="underline">Full local backend guide →</a></p>
@@ -350,13 +422,16 @@ source pose-env/bin/activate        # macOS / Linux
 pip install pose-platform</pre>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Optional Dependencies</h3>
-          <pre class="codeblock mt-2"># LLM chat support — Claude, DeepSeek, Qwen
-pip install openai>=1.50 anthropic>=0.30
+          <pre class="codeblock mt-2"># Local backend (pose serve) — receive iPhone uploads + run analysis server
+pip install 'pose-platform[server]'
 
-# Database operations (seed-session, list-users)
-pip install psycopg2-binary>=2.9 sqlalchemy>=2.0
+# LLM chat (pose chat) — Claude, DeepSeek, Qwen
+pip install 'pose-platform[llm]'
 
-# Claude Code integration
+# Everything — local backend + AI chat
+pip install 'pose-platform[server,llm]'
+
+# Claude Code integration (pose chat with Claude)
 npm install -g @anthropic-ai/claude-code</pre>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Troubleshooting</h3>
@@ -538,14 +613,12 @@ pose tools --sport &lt;id&gt;     # Filter by sport (e.g., badminton, sprint)</p
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose gaps</code></h3>
-          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Manage the capability gap registry (feature requests, tool ideas).</p>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Manage the capability gap registry — track feature requests and tool ideas locally.</p>
           <pre class="codeblock mt-2">pose gaps list                           # Active gaps
 pose gaps list --all-statuses            # All including resolved
 pose gaps submit "&lt;title&gt;"               # Register a new gap
 pose gaps show &lt;gap_id&gt;                  # View gap details + temp implementation
-pose gaps summary                        # Statistical summary
-pose gaps promote &lt;gap_id&gt; --to &lt;status&gt; # Advance gap state
-pose gaps dismiss &lt;gap_id&gt; --note "..."  # Close as not-planned</pre>
+pose gaps summary                        # Statistical summary</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose cache</code></h3>
@@ -572,10 +645,8 @@ pose telemetry stats --since 7d         # Last 7 days
 pose telemetry stats --since 24h        # Last 24 hours</pre>
 
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose data</code></h3>
-          <pre class="codeblock mt-2">pose data list-users                    # List local dev database users
-pose data seed-session &lt;stem&gt; \        # Pull a session from staging
-    --user &lt;selector&gt; --sport &lt;id&gt;
-pose data delete &lt;file&gt; [--yes] [--dry-run]</pre>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Manage local data files.</p>
+          <pre class="codeblock mt-2">pose data delete &lt;file&gt; [--yes] [--dry-run]</pre>
         </section>
 
         
@@ -810,26 +881,6 @@ pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
               </tbody>
             </table>
           </div>
-
-          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Backend Access (optional)</h3>
-          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Required for <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose data seed-session</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose gaps sync</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose feedback</code>, and <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose ops</code>.</p>
-          <div class="mt-3 overflow-x-auto">
-            <table class="w-full text-sm text-left">
-              <thead>
-                <tr class="border-b border-ink-200 dark:border-ink-700">
-                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Variable</th>
-                  <th class="py-2 font-medium text-ink-900 dark:text-white">Description</th>
-                </tr>
-              </thead>
-              <tbody class="text-ink-600 dark:text-ink-300">
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_LOCAL_URL</td><td class="py-2">Local backend URL (e.g., <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">http://localhost:8000</code>)</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_STAGING_URL</td><td class="py-2">Staging backend URL</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_PROD_URL</td><td class="py-2">Production backend URL</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_API_TOKEN</td><td class="py-2">User JWT for authenticated backend calls</td></tr>
-                <tr><td class="py-2 pr-4 font-mono text-xs">ADMIN_API_KEY</td><td class="py-2">Admin API key for feedback/gap management</td></tr>
-              </tbody>
-            </table>
-          </div>
         </section>
 
         
@@ -908,7 +959,7 @@ pose tools</pre>
               <div class="flex-1 rounded-xl border-2 border-ink-300 dark:border-ink-600 bg-white dark:bg-ink-900 overflow-hidden">
                 <div class="bg-ink-100 dark:bg-ink-800 px-4 py-2 text-center text-xs font-semibold text-ink-600 dark:text-ink-300 uppercase tracking-wider">Your Computer (Win / Linux / Mac)</div>
                 <div class="px-4 py-3 space-y-1.5 text-sm text-ink-700 dark:text-ink-200">
-                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">1</span><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">uvicorn api:app</code></div>
+                  <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">1</span><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code></div>
                   <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">↓</span>Saves to <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-data/</code></div>
                   <div class="flex items-center gap-2"><span class="text-ink-400 text-xs w-5 text-center">↓</span><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze data.csv</code></div>
                 </div>
@@ -924,32 +975,17 @@ pose tools</pre>
           </ul>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Step 1: Start the Local Backend</h3>
-          <pre class="codeblock mt-2"># Install Pose CLI (if not already)
-pip install -e .
+          <pre class="codeblock mt-2"># Install with server extras (if not already)
+pip install 'pose-platform[server,llm]'
 
-# Start the backend — dev mode skips Supabase auth, listens on all network interfaces
-POSE_ENV=dev uvicorn products.sports_assistant.backend.api:app --host 0.0.0.0 --port 8000</pre>
-          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Keep this terminal window open. The backend must stay running while you record.</p>
+# Start the backend
+pose serve
+# → http://0.0.0.0:8000
+# → LAN  →  http://192.168.1.x:8000  (configure this on iPhone)
+# → data → /Users/you/pose-data</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">The server listens on all network interfaces by default. Your LAN IP is printed automatically — use it to configure the iPhone. Options: <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve --port 9000</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve --data-dir ~/my-data</code>.</p>
 
-          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 2: Find Your Computer's IP Address</h3>
-          <div class="mt-3 overflow-x-auto">
-            <table class="w-full text-sm text-left">
-              <thead>
-                <tr class="border-b border-ink-200 dark:border-ink-700">
-                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">OS</th>
-                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Command</th>
-                  <th class="py-2 font-medium text-ink-900 dark:text-white">Example Output</th>
-                </tr>
-              </thead>
-              <tbody class="text-ink-600 dark:text-ink-300">
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">macOS</td><td class="py-2 pr-4 font-mono text-xs">ipconfig getifaddr en0</td><td class="py-2">192.168.1.42</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">Linux</td><td class="py-2 pr-4 font-mono text-xs">hostname -I | awk '{print $1}'</td><td class="py-2">192.168.1.42</td></tr>
-                <tr><td class="py-2 pr-4 font-medium text-ink-800 dark:text-ink-200">Windows</td><td class="py-2 pr-4 font-mono text-xs">ipconfig</td><td class="py-2">Find "IPv4 Address"</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 3: Configure Pose Coach on iPhone</h3>
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 2: Configure Pose Coach on iPhone</h3>
           <ol class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
             <li>Open <strong>Pose Coach</strong> on your iPhone</li>
             <li>Go to <strong>Settings</strong> (gear icon)</li>
@@ -960,10 +996,10 @@ POSE_ENV=dev uvicorn products.sports_assistant.backend.api:app --host 0.0.0.0 --
             <li>Restart the app when prompted</li>
           </ol>
           <div class="mt-3 rounded-lg border border-ink-200 bg-ink-50 p-3 dark:border-ink-700 dark:bg-ink-900">
-            <p class="text-sm text-ink-600 dark:text-ink-300"><strong>Note:</strong> The Researcher Backend section is visible in TestFlight builds automatically. You do <strong>not</strong> need to tap the logo 10 times or use any hidden gesture.</p>
+            <p class="text-sm text-ink-600 dark:text-ink-300"><strong>Note:</strong> The Researcher Backend section is visible in TestFlight builds automatically.</p>
           </div>
 
-          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 4: Record &amp; Analyze</h3>
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 3: Record &amp; Analyze</h3>
           <ol class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
             <li>In Pose Coach, select <strong>Freeplay</strong> as the sport (use this for any sport not yet officially supported)</li>
             <li>Record your motion — skeleton CSV is <strong>automatically uploaded</strong> after stopping</li>
@@ -977,7 +1013,7 @@ pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool stats
 pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool segment_motion_phases
 pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool detect_action_boundaries</pre>
 
-          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 5 (Optional): Get the Video File</h3>
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Step 4 (Optional): Get the Video File</h3>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">The <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mov</code> video is <strong>not uploaded</strong> to the backend (privacy guarantee). To get it:</p>
           <ol class="mt-2 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
             <li>After recording in Pose Coach, tap the export button (share icon)</li>
@@ -986,12 +1022,34 @@ pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool detect_action_
             <li>The <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mov</code> video pairs with the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">_3d.csv</code> skeleton (same filename stem)</li>
           </ol>
 
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">What <code>pose serve</code> provides vs the cloud backend</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Feature</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code></th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Cloud Backend</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">File upload</td><td class="py-2 pr-4">✅</td><td class="py-2">✅</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">Analysis (all tools)</td><td class="py-2 pr-4">✅</td><td class="py-2">✅</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">AI Coach chat</td><td class="py-2 pr-4">✅</td><td class="py-2">✅ (SSE streaming)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">Training plan (per-session)</td><td class="py-2 pr-4">✅</td><td class="py-2">✅</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">Training plan (comprehensive)</td><td class="py-2 pr-4">✅</td><td class="py-2">✅</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">Comprehensive report</td><td class="py-2 pr-4">✅</td><td class="py-2">✅</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">Session history</td><td class="py-2 pr-4">✅ (in-memory)</td><td class="py-2">✅ (database)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">Subject profiles</td><td class="py-2 pr-4">✅</td><td class="py-2">✅</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">User accounts</td><td class="py-2 pr-4">❌</td><td class="py-2">✅</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4">Multi-device</td><td class="py-2 pr-4">❌</td><td class="py-2">✅</td></tr>
+                <tr><td class="py-2 pr-4">Database</td><td class="py-2 pr-4">❌</td><td class="py-2">✅</td></tr>
+              </tbody>
+            </table>
+          </div>
+
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Troubleshooting</h3>
           <div class="mt-3 space-y-3 text-sm">
-            <div>
-              <p class="font-medium text-ink-800 dark:text-ink-200">"503 Service Unavailable" on /auth/anonymous</p>
-              <p class="text-ink-600 dark:text-ink-300">Start the backend with <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_ENV=dev</code> to skip Supabase auth.</p>
-            </div>
             <div>
               <p class="font-medium text-ink-800 dark:text-ink-200">"Cannot connect to backend" on iPhone</p>
               <ul class="mt-1 space-y-0.5 list-disc pl-5 text-ink-600 dark:text-ink-300">
@@ -1002,7 +1060,7 @@ pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool detect_action_
             </div>
             <div>
               <p class="font-medium text-ink-800 dark:text-ink-200">"Upload failed" after recording</p>
-              <p class="text-ink-600 dark:text-ink-300">Confirm <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">uvicorn</code> is still running and the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_DATA_DIR</code> directory exists and is writable.</p>
+              <p class="text-ink-600 dark:text-ink-300">Confirm <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code> is still running and the data directory exists and is writable.</p>
             </div>
             <div>
               <p class="font-medium text-ink-800 dark:text-ink-200">Backend not showing in Settings</p>
@@ -1010,7 +1068,7 @@ pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool detect_action_
             </div>
             <div>
               <p class="font-medium text-ink-800 dark:text-ink-200">Switching back to normal use</p>
-              <p class="text-ink-600 dark:text-ink-300">Settings → Researcher Backend → select <strong>Staging</strong> (or Production) → Apply → restart the app.</p>
+              <p class="text-ink-600 dark:text-ink-300">Settings → Researcher Backend → switch to <strong>Staging</strong> (or Production) → Apply → restart the app.</p>
             </div>
           </div>
         </section>
