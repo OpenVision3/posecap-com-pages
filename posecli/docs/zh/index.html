@@ -213,37 +213,46 @@
             </table>
           </div>
 
-          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">支持的运动项目</h3>
-          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Pose CLI 默认提供 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">freeplay</code>（通用）和 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">sprint</code>（短跑）。研究人员可在本地添加更多运动：</p>
-          <pre class="codeblock mt-3"># 列出官方和自定义运动
-pose sports
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">运动即插件</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Pose CLI 使用 Python entry_points 自动发现运动包。内置运动（<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">freeplay</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">sprint</code>）随基础安装提供。额外运动以独立 pip 包形式安装：</p>
+          <pre class="codeblock mt-3"># 内置（始终可用）
+pose version
+# → sports: freeplay, sprint
 
-# 羽毛球工具已内置 — 只需在本地注册运动
-pose sports add badminton --since v1.0.0
-# → 14 个工具可用（7 个专用 + 7 个通用）
+# 安装羽毛球 — 由羽毛球研究者维护的独立包
+pip install pose-platform[badminton]
+# → 安装 pose-sport-badminton（7 个工具）
 
-# 添加你自己的运动
-pose sports add basketball --since v1.25.0
-# → 6 个通用工具立即可用；在此基础上构建专用工具</pre>
+# 或直接安装运动包
+pip install pose-sport-badminton
+
+# 创建你自己的运动包
+pose sports create basketball
+# → 生成 sports/basketball/ 脚手架及示例工具
+# → pip install -e sports/basketball
+# → pose tools --sport basketball
+
+# 列出已安装的运动
+pose sports</pre>
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-sm text-left">
               <thead>
                 <tr class="border-b border-ink-200 dark:border-ink-700">
                   <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">运动</th>
-                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">来源</th>
-                  <th class="py-2 font-medium text-ink-900 dark:text-white">专用工具</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">包</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">安装</th>
                 </tr>
               </thead>
               <tbody class="text-ink-600 dark:text-ink-300">
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">freeplay</td><td class="py-2 pr-4">基线</td><td class="py-2">6 个通用</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">sprint</td><td class="py-2 pr-4">基线</td><td class="py-2">4 个专用 + 6 个通用</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">badminton</td><td class="py-2 pr-4">平台（通过 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports add</code> 启用）</td><td class="py-2">7 个专用 + 6 个通用</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">fitness</td><td class="py-2 pr-4">平台（Pose Coach）</td><td class="py-2">6 个通用</td></tr>
-                <tr><td class="py-2 pr-4 font-mono text-xs italic">你的运动</td><td class="py-2 pr-4">自定义（<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports add</code>）</td><td class="py-2">6 个通用 + 自行构建</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">freeplay</td><td class="py-2 pr-4">内置</td><td class="py-2">默认</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">sprint</td><td class="py-2 pr-4">内置</td><td class="py-2">默认</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">badminton</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-sport-badminton</code></td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install pose-platform[badminton]</code></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">basketball（模板）</td><td class="py-2 pr-4">通过 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports create</code> 创建</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install -e sports/basketball</code></td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs italic">你的运动</td><td class="py-2 pr-4">你的包</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install pose-sport-&lt;名称&gt;</code></td></tr>
               </tbody>
             </table>
           </div>
-          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><a href="#contributing" class="underline">添加你自己的运动 →</a></p>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400"><strong>面向研究者：</strong>运动包是由领域专家维护的独立 PyPI 包。每个包有自己的版本、发布周期和维护者。参见<a href="#contributing" class="underline">贡献指南 →</a></p>
 
           
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Web 标注工具</h3>
@@ -303,7 +312,9 @@ pose version</pre>
 
             <div>
               <h3 class="font-semibold text-ink-900 dark:text-white">第二步：获取示例数据</h3>
-              <pre class="codeblock mt-2">curl -O https://posecap.com/samples/sample_sprint.csv</pre>
+              <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Pose CLI 内置了短跑示例录制数据 — 无需下载：</p>
+              <pre class="codeblock mt-2">pose sample
+# → sample_sprint.csv 已复制到当前目录（438 KB）</pre>
             </div>
 
             <div>
@@ -422,17 +433,43 @@ source pose-env/bin/activate        # macOS / Linux
 pip install pose-platform</pre>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">可选依赖</h3>
-          <pre class="codeblock mt-2"># 本地后端 (pose serve) — 接收 iPhone 上传 + 运行分析服务器
+          <pre class="codeblock mt-2"># 运动包 — 安装专项运动分析工具
+pip install 'pose-platform[badminton]'         # 羽毛球：挥拍检测、击球分类、评分
+# pip install 'pose-platform[basketball]'     # 篮球（即将推出）
+
+# 全部运动
+pip install 'pose-platform[all-sports]'
+
+# 本地后端 (pose serve) — 接收 iPhone 上传 + 运行分析服务器
 pip install 'pose-platform[server]'
 
-# LLM 对话 (pose chat) — Claude、DeepSeek、Qwen
+# LLM 对话 (pose chat) — DeepSeek（默认）、Claude、Qwen
 pip install 'pose-platform[llm]'
 
-# 全部 — 本地后端 + AI 对话
-pip install 'pose-platform[server,llm]'
+# 全部 — 所有运动 + 后端 + AI 对话
+pip install 'pose-platform[all]'
 
-# Claude Code 集成 (pose chat with Claude)
-npm install -g @anthropic-ai/claude-code</pre>
+# Claude Code shell（可选，替代默认 http_api 提供程序）
+npm install -g @anthropic-ai/claude-code  # 常规 pose chat 使用不需要</pre>
+
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Extra</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">包含</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">用途</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[badminton]</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-sport-badminton</code></td><td class="py-2">羽毛球分析</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[all-sports]</td><td class="py-2 pr-4">所有运动包</td><td class="py-2">多运动研究</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[server]</td><td class="py-2 pr-4">fastapi, uvicorn, python-multipart</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[llm]</td><td class="py-2 pr-4">openai, anthropic</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve /chat</code></td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">[all]</td><td class="py-2 pr-4">all-sports + server + llm</td><td class="py-2">完整安装</td></tr>
+              </tbody>
+            </table>
+          </div>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">常见问题排查</h3>
           <div class="mt-3 space-y-4 text-sm">
@@ -465,6 +502,14 @@ python3 -m products.pose_cli.cli version</pre>
               <pre class="codeblock mt-1">wsl --install
 wsl
 # 然后按上述 Linux 方式操作</pre>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200"><code>pose chat</code> 启动后提示 "HTTP API key not set" 退出</p>
+              <p class="text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code> 需要 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">openai</code> 包和 API key：</p>
+              <pre class="codeblock mt-1">pip install openai>=1.50
+echo 'POSE_DEEPSEEK_API_KEY=sk-xxx' > .env   # 免费注册：platform.deepseek.com
+pose chat</pre>
+              <p class="mt-1 text-ink-500 dark:text-ink-400"><a href="#llm-chat" class="underline">完整 LLM 配置 →</a></p>
             </div>
           </div>
         </section>
@@ -601,15 +646,34 @@ pose analyze data/session.csv --tool stats --no-cache</pre>
 
           
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white"><code>pose tools</code></h3>
-          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">列出所有已注册的工具。</p>
-          <pre class="codeblock mt-2">pose tools                  # 简洁表格
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">列出所有已注册的工具，含版本号。</p>
+          <pre class="codeblock mt-2">pose tools                  # 简洁表格：名称、版本、状态、运动、描述
 pose tools --detail         # 每个工具的完整参数详情
 pose tools --sport &lt;id&gt;     # 按运动筛选（如 badminton、sprint）</pre>
 
           
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose sample</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">将内置的示例数据文件（<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">sample_sprint.csv</code>）复制到当前目录。无需网络 — 示例文件已包含在 pip 包中。</p>
+          <pre class="codeblock mt-2">pose sample
+# → 示例数据已复制到当前目录（438 KB）
+# → 下一步：pose analyze sample_sprint.csv --tool stats</pre>
+
+          
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose sports</code></h3>
-          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">列出官方支持的运动及其可用工具。</p>
-          <pre class="codeblock mt-2">pose sports</pre>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">管理运动：列出已安装的运动、添加自定义运动或创建新的运动包。</p>
+          <pre class="codeblock mt-2">pose sports list                # 内置 + 已安装运动包（默认）
+pose sports add &lt;id&gt;            # 添加自定义运动（写入 .pose/config.json）
+pose sports remove &lt;id&gt;         # 移除自定义运动
+pose sports create &lt;id&gt;         # 生成新的运动包脚手架</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><strong>安装运动包：</strong>额外运动以独立 pip 包形式分发。通过 pip extras 或直接安装：</p>
+          <pre class="codeblock mt-1">pip install pose-platform[badminton]
+# 或
+pip install pose-sport-badminton</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><strong>创建新运动：</strong>使用 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports create</code> 生成脚手架，然后以可编辑模式安装：</p>
+          <pre class="codeblock mt-1">pose sports create basketball
+# → 生成 sports/basketball/ 含 pyproject.toml、示例工具、测试
+pip install -e sports/basketball
+pose tools --sport basketball</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose gaps</code></h3>
@@ -629,9 +693,19 @@ pose cache clear &lt;file.csv&gt;             # 清空特定文件的缓存</pre
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose version</code></h3>
-          <pre class="codeblock mt-2">pose version                            # 平台 + 工具版本
-pose version --changelog                # 技术更新日志
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">显示版本信息 — 动态检测已安装的运动包。</p>
+          <pre class="codeblock mt-2">pose version                            # 平台 + 已安装运动
+pose version --changelog                # 技术更新日志（CHANGELOG.md）
 pose version --release-notes            # 面向用户的发布说明</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">示例输出：</p>
+          <pre class="codeblock mt-1">{
+  "platform": "1.25.3",
+  "sports": {
+    "freeplay":  {"version": "1.25.3", "builtin": true},
+    "sprint":    {"version": "1.25.3", "builtin": true},
+    "badminton": {"version": "1.13.1", "builtin": false, "tools_count": 7}
+  }
+}</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose chat</code></h3>
@@ -886,46 +960,60 @@ pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
         
         <section id="llm-chat">
           <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">LLM 驱动的分析（<code>pose chat</code>）</h2>
-          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI 包含可选的 AI 对话模式，让你用自然语言询问数据问题。支持 Claude、DeepSeek 和 Qwen。</p>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI 包含 AI 对话模式，让你用自然语言询问数据问题。默认使用 <strong>DeepSeek</strong> — 免费额度，邮箱注册，全球可用。</p>
 
-          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">快速配置方案</h3>
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">快速配置</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">安装 LLM 扩展并创建 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.env</code> 文件 — Pose CLI 自动加载。无需 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">export</code>、无需 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">source</code>。</p>
+          <pre class="codeblock mt-2">pip install 'pose-platform[llm]'
+echo 'POSE_DEEPSEEK_API_KEY=sk-xxx' > .env
+pose chat</pre>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400">在 <a href="https://platform.deepseek.com" class="underline">platform.deepseek.com</a> 免费注册获取 DeepSeek API key。</p>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">提供商配置</h3>
 
           <div class="mt-4 space-y-4">
             <div class="card">
-              <h4 class="font-semibold text-ink-900 dark:text-white">使用 DeepSeek（推荐研究人员）</h4>
-              <pre class="codeblock mt-2">export POSE_DEEPSEEK_API_KEY=sk-xxx
+              <h4 class="font-semibold text-ink-900 dark:text-white">DeepSeek（默认）</h4>
+              <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">免费额度，邮箱注册，全球可用。</p>
+              <pre class="codeblock mt-2">echo 'POSE_DEEPSEEK_API_KEY=sk-xxx' > .env
 pose chat</pre>
             </div>
 
             <div class="card">
-              <h4 class="font-semibold text-ink-900 dark:text-white">使用 Claude</h4>
-              <pre class="codeblock mt-2">export ANTHROPIC_API_KEY=sk-xxx
+              <h4 class="font-semibold text-ink-900 dark:text-white">Claude（最佳分析质量）</h4>
+              <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">需要 Anthropic API key。可选安装 Claude Code CLI shell。</p>
+              <pre class="codeblock mt-2">export ANTHROPIC_API_KEY=sk-ant-...
 pose chat</pre>
+              <p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Claude Code shell（可选）：<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">npm install -g @anthropic-ai/claude-code</code></p>
             </div>
 
             <div class="card">
-              <h4 class="font-semibold text-ink-900 dark:text-white">使用 Qwen（中文优化）</h4>
+              <h4 class="font-semibold text-ink-900 dark:text-white">Qwen / DashScope（中文优化）</h4>
               <pre class="codeblock mt-2">export POSE_REGION=cn
 export POSE_CN_API_KEY=sk-xxx
 pose chat</pre>
             </div>
-
-            <div class="card">
-              <h4 class="font-semibold text-ink-900 dark:text-white">开发者模式（启用在研工具）</h4>
-              <pre class="codeblock mt-2">export POSE_ENABLE_WIP_TOOLS=1
-pose tools</pre>
-            </div>
           </div>
 
-          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">示例会话</h3>
-          <pre class="codeblock mt-2">> session_20260720.csv 里有多少次挥拍？
-[Tool: detect_swing_multifeature] 检测到 14 次挥拍
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">区域路由</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">默认配置在所有区域使用 DeepSeek。可通过 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> 或环境变量覆盖。</p>
+          <pre class="codeblock mt-2"># 默认路由：
+# US/EU 区域：DeepSeek (http_api) → Claude（如已配置则回退）
+# CN 区域：  Qwen-Plus (http_api) → DeepSeek（回退）
 
-> 最快的一次是哪次？
+# 强制指定区域：
+export POSE_REGION=cn    # CN 路由（需 manifest 配置）
+export POSE_REGION=us    # US 路由（默认）</pre>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">示例会话</h3>
+          <pre class="codeblock mt-2">> 这段录制中有多少个动作片段？
+[Tool: detect_action_boundaries] 检测到 14 个动作片段
+
+> 最快的是哪个？
 [Tool: detect_velocity] 峰值在 2.3 秒，18.5 m/s
 
-> 对比第 3 次和第 7 次挥拍
-[Tool: compare_with_reference] 肘部角度：差异 15°，...</pre>
+> 分析跑步步态模式
+[Tool: analyze_running_gait] 步频：180 spm，对称性：0.94，...</pre>
         </section>
 
         
@@ -1021,6 +1109,44 @@ pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool detect_action_
             <li>在电脑上从 iCloud Drive 下载</li>
             <li><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mov</code> 视频与 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">_3d.csv</code> 骨骼文件同名配对</li>
           </ol>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">支持的端点</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code> 实现了 20+ 个与 Pose Coach iOS App 兼容的 API 端点：</p>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">端点</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">方法</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">用途</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300 font-mono text-xs">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/health /health/strict</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">健康检查</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/auth/anonymous</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">匿名认证（返回 JWT）</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/auth/refresh</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">令牌刷新</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/user/me</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">用户档案</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/sports</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">运动列表</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/capabilities</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">工具列表 + 缺口</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/tools</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">工具定义</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/models/{sport}</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">AFM 模型状态</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/upload</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">接收录制数据</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/sessions</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">录制列表</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/sessions/metadata</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">自动生成标题/摘要</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/analyze</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">运行分析工具</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/chat</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">AI 教练对话</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/chat/stream</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">SSE 流式对话</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/subjects</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">受试者列表</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/subjects/{id}/sessions</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">受试者录制记录</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/subjects/{id}/progress</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">进度数据</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/generate_report</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">综合报告</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/generate_subject_training_plan</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">跨录制训练计划</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/annotations/status</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">标注状态</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/corrections</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">骨骼修正</td></tr>
+                <tr><td class="py-1.5 pr-4">/ios/feature-flags</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">功能开关</td></tr>
+              </tbody>
+            </table>
+          </div>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white"><code>pose serve</code> 与云端后端对比</h3>
           <div class="mt-3 overflow-x-auto">

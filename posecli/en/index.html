@@ -66,7 +66,7 @@
     <div class="md:col-span-5">
       <pre class="codeblock"><span class="text-ink-400">$</span> pose analyze data/session.csv \
     --tool detect_velocity
-<span class="text-ink-400">→</span> 38 swings detected
+<span class="text-ink-400">→</span> 14 action segments detected
 <span class="text-ink-400">→</span> peak velocity 28.4 m/s
 <span class="text-ink-400">→</span> stability index 0.72
 
@@ -89,11 +89,11 @@
       </div>
       <div class="card">
         <h3 class="font-semibold text-ink-900 dark:text-white">PE programs</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Standardized motion statistics for student cohorts — quality flags, joint amplitude, swing counts.</p>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Standardized motion statistics for student cohorts — quality flags, joint amplitude, action detection.</p>
       </div>
       <div class="card">
         <h3 class="font-semibold text-ink-900 dark:text-white">Performance analysts</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Sport-specific rule evaluation (badminton today, more sports next), batch processing, CI-friendly JSON output.</p>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Extensible sport analysis (sprint as baseline, badminton/fitness via platform, custom sports via rules), batch processing, CI-friendly JSON output.</p>
       </div>
     </div>
   </div>
@@ -107,9 +107,9 @@
     </div>
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Motion statistics</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Frame rate, jitter ratio, joint amplitude, data-quality assessment.</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Swing detection</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Multi-feature: velocity peaks, shoulder engagement, direction consistency, arm-involvement filtering.</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Action detection</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Full-body energy-based action boundary detection, applicable across sports.</p></div>
       <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Energy analysis</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Peak energy detection and velocity profiling with configurable time windows.</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Sport-specific rules</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Badminton rule compliance today, more sports planned. Bring-your-own rule sets supported.</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Sport-specific rules</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Extensible via Python classes, with sprint and badminton tools as reference templates.</p></div>
       <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">AI chat (MCP)</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code>pose chat</code> launches Claude Code with all analysis tools pre-loaded for interactive exploration.</p></div>
       <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Gap registry</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Crowdsourced capability requests; temporary implementations auto-generated for unsupported analyses.</p></div>
     </div>
@@ -123,7 +123,7 @@
       <p class="section-lead">A local-first Python CLI with pluggable MCP analysis tools.</p>
       <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
         <li><strong>20+ pluggable analysis tools</strong> — stats, motion segmentation, action detection, velocity profiling, and more</li>
-        <li><strong>Built-in lightweight backend</strong> — <code>pose serve</code> turns your computer into a dev backend, no config needed</li>
+        <li><strong>Built-in lightweight backend</strong> — <code>pose serve</code> turns your computer into a full-featured backend for Pose Coach; analysis, AI coach chat, training plans, and reports all run locally</li>
         <li><strong>MCP Server</strong> — standard protocol, works with Claude Desktop, Claude Code, and custom apps</li>
         <li><strong>JointData3D format</strong> — single skeleton format shared with Pose Coach; accepts CSV and .bin</li>
         <li><strong>Runs 100% locally</strong> — no server required for analysis commands</li>

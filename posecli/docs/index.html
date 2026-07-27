@@ -213,37 +213,46 @@
             </table>
           </div>
 
-          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Supported Sports</h3>
-          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Pose CLI ships with <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">freeplay</code> (general) and <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">sprint</code> as baseline. Researchers can add additional sports locally:</p>
-          <pre class="codeblock mt-3"># List official + custom sports
-pose sports
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Sports as Plugins</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Pose CLI uses Python entry_points to auto-discover sport packages. Built-in sports (<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">freeplay</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">sprint</code>) ship with the base install. Additional sports are installed as independent pip packages:</p>
+          <pre class="codeblock mt-3"># Built-in (always available)
+pose version
+# → sports: freeplay, sprint
 
-# Badminton tools are built-in — just register the sport locally
-pose sports add badminton --since v1.0.0
-# → 14 tools available (7 dedicated + 7 generic)
+# Install badminton — separate package maintained by badminton researchers
+pip install pose-platform[badminton]
+# → installs pose-sport-badminton (7 tools)
 
-# Add your own sport
-pose sports add basketball --since v1.25.0
-# → 6 generic tools immediately available; build dedicated tools on top</pre>
+# Or install the sport package directly
+pip install pose-sport-badminton
+
+# Create your own sport package
+pose sports create basketball
+# → generates sports/basketball/ scaffold with example tool
+# → pip install -e sports/basketball
+# → pose tools --sport basketball
+
+# List installed sports
+pose sports</pre>
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-sm text-left">
               <thead>
                 <tr class="border-b border-ink-200 dark:border-ink-700">
                   <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Sport</th>
-                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Source</th>
-                  <th class="py-2 font-medium text-ink-900 dark:text-white">Dedicated Tools</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Package</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Install</th>
                 </tr>
               </thead>
               <tbody class="text-ink-600 dark:text-ink-300">
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">freeplay</td><td class="py-2 pr-4">baseline</td><td class="py-2">6 generic</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">sprint</td><td class="py-2 pr-4">baseline</td><td class="py-2">4 dedicated + 6 generic</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">badminton</td><td class="py-2 pr-4">platform (enable via <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports add</code>)</td><td class="py-2">7 dedicated + 6 generic</td></tr>
-                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">fitness</td><td class="py-2 pr-4">platform (Pose Coach)</td><td class="py-2">6 generic</td></tr>
-                <tr><td class="py-2 pr-4 font-mono text-xs italic">your sport</td><td class="py-2 pr-4">custom (<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports add</code>)</td><td class="py-2">6 generic + build your own</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">freeplay</td><td class="py-2 pr-4">built-in</td><td class="py-2">default</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">sprint</td><td class="py-2 pr-4">built-in</td><td class="py-2">default</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">badminton</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-sport-badminton</code></td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install pose-platform[badminton]</code></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">basketball (template)</td><td class="py-2 pr-4">create via <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports create</code></td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install -e sports/basketball</code></td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs italic">your sport</td><td class="py-2 pr-4">your package</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install pose-sport-&lt;name&gt;</code></td></tr>
               </tbody>
             </table>
           </div>
-          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><a href="#contributing" class="underline">Add your own sport →</a></p>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400"><strong>For researchers:</strong> Sport packages are independent PyPI packages maintained by domain experts. Each has its own version, release cycle, and maintainer. See <a href="#contributing" class="underline">Contributing →</a></p>
 
           
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Web Annotation Tool</h3>
@@ -303,7 +312,9 @@ pose version</pre>
 
             <div>
               <h3 class="font-semibold text-ink-900 dark:text-white">Step 2: Get sample data</h3>
-              <pre class="codeblock mt-2">curl -O https://posecap.com/samples/sample_sprint.csv</pre>
+              <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Pose CLI ships with a sample sprint recording — no download needed:</p>
+              <pre class="codeblock mt-2">pose sample
+# → sample_sprint.csv copied to current directory (438 KB)</pre>
             </div>
 
             <div>
@@ -422,17 +433,43 @@ source pose-env/bin/activate        # macOS / Linux
 pip install pose-platform</pre>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Optional Dependencies</h3>
-          <pre class="codeblock mt-2"># Local backend (pose serve) — receive iPhone uploads + run analysis server
+          <pre class="codeblock mt-2"># Sport packages — install domain-specific analysis tools
+pip install 'pose-platform[badminton]'         # Badminton: swing detection, stroke classification, scoring
+# pip install 'pose-platform[basketball]'     # Basketball (future)
+
+# All sports
+pip install 'pose-platform[all-sports]'
+
+# Local backend (pose serve) — receive iPhone uploads + run analysis server
 pip install 'pose-platform[server]'
 
-# LLM chat (pose chat) — Claude, DeepSeek, Qwen
+# LLM chat (pose chat) — DeepSeek (default), Claude, Qwen
 pip install 'pose-platform[llm]'
 
-# Everything — local backend + AI chat
-pip install 'pose-platform[server,llm]'
+# Everything — all sports + backend + AI chat
+pip install 'pose-platform[all]'
 
-# Claude Code integration (pose chat with Claude)
-npm install -g @anthropic-ai/claude-code</pre>
+# Claude Code shell (optional alternative to the default http_api provider)
+npm install -g @anthropic-ai/claude-code  # not required for normal pose chat usage</pre>
+
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Extra</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Includes</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Used by</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[badminton]</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-sport-badminton</code></td><td class="py-2">Badminton analysis</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[all-sports]</td><td class="py-2 pr-4">all sport packages</td><td class="py-2">Multi-sport research</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[server]</td><td class="py-2 pr-4">fastapi, uvicorn, python-multipart</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[llm]</td><td class="py-2 pr-4">openai, anthropic</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve /chat</code></td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">[all]</td><td class="py-2 pr-4">all-sports + server + llm</td><td class="py-2">Full installation</td></tr>
+              </tbody>
+            </table>
+          </div>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Troubleshooting</h3>
           <div class="mt-3 space-y-4 text-sm">
@@ -465,6 +502,14 @@ python3 -m products.pose_cli.cli version</pre>
               <pre class="codeblock mt-1">wsl --install
 wsl
 # Then follow Linux instructions above</pre>
+            </div>
+            <div>
+              <p class="font-medium text-ink-800 dark:text-ink-200"><code>pose chat</code> starts but exits with "HTTP API key not set"</p>
+              <p class="text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code> needs the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">openai</code> package and an API key:</p>
+              <pre class="codeblock mt-1">pip install openai>=1.50
+echo 'POSE_DEEPSEEK_API_KEY=sk-xxx' > .env   # free tier: platform.deepseek.com
+pose chat</pre>
+              <p class="mt-1 text-ink-500 dark:text-ink-400"><a href="#llm-chat" class="underline">Full LLM setup →</a></p>
             </div>
           </div>
         </section>
@@ -601,15 +646,34 @@ pose analyze data/session.csv --tool stats --no-cache</pre>
 
           
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white"><code>pose tools</code></h3>
-          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">List all registered tools.</p>
-          <pre class="codeblock mt-2">pose tools                  # Compact table
-pose tools --detail         # Full parameter details
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">List all registered tools with version numbers.</p>
+          <pre class="codeblock mt-2">pose tools                  # Compact table: Name, Version, Status, Sport, Description
+pose tools --detail         # Full parameter details for each tool
 pose tools --sport &lt;id&gt;     # Filter by sport (e.g., badminton, sprint)</pre>
 
           
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose sample</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Copy the bundled sample data file (<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">sample_sprint.csv</code>) to the current directory. No network required — the sample is included in the pip package.</p>
+          <pre class="codeblock mt-2">pose sample
+# → sample_sprint.csv copied to current directory (438 KB)
+# → Next: pose analyze sample_sprint.csv --tool stats</pre>
+
+          
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose sports</code></h3>
-          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">List supported sports and their available tools.</p>
-          <pre class="codeblock mt-2">pose sports</pre>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Manage sports: list installed sports, add custom sports, or create new sport packages.</p>
+          <pre class="codeblock mt-2">pose sports list                # Built-in + installed sport packages (default)
+pose sports add &lt;id&gt;            # Add a custom sport (writes .pose/config.json)
+pose sports remove &lt;id&gt;         # Remove a custom sport
+pose sports create &lt;id&gt;         # Generate new sport package scaffold</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><strong>Installing sport packages:</strong> Additional sports are distributed as independent pip packages. Install via pip extras or directly:</p>
+          <pre class="codeblock mt-1">pip install pose-platform[badminton]
+# or
+pip install pose-sport-badminton</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><strong>Creating a new sport:</strong> Use <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports create</code> to scaffold, then install in editable mode:</p>
+          <pre class="codeblock mt-1">pose sports create basketball
+# → generates sports/basketball/ with pyproject.toml, example tool, tests
+pip install -e sports/basketball
+pose tools --sport basketball</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose gaps</code></h3>
@@ -629,9 +693,19 @@ pose cache clear &lt;file.csv&gt;             # Clear cache for specific file</p
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose version</code></h3>
-          <pre class="codeblock mt-2">pose version                            # Platform + tool versions
-pose version --changelog                # Technical changelog
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Display version information — dynamically detects installed sport packages.</p>
+          <pre class="codeblock mt-2">pose version                            # Platform + installed sports
+pose version --changelog                # Technical changelog (CHANGELOG.md)
 pose version --release-notes            # User-facing release notes</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Example output:</p>
+          <pre class="codeblock mt-1">{
+  "platform": "1.25.3",
+  "sports": {
+    "freeplay":  {"version": "1.25.3", "builtin": true},
+    "sprint":    {"version": "1.25.3", "builtin": true},
+    "badminton": {"version": "1.13.1", "builtin": false, "tools_count": 7}
+  }
+}</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose chat</code></h3>
@@ -886,46 +960,60 @@ pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
         
         <section id="llm-chat">
           <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">LLM-Powered Analysis (<code>pose chat</code>)</h2>
-          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI includes an optional AI chat mode that lets you ask natural-language questions about your data. Supports Claude, DeepSeek, and Qwen.</p>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI includes an AI chat mode that lets you ask natural-language questions about your data. The default provider is <strong>DeepSeek</strong> — free tier, email signup, global access.</p>
 
-          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Quick-Start Configurations</h3>
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Quick Setup</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Install the LLM extra and create a <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.env</code> file — Pose CLI loads it automatically. No <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">export</code>, no <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">source</code> needed.</p>
+          <pre class="codeblock mt-2">pip install 'pose-platform[llm]'
+echo 'POSE_DEEPSEEK_API_KEY=sk-xxx' > .env
+pose chat</pre>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400">Get a free DeepSeek API key at <a href="https://platform.deepseek.com" class="underline">platform.deepseek.com</a>.</p>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Providers</h3>
 
           <div class="mt-4 space-y-4">
             <div class="card">
-              <h4 class="font-semibold text-ink-900 dark:text-white">With DeepSeek Chat (recommended for researchers)</h4>
-              <pre class="codeblock mt-2">export POSE_DEEPSEEK_API_KEY=sk-xxx
+              <h4 class="font-semibold text-ink-900 dark:text-white">DeepSeek (default)</h4>
+              <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Free tier, email signup. Works globally.</p>
+              <pre class="codeblock mt-2">echo 'POSE_DEEPSEEK_API_KEY=sk-xxx' > .env
 pose chat</pre>
             </div>
 
             <div class="card">
-              <h4 class="font-semibold text-ink-900 dark:text-white">With Claude Chat</h4>
-              <pre class="codeblock mt-2">export ANTHROPIC_API_KEY=sk-xxx
+              <h4 class="font-semibold text-ink-900 dark:text-white">Claude (best quality)</h4>
+              <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Requires Anthropic API key. Optional Claude Code CLI shell.</p>
+              <pre class="codeblock mt-2">export ANTHROPIC_API_KEY=sk-ant-...
 pose chat</pre>
+              <p class="mt-1 text-sm text-ink-500 dark:text-ink-400">Claude Code shell (optional): <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">npm install -g @anthropic-ai/claude-code</code></p>
             </div>
 
             <div class="card">
-              <h4 class="font-semibold text-ink-900 dark:text-white">With Qwen (Chinese-optimized)</h4>
+              <h4 class="font-semibold text-ink-900 dark:text-white">Qwen / DashScope (Chinese-optimized)</h4>
               <pre class="codeblock mt-2">export POSE_REGION=cn
 export POSE_CN_API_KEY=sk-xxx
 pose chat</pre>
             </div>
-
-            <div class="card">
-              <h4 class="font-semibold text-ink-900 dark:text-white">Developer (with WIP tools)</h4>
-              <pre class="codeblock mt-2">export POSE_ENABLE_WIP_TOOLS=1
-pose tools</pre>
-            </div>
           </div>
 
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Region Routing</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">The default configuration uses DeepSeek for all regions. You can override via <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> or environment variables.</p>
+          <pre class="codeblock mt-2"># Default routing:
+# US/EU region:  DeepSeek (http_api) → Claude (fallback if configured)
+# CN region:     Qwen-Plus (http_api) → DeepSeek (fallback)
+
+# Force a region:
+export POSE_REGION=cn    # CN routing (requires manifest config)
+export POSE_REGION=us    # US routing (default)</pre>
+
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Example Session</h3>
-          <pre class="codeblock mt-2">> How many swings are in session_20260720.csv?
-[Tool: detect_swing_multifeature] Found 14 swings
+          <pre class="codeblock mt-2">> How many action segments are in this recording?
+[Tool: detect_action_boundaries] Found 14 action segments
 
 > What was the fastest one?
 [Tool: detect_velocity] Peak at 2.3s, 18.5 m/s
 
-> Compare swing #3 with #7
-[Tool: compare_with_reference] Elbow angle: 15° difference, ...</pre>
+> Analyze the running gait pattern
+[Tool: analyze_running_gait] Cadence: 180 spm, symmetry: 0.94, ...</pre>
         </section>
 
         
@@ -1021,6 +1109,44 @@ pose analyze pose-data/20260723T140000_seg_1_iPhone_3d.csv --tool detect_action_
             <li>On your computer, download from iCloud Drive</li>
             <li>The <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mov</code> video pairs with the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">_3d.csv</code> skeleton (same filename stem)</li>
           </ol>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Supported Endpoints</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code> implements 20+ API endpoints compatible with the Pose Coach iOS app:</p>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Endpoint</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Method</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Purpose</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300 font-mono text-xs">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/health /health/strict</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">Health check</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/auth/anonymous</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">Anonymous auth (returns JWT)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/auth/refresh</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">Token refresh</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/user/me</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">User profile</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/sports</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">Sport list</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/capabilities</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">Tool list + gaps</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/tools</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">Tool definitions</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/models/{sport}</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">AFM model status</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/upload</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">Receive recordings</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/sessions</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">Session list</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/sessions/metadata</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">Auto-generate title/summary</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/analyze</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">Run analysis tools</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/chat</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">AI coach chat</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/chat/stream</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">SSE streaming chat</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/subjects</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">Subject list</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/subjects/{id}/sessions</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">Subject's sessions</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/subjects/{id}/progress</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">Progress data</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/generate_report</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">Comprehensive report</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/generate_subject_training_plan</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">Cross-session training plan</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/annotations/status</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">Annotation status</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">/corrections</td><td class="py-1.5 pr-4">POST</td><td class="py-1.5">Skeleton corrections</td></tr>
+                <tr><td class="py-1.5 pr-4">/ios/feature-flags</td><td class="py-1.5 pr-4">GET</td><td class="py-1.5">Feature flags</td></tr>
+              </tbody>
+            </table>
+          </div>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">What <code>pose serve</code> provides vs the cloud backend</h3>
           <div class="mt-3 overflow-x-auto">

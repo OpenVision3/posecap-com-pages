@@ -66,7 +66,7 @@
     <div class="md:col-span-5">
       <pre class="codeblock"><span class="text-ink-400">$</span> pose analyze data/session.csv \
     --tool detect_velocity
-<span class="text-ink-400">→</span> 38 frappes détectées
+<span class="text-ink-400">→</span> 14 segments d'action détectés
 <span class="text-ink-400">→</span> vitesse de pointe 28,4 m/s
 <span class="text-ink-400">→</span> indice de stabilité 0,72
 
@@ -89,11 +89,11 @@
       </div>
       <div class="card">
         <h3 class="font-semibold text-ink-900 dark:text-white">Programmes d'éducation physique</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Statistiques de mouvement normalisées pour des cohortes d'élèves — indicateurs de qualité, amplitude articulaire, nombre de frappes.</p>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Statistiques de mouvement normalisées pour des cohortes d'élèves — indicateurs de qualité, amplitude articulaire, détection d'actions.</p>
       </div>
       <div class="card">
         <h3 class="font-semibold text-ink-900 dark:text-white">Analystes de la performance</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Évaluation de règles propres à chaque sport (le badminton aujourd'hui, d'autres sports à venir), traitement par lots, sortie JSON adaptée à l'intégration continue.</p>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Analyse sportive extensible (le sprint en référence, badminton/fitness via plateforme, sports personnalisés via des règles), traitement par lots, sortie JSON adaptée à l'intégration continue.</p>
       </div>
     </div>
   </div>
@@ -107,9 +107,9 @@
     </div>
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Statistiques de mouvement</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Fréquence d'images, taux de gigue, amplitude articulaire, évaluation de la qualité des données.</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Détection des frappes</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Multi-critères : pics de vitesse, engagement de l'épaule, cohérence de direction, filtrage de l'implication du bras.</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Détection d'actions</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Détection des limites d'action basée sur l'énergie corporelle globale, applicable à tous les sports.</p></div>
       <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Analyse d'énergie</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Détection des pics d'énergie et profilage de la vitesse avec des fenêtres temporelles configurables.</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Règles propres au sport</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Conformité aux règles du badminton aujourd'hui, d'autres sports prévus. Jeux de règles personnels pris en charge.</p></div>
+      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Règles propres au sport</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Extensible via des classes Python, avec les outils de sprint et de badminton comme modèles de référence.</p></div>
       <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Discussion IA (MCP)</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code>pose chat</code> lance Claude Code avec tous les outils d'analyse préchargés pour une exploration interactive.</p></div>
       <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Registre des lacunes</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Demandes de capacités en mode participatif ; implémentations temporaires générées automatiquement pour les analyses non prises en charge.</p></div>
     </div>
@@ -123,7 +123,7 @@
       <p class="section-lead">Un CLI Python local avec des outils d'analyse MCP enfichables.</p>
       <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
         <li><strong>Plus de 20 outils d'analyse enfichables</strong> — statistiques, segmentation de mouvement, détection d'actions, profilage de vitesse, etc.</li>
-        <li><strong>Backend léger intégré</strong> — <code>pose serve</code> transforme votre ordinateur en backend de développement, sans configuration</li>
+        <li><strong>Backend léger intégré</strong> — <code>pose serve</code> transforme votre ordinateur en backend complet pour Pose Coach ; analyse, coach IA, plans d'entraînement et rapports s'exécutent localement</li>
         <li><strong>Serveur MCP</strong> — protocole standard, compatible avec Claude Desktop, Claude Code et applications personnalisées</li>
         <li><strong>Format JointData3D</strong> — format squelette unique partagé avec Pose Coach ; accepte CSV et .bin</li>
         <li><strong>100 % local</strong> — aucun serveur requis pour les commandes d'analyse</li>
