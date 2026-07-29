@@ -82,6 +82,7 @@
           <a href="#cli-commands" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">CLI 命令</a>
           <a href="#tools" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">工具参考</a>
           <a href="#env-vars" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">环境变量</a>
+          <a href="#caching" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">缓存机制</a>
           <a href="#llm-chat" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">LLM 对话</a>
           <a href="#local-backend" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">本地后端</a>
           <a href="#contributing" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">贡献指南</a>
@@ -221,7 +222,7 @@ pose version
 
 # 安装羽毛球 — 由羽毛球研究者维护的独立包
 pip install pose-platform[badminton]
-# → 安装 pose-sport-badminton（7 个工具）
+# → 安装 pose-sport-badminton（v1.13.4，8 个工具）
 
 # 或直接安装运动包
 pip install pose-sport-badminton
@@ -443,14 +444,15 @@ pip install 'pose-platform[all-sports]'
 # 本地后端 (pose serve) — 接收 iPhone 上传 + 运行分析服务器
 pip install 'pose-platform[server]'
 
-# LLM 对话 (pose chat) — DeepSeek（默认）、Claude、Qwen
-pip install 'pose-platform[llm]'
+# LLM 对话 (pose chat) — 三种模式可选
+pip install 'pose-platform[llm]'                   # REPL 模式（openai SDK）
+pip install 'pose-platform[mcp]'                   # Claude Code 模式（mcp SDK, >=1.0,<2.0）
 
 # 全部 — 所有运动 + 后端 + AI 对话
 pip install 'pose-platform[all]'
 
-# Claude Code shell（可选，替代默认 http_api 提供程序）
-npm install -g @anthropic-ai/claude-code  # 常规 pose chat 使用不需要</pre>
+# Claude Code 前端（可选，用于 --mode claude / --mode claude-ds）
+npm install -g @anthropic-ai/claude-code</pre>
 
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-sm text-left">
@@ -466,6 +468,7 @@ npm install -g @anthropic-ai/claude-code  # 常规 pose chat 使用不需要</pr
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[all-sports]</td><td class="py-2 pr-4">所有运动包</td><td class="py-2">多运动研究</td></tr>
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[server]</td><td class="py-2 pr-4">fastapi, uvicorn, python-multipart</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code></td></tr>
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[llm]</td><td class="py-2 pr-4">openai, anthropic</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve /chat</code></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[mcp]</td><td class="py-2 pr-4">mcp>=1.0,&lt;2.0</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat --mode claude</code> / <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">--mode claude-ds</code></td></tr>
                 <tr><td class="py-2 pr-4 font-mono text-xs">[all]</td><td class="py-2 pr-4">all-sports + server + llm</td><td class="py-2">完整安装</td></tr>
               </tbody>
             </table>
@@ -627,6 +630,7 @@ for t_idx, t in enumerate(timestamps):
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--tool &lt;name&gt;</td><td class="py-2">要运行的工具（默认：<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">stats</code>）</td></tr>
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--no-cache</td><td class="py-2">跳过缓存，强制重新计算</td></tr>
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--param KEY=VALUE</td><td class="py-2">向工具传递参数（可重复使用）。自动检测类型</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--env &lt;env&gt;</td><td class="py-2">后端环境：<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">local</code>、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">staging</code> 或 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">prod</code>（默认：自动检测）</td></tr>
                 <tr><td class="py-2 pr-4 font-mono text-xs">--subject-id &lt;ID&gt;</td><td class="py-2">用于训练计划停滞检测（需要 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_API_TOKEN</code>）</td></tr>
               </tbody>
             </table>
@@ -699,11 +703,11 @@ pose version --changelog                # 技术更新日志（CHANGELOG.md）
 pose version --release-notes            # 面向用户的发布说明</pre>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">示例输出：</p>
           <pre class="codeblock mt-1">{
-  "platform": "1.25.3",
+  "platform": "1.25.10",
   "sports": {
-    "freeplay":  {"version": "1.25.3", "builtin": true},
-    "sprint":    {"version": "1.25.3", "builtin": true},
-    "badminton": {"version": "1.13.1", "builtin": false, "tools_count": 7}
+    "freeplay":  {"version": "1.25.10", "builtin": true},
+    "sprint":    {"version": "1.25.10", "builtin": true},
+    "badminton": {"version": "1.13.4", "builtin": false, "tools_count": 8}
   }
 }</pre>
 
@@ -711,6 +715,45 @@ pose version --release-notes            # 面向用户的发布说明</pre>
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose chat</code></h3>
           <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">启动交互式 LLM 分析会话。配置方式见<a href="#llm-chat" class="underline">LLM 对话</a>。</p>
           <pre class="codeblock mt-2">pose chat [data_dir]                    # 默认数据目录：../pose-data</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose annotate</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">创建、列出和删除录制的标注。也可启动 Web 标注界面。</p>
+          <pre class="codeblock mt-2">pose annotate create &lt;file.csv&gt; --start &lt;s&gt; --end &lt;s&gt; --label &lt;名称&gt;
+                                [--peak_s &lt;s&gt;] [--hand left|right]
+                                [--quality good|acceptable|poor] [--note "备注"]
+pose annotate list &lt;file.csv&gt;
+pose annotate delete &lt;file.csv&gt; &lt;标注ID&gt;
+pose annotate --serve &lt;file.csv&gt;       # Web 标注界面</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose calib</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">评分校准工作流 — 将工具评分与专家标注进行对比，验证算法准确性。</p>
+          <pre class="codeblock mt-2">pose calib auto-label                  # 自动评分已标注动作
+pose calib validate                    # 对比专家标注验证工具一致性</pre>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">指标</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">说明</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">MAE</td><td class="py-2">工具评分与专家标注之间的平均绝对误差</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">Spearman ρ</td><td class="py-2">排名相关性 — 工具保留正确排序的程度</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">等级一致性</td><td class="py-2">工具等级与专家等级一致的比例（±1 个字母容差）</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose feedback</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">提交和管理反馈 — 包括 bug 报告、功能请求和工具改进建议。</p>
+          <pre class="codeblock mt-2">pose feedback list                     # 列出所有反馈
+pose feedback stats                    # 统计摘要
+pose feedback resolve &lt;id&gt;            # 标记为已解决
+pose feedback dismiss &lt;id&gt;            # 带原因驳回</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose telemetry</code></h3>
@@ -917,6 +960,7 @@ pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
               <tbody class="text-ink-600 dark:text-ink-300">
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_DATA_DIR</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">../pose-data</code></td><td class="py-2">数据文件目录</td></tr>
                 <tr><td class="py-2 pr-4 font-mono text-xs">POSE_ENABLE_WIP_TOOLS</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">0</code></td><td class="py-2">设为 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">1</code> 以启用在研工具</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_PLATFORM_SPORTS</td><td class="py-2 pr-4">(空)</td><td class="py-2">额外平台运动。格式：<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">badminton:v1.0.0,fitness:v1.13.0</code>。在 Pose Coach 后端设置以暴露 CLI 基准之外的运动</td></tr>
               </tbody>
             </table>
           </div>
@@ -934,7 +978,25 @@ pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
               <tbody class="text-ink-600 dark:text-ink-300">
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">ANTHROPIC_API_KEY</td><td class="py-2 pr-4">Claude（Anthropic）</td><td class="py-2">API key 来自 <a href="https://console.anthropic.com" class="underline">console.anthropic.com</a></td></tr>
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_DEEPSEEK_API_KEY</td><td class="py-2 pr-4">DeepSeek</td><td class="py-2">API key 来自 <a href="https://platform.deepseek.com" class="underline">platform.deepseek.com</a>（免费额度可用）</td></tr>
-                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_CN_API_KEY</td><td class="py-2 pr-4">Qwen（DashScope）</td><td class="py-2">API key 来自 <a href="https://dashscope.aliyun.com" class="underline">dashscope.aliyun.com</a></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_DEEPSEEK_API_ENDPOINT</td><td class="py-2 pr-4">DeepSeek</td><td class="py-2">覆盖 Base URL（默认：<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">https://api.deepseek.com</code>）</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_CN_API_KEY</td><td class="py-2 pr-4">Qwen（DashScope）</td><td class="py-2">API key 来自 <a href="https://dashscope.aliyun.com" class="underline">dashscope.aliyun.com</a></td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_CN_API_ENDPOINT</td><td class="py-2 pr-4">Qwen（DashScope）</td><td class="py-2">覆盖 Base URL。国际访问使用 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">https://dashscope-intl.aliyuncs.com/compatible-mode/v1</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">对话模式</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">变量</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">默认值</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">说明</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_CHAT_MODE</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">repl</code></td><td class="py-2">对话前端模式：<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">repl</code>（内置 + DeepSeek）、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">claude</code>（Claude Code + Claude）、<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">claude-ds</code>（Claude Code + DeepSeek）。CLI <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">--mode</code> 参数可覆盖</td></tr>
               </tbody>
             </table>
           </div>
@@ -955,6 +1017,24 @@ pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
               </tbody>
             </table>
           </div>
+        </section>
+
+        
+        <section id="caching">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">缓存机制</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI 缓存工具结果以避免重复计算相同分析。缓存键为：<strong>文件标识</strong>（mtime + size）+ <strong>工具名称</strong> + <strong>工具版本</strong>。</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">缓存失效</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">源文件变更（mtime/size）或 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> 中工具版本变更时，缓存自动失效。工具升级后旧缓存自动作废。</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">缓存命令</h3>
+          <pre class="codeblock mt-2">pose cache list                          # 所有缓存条目
+pose cache clear                         # 清空全部缓存
+pose cache clear &lt;file.csv&gt;             # 清空特定文件的缓存</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">跳过缓存：<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze data.csv --tool stats --no-cache</code>。命中缓存时 CLI 输出 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">[CACHE HIT]</code>。</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">CI/CD 集成</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">在 CI 流水线中缓存 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.pose/cache/</code> 目录。以 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> 的哈希值作为缓存键可在工具版本升级时正确失效。</p>
         </section>
 
         
@@ -994,6 +1074,57 @@ export POSE_CN_API_KEY=sk-xxx
 pose chat</pre>
             </div>
           </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">对话模式</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code> 支持三种前端模式。通过 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">--mode</code> 参数或 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_CHAT_MODE</code> 环境变量切换。</p>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">模式</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">前端</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">后端</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">安装</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">repl</td><td class="py-2 pr-4">内置 REPL</td><td class="py-2 pr-4">DeepSeek</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">[llm]</code> + key</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">claude</td><td class="py-2 pr-4">Claude Code CLI</td><td class="py-2 pr-4">Claude 原生</td><td class="py-2">Claude Code + <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">[mcp]</code></td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">claude-ds</td><td class="py-2 pr-4">Claude Code CLI</td><td class="py-2 pr-4">DeepSeek</td><td class="py-2">Claude Code + <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">[mcp]</code> + key</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <pre class="codeblock mt-3"># REPL 模式（默认）
+pose chat
+
+# Claude Code + Claude 原生（最佳体验）
+npm install -g @anthropic-ai/claude-code
+pip install 'pose-platform[mcp]'
+pose chat --mode claude
+
+# Claude Code + DeepSeek
+echo 'POSE_DEEPSEEK_API_KEY=sk-xxx' > .env
+pose chat --mode claude-ds</pre>
+          <div class="mt-3 rounded-lg border border-ink-200 bg-ink-50 p-4 dark:border-ink-700 dark:bg-ink-900">
+            <p class="text-sm font-semibold text-ink-800 dark:text-ink-200">工作原理</p>
+            <p class="mt-1 text-sm text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code> 读取 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_DEEPSEEK_API_KEY</code>，在启动 Claude Code 前自动将以下环境变量注入：</p>
+            <table class="mt-2 w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Claude Code 环境变量</th>
+                  <th class="py-1.5 font-medium text-ink-900 dark:text-white">值</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300 font-mono text-xs">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">ANTHROPIC_BASE_URL</td><td class="py-1.5">https://api.deepseek.com/anthropic</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">ANTHROPIC_AUTH_TOKEN</td><td class="py-1.5">$POSE_DEEPSEEK_API_KEY</td></tr>
+                <tr><td class="py-1.5 pr-4">ANTHROPIC_MODEL</td><td class="py-1.5">deepseek-v4-pro[1m]</td></tr>
+              </tbody>
+            </table>
+            <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">这把 DeepSeek 兼容 Anthropic 的 API 端点桥接到 Claude Code 的原生认证模型。你只需要 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_DEEPSEEK_API_KEY</code> — 转换过程由 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code> 透明处理。</p>
+          </div>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400"><strong>注意：</strong>如果你直接启动 Claude Code（不通过 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code>），则需要自行设置 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">ANTHROPIC_BASE_URL</code> + <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">ANTHROPIC_AUTH_TOKEN</code>。<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat --mode claude-ds</code> 会自动为你完成这些配置。</p>
+          <p class="mt-3 text-sm text-ink-600 dark:text-ink-300">使用 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">--mode claude</code> 或 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">--mode claude-ds</code> 时，Pose CLI 同时自动生成临时 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mcp.json</code>，将 Claude Code 连接到 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-analysis</code> MCP 服务器并加载所有已注册工具 — 无需手动配置。</p>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">区域路由</h3>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">默认配置在所有区域使用 DeepSeek。可通过 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> 或环境变量覆盖。</p>
@@ -1229,6 +1360,8 @@ class MyTool(DirectTool):
     status = "wip"                     # "wip" 或 "stable"
     supported_sports = []              # [] = 所有运动
     tier = 1                           # 1 = 主要, 2 = 备选
+    depends_on = []                    # 可选：工具依赖
+    requires_session_context_by_sport = ["badminton"]  # 可选：运动专项元数据
 
     def run(self, tool_input: dict, output_dir: Path) -> str:
         pose = load_pose(tool_input["path"])
@@ -1260,6 +1393,26 @@ OFFICIAL_SPORTS = [
             <li>将工具类中的 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">status = "stable"</code></li>
             <li>在 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> → <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">tools</code> 中添加版本条目</li>
           </ol>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">分发你的工具</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">两种分发自定义工具的方式：</p>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white"></th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">路径一：运动包</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">路径二：并入平台</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium">最适合</td><td class="py-2 pr-4">运动专项工具集</td><td class="py-2">通用工具</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium">分发方式</td><td class="py-2 pr-4">独立 PyPI 包</td><td class="py-2">成为 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-platform</code> 的一部分</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium">版本管理</td><td class="py-2 pr-4">你自己的版本号和发布周期</td><td class="py-2">跟随平台发布节奏</td></tr>
+                <tr><td class="py-2 pr-4 font-medium">操作方法</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports create &lt;id&gt;</code> 然后发布</td><td class="py-2">向 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">posecap/pose-platform</code> 提交 PR</td></tr>
+              </tbody>
+            </table>
+          </div>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">数据加载最佳实践</h3>
           <ul class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">

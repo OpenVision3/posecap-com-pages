@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pose CLI — Motion analysis platform for researchers — PoseCap Inc.</title>
-  <meta name="description" content="Pose CLI turns 3D pose data into reproducible motion reports. A command-line + MCP toolkit for sports scientists, PE programs, and performance analysts. Currently in Early Access.">
+  <title>Pose CLI — Open motion-analysis toolkit for sports scientists — PoseCap Inc.</title>
+  <meta name="description" content="Pose CLI turns 3D pose data into reproducible motion reports. A command-line toolkit for sports scientists, PE programs, and performance analysts. Pip-installable, runs entirely on your machine.">
   <link rel="alternate" hreflang="en" href="https://posecap.com/posecli/en/">
   <link rel="alternate" hreflang="zh" href="https://posecap.com/posecli/zh/">
   <link rel="alternate" hreflang="fr" href="https://posecap.com/posecli/fr/">
   <link rel="alternate" hreflang="x-default" href="https://posecap.com/posecli/en/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Pose CLI — Motion analysis platform for researchers">
-  <meta property="og:description" content="Pose CLI turns 3D pose data into reproducible motion reports. A command-line + MCP toolkit for sports scientists, PE programs, and performance analysts. Currently in Early Access.">
+  <meta property="og:title" content="Pose CLI — Open motion-analysis toolkit for sports scientists">
+  <meta property="og:description" content="Pose CLI turns 3D pose data into reproducible motion reports. A command-line toolkit for sports scientists, PE programs, and performance analysts. Pip-installable, runs entirely on your machine.">
   <meta property="og:url" content="https://posecap.com/posecli/en/">
   <meta property="og:site_name" content="PoseCap Inc.">
   <meta property="og:locale" content="en_US">
@@ -56,22 +56,24 @@
         <img src="/posecli/images/logo.svg" alt="Pose CLI" class="h-12 w-12 rounded-xl shadow-sm">
         <span class="badge-early">Early access</span>
       </div>
-      <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">Pose CLI — motion analysis for serious work.</h1>
-      <p class="max-w-prose text-lg text-ink-600 dark:text-ink-300">A command-line and MCP toolkit that turns 3D pose data into reproducible motion reports. Built for sports scientists, PE programs, performance analysts, and the teams who need to ship findings — not slide decks.</p>
+      <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">Pose CLI — open motion analysis for serious work.</h1>
+      <p class="max-w-prose text-lg text-ink-600 dark:text-ink-300">A pip-installable toolkit that turns 3D skeleton data into actionable sports analytics. Built for sports scientists, coaches, and performance analysts — with 20+ built-in tools, sport-specific plugins, and a local backend that runs entirely on your machine.</p>
       <div class="flex flex-wrap items-center gap-3 pt-2">
         <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Early%20Access" class="btn-primary">Request early access</a>
         <a href="/posecli/docs/" class="btn-secondary">View docs</a>
       </div>
     </div>
     <div class="md:col-span-5">
-      <pre class="codeblock"><span class="text-ink-400">$</span> pose analyze data/session.csv \
-    --tool detect_velocity
-<span class="text-ink-400">→</span> 14 action segments detected
-<span class="text-ink-400">→</span> peak velocity 28.4 m/s
-<span class="text-ink-400">→</span> stability index 0.72
+      <pre class="codeblock"><span class="text-ink-400">$</span> pip install pose-platform
+<span class="text-ink-400">$</span> pose analyze data/session.csv --tool stats
+<span class="text-ink-400">→</span> data_quality: good, tracking_coverage: 0.98
 
-<span class="text-ink-400">$</span> pose chat ./data
-<span class="text-ink-400">→</span> Launching Claude Code with MCP tools…</pre>
+<span class="text-ink-400">$</span> pose serve
+<span class="text-ink-400">→</span> http://0.0.0.0:8000
+<span class="text-ink-400">→</span> LAN  →  http://192.168.1.x:8000
+
+<span class="text-ink-400">$</span> pose annotate --serve data/session.csv
+<span class="text-ink-400">→</span> Web annotator at http://localhost:8001</pre>
     </div>
   </div>
 </section>
@@ -84,16 +86,16 @@
     </div>
     <div class="grid gap-6 md:grid-cols-3">
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">Sports scientists</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Run reproducible analysis across sessions and athletes, export markdown / JSON for papers and reports.</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">Sports scientists &amp; researchers</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Run reproducible analysis across sessions and athletes. Export markdown / JSON for papers and reports. Publish your tools as independent pip packages.</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">PE programs</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Standardized motion statistics for student cohorts — quality flags, joint amplitude, action detection.</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">Coaches &amp; performance analysts</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Evaluate technique, track progress, compare athletes. Sport-specific tools for badminton, sprint, and more — install only what you need.</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">Performance analysts</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Extensible sport analysis (sprint as baseline, badminton/fitness via platform, custom sports via rules), batch processing, CI-friendly JSON output.</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">PE programs &amp; labs</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Standardized motion statistics for student cohorts. Batch processing, CI-friendly JSON output. Zero cloud dependency — all analysis runs locally.</p>
       </div>
     </div>
   </div>
@@ -102,16 +104,34 @@
 <section class="section bg-ink-50 dark:bg-ink-900/40">
   <div class="container-page">
     <div class="space-y-3 mb-10">
-      <h2 class="section-title">Capabilities</h2>
-      <p class="section-lead">Pluggable analysis tools with a consistent interface.</p>
+      <h2 class="section-title">Key features</h2>
+      <p class="section-lead">Everything you need to go from raw pose data to actionable insights.</p>
     </div>
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Motion statistics</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Frame rate, jitter ratio, joint amplitude, data-quality assessment.</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Action detection</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Full-body energy-based action boundary detection, applicable across sports.</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Energy analysis</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Peak energy detection and velocity profiling with configurable time windows.</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Sport-specific rules</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Extensible via Python classes, with sprint and badminton tools as reference templates.</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">AI chat (MCP)</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code>pose chat</code> launches Claude Code with all analysis tools pre-loaded for interactive exploration.</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">Gap registry</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Crowdsourced capability requests; temporary implementations auto-generated for unsupported analyses.</p></div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">🏃 Sports as Plugins</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Built-in <code>freeplay</code> and <code>sprint</code>. Install sport-specific packages: <code>pip install pose-platform[badminton]</code>. Create your own with <code>pose sports create</code>.</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">🖥️ Built-in Local Backend</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code>pose serve</code> turns your computer into a full backend for Pose Coach — auto-upload, analysis, AI chat, training plans. No cloud required.</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">🏷️ Web Annotation Tool</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Label recordings in your browser with synchronized video + 2D skeleton overlay. Create ground truth for calibration and algorithm validation.</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">🤖 LLM-Powered Analysis</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code>pose chat</code> lets you ask natural-language questions about your data. Defaults to DeepSeek (free tier). Also supports Claude and Qwen.</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">📊 20+ Analysis Tools</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Stats, motion segmentation, action detection, velocity profiling, gait analysis, highlight extraction — all with a consistent CLI interface.</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">🔒 100% Local-First</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Your data never leaves your computer. Analysis, AI chat, and the local backend all run on your machine. Cache built-in for instant re-runs.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -120,11 +140,13 @@
   <div class="container-page grid gap-10 md:grid-cols-2 items-start">
     <div class="space-y-4">
       <h2 class="section-title">Architecture</h2>
-      <p class="section-lead">A local-first Python CLI with pluggable MCP analysis tools.</p>
+      <p class="section-lead">A local-first Python CLI with pluggable sports and a built-in backend.</p>
       <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
         <li><strong>20+ pluggable analysis tools</strong> — stats, motion segmentation, action detection, velocity profiling, and more</li>
+        <li><strong>Sports as plugins</strong> — built-in freeplay + sprint; install badminton, basketball, or create your own via Python entry_points</li>
         <li><strong>Built-in lightweight backend</strong> — <code>pose serve</code> turns your computer into a full-featured backend for Pose Coach; analysis, AI coach chat, training plans, and reports all run locally</li>
-        <li><strong>MCP Server</strong> — standard protocol, works with Claude Desktop, Claude Code, and custom apps</li>
+        <li><strong>Web annotation tool</strong> — <code>pose annotate --serve</code> opens a browser UI with synced video + skeleton for labeling</li>
+        <li><strong>LLM chat</strong> — <code>pose chat</code> with DeepSeek (default, free tier), Claude, or Qwen</li>
         <li><strong>JointData3D format</strong> — single skeleton format shared with Pose Coach; accepts CSV and .bin</li>
         <li><strong>Runs 100% locally</strong> — no server required for analysis commands</li>
       </ul>
@@ -135,7 +157,7 @@
       <pre class="codeblock">timestamp, joint, wx, wy, wz,
 mx, my, mz,
 ldq_x, ldq_y, ldq_z, ldq_w</pre>
-      <p class="text-sm text-ink-500 dark:text-ink-400">Binary <code>.bin</code> from Pose Coach is also accepted natively. Output as Markdown reports or CI-friendly JSON.</p>
+      <p class="text-sm text-ink-500 dark:text-ink-400">Binary <code>.bin</code> from Pose Coach is also accepted natively. Output as Markdown reports or CI-friendly JSON. Works with ARKit, OpenPose, MediaPipe, and motion capture data.</p>
     </div>
   </div>
 </section>

@@ -82,6 +82,7 @@
           <a href="#cli-commands" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">CLI Commands</a>
           <a href="#tools" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Tool Reference</a>
           <a href="#env-vars" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Environment Variables</a>
+          <a href="#caching" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Caching</a>
           <a href="#llm-chat" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">LLM Chat</a>
           <a href="#local-backend" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Local Backend</a>
           <a href="#contributing" class="block rounded-md px-3 py-1.5 text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800">Contributing</a>
@@ -221,7 +222,7 @@ pose version
 
 # Install badminton — separate package maintained by badminton researchers
 pip install pose-platform[badminton]
-# → installs pose-sport-badminton (7 tools)
+# → installs pose-sport-badminton (v1.13.4, 8 tools)
 
 # Or install the sport package directly
 pip install pose-sport-badminton
@@ -443,14 +444,15 @@ pip install 'pose-platform[all-sports]'
 # Local backend (pose serve) — receive iPhone uploads + run analysis server
 pip install 'pose-platform[server]'
 
-# LLM chat (pose chat) — DeepSeek (default), Claude, Qwen
-pip install 'pose-platform[llm]'
+# LLM chat (pose chat) — three modes available
+pip install 'pose-platform[llm]'                   # REPL mode (openai SDK)
+pip install 'pose-platform[mcp]'                   # Claude Code mode (mcp SDK, >=1.0,<2.0)
 
 # Everything — all sports + backend + AI chat
 pip install 'pose-platform[all]'
 
-# Claude Code shell (optional alternative to the default http_api provider)
-npm install -g @anthropic-ai/claude-code  # not required for normal pose chat usage</pre>
+# Claude Code frontend (optional, for --mode claude / --mode claude-ds)
+npm install -g @anthropic-ai/claude-code</pre>
 
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-sm text-left">
@@ -466,6 +468,7 @@ npm install -g @anthropic-ai/claude-code  # not required for normal pose chat us
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[all-sports]</td><td class="py-2 pr-4">all sport packages</td><td class="py-2">Multi-sport research</td></tr>
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[server]</td><td class="py-2 pr-4">fastapi, uvicorn, python-multipart</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code></td></tr>
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[llm]</td><td class="py-2 pr-4">openai, anthropic</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve /chat</code></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">[mcp]</td><td class="py-2 pr-4">mcp>=1.0,&lt;2.0</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat --mode claude</code> / <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">--mode claude-ds</code></td></tr>
                 <tr><td class="py-2 pr-4 font-mono text-xs">[all]</td><td class="py-2 pr-4">all-sports + server + llm</td><td class="py-2">Full installation</td></tr>
               </tbody>
             </table>
@@ -627,6 +630,7 @@ for t_idx, t in enumerate(timestamps):
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--tool &lt;name&gt;</td><td class="py-2">Tool to run (default: <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">stats</code>)</td></tr>
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--no-cache</td><td class="py-2">Skip cache, force recomputation</td></tr>
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--param KEY=VALUE</td><td class="py-2">Pass parameter to tool (repeatable). Auto-detects type</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">--env &lt;env&gt;</td><td class="py-2">Backend environment: <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">local</code>, <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">staging</code>, or <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">prod</code> (default: auto-detect)</td></tr>
                 <tr><td class="py-2 pr-4 font-mono text-xs">--subject-id &lt;ID&gt;</td><td class="py-2">For training plan stagnation detection (requires <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_API_TOKEN</code>)</td></tr>
               </tbody>
             </table>
@@ -699,11 +703,11 @@ pose version --changelog                # Technical changelog (CHANGELOG.md)
 pose version --release-notes            # User-facing release notes</pre>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Example output:</p>
           <pre class="codeblock mt-1">{
-  "platform": "1.25.3",
+  "platform": "1.25.10",
   "sports": {
-    "freeplay":  {"version": "1.25.3", "builtin": true},
-    "sprint":    {"version": "1.25.3", "builtin": true},
-    "badminton": {"version": "1.13.1", "builtin": false, "tools_count": 7}
+    "freeplay":  {"version": "1.25.10", "builtin": true},
+    "sprint":    {"version": "1.25.10", "builtin": true},
+    "badminton": {"version": "1.13.4", "builtin": false, "tools_count": 8}
   }
 }</pre>
 
@@ -711,6 +715,45 @@ pose version --release-notes            # User-facing release notes</pre>
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose chat</code></h3>
           <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Start an interactive LLM-powered analysis session. See <a href="#llm-chat" class="underline">LLM Chat</a> for setup.</p>
           <pre class="codeblock mt-2">pose chat [data_dir]                    # Default data dir: ../pose-data</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose annotate</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Create, list, and delete annotations for a recording. Also launches the web annotation UI.</p>
+          <pre class="codeblock mt-2">pose annotate create &lt;file.csv&gt; --start &lt;s&gt; --end &lt;s&gt; --label &lt;name&gt;
+                                [--peak_s &lt;s&gt;] [--hand left|right]
+                                [--quality good|acceptable|poor] [--note "text"]
+pose annotate list &lt;file.csv&gt;
+pose annotate delete &lt;file.csv&gt; &lt;annotation_id&gt;
+pose annotate --serve &lt;file.csv&gt;       # Web annotation UI</pre>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose calib</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Score calibration workflow — compare tool scores against expert annotations to validate algorithm accuracy.</p>
+          <pre class="codeblock mt-2">pose calib auto-label                  # Auto-score annotated strokes
+pose calib validate                    # Validate tool agreement against expert labels</pre>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Metric</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Description</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">MAE</td><td class="py-2">Mean Absolute Error between tool scores and expert labels</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">Spearman ρ</td><td class="py-2">Rank correlation — how well tool preserves ordering</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">Grade agreement</td><td class="py-2">Fraction where tool grade matches expert grade (±1 letter tolerance)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose feedback</code></h3>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Submit and manage feedback items — bug reports, feature requests, and tool improvement suggestions.</p>
+          <pre class="codeblock mt-2">pose feedback list                     # List all feedback
+pose feedback stats                    # Summary statistics
+pose feedback resolve &lt;id&gt;            # Mark as resolved
+pose feedback dismiss &lt;id&gt;            # Dismiss with reason</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose telemetry</code></h3>
@@ -917,6 +960,7 @@ pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
               <tbody class="text-ink-600 dark:text-ink-300">
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_DATA_DIR</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">../pose-data</code></td><td class="py-2">Directory for data files</td></tr>
                 <tr><td class="py-2 pr-4 font-mono text-xs">POSE_ENABLE_WIP_TOOLS</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">0</code></td><td class="py-2">Set to <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">1</code> to enable work-in-progress tools</td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_PLATFORM_SPORTS</td><td class="py-2 pr-4">(empty)</td><td class="py-2">Additional platform sports. Format: <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">badminton:v1.0.0,fitness:v1.13.0</code>. Set on Pose Coach backend to expose sports beyond the CLI baseline</td></tr>
               </tbody>
             </table>
           </div>
@@ -934,7 +978,25 @@ pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
               <tbody class="text-ink-600 dark:text-ink-300">
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">ANTHROPIC_API_KEY</td><td class="py-2 pr-4">Claude (Anthropic)</td><td class="py-2">API key from <a href="https://console.anthropic.com" class="underline">console.anthropic.com</a></td></tr>
                 <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_DEEPSEEK_API_KEY</td><td class="py-2 pr-4">DeepSeek</td><td class="py-2">API key from <a href="https://platform.deepseek.com" class="underline">platform.deepseek.com</a> (free tier available)</td></tr>
-                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_CN_API_KEY</td><td class="py-2 pr-4">Qwen (DashScope)</td><td class="py-2">API key from <a href="https://dashscope.aliyun.com" class="underline">dashscope.aliyun.com</a></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_DEEPSEEK_API_ENDPOINT</td><td class="py-2 pr-4">DeepSeek</td><td class="py-2">Override base URL (default: <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">https://api.deepseek.com</code>)</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">POSE_CN_API_KEY</td><td class="py-2 pr-4">Qwen (DashScope)</td><td class="py-2">API key from <a href="https://dashscope.aliyun.com" class="underline">dashscope.aliyun.com</a></td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_CN_API_ENDPOINT</td><td class="py-2 pr-4">Qwen (DashScope)</td><td class="py-2">Override base URL. Use <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">https://dashscope-intl.aliyuncs.com/compatible-mode/v1</code> for international access</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Chat Mode</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Variable</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Default</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Description</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr><td class="py-2 pr-4 font-mono text-xs">POSE_CHAT_MODE</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">repl</code></td><td class="py-2">Chat frontend mode: <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">repl</code> (built-in + DeepSeek), <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">claude</code> (Claude Code + Claude), <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">claude-ds</code> (Claude Code + DeepSeek). CLI <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">--mode</code> flag overrides</td></tr>
               </tbody>
             </table>
           </div>
@@ -955,6 +1017,24 @@ pose analyze data/sprint_100m.csv --tool detect_action_boundaries \
               </tbody>
             </table>
           </div>
+        </section>
+
+        
+        <section id="caching">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink-900 dark:text-white">Caching</h2>
+          <p class="mt-2 text-ink-600 dark:text-ink-300">Pose CLI caches tool results to avoid recomputing the same analysis. The cache key is: <strong>file identity</strong> (mtime + size) + <strong>tool name</strong> + <strong>tool version</strong>.</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Cache Invalidation</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Cache is automatically invalidated when the source file changes (mtime/size) or the tool version changes in <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code>. Tool upgrades automatically invalidate old caches.</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">Cache Commands</h3>
+          <pre class="codeblock mt-2">pose cache list                          # All cached entries
+pose cache clear                         # Clear all cache
+pose cache clear &lt;file.csv&gt;             # Clear cache for specific file</pre>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Skip cache with <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze data.csv --tool stats --no-cache</code>. Cache HIT is indicated with <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">[CACHE HIT]</code> in CLI output.</p>
+
+          <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white">CI/CD Integration</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">In CI pipelines, cache the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.pose/cache/</code> directory. Cache key on <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> hash gives correct invalidation on tool version bumps.</p>
         </section>
 
         
@@ -994,6 +1074,57 @@ export POSE_CN_API_KEY=sk-xxx
 pose chat</pre>
             </div>
           </div>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Chat Modes</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code> supports three frontend modes. Switch via <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">--mode</code> flag or <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_CHAT_MODE</code> environment variable.</p>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Mode</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Frontend</th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Backend</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Setup</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">repl</td><td class="py-2 pr-4">Built-in REPL</td><td class="py-2 pr-4">DeepSeek</td><td class="py-2"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">[llm]</code> + key</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-mono text-xs">claude</td><td class="py-2 pr-4">Claude Code CLI</td><td class="py-2 pr-4">Claude native</td><td class="py-2">Claude Code + <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">[mcp]</code></td></tr>
+                <tr><td class="py-2 pr-4 font-mono text-xs">claude-ds</td><td class="py-2 pr-4">Claude Code CLI</td><td class="py-2 pr-4">DeepSeek</td><td class="py-2">Claude Code + <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">[mcp]</code> + key</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <pre class="codeblock mt-3"># REPL mode (default)
+pose chat
+
+# Claude Code + Claude native (best experience)
+npm install -g @anthropic-ai/claude-code
+pip install 'pose-platform[mcp]'
+pose chat --mode claude
+
+# Claude Code + DeepSeek
+echo 'POSE_DEEPSEEK_API_KEY=sk-xxx' > .env
+pose chat --mode claude-ds</pre>
+          <div class="mt-3 rounded-lg border border-ink-200 bg-ink-50 p-4 dark:border-ink-700 dark:bg-ink-900">
+            <p class="text-sm font-semibold text-ink-800 dark:text-ink-200">How it works</p>
+            <p class="mt-1 text-sm text-ink-600 dark:text-ink-300"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code> reads <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_DEEPSEEK_API_KEY</code> and automatically injects the following into Claude Code's environment before launching it:</p>
+            <table class="mt-2 w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-1.5 pr-4 font-medium text-ink-900 dark:text-white">Claude Code env var</th>
+                  <th class="py-1.5 font-medium text-ink-900 dark:text-white">Value</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300 font-mono text-xs">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">ANTHROPIC_BASE_URL</td><td class="py-1.5">https://api.deepseek.com/anthropic</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-1.5 pr-4">ANTHROPIC_AUTH_TOKEN</td><td class="py-1.5">$POSE_DEEPSEEK_API_KEY</td></tr>
+                <tr><td class="py-1.5 pr-4">ANTHROPIC_MODEL</td><td class="py-1.5">deepseek-v4-pro[1m]</td></tr>
+              </tbody>
+            </table>
+            <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">This bridges DeepSeek's Anthropic-compatible API endpoint to Claude Code's native authentication model. You only need <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">POSE_DEEPSEEK_API_KEY</code> — the translation is handled transparently.</p>
+          </div>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400"><strong>Note:</strong> If you launch Claude Code directly (without <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat</code>), you must set <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">ANTHROPIC_BASE_URL</code> + <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">ANTHROPIC_AUTH_TOKEN</code> yourself. <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose chat --mode claude-ds</code> does this for you automatically.</p>
+          <p class="mt-3 text-sm text-ink-600 dark:text-ink-300">When using <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">--mode claude</code> or <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">--mode claude-ds</code>, Pose CLI also automatically generates a temporary <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">.mcp.json</code> that connects Claude Code to the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-analysis</code> MCP server with all registered tools — no manual setup needed.</p>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Region Routing</h3>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">The default configuration uses DeepSeek for all regions. You can override via <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> or environment variables.</p>
@@ -1229,6 +1360,8 @@ class MyTool(DirectTool):
     status = "wip"                     # "wip" or "stable"
     supported_sports = []              # [] = all sports
     tier = 1                           # 1 = primary, 2 = fallback
+    depends_on = []                    # Optional: tool dependencies
+    requires_session_context_by_sport = ["badminton"]  # Optional: sport-specific metadata
 
     def run(self, tool_input: dict, output_dir: Path) -> str:
         pose = load_pose(tool_input["path"])
@@ -1260,6 +1393,26 @@ OFFICIAL_SPORTS = [
             <li>Change <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">status = "stable"</code> in your tool class</li>
             <li>Add version entry in <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-manifest.json</code> → <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">tools</code></li>
           </ol>
+
+          <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Distributing Your Tools</h3>
+          <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Two ways to distribute your custom tools:</p>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="border-b border-ink-200 dark:border-ink-700">
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white"></th>
+                  <th class="py-2 pr-4 font-medium text-ink-900 dark:text-white">Path 1: Sport Package</th>
+                  <th class="py-2 font-medium text-ink-900 dark:text-white">Path 2: Merge into Platform</th>
+                </tr>
+              </thead>
+              <tbody class="text-ink-600 dark:text-ink-300">
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium">Best for</td><td class="py-2 pr-4">Sport-specific tool collections</td><td class="py-2">General-purpose tools</td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium">Distribution</td><td class="py-2 pr-4">Independent PyPI package</td><td class="py-2">Part of <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose-platform</code></td></tr>
+                <tr class="border-b border-ink-100 dark:border-ink-800"><td class="py-2 pr-4 font-medium">Versioning</td><td class="py-2 pr-4">Your own version + release cycle</td><td class="py-2">Follows platform releases</td></tr>
+                <tr><td class="py-2 pr-4 font-medium">How to</td><td class="py-2 pr-4"><code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose sports create &lt;id&gt;</code> then publish</td><td class="py-2">PR to <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">posecap/pose-platform</code></td></tr>
+              </tbody>
+            </table>
+          </div>
 
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Data Loading Best Practices</h3>
           <ul class="mt-3 space-y-1.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">

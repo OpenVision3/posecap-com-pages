@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pose CLI — 面向研究者的动作分析平台 — PoseCap Inc.</title>
-  <meta name="description" content="Pose CLI 把 3D 姿态数据转化为可复现的运动分析报告。面向运动科研人员、体育院校与表现分析师的命令行 + MCP 工具集。当前为早期访问阶段。">
+  <title>Pose CLI — 开源运动分析工具包 — PoseCap Inc.</title>
+  <meta name="description" content="Pose CLI 把 3D 姿态数据转化为可复现的运动分析报告。面向运动科研人员、教练和表现分析师。pip 安装，完全在本地运行。">
   <link rel="alternate" hreflang="en" href="https://posecap.com/posecli/en/">
   <link rel="alternate" hreflang="zh" href="https://posecap.com/posecli/zh/">
   <link rel="alternate" hreflang="fr" href="https://posecap.com/posecli/fr/">
   <link rel="alternate" hreflang="x-default" href="https://posecap.com/posecli/en/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Pose CLI — 面向研究者的动作分析平台">
-  <meta property="og:description" content="Pose CLI 把 3D 姿态数据转化为可复现的运动分析报告。面向运动科研人员、体育院校与表现分析师的命令行 + MCP 工具集。当前为早期访问阶段。">
+  <meta property="og:title" content="Pose CLI — 开源运动分析工具包">
+  <meta property="og:description" content="Pose CLI 把 3D 姿态数据转化为可复现的运动分析报告。面向运动科研人员、教练和表现分析师。pip 安装，完全在本地运行。">
   <meta property="og:url" content="https://posecap.com/posecli/zh/">
   <meta property="og:site_name" content="PoseCap Inc.">
   <meta property="og:locale" content="zh_CN">
@@ -56,22 +56,24 @@
         <img src="/posecli/images/logo.svg" alt="Pose CLI" class="h-12 w-12 rounded-xl shadow-sm">
         <span class="badge-early">早期访问</span>
       </div>
-      <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">Pose CLI — 面向严肃学术研究的动作分析工具集。</h1>
-      <p class="max-w-prose text-lg text-ink-600 dark:text-ink-300">命令行与 MCP 工具集，把 3D 姿态数据转化为可复现的运动分析报告。为运动科研人员、体育院校、表现分析师以及那些需要交付结论而不是 PPT 的团队而生。</p>
+      <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">Pose CLI — 面向严肃研究的开源运动分析工具集。</h1>
+      <p class="max-w-prose text-lg text-ink-600 dark:text-ink-300">pip 一键安装，将 3D 骨骼数据转化为可实践的运动分析。为运动科研人员、教练和表现分析师打造 — 内置 20+ 分析工具、运动专项插件系统，以及完全本地运行的后端服务。</p>
       <div class="flex flex-wrap items-center gap-3 pt-2">
         <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Early%20Access" class="btn-primary">申请早期访问</a>
         <a href="/posecli/docs/zh/" class="btn-secondary">查看文档</a>
       </div>
     </div>
     <div class="md:col-span-5">
-      <pre class="codeblock"><span class="text-ink-400">$</span> pose analyze data/session.csv \
-    --tool detect_velocity
-<span class="text-ink-400">→</span> 检测到 14 个动作区间
-<span class="text-ink-400">→</span> 峰值速度 28.4 m/s
-<span class="text-ink-400">→</span> 稳定性指数 0.72
+      <pre class="codeblock"><span class="text-ink-400">$</span> pip install pose-platform
+<span class="text-ink-400">$</span> pose analyze data/session.csv --tool stats
+<span class="text-ink-400">→</span> data_quality: good, tracking_coverage: 0.98
 
-<span class="text-ink-400">$</span> pose chat ./data
-<span class="text-ink-400">→</span> 启动 Claude Code，加载 MCP 工具…</pre>
+<span class="text-ink-400">$</span> pose serve
+<span class="text-ink-400">→</span> http://0.0.0.0:8000
+<span class="text-ink-400">→</span> LAN  →  http://192.168.1.x:8000
+
+<span class="text-ink-400">$</span> pose annotate --serve data/session.csv
+<span class="text-ink-400">→</span> Web 标注工具 http://localhost:8001</pre>
     </div>
   </div>
 </section>
@@ -85,15 +87,15 @@
     <div class="grid gap-6 md:grid-cols-3">
       <div class="card">
         <h3 class="font-semibold text-ink-900 dark:text-white">运动科研人员</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">在不同 session 与运动员之间运行可复现分析，并以 markdown / JSON 导出，便于论文与报告。</p>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">跨会话、跨运动员运行可复现分析。以 markdown / JSON 导出，便于论文与报告。将你的工具发布为独立的 pip 包。</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">体育院校</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">为学生群体提供标准化动作统计 — 数据质量标记、关节幅度、动作检测。</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">教练与表现分析师</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">评估技术动作、追踪进步、对比运动员。羽毛球、短跑等运动专项工具 — 按需安装。</p>
       </div>
       <div class="card">
-        <h3 class="font-semibold text-ink-900 dark:text-white">表现分析师</h3>
-        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">可扩展运动分析（以短跑为参考实现，可自定义运动规则）、批量处理、CI 友好的 JSON 输出。</p>
+        <h3 class="font-semibold text-ink-900 dark:text-white">体育院校与实验室</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">为学生群体提供标准化动作统计。批量处理、CI 友好的 JSON 输出。零云端依赖 — 所有分析本地完成。</p>
       </div>
     </div>
   </div>
@@ -102,16 +104,34 @@
 <section class="section bg-ink-50 dark:bg-ink-900/40">
   <div class="container-page">
     <div class="space-y-3 mb-10">
-      <h2 class="section-title">核心能力</h2>
-      <p class="section-lead">界面统一、可插拔的分析工具。</p>
+      <h2 class="section-title">核心功能</h2>
+      <p class="section-lead">从原始姿态数据到可实践洞察的全套工具链。</p>
     </div>
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">动作统计</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">帧率、抖动比例、关节幅度、数据质量评估。</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">动作检测</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">基于全身能量分析的动作边界检测，适用于各类运动项目。</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">能量分析</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">峰值能量检测与可配置时间窗口的速度分布。</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">运动专属规则</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">通过 Python 类扩展，以短跑工具为参考模板。</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">AI 对话（MCP）</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code>pose chat</code> 启动 Claude Code 并预加载所有分析工具，支持交互式探索。</p></div>
-      <div class="card"><h3 class="font-semibold text-ink-900 dark:text-white">能力缺口登记</h3><p class="mt-2 text-sm text-ink-600 dark:text-ink-300">众包能力请求；遇到未覆盖的分析时自动生成临时实现。</p></div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">🏃 运动即插件</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">内置 <code>freeplay</code> 和 <code>sprint</code>。安装运动专项包：<code>pip install pose-platform[badminton]</code>。通过 <code>pose sports create</code> 创建你自己的运动包。</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">🖥️ 内置本地后端</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code>pose serve</code> 将电脑变为 Pose Coach 的全功能后端 — 自动上传、分析、AI 对话、训练计划。无需云端。</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">🏷️ Web 标注工具</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">在浏览器中交互式标注录制数据，视频与 2D 骨骼叠加同步显示。为校准和算法验证创建标准答案。</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">🤖 LLM 智能分析</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300"><code>pose chat</code> 支持用自然语言提问分析数据。默认使用 DeepSeek（免费额度）。同时支持 Claude 和 Qwen（通义千问）。</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">📊 20+ 分析工具</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">统计信息、动作分割、动作检测、速度分析、步态分析、高光提取 — 全部通过统一的 CLI 接口调用。</p>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold text-ink-900 dark:text-white">🔒 100% 本地优先</h3>
+        <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">你的数据永不离开电脑。分析、AI 对话和本地后端全部在本地运行。内置缓存，重复运行即时返回结果。</p>
+      </div>
     </div>
   </div>
 </section>
@@ -120,11 +140,13 @@
   <div class="container-page grid gap-10 md:grid-cols-2 items-start">
     <div class="space-y-4">
       <h2 class="section-title">架构</h2>
-      <p class="section-lead">本地优先的 Python CLI，配备可插拔的 MCP 分析工具。</p>
+      <p class="section-lead">本地优先的 Python CLI，配备可插拔运动系统和内置后端。</p>
       <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
         <li><strong>20+ 可插拔分析工具</strong> — 统计、动作分割、动作检测、速度分析等</li>
+        <li><strong>运动即插件</strong> — 内置 freeplay + sprint；安装 badminton、basketball，或通过 Python entry_points 创建自定义运动</li>
         <li><strong>内置轻量后端</strong> — <code>pose serve</code> 将电脑变为 Pose Coach 的全功能后端；分析、AI 教练对话、训练计划和综合报告均在本地运行</li>
-        <li><strong>MCP Server</strong> — 标准协议，兼容 Claude Desktop、Claude Code 及自定义应用</li>
+        <li><strong>Web 标注工具</strong> — <code>pose annotate --serve</code> 打开浏览器界面，视频与骨骼同步标注</li>
+        <li><strong>LLM 对话</strong> — <code>pose chat</code>，默认 DeepSeek（免费额度），同时支持 Claude 和 Qwen</li>
         <li><strong>JointData3D 格式</strong> — 与 Pose Coach 共享的骨骼数据格式；支持 CSV 和 .bin</li>
         <li><strong>100% 本地运行</strong> — 分析命令无需任何服务器</li>
       </ul>
@@ -135,14 +157,14 @@
       <pre class="codeblock">timestamp, joint, wx, wy, wz,
 mx, my, mz,
 ldq_x, ldq_y, ldq_z, ldq_w</pre>
-      <p class="text-sm text-ink-500 dark:text-ink-400">Pose Coach 导出的 <code>.bin</code> 二进制文件原生支持。可输出 Markdown 报告或 CI 友好的 JSON。</p>
+      <p class="text-sm text-ink-500 dark:text-ink-400">Pose Coach 导出的 <code>.bin</code> 二进制文件原生支持。可输出 Markdown 报告或 CI 友好的 JSON。兼容 ARKit、OpenPose、MediaPipe 及动作捕捉数据。</p>
     </div>
   </div>
 </section>
 
 <section class="section bg-ink-50 dark:bg-ink-900/40">
   <div class="container-page text-center space-y-6">
-    <h2 class="section-title">让你的动作数据派上用场</h2>
+    <h2 class="section-title">让你的运动数据派上用场</h2>
     <p class="section-lead mx-auto">Pose CLI 处于早期访问阶段，我们正在按需求接入合作伙伴。来信告诉我们你想研究什么。</p>
     <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
       <a href="mailto:contact@posecap.com?subject=Pose%20CLI%20Early%20Access" class="btn-primary">邮件联系 contact@posecap.com</a>
