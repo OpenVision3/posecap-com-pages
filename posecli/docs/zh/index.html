@@ -121,6 +121,7 @@
           <pre class="codeblock mt-2">pose serve
 # → http://0.0.0.0:8000
 # → LAN  →  http://192.168.1.x:8000  （在 iPhone 上配置此地址）</pre>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400"><strong>运行前需先安装 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install 'pose-platform[server]'</code></strong>（fastapi + uvicorn）。详见<a href="#installation" class="underline">安装指南 →</a></p>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">在 iPhone 上录制 → 骨骼文件自动到达你的电脑。分析、AI 教练对话、训练计划和综合报告全部通过同一本地服务器运行。Pose Coach iOS App 将 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code> 作为全功能后端连接。无需数据库、无需云端。<a href="#local-backend" class="underline">配置指南 →</a></p>
 
           
@@ -258,7 +259,7 @@ pose sports</pre>
           
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Web 标注工具</h3>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">在浏览器中交互式标注录制数据，视频与 2D 骨骼叠加同步显示：</p>
-          <pre class="codeblock mt-2">pose annotate --serve data/session.csv
+          <pre class="codeblock mt-2">pose annotate serve data/session.csv
 # → 自动打开 http://localhost:8001</pre>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">在时间轴上拖拽即可标记动作（短跑阶段、挥拍、投篮）。标注数据可作为校准和算法验证的标准答案。</p>
 
@@ -279,11 +280,11 @@ pose annotate create data/session.csv --start 2.3 --end 3.1 --label "sprint_driv
 pose annotate list data/session.csv
 
 # 打开 Web 标注界面
-pose annotate --serve data/session.csv</pre>
+pose annotate serve data/session.csv</pre>
 
           <h4 class="mt-4 text-sm font-semibold text-ink-800 dark:text-ink-200">校准工作流</h4>
           <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
-            <li>标注录制数据（Web 或 CLI）— <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose annotate --serve</code></li>
+            <li>标注录制数据（Web 或 CLI）— <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose annotate serve</code></li>
             <li>自动评分已标注动作 — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose calib auto-label</code></li>
             <li>人工审查并修正评分（专家审核）</li>
             <li>验证工具一致性 — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose calib validate</code></li>
@@ -490,8 +491,13 @@ npm install -g @anthropic-ai/claude-code</pre>
               <pre class="codeblock mt-1"># 添加到 ~/.zshrc 或 ~/.bashrc
 export PATH="$HOME/.local/bin:$PATH"
 
-# 替代方案 — 不通过 pose 命令运行
-python3 -m products.pose_cli.cli version</pre>
+# Windows（原生安装）— 先找到 Scripts 目录：
+python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+# → 例如 C:\Users\you\AppData\Roaming\Python\Python312\Scripts
+# 将该目录加入 PATH（系统属性 → 环境变量），然后重启终端。
+
+# 任何系统上的替代方案 — 不通过 pose 命令运行
+python3 -m products.pose_cli.cli version   # Windows 上用 python</pre>
             </div>
             <div>
               <p class="font-medium text-ink-800 dark:text-ink-200">Apple Silicon（M1/M2/M3）</p>
@@ -501,7 +507,7 @@ python3 -m products.pose_cli.cli version</pre>
             </div>
             <div>
               <p class="font-medium text-ink-800 dark:text-ink-200">Windows</p>
-              <p class="text-ink-600 dark:text-ink-300">请使用 WSL2。原生 Windows 未经测试。</p>
+              <p class="text-ink-600 dark:text-ink-300">推荐使用 WSL2。原生 Windows 也可以 —— 若 pip 安装后 <code>pose</code> 命令不存在，请按上一条将 Python 的 <code>Scripts</code> 目录加入 PATH。</p>
               <pre class="codeblock mt-1">wsl --install
 wsl
 # 然后按上述 Linux 方式操作</pre>
@@ -713,7 +719,7 @@ pose version --release-notes            # 面向用户的发布说明</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose chat</code></h3>
-          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">启动交互式 LLM 分析会话。配置方式见<a href="#llm-chat" class="underline">LLM 对话</a>。</p>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">启动交互式 LLM 分析会话。需要 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">[llm]</code> 扩展（<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install openai</code>）和 API key。配置方式见<a href="#llm-chat" class="underline">LLM 对话</a>。</p>
           <pre class="codeblock mt-2">pose chat [data_dir]                    # 默认数据目录：../pose-data</pre>
 
           
@@ -724,7 +730,7 @@ pose version --release-notes            # 面向用户的发布说明</pre>
                                 [--quality good|acceptable|poor] [--note "备注"]
 pose annotate list &lt;file.csv&gt;
 pose annotate delete &lt;file.csv&gt; &lt;标注ID&gt;
-pose annotate --serve &lt;file.csv&gt;       # Web 标注界面</pre>
+pose annotate serve &lt;file.csv&gt;       # Web 标注界面</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose calib</code></h3>

@@ -121,6 +121,7 @@
           <pre class="codeblock mt-2">pose serve
 # → http://0.0.0.0:8000
 # → LAN  →  http://192.168.1.x:8000  (configure this on iPhone)</pre>
+          <p class="mt-2 text-sm text-ink-500 dark:text-ink-400"><strong>Requires <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install 'pose-platform[server]'</code></strong> (installs fastapi + uvicorn). See <a href="#installation" class="underline">Installation →</a></p>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Record on iPhone → skeleton files arrive on your computer automatically. Analysis, AI coach chat, training plans, and comprehensive reports all work through the same local server. The Pose Coach iOS app connects to <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code> as a full-featured backend. No database, no cloud required. <a href="#local-backend" class="underline">Setup guide →</a></p>
 
           
@@ -258,7 +259,7 @@ pose sports</pre>
           
           <h3 class="mt-8 text-lg font-semibold text-ink-900 dark:text-white">Web Annotation Tool</h3>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Label recordings interactively in your browser with synchronized video + 2D skeleton overlay:</p>
-          <pre class="codeblock mt-2">pose annotate --serve data/session.csv
+          <pre class="codeblock mt-2">pose annotate serve data/session.csv
 # → opens http://localhost:8001</pre>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">Click and drag on the timeline to mark actions (sprint phases, swings, shots). Annotations serve as ground truth for calibration and algorithm validation.</p>
 
@@ -279,11 +280,11 @@ pose annotate create data/session.csv --start 2.3 --end 3.1 --label "sprint_driv
 pose annotate list data/session.csv
 
 # Open the web UI
-pose annotate --serve data/session.csv</pre>
+pose annotate serve data/session.csv</pre>
 
           <h4 class="mt-4 text-sm font-semibold text-ink-800 dark:text-ink-200">Calibration Workflow</h4>
           <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
-            <li>Annotate recordings (web or CLI) — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose annotate --serve</code></li>
+            <li>Annotate recordings (web or CLI) — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose annotate serve</code></li>
             <li>Auto-score annotated strokes — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose calib auto-label</code></li>
             <li>Review and correct scores (expert review)</li>
             <li>Validate tool agreement — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose calib validate</code></li>
@@ -490,8 +491,13 @@ npm install -g @anthropic-ai/claude-code</pre>
               <pre class="codeblock mt-1"># Add to ~/.zshrc or ~/.bashrc
 export PATH="$HOME/.local/bin:$PATH"
 
-# Alternative — run without the pose command
-python3 -m products.pose_cli.cli version</pre>
+# Windows (native install) — locate the Scripts folder:
+python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+# → e.g. C:\Users\you\AppData\Roaming\Python\Python312\Scripts
+# Add that folder to PATH (System Properties → Environment Variables), then restart the terminal.
+
+# Alternative on any OS — run without the pose command
+python3 -m products.pose_cli.cli version   # python on Windows</pre>
             </div>
             <div>
               <p class="font-medium text-ink-800 dark:text-ink-200">Apple Silicon (M1/M2/M3)</p>
@@ -501,7 +507,7 @@ python3 -m products.pose_cli.cli version</pre>
             </div>
             <div>
               <p class="font-medium text-ink-800 dark:text-ink-200">Windows</p>
-              <p class="text-ink-600 dark:text-ink-300">Use WSL2. Native Windows is not tested.</p>
+              <p class="text-ink-600 dark:text-ink-300">WSL2 is recommended. Native Windows also works — if <code>pose</code> isn't found after <code>pip install</code>, add Python's <code>Scripts</code> folder to PATH (see the "pose: command not found" item above).</p>
               <pre class="codeblock mt-1">wsl --install
 wsl
 # Then follow Linux instructions above</pre>
@@ -713,7 +719,7 @@ pose version --release-notes            # User-facing release notes</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose chat</code></h3>
-          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Start an interactive LLM-powered analysis session. See <a href="#llm-chat" class="underline">LLM Chat</a> for setup.</p>
+          <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Start an interactive LLM-powered analysis session. Requires the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">[llm]</code> extra (<code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pip install openai</code>) and an API key. See <a href="#llm-chat" class="underline">LLM Chat</a> for setup.</p>
           <pre class="codeblock mt-2">pose chat [data_dir]                    # Default data dir: ../pose-data</pre>
 
           
@@ -724,7 +730,7 @@ pose version --release-notes            # User-facing release notes</pre>
                                 [--quality good|acceptable|poor] [--note "text"]
 pose annotate list &lt;file.csv&gt;
 pose annotate delete &lt;file.csv&gt; &lt;annotation_id&gt;
-pose annotate --serve &lt;file.csv&gt;       # Web annotation UI</pre>
+pose annotate serve &lt;file.csv&gt;       # Web annotation UI</pre>
 
           
           <h3 class="mt-6 text-lg font-semibold text-ink-900 dark:text-white"><code>pose calib</code></h3>
