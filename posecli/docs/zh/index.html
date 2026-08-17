@@ -356,6 +356,10 @@ pose analyze sample_sprint.csv --tool measure_running_speed \
               <h3 class="font-semibold text-ink-900 dark:text-white">第六步：用 Pose Coach 录制你自己的数据</h3>
               <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">获取 JointData3D 文件最简单的方式是用 Pose Coach iOS App 录制。</p>
 
+              <div class="mt-3 rounded-lg border border-sky-200 bg-sky-50/60 p-3 dark:border-sky-800 dark:bg-sky-950/30">
+                <p class="text-sm text-sky-800 dark:text-sky-300"><strong>使用 Windows？</strong>直接跳到下方的"自动上传" — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code> 原生支持 Windows，完全无需用到 AirDrop。</p>
+              </div>
+
               <div class="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-800 dark:bg-emerald-950/30">
                 <p class="text-sm font-semibold text-emerald-800 dark:text-emerald-300">快速上手（无需配置）：</p>
                 <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
@@ -364,8 +368,8 @@ pose analyze sample_sprint.csv --tool measure_running_speed \
                   <li>传输数据到电脑：</li>
                 </ol>
                 <ul class="mt-1 space-y-0.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-8">
-                  <li><strong>AirDrop</strong>（最快）：回放菜单 → <strong>导出全部数据</strong> → AirDrop 到你的 Mac</li>
-                  <li><strong>iCloud Drive</strong>：点击导出 → <strong>保存到文件</strong> → iCloud Drive → 在电脑上下载</li>
+                  <li><strong>AirDrop</strong>（最快，<strong>仅限 macOS</strong> — Windows 没有 AirDrop 客户端）：回放菜单 → <strong>导出全部数据</strong> → AirDrop 到你的 Mac</li>
+                  <li><strong>iCloud Drive</strong>（Windows 也可用）：点击导出 → <strong>保存到文件</strong> → iCloud Drive → 在 Microsoft Store 安装 iCloud for Windows，用同一个 Apple ID 登录，然后在同步的本地文件夹中取出文件</li>
                 </ul>
                 <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5" start="4">
                   <li>对 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">_3d.csv</code> 文件运行 <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze</code></li>
@@ -373,7 +377,7 @@ pose analyze sample_sprint.csv --tool measure_running_speed \
               </div>
 
               <div class="mt-3 rounded-lg border border-violet-200 bg-violet-50/60 p-4 dark:border-violet-800 dark:bg-violet-950/30">
-                <p class="text-sm font-semibold text-violet-800 dark:text-violet-300">自动上传（一个命令）：</p>
+                <p class="text-sm font-semibold text-violet-800 dark:text-violet-300">自动上传（一个命令，Windows 推荐）：</p>
                 <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
                   <li>安装服务端扩展：</li>
                 </ol>

@@ -356,6 +356,10 @@ pose analyze sample_sprint.csv --tool measure_running_speed \
               <h3 class="font-semibold text-ink-900 dark:text-white">Step 6: Record your own data with Pose Coach</h3>
               <p class="mt-2 text-sm text-ink-600 dark:text-ink-300">The easiest way to get JointData3D files is to record with the Pose Coach iOS app.</p>
 
+              <div class="mt-3 rounded-lg border border-sky-200 bg-sky-50/60 p-3 dark:border-sky-800 dark:bg-sky-950/30">
+                <p class="text-sm text-sky-800 dark:text-sky-300"><strong>On Windows?</strong> Skip straight to "Automatic uploads" below — <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose serve</code> runs natively on Windows and avoids AirDrop entirely.</p>
+              </div>
+
               <div class="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-800 dark:bg-emerald-950/30">
                 <p class="text-sm font-semibold text-emerald-800 dark:text-emerald-300">Quick start (no setup):</p>
                 <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
@@ -364,8 +368,8 @@ pose analyze sample_sprint.csv --tool measure_running_speed \
                   <li>Transfer data to your computer:</li>
                 </ol>
                 <ul class="mt-1 space-y-0.5 text-sm text-ink-600 dark:text-ink-300 list-disc pl-8">
-                  <li><strong>AirDrop</strong> (fastest): playback menu → <strong>Export All Data</strong> → AirDrop to your Mac</li>
-                  <li><strong>iCloud Drive</strong>: tap export → <strong>Save to Files</strong> → iCloud Drive → download on computer</li>
+                  <li><strong>AirDrop</strong> (fastest, <strong>macOS only</strong> — Windows has no AirDrop client): playback menu → <strong>Export All Data</strong> → AirDrop to your Mac</li>
+                  <li><strong>iCloud Drive</strong> (works on Windows too): tap export → <strong>Save to Files</strong> → iCloud Drive → install iCloud for Windows (Microsoft Store), sign in with the same Apple ID, then grab the file from the synced local folder</li>
                 </ul>
                 <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5" start="4">
                   <li>Run <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">pose analyze</code> on the <code class="text-xs bg-ink-100 dark:bg-ink-800 px-1 rounded">_3d.csv</code> file</li>
@@ -373,7 +377,7 @@ pose analyze sample_sprint.csv --tool measure_running_speed \
               </div>
 
               <div class="mt-3 rounded-lg border border-violet-200 bg-violet-50/60 p-4 dark:border-violet-800 dark:bg-violet-950/30">
-                <p class="text-sm font-semibold text-violet-800 dark:text-violet-300">Automatic uploads (one command):</p>
+                <p class="text-sm font-semibold text-violet-800 dark:text-violet-300">Automatic uploads (one command, recommended for Windows):</p>
                 <ol class="mt-1 space-y-1 text-sm text-ink-600 dark:text-ink-300 list-decimal pl-5">
                   <li>Install with server extras:</li>
                 </ol>
