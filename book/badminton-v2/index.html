@@ -230,4 +230,7 @@ const m=/^#a(\d+)$/.exec(location.hash); if(m&&document.getElementById("p"+m[1])
   window.athOpen = open;
 })();
 </script>
+<a id="xsHome" href="/book/" hidden style="position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:5;background:#185943;color:#F2B01E;font:800 15px/1 'Noto Sans SC','PingFang SC',sans-serif;padding:10px 14px;border-radius:999px;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,.25)">← 返回主页</a>
+<script>(function(){var a=document.getElementById("xsHome"),r=(document.referrer||"").replace(location.origin,"");
+if(matchMedia("(display-mode: standalone)").matches||navigator.standalone||/^\/book\/(index\.html)?(\?.*)?$/.test(r))a.hidden=false;})();</script>
 </body></html>
