@@ -1,9 +1,10 @@
 {
- "name": "想三拍 · 球路动画",
+ "name": "想三拍 · 羽毛球球路",
  "short_name": "想三拍",
  "lang": "zh-CN",
- "start_url": "https://posecap.com/book/badminton-v2/",
- "scope": "https://posecap.com/book/badminton-v2/",
+ "id": "https://posecap.com/book/",
+ "start_url": "https://posecap.com/book/",
+ "scope": "https://posecap.com/book/",
  "display": "standalone",
  "background_color": "#185943",
  "theme_color": "#185943",

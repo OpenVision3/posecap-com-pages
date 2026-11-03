@@ -1,6 +1,6 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>羽毛球球路小手册 · 第 2 版(网页动画）</title><link rel="stylesheet" href="fonts/fonts.css">
-<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="想三拍"><meta name="theme-color" content="#185943">
+<link rel="manifest" href="https://posecap.com/book/manifest.webmanifest"><link rel="apple-touch-icon" href="https://posecap.com/book/apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="想三拍"><meta name="theme-color" content="#185943">
 <style>
 :root{--bg:#F6F3EA;--fg:#2B2B2B;--card:#fff;--muted:#7a7468;--line:#e3dccb;--accent:#2F7FD9}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1d1f1e;--fg:#eee;--card:#2a2d2b;--muted:#aaa;--line:#3a3d3b}}
@@ -165,6 +165,8 @@ const m=/^#a(\d+)$/.exec(location.hash); if(m&&document.getElementById("p"+m[1])
 .ath-box .k{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:24px;padding:0 6px;border-radius:6px;background:#E7EEF8;color:#2F7FD9;font-weight:800;vertical-align:-5px;margin:0 2px}
 .ath-box .k svg{width:16px;height:16px}
 .ath-box .go{display:block;width:100%;margin-top:12px;border:0;border-radius:12px;padding:12px;background:#2F7FD9;color:#fff;font:800 16px/1 inherit;cursor:pointer}
+.ath-box [hidden]{display:none!important}
+.ath-box .msg{margin:12px 0 0;padding:10px 12px;border-radius:12px;background:#FFF3D6;color:#7a4b00;font-size:14px}
 .ath-box .close{display:block;width:100%;margin-top:10px;border:0;border-radius:12px;padding:10px;background:#E7EEF8;color:#2F7FD9;font:700 15px/1 inherit;cursor:pointer}
 .ath-arrow{position:fixed;right:14px;top:6px;z-index:51;display:none;flex-direction:column;align-items:flex-end;color:#fff;font:800 15px/1.4 "Noto Sans SC",sans-serif;text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none}
 .ath-arrow.on{display:flex}
@@ -173,10 +175,11 @@ const m=/^#a(\d+)$/.exec(location.hash); if(m&&document.getElementById("p"+m[1])
 <div class="ath-arrow" id="athArrow"><svg viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"><path d="M14 58 C 20 30, 36 16, 54 10"/><path d="M40 8 L 55 9 L 50 23"/></svg>点这里「···」</div>
 <div class="ath-mask" id="athMask" role="dialog" aria-modal="true" aria-labelledby="athTitle">
   <div class="ath-box">
-    <h3 id="athTitle"><img src="icon-192.png" alt="">把「想三拍」放到手机桌面</h3>
+    <h3 id="athTitle"><img src="https://posecap.com/book/icon-192.png" alt="">把「想三拍」放到手机桌面</h3>
     <p class="sub" id="athSub">以后点桌面上的图标就能打开，不用再去微信聊天里找链接。</p>
     <ol id="athSteps"></ol>
-    <button class="go" id="athGo" hidden>放到桌面</button>
+    <button class="go" id="athGo" hidden>一键放到桌面</button>
+    <p class="msg" id="athMsg" hidden></p>
     <button class="close" id="athClose">知道了</button>
   </div>
 </div>
@@ -206,13 +209,23 @@ const m=/^#a(\d+)$/.exec(location.hash); if(m&&document.getElementById("p"+m[1])
     const s = STEPS[kind] || STEPS.pc;
     $("athSub").textContent = s.sub;
     $("athSteps").innerHTML = s.steps.map((t, i) => `<li><b>${i + 1}</b><span>${t}</span></li>`).join("");
-    $("athGo").hidden = !(deferred && kind !== "wx");
+    $("athGo").hidden = !(deferred && kind !== "wx"); $("athMsg").hidden = true;
     $("athMask").classList.add("on"); $("athArrow").classList.toggle("on", !!s.arrow);
   }
   function close() { $("athMask").classList.remove("on"); $("athArrow").classList.remove("on"); }
   $("athClose").onclick = close;
   $("athMask").onclick = (e) => { if (e.target === $("athMask")) close(); };
-  $("athGo").onclick = async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; close(); };
+  /* 一键安装：浏览器报过「能装」才有这个按钮；可有的浏览器（试用者 2026-11-03 实测）点了不弹框也不报错——
+     2 秒内没有回音、或者报错，就换成文字提示，照上面的步骤在菜单里加 */
+  function manual() { $("athGo").hidden = true; const m = $("athMsg"); m.hidden = false;
+    m.textContent = "这个浏览器没弹出安装框：照上面 1、2、3 步，在浏览器菜单里点「添加到主屏幕」。"; }
+  $("athGo").onclick = async () => {
+    const e = deferred; if (!e) return manual();
+    let answered = false; const t = setTimeout(() => { if (!answered) manual(); }, 2000);
+    try { await e.prompt(); const r = await e.userChoice; answered = true; clearTimeout(t); deferred = null;
+      if (r && r.outcome === "accepted") close(); else manual();
+    } catch (err) { clearTimeout(t); deferred = null; manual(); }
+  };
   for (const b of document.querySelectorAll("[data-ath]")) { if (standalone) b.hidden = true; else b.addEventListener("click", open); }
   window.athOpen = open;
 })();
