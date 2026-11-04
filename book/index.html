@@ -240,7 +240,7 @@ a.go,a.ghost{text-decoration:none;display:inline-block}
       </fieldset>
       <label for="f-use">主要给谁用
         <select id="f-use"><option>孩子自己读</option><option>家长陪练</option><option>教练教学</option></select></label>
-      <label class="check"><input type="checkbox" id="f-ok"> 我知道这份 PDF 印有我的编号，只供自己或本队使用，不再转发（CC BY-NC 4.0）。</label>
+      <label class="check"><input type="checkbox" id="f-ok"> 我知道这份 PDF 印有我的编号；可以非商业分享，请保留编号和署名（CC BY-NC 4.0）。</label>
       <button type="submit" class="go" id="f-go" disabled>生成申请邮件</button>
       <div id="msg" class="status" hidden></div>
     </form>
@@ -287,11 +287,11 @@ const REQ = {"email": "hlliu211@gmail.com", "name": "Luke Liu", "subject": "【�
     ev.preventDefault();
     const name = $("f-name").value.trim().replace(/[\r\n]+/g, " ");
     if (!name) return warn("请填称呼，它会印在版权页上。");
-    if (!$("f-ok").checked) return warn("请先勾选「只供自己或本队使用」。");
+    if (!$("f-ok").checked) return warn("请先勾选「我知道这份 PDF 印有我的编号」。");
     const ed = document.querySelector("input[name=ed]:checked").value;
     const subject = `${REQ.subject}第 ${ed} 版`;
     const body = [`称呼：${name}`, `版本：第 ${ed} 版`, `地区：${rg}`, `主要给谁用：${$("f-use").value}`,
-                  "我知道这份 PDF 印有我的编号，只供自己或本队使用，不再转发（CC BY-NC 4.0）。", "",
+                  "我知道这份 PDF 印有我的编号；可以非商业分享，请保留编号和署名（CC BY-NC 4.0）。", "",
                   "（这封邮件由「羽毛球球路：想三拍」页面生成，请不要改上面几行的格式。）"].join("\n");
     $("s-to").textContent = `${REQ.name} <${REQ.email}>`;
     $("s-sub").textContent = subject;
