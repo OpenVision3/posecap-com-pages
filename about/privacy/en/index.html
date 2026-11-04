@@ -53,7 +53,7 @@
   <div class="container-page max-w-3xl">
     <header class="space-y-2 mb-10">
       <h1 class="text-4xl font-semibold tracking-tight text-ink-900 dark:text-white">Privacy policy</h1>
-      <p class="text-sm text-ink-500 dark:text-ink-400">Last updated: 2026-05-10</p>
+      <p class="text-sm text-ink-500 dark:text-ink-400">Last updated: 2026-10-13</p>
     </header>
 
     <div class="prose-legal">
@@ -71,25 +71,30 @@
       <p>PoseCap requires camera and microphone access to capture photos and record videos. Captured media is saved directly to your device's media library. We do not transmit or store your media on external servers.</p>
 
       <h3>2.2 Pose Coach</h3>
-      <p>Pose Coach uses ARKit to capture 3D body motion data (joint positions and rotations), camera access for the AR session, and — if you opt in — heart-rate data from Apple Watch. Capture, on-device recognition, and local scoring all run on the device. When you use the AI coach to analyze a session, only the anonymized skeleton motion data is uploaded to our servers for analysis; <strong>the raw video and images always stay on your device and are never uploaded</strong>. Pose Coach does not require an account. You may export sessions yourself via AirDrop, Photos, Files or ZIP.</p>
+      <p>Pose Coach uses ARKit to capture 3D body motion data (joint positions and rotations) and camera access for the AR session. Alongside these, your iPhone's own motion sensors — accelerometer, gyroscope, and device orientation — are recorded, and the microphone is used to detect the sound of ball impacts. If you have filled in a runner profile, the details you entered there — including your body weight — are stored with your account. If you record while wearing an Apple Watch, the Watch also records wrist motion-sensor data (from v1.1) and — with your explicit HealthKit authorization — heart-rate data. Capture and on-device recognition run on the device, as does the live feedback you see while recording.</p>
+      <p>When you finish a recording, the session is uploaded to our servers automatically — you do not need to open the AI coach for this to happen. What is uploaded is: anonymized skeleton motion data; your iPhone's motion-sensor readings; the timestamps of detected ball-impact sounds — not the audio itself; wrist motion-sensor readings, where an Apple Watch was used; and, in Watch-only sessions recorded without your iPhone, the heart-rate series for that session. In iPhone-plus-Watch sessions, heart rate is used on your device only and is not uploaded. Heart rate requires your explicit HealthKit authorization, which you can withdraw at any time — withdrawing it stops both collection and upload. <strong>The raw video and images always stay on your device and are never uploaded.</strong></p>
+      <p>Pose Coach also collects device metadata — app version, iOS version, device model, and screen size — for format adaptation and troubleshooting, together with the feedback you send and the ratings you give to AI analysis results.</p>
+      <p>Pose Coach does not require an account. You may export sessions yourself via AirDrop, Photos, Files or ZIP. For the full product-level detail — including sampling rates, retention periods, and the legal basis for each data type — see the privacy policy in the Pose Coach app.</p>
 
       <h3>2.3 Pose CLI</h3>
       <p>Pose CLI is provided to early-access partners and runs on infrastructure you control. When you process pose data (CSV or binary) inside your self-hosted Pose CLI instance, all data stays inside that instance — we do not access your session data. Pose CLI does not collect any usage telemetry today.</p>
 
       <h2>3. On-device processing</h2>
-      <p>Wherever possible, processing happens on your device. Pose Coach's pose recognition, local scoring, and playback all run on the device; only when you invoke the AI coach is skeleton data uploaded for analysis — raw video and images are not part of that upload. Pose Coach uses Apple Foundation Models on supported hardware for some on-device AI inference.</p>
+      <p>Wherever possible, processing happens on your device. Pose Coach's pose recognition, the live feedback shown while you record, and playback all run on the device; the scores themselves are computed on our servers. When you finish a recording, motion data is uploaded to our servers for analysis — see section 2.2 for exactly what that upload contains. Raw video and images are never part of it. On supported hardware (iOS 26 and later), Pose Coach uses Apple Foundation Models to answer the first message of an AI coach conversation on the device. Where that is unavailable, and for every message after the first, the conversation is processed in the cloud — see section 5 for who receives it.</p>
 
       <h2>4. How we use information</h2>
       <ul>
         <li>To provide the core functionality you requested (capture, scoring, motion analysis).</li>
         <li>To respond to your support inquiries.</li>
+        <li>To investigate a problem you report: when you send feedback or rate an AI analysis result, we may review the related data.</li>
       </ul>
 
       <h2>5. Sharing &amp; third parties</h2>
-      <p>We do not sell your data. We do not share your motion data with third parties. We do not integrate any third-party advertising or analytics SDKs in any of our products.</p>
+      <p>Pose Coach has two features that send data to a third-party service: the AI coach and performance reports. When you use the AI coach, your messages and the complete output of any analysis it runs are forwarded by our backend to Anthropic's Claude API — the analysis output is sent as it is, <strong>not summarised or de-identified first</strong>. For sprint sessions, a body weight you have entered in your runner profile is included as well. When you generate a performance report, the athlete's name and age, the per-session scores, and any coach note you write are sent the same way. Anthropic has committed not to use API input data to train its models (see Anthropic's <a href="https://www.anthropic.com/legal/privacy" rel="noopener">Privacy Policy</a>). Our analysis backend is hosted on Railway (US-West) with Supabase as the database layer; all data transit is HTTPS-encrypted.</p>
+      <p>We do not sell your data. Other than the third-party processing described above, we do not share your motion data — including wrist motion-sensor data from an Apple Watch — with third parties, and we do not share heart-rate data with third parties or use it for advertising. We do not integrate any third-party advertising or analytics SDKs in any of our products.</p>
 
       <h2>6. Data retention &amp; export</h2>
-      <p>PoseCap and Pose Coach store data locally on your device — you control retention by deleting captures or sessions. Anonymized skeleton data uploaded to our servers for the Pose Coach AI coach is retained only for the duration needed to perform the analysis and is cleared on a reasonable cadence afterward. Pose CLI is self-hosted by you; retention and deletion of session data are entirely under your control.</p>
+      <p>PoseCap and Pose Coach store data locally on your device — you control retention by deleting captures or sessions. Data uploaded to our servers from Pose Coach (see section 2.2) is retained according to your account status: if you have not signed in, it is kept for 30 days from account creation and then physically purged after a 7-day grace period; if you have signed in with Apple, it is retained until you delete the individual session or your account. Apple Watch data is subject to exactly the same rules. You can email us at any time to request immediate deletion of all your server-side data. Pose CLI is self-hosted by you; retention and deletion of session data are entirely under your control.</p>
 
       <h2>7. Children's privacy</h2>
       <p>PoseCap and Pose Coach are intended for users above the age of 4. Pose CLI is intended for users above the age of 13. We do not knowingly collect personal information from children below those ages.</p>

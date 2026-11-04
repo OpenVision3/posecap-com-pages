@@ -79,7 +79,7 @@
       </div>
       <div class="sm:col-span-2 text-sm text-ink-600 dark:text-ink-300">
         <p>A weighted blend of five dimensions. The grade is the overall score mapped to a letter — the same S–D scale that powers our running score, so grades are comparable across sports: your badminton B and your running B are one ruler.</p>
-        <p class="mt-2 text-ink-500 dark:text-ink-400">Default weights: <strong>Completeness 25% · Tempo 20% · Joint Angles 20% · Stability 15% · Kinetic Chain 20%</strong>. A coach view auto-shifts to 30 / 15 / 25 / 10 / 20, weighting technical accuracy more.</p>
+        <p class="mt-2 text-ink-500 dark:text-ink-400">Default weights: <strong>Completeness 25% · Tempo 20% · Joint Angles 20% · Stability 15% · Kinetic Chain 20%</strong>. A coach view auto-shifts to 30 / 15 / 25 / 10 / 20, weighting technical accuracy more. Kinetic Chain is currently in <strong>beta</strong> and ships with v1.1.</p>
       </div>
     </div>
 
@@ -169,7 +169,7 @@
 
       <div class="card space-y-4">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-[#1565C0]"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">Kinetic Chain</h3></div>
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-[#1565C0]"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">Kinetic Chain</h3><span class="badge-beta">v1.1 beta</span></div>
           <span class="badge bg-[#1565C0]/15 text-[#1565C0] ring-1 ring-[#1565C0]/30">Weight 20%</span>
         </div>
         <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">Measures —</strong> how well power transfers along the chain — <strong>hips → shoulder → elbow → wrist</strong> — for each overhead stroke, based on a biomechanical model of the kinetic chain. Three sub-signals combine into one score: <strong>chain integrity</strong> (are your joints firing in the right order? — 50%), <strong>speed amplification</strong> (how much wrist speed multiplies from hip speed? — 30%), and <strong>hip engagement</strong> (are you starting from the hips or skipping to the arm? — 20%).</p>
@@ -179,6 +179,7 @@
           <li>Let the elbow lead, then the wrist — a whip, not a push</li>
           <li>Finish the follow-through so the chain closes cleanly</li>
         </ul>
+        <p class="text-xs text-amber-700 dark:text-amber-400"><strong>In beta —</strong> this dimension is live for testing and ships with v1.1. It already contributes to your overall score, but its thresholds and weighting may still change before release.</p>
         <p class="text-xs text-ink-500 dark:text-ink-400">Kinetic Chain is scored for overhead strokes only (clear / smash / drop). A clear side view at 60 fps or higher gives the most reliable read. When arm tracking degrades, this dimension is flagged as lower confidence.</p>
       </div>
 

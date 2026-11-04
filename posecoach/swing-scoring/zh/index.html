@@ -79,7 +79,7 @@
       </div>
       <div class="sm:col-span-2 text-sm text-ink-600 dark:text-ink-300">
         <p>综合分是五个维度的加权融合，等级就是综合分映射成的字母。同一套 S–D 等级也用在跑步评分上，<strong>跨项目可横向比较</strong>——你的羽毛球 B 和跑步 B 是同一把尺子。</p>
-        <p class="mt-2 text-ink-500 dark:text-ink-400">默认权重：<strong>完整性 25% · 速度节奏 20% · 关节角度 20% · 稳定性 15% · 动力链 20%</strong>。教练视角会自动调成 30 / 15 / 25 / 10 / 20，更看重技术准确性。</p>
+        <p class="mt-2 text-ink-500 dark:text-ink-400">默认权重：<strong>完整性 25% · 速度节奏 20% · 关节角度 20% · 稳定性 15% · 动力链 20%</strong>。教练视角会自动调成 30 / 15 / 25 / 10 / 20，更看重技术准确性。其中动力链目前为 <strong>beta</strong>，随 v1.1 推出。</p>
       </div>
     </div>
 
@@ -169,7 +169,7 @@
 
       <div class="card space-y-4">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-[#1565C0]"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">动力链</h3></div>
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-[#1565C0]"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">动力链</h3><span class="badge-beta">v1.1 beta</span></div>
           <span class="badge bg-[#1565C0]/15 text-[#1565C0] ring-1 ring-[#1565C0]/30">权重 20%</span>
         </div>
         <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么——</strong>头顶击球时力量沿链条——<strong>髋 → 肩 → 肘 → 腕</strong>——的传递质量，基于运动生物力学模型。由三个子信号加权合成：<strong>链完整率</strong>（关节发力顺序对不对？占 50%）、<strong>速度放大率</strong>（腕速是髋速的几倍？占 30%）、<strong>髋参与度</strong>（从髋启动还是直接抡胳膊？占 20%）。</p>
@@ -179,6 +179,7 @@
           <li>肘先带、腕后甩——是鞭打，不是推</li>
           <li>随挥做完整，让链条收尾</li>
         </ul>
+        <p class="text-xs text-amber-700 dark:text-amber-400"><strong>beta 测试中——</strong>该维度已开放测试，将随 v1.1 推出。它已计入总分，但阈值与权重在正式发布前仍可能调整。</p>
         <p class="text-xs text-ink-500 dark:text-ink-400">动力链仅对头顶击球（高远/杀球/吊球）评分。清晰的侧面视角加 60 fps 及以上帧率，读数最可靠。举臂追踪退化时，该维度自动标为可信度下降。</p>
       </div>
 

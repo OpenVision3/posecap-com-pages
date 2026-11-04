@@ -79,7 +79,7 @@
       </div>
       <div class="sm:col-span-2 text-sm text-ink-600 dark:text-ink-300">
         <p>Un mélange pondéré de cinq dimensions. La note-lettre est la note globale convertie en lettre — la même échelle S–D que notre score de course, donc les notes sont comparables d'un sport à l'autre : votre B au badminton et votre B à la course, c'est une seule règle.</p>
-        <p class="mt-2 text-ink-500 dark:text-ink-400">Pondérations par défaut : <strong>Complétude 25 % · Tempo 20 % · Angles articulaires 20 % · Stabilité 15 % · Chaîne cinétique 20 %</strong>. Une vue entraîneur passe automatiquement à 30 / 15 / 25 / 10 / 20, accordant plus de poids à la précision technique.</p>
+        <p class="mt-2 text-ink-500 dark:text-ink-400">Pondérations par défaut : <strong>Complétude 25 % · Tempo 20 % · Angles articulaires 20 % · Stabilité 15 % · Chaîne cinétique 20 %</strong>. Une vue entraîneur passe automatiquement à 30 / 15 / 25 / 10 / 20, accordant plus de poids à la précision technique. La chaîne cinétique est actuellement en <strong>bêta</strong> et sera disponible avec la v1.1.</p>
       </div>
     </div>
 
@@ -169,7 +169,7 @@
 
       <div class="card space-y-4">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-[#1565C0]"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">Chaîne cinétique</h3></div>
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-[#1565C0]"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">Chaîne cinétique</h3><span class="badge-beta">v1.1 bêta</span></div>
           <span class="badge bg-[#1565C0]/15 text-[#1565C0] ring-1 ring-[#1565C0]/30">Poids 20 %</span>
         </div>
         <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">Mesure —</strong> la qualité du transfert d'énergie le long de la chaîne — <strong>hanche → épaule → coude → poignet</strong> — pour chaque frappe au-dessus de la tête, sur la base d'un modèle biomécanique. Trois sous-signaux pondérés : <strong>intégrité de la chaîne</strong> (vos articulations s'activent-elles dans le bon ordre ? — 50 %), <strong>amplification de vitesse</strong> (la vitesse du poignet est-elle bien supérieure à celle des hanches ? — 30 %), et <strong>engagement des hanches</strong> (démarrez-vous des hanches ou passez-vous directement au bras ? — 20 %).</p>
@@ -179,6 +179,7 @@
           <li>Laissez le coude précéder, puis le poignet — un fouet, pas une poussée</li>
           <li>Terminez l'accompagnement pour fermer la chaîne</li>
         </ul>
+        <p class="text-xs text-amber-700 dark:text-amber-400"><strong>En bêta —</strong> cette dimension est ouverte aux tests et sera disponible avec la v1.1. Elle compte déjà dans votre note globale, mais ses seuils et sa pondération peuvent encore évoluer avant la sortie.</p>
         <p class="text-xs text-ink-500 dark:text-ink-400">La chaîne cinétique n'est notée que pour les frappes au-dessus de la tête (dégagement / smash / amorti). Une vue de profil nette à 60 fps ou plus donne la lecture la plus fiable. Lorsque le suivi du bras se dégrade, cette dimension est signalée comme moins fiable.</p>
       </div>
 

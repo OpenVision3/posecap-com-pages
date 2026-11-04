@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>分析方法论 — PoseCap Inc.</title>
-  <meta name="description" content="PoseCap 如何把动作转化为分数——每个数字背后的维度、权重与阈值，面向球友、家长与教练，并与 App 保持同源。">
+  <meta name="description" content="PoseCap 如何把动作转化为分数——每个数字背后的维度、权重与阈值，以及测量方式、参考标准来源与适用边界。与 App 保持同源。">
   <link rel="alternate" hreflang="en" href="https://posecap.com/methodology/en/">
   <link rel="alternate" hreflang="zh" href="https://posecap.com/methodology/zh/">
   <link rel="alternate" hreflang="fr" href="https://posecap.com/methodology/fr/">
@@ -12,7 +12,7 @@
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="分析方法论">
-  <meta property="og:description" content="PoseCap 如何把动作转化为分数——每个数字背后的维度、权重与阈值，面向球友、家长与教练，并与 App 保持同源。">
+  <meta property="og:description" content="PoseCap 如何把动作转化为分数——每个数字背后的维度、权重与阈值，以及测量方式、参考标准来源与适用边界。与 App 保持同源。">
   <meta property="og:url" content="https://posecap.com/methodology/zh/">
   <meta property="og:site_name" content="PoseCap Inc.">
   <meta property="og:locale" content="zh_CN">
@@ -50,10 +50,10 @@
 
   <main class="flex-1">
     <section class="section pt-12 sm:pt-16">
-  <div class="container-page max-w-3xl space-y-4">
+  <div class="container-page max-w-3xl space-y-6">
     <p class="text-sm font-medium uppercase tracking-wider text-posecoach">分析方法论</p>
     <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">我们如何把动作变成分数。</h1>
-    <p class="text-lg text-ink-600 dark:text-ink-300">Pose Coach 给你的每一个数字背后，都有确定的维度、权重与阈值——为球友、家长与教练而写，并与 App 保持同源。对每个分数能说明什么、不能说明什么，都如实交代。</p>
+    <p class="border-l-2 border-posecoach pl-4 text-lg leading-relaxed text-ink-600 dark:text-ink-300">Pose Coach 的评分是<strong class="font-semibold text-ink-900 dark:text-white">方向性参考</strong>——分数越高，表示你的动作模式越接近该项技术的公开参考标准。它不是权威判定，<strong class="font-semibold text-ink-900 dark:text-white">也不构成医疗或临床评估</strong>。</p>
   </div>
 </section>
 
@@ -65,7 +65,7 @@
       <a href="/posecoach/swing-scoring/zh/" class="card group flex flex-col gap-3">
         <span class="badge bg-lime-100 text-lime-800 dark:bg-lime-950/60 dark:text-lime-300 w-fit">羽毛球</span>
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">羽毛球挥拍评分</h3>
-        <p class="text-sm text-ink-600 dark:text-ink-300">五个维度——完整性、速度节奏、关节角度、稳定性、动力链——0–100 分与 S/A/B/C/D 等级，并给出下一步最该练的三件事。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300">五个维度——完整性、速度节奏、关节角度、稳定性、动力链（beta）——0–100 分与 S/A/B/C/D 等级，并给出下一步最该练的三件事。</p>
         <span class="mt-auto text-sm font-medium text-posecoach group-hover:underline">阅读说明 →</span>
       </a>
 
@@ -82,9 +82,86 @@
         <p class="text-sm text-ink-600 dark:text-ink-300">步频、垂振比、时间对称、步幅效率——加权 0–100，可选 Running Power。测你跑得多省力，与速度无关。</p>
         <span class="mt-auto text-sm font-medium text-posecoach group-hover:underline">阅读说明 →</span>
       </a>
+      <a href="/posecoach/footwork-scoring/zh/" class="card group flex flex-col gap-3">
+        <span class="badge bg-lime-100 text-lime-800 dark:bg-lime-950/60 dark:text-lime-300 w-fit">羽毛球</span>
+        <div class="flex items-center gap-2"><h3 class="text-lg font-semibold text-ink-900 dark:text-white">羽毛球步法评分</h3><span class="badge-beta">v1.1 beta</span></div>
+        <p class="text-sm text-ink-600 dark:text-ink-300">以启动步为界切分步法循环，从方向一致、终点稳定、重心平稳、步数效率、无多余步五个维度给出 0–100 分与 S/A/B/C/D 等级。覆盖单独呈现，不计入综合分。</p>
+        <span class="mt-auto text-sm font-medium text-posecoach group-hover:underline">阅读指南 →</span>
+      </a>
 
     </div>
-    <p class="text-xs text-ink-400 dark:text-ink-500">评分基于 AI 动作分析，仅供方向性参考，非临床或专业评估。</p>
+  </div>
+</section>
+
+<section class="section pt-0">
+  <div class="container-page max-w-3xl space-y-12">
+
+    <div class="space-y-4">
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink-900 dark:text-white">动作是怎么测出来的</h2>
+      <p class="text-ink-600 dark:text-ink-300">Pose Coach 使用 Apple ARKit 身体追踪技术，通过设备摄像头以每秒最高 60 帧的速度估算三维关节位置。基于这些数据，我们计算关节角度、动作时序和技术特征，并与「聚合动作样本」及「公开的运动技术标准」推导出的参考值进行对比。</p>
+      <p class="text-ink-600 dark:text-ink-300">这些测量值是<strong class="font-semibold text-ink-900 dark:text-white">基于单个手机摄像头的估算，并非实验室级精度</strong>，准确性受光线、取景、距离以及身体是否完整入镜等因素影响。改进建议同样基于上述对比，指出与参考标准差距最大的维度。</p>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink-900 dark:text-white">参考标准的来源</h2>
+      <p class="text-ink-600 dark:text-ink-300">跑步速度基于短时间段内的峰值速度推算，<strong class="font-semibold text-ink-900 dark:text-white">而非完整计时赛成绩</strong>。</p>
+      <div class="overflow-x-auto rounded-xl border border-ink-100 dark:border-ink-800">
+        <table class="w-full min-w-[34rem] border-collapse text-sm">
+          <thead>
+            <tr class="bg-ink-50 dark:bg-ink-900">
+              <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400">机构</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400">用于</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400">来源</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-ink-100 dark:divide-ink-800">
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-ink-900 dark:text-white">BWF</td>
+              <td class="px-4 py-3 align-top text-ink-600 dark:text-ink-300">羽毛球世界联合会——技术指导参考其教练教育框架，即该项目世界管理机构的官方教练课程</td>
+              <td class="px-4 py-3 align-top"><a class="font-mono text-xs" href="https://development.bwfbadminton.com/coaches" rel="noopener">development.bwfbadminton.com/coaches</a></td>
+            </tr>
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-ink-900 dark:text-white">USATF</td>
+              <td class="px-4 py-3 align-top text-ink-600 dark:text-ink-300">美国——<em>USATF Junior Olympics</em> 田径标准</td>
+              <td class="px-4 py-3 align-top"><a class="font-mono text-xs" href="https://www.usatf.org" rel="noopener">usatf.org</a></td>
+            </tr>
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-ink-900 dark:text-white">Athletics Canada</td>
+              <td class="px-4 py-3 align-top text-ink-600 dark:text-ink-300">加拿大——<em>Athletics Canada</em> 青少年标准</td>
+              <td class="px-4 py-3 align-top"><a class="font-mono text-xs" href="https://athletics.ca" rel="noopener">athletics.ca</a></td>
+            </tr>
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-ink-900 dark:text-white">World Athletics</td>
+              <td class="px-4 py-3 align-top text-ink-600 dark:text-ink-300">世界田径——跑步姿态的一般技术原则参考其教练教育与认证体系（CECS）</td>
+              <td class="px-4 py-3 align-top"><a class="font-mono text-xs" href="https://worldathletics.org/development/education/coaches" rel="noopener">worldathletics.org/development/education/coaches</a></td>
+            </tr>
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-ink-900 dark:text-white">ACSM</td>
+              <td class="px-4 py-3 align-top text-ink-600 dark:text-ink-300">美国运动医学会——热身及体育活动的一般建议参考其指南，如 <em>ACSM's Guidelines for Exercise Testing and Prescription</em></td>
+              <td class="px-4 py-3 align-top"><a class="font-mono text-xs" href="https://www.acsm.org" rel="noopener">acsm.org</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="border-t border-ink-100 bg-ink-50 py-12 sm:py-16 dark:border-ink-800 dark:bg-ink-900/40">
+  <div class="container-page max-w-3xl">
+    <div class="prose-legal">
+      <h2 class="mt-0">非医疗建议——请咨询医生</h2>
+      <p>Pose Coach 提供的分析、评分及建议仅供<strong>运动训练和教育参考</strong>，不能替代：</p>
+      <ul>
+        <li>专业运动教练指导</li>
+        <li>物理治疗或运动医学评估</li>
+        <li>医疗诊断或治疗</li>
+      </ul>
+      <p><strong>在开始新的训练计划之前、以及在做任何健康相关决策之前，请务必咨询合格的医生或医疗专业人员。</strong> 如果您在运动过程中感到疼痛、不适、头晕，或正在从伤病中康复，请停止并在继续之前咨询医疗专业人员。</p>
+      <p>评分与建议不能用于诊断伤病、健康状况或身体机能限制，也不能替代专业意见。</p>
+    </div>
+    <p class="mt-6 border-t border-ink-200 pt-4 text-sm text-ink-500 dark:border-ink-800 dark:text-ink-400">关于我们分析方法的问题，请联系 <strong class="font-semibold text-ink-900 dark:text-white">support@posecap.com</strong></p>
   </div>
 </section>
 

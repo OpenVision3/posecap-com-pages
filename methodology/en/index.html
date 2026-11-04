@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Analysis methodology — PoseCap Inc.</title>
-  <meta name="description" content="How PoseCap turns motion into scores — the exact metrics, weights, and thresholds behind each number, kept in sync with the app.">
+  <meta name="description" content="How PoseCap turns motion into scores — the metrics behind each number, how the measurements are taken, where the reference standards come from, and what the scores can&#39;t tell you. Kept in sync with the app.">
   <link rel="alternate" hreflang="en" href="https://posecap.com/methodology/en/">
   <link rel="alternate" hreflang="zh" href="https://posecap.com/methodology/zh/">
   <link rel="alternate" hreflang="fr" href="https://posecap.com/methodology/fr/">
@@ -12,7 +12,7 @@
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="Analysis methodology">
-  <meta property="og:description" content="How PoseCap turns motion into scores — the exact metrics, weights, and thresholds behind each number, kept in sync with the app.">
+  <meta property="og:description" content="How PoseCap turns motion into scores — the metrics behind each number, how the measurements are taken, where the reference standards come from, and what the scores can&#39;t tell you. Kept in sync with the app.">
   <meta property="og:url" content="https://posecap.com/methodology/en/">
   <meta property="og:site_name" content="PoseCap Inc.">
   <meta property="og:locale" content="en_US">
@@ -50,10 +50,10 @@
 
   <main class="flex-1">
     <section class="section pt-12 sm:pt-16">
-  <div class="container-page max-w-3xl space-y-4">
+  <div class="container-page max-w-3xl space-y-6">
     <p class="text-sm font-medium uppercase tracking-wider text-posecoach">Analysis methodology</p>
     <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">How we turn motion into scores.</h1>
-    <p class="text-lg text-ink-600 dark:text-ink-300">The exact metrics, weights, and thresholds behind every number Pose Coach shows you — written for athletes, parents and coaches, and kept in sync with the app. Honest about what each score can and can't tell you.</p>
+    <p class="border-l-2 border-posecoach pl-4 text-lg leading-relaxed text-ink-600 dark:text-ink-300">Scores in Pose Coach are a <strong class="font-semibold text-ink-900 dark:text-white">directional reference</strong> — a higher score means your movement pattern is closer to the published reference profile for that technique. They are not a verdict, and <strong class="font-semibold text-ink-900 dark:text-white">they are not a medical or clinical assessment</strong>.</p>
   </div>
 </section>
 
@@ -65,7 +65,7 @@
       <a href="/posecoach/swing-scoring/en/" class="card group flex flex-col gap-3">
         <span class="badge bg-lime-100 text-lime-800 dark:bg-lime-950/60 dark:text-lime-300 w-fit">Badminton</span>
         <h3 class="text-lg font-semibold text-ink-900 dark:text-white">Badminton swing scoring</h3>
-        <p class="text-sm text-ink-600 dark:text-ink-300">Five dimensions — completeness, tempo, joint angles, stability, kinetic chain — scored 0–100 with an S/A/B/C/D grade, plus the three things to work on next.</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300">Five dimensions — completeness, tempo, joint angles, stability, kinetic chain (beta) — scored 0–100 with an S/A/B/C/D grade, plus the three things to work on next.</p>
         <span class="mt-auto text-sm font-medium text-posecoach group-hover:underline">Read the guide →</span>
       </a>
 
@@ -82,9 +82,86 @@
         <p class="text-sm text-ink-600 dark:text-ink-300">Cadence, vertical ratio, time symmetry and stride efficiency — weighted 0–100, with optional Running Power. How economically you run, separate from speed.</p>
         <span class="mt-auto text-sm font-medium text-posecoach group-hover:underline">Read the guide →</span>
       </a>
+      <a href="/posecoach/footwork-scoring/en/" class="card group flex flex-col gap-3">
+        <span class="badge bg-lime-100 text-lime-800 dark:bg-lime-950/60 dark:text-lime-300 w-fit">Badminton</span>
+        <div class="flex items-center gap-2"><h3 class="text-lg font-semibold text-ink-900 dark:text-white">Badminton footwork scoring</h3><span class="badge-beta">v1.1 beta</span></div>
+        <p class="text-sm text-ink-600 dark:text-ink-300">Split steps mark the cycle boundaries; five dimensions — direction, endpoint, stability, economy, efficiency — are scored 0–100 with an S/A/B/C/D grade. Coverage is reported separately and is not part of the score.</p>
+        <span class="mt-auto text-sm font-medium text-posecoach group-hover:underline">Read the guide →</span>
+      </a>
 
     </div>
-    <p class="text-xs text-ink-400 dark:text-ink-500">Scores reflect AI motion analysis and are directional guidance, not a clinical or professional assessment.</p>
+  </div>
+</section>
+
+<section class="section pt-0">
+  <div class="container-page max-w-3xl space-y-12">
+
+    <div class="space-y-4">
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink-900 dark:text-white">How the measurements are taken</h2>
+      <p class="text-ink-600 dark:text-ink-300">Pose Coach uses Apple ARKit body-tracking to estimate 3D joint positions from the device camera at up to 60 frames per second. From this data we compute joint angles, movement timing, and technique patterns, then compare them against reference values derived from aggregated motion samples and published sport-technique standards.</p>
+      <p class="text-ink-600 dark:text-ink-300">These measurements are <strong class="font-semibold text-ink-900 dark:text-white">estimates from a single phone camera. They are not laboratory-grade</strong> and accuracy depends on lighting, framing, distance, and how completely your body stays in frame. Tips are generated from the same comparison and highlight the dimensions with the largest gap from the reference.</p>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-ink-900 dark:text-white">Where the reference standards come from</h2>
+      <p class="text-ink-600 dark:text-ink-300">Running speed is projected from peak pace measured over a short interval, <strong class="font-semibold text-ink-900 dark:text-white">not a full timed event</strong>.</p>
+      <div class="overflow-x-auto rounded-xl border border-ink-100 dark:border-ink-800">
+        <table class="w-full min-w-[34rem] border-collapse text-sm">
+          <thead>
+            <tr class="bg-ink-50 dark:bg-ink-900">
+              <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400">Body</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400">Used for</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400">Source</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-ink-100 dark:divide-ink-800">
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-ink-900 dark:text-white">BWF</td>
+              <td class="px-4 py-3 align-top text-ink-600 dark:text-ink-300">Badminton World Federation — badminton technique guidance is informed by its Coach Education Framework, the official coaching curriculum of the sport's world governing body</td>
+              <td class="px-4 py-3 align-top"><a class="font-mono text-xs" href="https://development.bwfbadminton.com/coaches" rel="noopener">development.bwfbadminton.com/coaches</a></td>
+            </tr>
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-ink-900 dark:text-white">USATF</td>
+              <td class="px-4 py-3 align-top text-ink-600 dark:text-ink-300">United States — <em>USATF Junior Olympics</em> track &amp; field standards</td>
+              <td class="px-4 py-3 align-top"><a class="font-mono text-xs" href="https://www.usatf.org" rel="noopener">usatf.org</a></td>
+            </tr>
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-ink-900 dark:text-white">Athletics Canada</td>
+              <td class="px-4 py-3 align-top text-ink-600 dark:text-ink-300">Canada — <em>Athletics Canada</em> youth standards</td>
+              <td class="px-4 py-3 align-top"><a class="font-mono text-xs" href="https://athletics.ca" rel="noopener">athletics.ca</a></td>
+            </tr>
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-ink-900 dark:text-white">World Athletics</td>
+              <td class="px-4 py-3 align-top text-ink-600 dark:text-ink-300">General running-technique principles are informed by its Coaches' Education and Certification System (CECS)</td>
+              <td class="px-4 py-3 align-top"><a class="font-mono text-xs" href="https://worldathletics.org/development/education/coaches" rel="noopener">worldathletics.org/development/education/coaches</a></td>
+            </tr>
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 align-top font-semibold text-ink-900 dark:text-white">ACSM</td>
+              <td class="px-4 py-3 align-top text-ink-600 dark:text-ink-300">American College of Sports Medicine — general warm-up and physical-activity recommendations are informed by its guidance, e.g. <em>ACSM's Guidelines for Exercise Testing and Prescription</em></td>
+              <td class="px-4 py-3 align-top"><a class="font-mono text-xs" href="https://www.acsm.org" rel="noopener">acsm.org</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="border-t border-ink-100 bg-ink-50 py-12 sm:py-16 dark:border-ink-800 dark:bg-ink-900/40">
+  <div class="container-page max-w-3xl">
+    <div class="prose-legal">
+      <h2 class="mt-0">Not medical advice — check with a doctor</h2>
+      <p>The analysis, scores, and recommendations in Pose Coach are for <strong>sports training and educational purposes only</strong>. They are not a substitute for:</p>
+      <ul>
+        <li>Professional sports coaching</li>
+        <li>Physiotherapy or sports-medicine assessment</li>
+        <li>Medical diagnosis or treatment</li>
+      </ul>
+      <p><strong>Always check with a qualified doctor or healthcare professional before starting a new training program, and before making any decisions about your health.</strong> If you experience pain, discomfort, dizziness, or are recovering from an injury, stop and consult a healthcare professional before continuing.</p>
+      <p>Scores and tips do not diagnose injuries, health conditions, or physical limitations, and they are not a substitute for professional advice.</p>
+    </div>
+    <p class="mt-6 border-t border-ink-200 pt-4 text-sm text-ink-500 dark:border-ink-800 dark:text-ink-400">For questions about our methodology, contact us at <strong class="font-semibold text-ink-900 dark:text-white">support@posecap.com</strong></p>
   </div>
 </section>
 

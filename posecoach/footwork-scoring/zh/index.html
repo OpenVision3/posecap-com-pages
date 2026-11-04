@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽毛球步法评分原理 · 五维 AI 动作分析 — Pose Coach — PoseCap Inc.</title>
+  <meta name="description" content="Pose Coach 如何给羽毛球步法打分 —— 以启动步为界切分步法循环，从步数效率、方向一致、终点稳定、重心平稳、无多余步五个维度给出 0–100 分与 S/A/B/C/D 等级。v1.1 beta 测试中。">
+  <meta name="apple-itunes-app" content="app-id=6760837820, app-argument=posecoach-home">
+  <link rel="alternate" hreflang="en" href="https://posecap.com/posecoach/footwork-scoring/en/">
+  <link rel="alternate" hreflang="zh" href="https://posecap.com/posecoach/footwork-scoring/zh/">
+  <link rel="alternate" hreflang="x-default" href="https://posecap.com/posecoach/footwork-scoring/en/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="羽毛球步法评分原理 · 五维 AI 动作分析 — Pose Coach">
+  <meta property="og:description" content="Pose Coach 如何给羽毛球步法打分 —— 以启动步为界切分步法循环，从步数效率、方向一致、终点稳定、重心平稳、无多余步五个维度给出 0–100 分与 S/A/B/C/D 等级。v1.1 beta 测试中。">
+  <meta property="og:url" content="https://posecap.com/posecoach/footwork-scoring/zh/">
+  <meta property="og:site_name" content="PoseCap Inc.">
+  <meta property="og:locale" content="zh_CN">
+
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="/assets/css/tailwind.css">
+</head>
+<body class="min-h-screen flex flex-col">
+  
+
+  
+  
+  
+
+<header class="border-b border-ink-100 bg-white/80 backdrop-blur dark:border-ink-800 dark:bg-ink-950/80 sticky top-0 z-40">
+  <div class="container-page flex h-10 items-center gap-6">
+    <a href="/zh/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap">
+      <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap" width="76" height="28" class="h-7 w-auto block dark:hidden">
+      <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap</span>
+    </a>
+    <nav class="ml-auto hidden md:flex items-center gap-6 text-sm">
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="/zh/#products">产品</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="/about/zh/">关于</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white" href="mailto:contact@posecap.com">联系我们</a>
+      <span class="text-ink-300 dark:text-ink-700">|</span>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white " href="/posecoach/footwork-scoring/en/">EN</a>
+      <a class="text-ink-600 hover:text-ink-900 dark:text-ink-300 dark:hover:text-white font-semibold text-ink-900 dark:text-white" href="/posecoach/footwork-scoring/zh/">中文</a>
+      
+    </nav>
+    <a class="md:hidden ml-auto text-ink-600 dark:text-ink-300 text-sm" href="/zh/#products">产品</a>
+  </div>
+</header>
+
+  <main class="flex-1">
+    <section class="section pt-10 sm:pt-14 bg-gradient-to-br from-posecoach/10 via-transparent to-transparent dark:from-posecoach/20">
+  <div class="container-page space-y-6 max-w-3xl">
+    <div class="flex flex-wrap items-center gap-3">
+      <a href="/methodology/zh/" class="inline-flex items-center gap-2 text-sm text-posecoach hover:underline">← 分析方法论</a>
+      <span class="text-xs font-medium uppercase tracking-wider text-ink-400">羽毛球步法评分</span>
+      <span class="badge-beta">v1.1 beta</span>
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-ink-900 dark:text-white">赢在<span class="text-posecoach">挥拍之前</span> —— 看看你的脚下。</h1>
+    <p class="text-lg text-ink-600 dark:text-ink-300">录一段多拍对抗，Pose Coach 把你的移动切成一个个<strong>步法循环</strong>，从步数效率、方向一致、终点稳定、重心平稳、无多余步五个维度量化你的步法，并告诉你最该改的那一项。</p>
+    <div class="flex flex-wrap items-center gap-3 pt-2">
+      <a href="https://apps.apple.com/app/id6760837820" rel="noopener" target="_blank" class="btn-primary">给我的步法打个分</a>
+      <a href="#how" class="btn-secondary">看看评分怎么来</a>
+    </div>
+    <p class="text-sm text-amber-700 dark:text-amber-400"><strong>beta 测试中——</strong>步法评分随 v1.1 发布。当前阈值是校准前的开发值，正式发布前仍可能调整。</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page max-w-3xl space-y-6">
+    <h2 class="section-title">一个循环 = 从这次启动步到下一次。</h2>
+    <p class="section-lead mt-0 max-w-none">跑步可以按步计分，羽毛球不行。羽毛球的移动是<strong>去而复返</strong>的 —— 对手击球时你启动、移动、击球，然后回到中心位。所以 Pose Coach 以<strong>启动步落地的那一刻</strong>作为循环边界：两次启动步之间的全部动作，就是一个完整的步法循环。</p>
+
+    <div class="rounded-2xl border border-ink-100 dark:border-ink-800 bg-ink-50 dark:bg-ink-900/40 p-6 space-y-4">
+      <div class="grid grid-cols-4 gap-2 text-center text-xs">
+        <div class="space-y-2"><div class="h-2 rounded-full bg-posecoach"></div><div class="font-semibold text-ink-900 dark:text-white">启动步</div><div class="text-ink-500">对手击球</div></div>
+        <div class="space-y-2"><div class="h-2 rounded-full bg-posecoach/60"></div><div class="font-semibold text-ink-900 dark:text-white">移动</div><div class="text-ink-500">并步 / 交叉步</div></div>
+        <div class="space-y-2"><div class="h-2 rounded-full bg-posecoach/60"></div><div class="font-semibold text-ink-900 dark:text-white">击球步</div><div class="text-ink-500">你击球</div></div>
+        <div class="space-y-2"><div class="h-2 rounded-full bg-posecoach"></div><div class="font-semibold text-ink-900 dark:text-white">回位</div><div class="text-ink-500">下一次启动步</div></div>
+      </div>
+      <p class="text-center text-xs text-ink-500 dark:text-ink-400">└─────────  一个步法循环  ─────────┘</p>
+    </div>
+
+    <p class="text-sm text-ink-600 dark:text-ink-300">五个维度都是<strong>逐循环计算、再在整段录制上取平均</strong>。分数反映的是每一次出击与回位的质量，而不是你总共移动了多少。</p>
+
+    <div class="overflow-hidden rounded-xl border border-ink-100 dark:border-ink-800">
+      <table class="w-full text-sm">
+        <thead class="bg-ink-50 dark:bg-ink-900/40 text-ink-500 dark:text-ink-400">
+          <tr><th class="px-4 py-2 text-left font-medium">优先级</th><th class="px-4 py-2 text-left font-medium">循环锚点</th><th class="px-4 py-2 text-left font-medium">何时使用</th></tr>
+        </thead>
+        <tbody class="divide-y divide-ink-100 dark:divide-ink-800 text-ink-700 dark:text-ink-200">
+          <tr><td class="px-4 py-2 font-semibold">①</td><td class="px-4 py-2">启动步落地</td><td class="px-4 py-2">首选 —— 真实的物理单元</td></tr>
+          <tr><td class="px-4 py-2 font-semibold">②</td><td class="px-4 py-2">击球时刻</td><td class="px-4 py-2">未检测到启动步时</td></tr>
+          <tr><td class="px-4 py-2 font-semibold">③</td><td class="px-4 py-2">整段录制</td><td class="px-4 py-2">两者都没有时，整段算一个循环</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-ink-500 dark:text-ink-400">当分析退化到 ② 或 ③ 时，「循环」作为物理单元就变弱了，分数的可解释性也相应下降。评分卡会显示本次用的是哪一种锚点。</p>
+  </div>
+</section>
+
+<section id="how" class="section bg-ink-50 dark:bg-ink-900/40">
+  <div class="container-page max-w-3xl space-y-6">
+    <h2 class="section-title">一个步法分，五个维度加权合成。</h2>
+    <p class="section-lead mt-0 max-w-none">Pose Coach 读取你的步法循环数据，对<strong>五个维度</strong>各打 0–100 分，再按权重合成 <strong>0–100 综合分</strong>和 <strong>S/A/B/C/D 等级</strong>。</p>
+
+    <div class="grid gap-6 sm:grid-cols-3 items-center rounded-2xl border border-ink-100 dark:border-ink-800 bg-white dark:bg-ink-900 p-6">
+      <div class="flex flex-col items-center justify-center">
+        <div class="flex h-28 w-28 items-center justify-center rounded-full border-[6px] border-posecoach text-ink-900 dark:text-white">
+          <div class="text-center leading-none"><div class="text-3xl font-semibold">74</div><div class="text-xs text-ink-500">/ 100</div></div>
+        </div>
+        <div class="mt-2 inline-flex items-center rounded-full bg-posecoach/15 px-3 py-0.5 text-sm font-semibold text-posecoach ring-1 ring-posecoach/30">B · 步法良好</div>
+      </div>
+      <div class="sm:col-span-2 text-sm text-ink-600 dark:text-ink-300">
+        <p>五个维度的加权合成。等级由综合分映射为字母 —— 与挥拍评分、跑姿评分共用同一套 S–D 分数线，因此不同项目的等级可以横向比较。</p>
+        <p class="mt-2 text-ink-500 dark:text-ink-400">权重：<strong>方向一致 30% · 终点稳定 22% · 重心平稳 22% · 步数效率 15% · 无多余步 11%</strong>。<strong>覆盖不计入综合分</strong> —— 见下文。</p>
+      </div>
+    </div>
+
+    <div class="overflow-hidden rounded-xl border border-ink-100 dark:border-ink-800">
+      <table class="w-full text-sm">
+        <thead class="bg-white dark:bg-ink-900 text-ink-500 dark:text-ink-400">
+          <tr><th class="px-4 py-2 text-left font-medium">等级</th><th class="px-4 py-2 text-left font-medium">定性</th><th class="px-4 py-2 text-right font-medium">综合分</th></tr>
+        </thead>
+        <tbody class="divide-y divide-ink-100 dark:divide-ink-800 text-ink-700 dark:text-ink-200">
+          <tr><td class="px-4 py-2 font-semibold">S</td><td class="px-4 py-2">精英级步法</td><td class="px-4 py-2 text-right">≥ 90</td></tr>
+          <tr><td class="px-4 py-2 font-semibold">A</td><td class="px-4 py-2">步法优秀</td><td class="px-4 py-2 text-right">≥ 80</td></tr>
+          <tr><td class="px-4 py-2 font-semibold">B</td><td class="px-4 py-2">步法良好</td><td class="px-4 py-2 text-right">≥ 70</td></tr>
+          <tr><td class="px-4 py-2 font-semibold">C</td><td class="px-4 py-2">步法一般</td><td class="px-4 py-2 text-right">≥ 60</td></tr>
+          <tr><td class="px-4 py-2 font-semibold">D</td><td class="px-4 py-2">步法需加强</td><td class="px-4 py-2 text-right">&lt; 60</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-ink-500 dark:text-ink-400">分数线（90 / 80 / 70 / 60）与挥拍评分、跑姿评分共用，因此等级可以跨评分比较 —— 但底层维度不同，<strong>分数本身不可直接互换</strong>。</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page max-w-4xl space-y-8">
+    <div class="space-y-3">
+      <h2 class="section-title">五个维度</h2>
+      <p class="section-lead mt-0">每个维度回答三个问题：<strong>测什么</strong>、<strong>什么算满分</strong>、<strong>怎么提高</strong>。按权重从高到低排列 —— 权重来自实测区分度，不是「哪一维听起来更重要」。</p>
+    </div>
+    <div class="grid gap-6 md:grid-cols-2">
+
+      <div class="card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-cyan-400"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">方向一致</h3></div>
+          <span class="badge bg-cyan-100 text-cyan-800 dark:bg-cyan-950/60 dark:text-cyan-300">权重 30%</span>
+        </div>
+        <p class="text-xs font-medium uppercase tracking-wider text-ink-400">移动方向明确</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么 ——</strong> 你在一个循环内的位移是否有明确朝向 —— 是果断地出击再回位，还是中途犹豫、来回晃动。系统把循环切成三段，比较三段朝向的一致性。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">什么算满分 ——</strong> 循环的三段朝向一致：一次果断的移动，没有犹豫。</p>
+        <ul class="text-sm text-ink-600 dark:text-ink-300 list-disc pl-5 space-y-1">
+          <li>练习六点移动和方向切换</li>
+          <li>每次移动有明确的起点和终点</li>
+        </ul>
+        <p class="text-xs text-ink-500 dark:text-ink-400">这是权重最高的一维 —— 五个维度里，它对「果断移动」与「犹豫」的区分度最好。</p>
+      </div>
+
+      <div class="card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-violet-400"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">终点稳定</h3></div>
+          <span class="badge bg-violet-100 text-violet-800 dark:bg-violet-950/60 dark:text-violet-300">权重 22%</span>
+        </div>
+        <p class="text-xs font-medium uppercase tracking-wider text-ink-400">到位时是否受控</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么 ——</strong> 循环结束时你是否<strong>受控地</strong>到位，减速衔接下一次启动步，而不是仍以全速冲着。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">什么算满分 ——</strong> 受控到位、随时可以蹬出下一步。注意这<em>不是</em>「完全停住」—— 循环的终点正是下一次启动的起点。</p>
+        <ul class="text-sm text-ink-600 dark:text-ink-300 list-disc pl-5 space-y-1">
+          <li>击球后控制重心</li>
+          <li>站稳了再启动下一步</li>
+        </ul>
+      </div>
+
+      <div class="card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-lime-400"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">重心平稳</h3></div>
+          <span class="badge bg-lime-100 text-lime-800 dark:bg-lime-950/60 dark:text-lime-300">权重 22%</span>
+        </div>
+        <p class="text-xs font-medium uppercase tracking-wider text-ink-400">移动中不上下颠簸</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么 ——</strong> 移动过程中髋部上下起伏的幅度。上下颠簸意味着力气花在了把身体抬起来，而不是把它送到该去的位置。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">什么算满分 ——</strong> 移动全程髋部走平，没有明显起伏。</p>
+        <ul class="text-sm text-ink-600 dark:text-ink-300 list-disc pl-5 space-y-1">
+          <li>移动中保持膝盖微屈</li>
+          <li>避免上下颠簸</li>
+        </ul>
+        <p class="text-xs text-ink-500 dark:text-ink-400"><strong>与挥拍评分里的「稳定性」不是一回事。</strong>那一维测的是多次挥拍之间的节奏一致性，这一维测的是移动中髋部的垂直起伏。</p>
+      </div>
+
+      <div class="card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-amber-400"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">步数效率</h3></div>
+          <span class="badge bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">权重 15%</span>
+        </div>
+        <p class="text-xs font-medium uppercase tracking-wider text-ink-400">每步覆盖多少距离</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么 ——</strong> 一个循环里每一步覆盖了多少距离。设计意图是：小碎步多的得分低，用并步、交叉步以更少更大的步子到位的得分高。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">什么算满分 ——</strong> 用更少、更大的步子到位，而不是靠许多小调整步。</p>
+        <ul class="text-sm text-ink-600 dark:text-ink-300 list-disc pl-5 space-y-1">
+          <li>用并步和交叉步替代小碎步</li>
+          <li>减少无效移动</li>
+        </ul>
+        <p class="text-xs text-amber-700 dark:text-amber-400"><strong>这一维要谨慎解读 ——</strong> 按当前实现，它最直接测量的是每步覆盖的距离，而这个量很大程度上由<strong>你录了什么内容</strong>决定，而非只由步法效率决定。同一个人做定点练习和做六点步法练习，这一维可以相差数倍。<strong>不同练习类型的录制在这一维上不可比。</strong>这也是它权重最低的原因。</p>
+        <p class="text-xs text-ink-500 dark:text-ink-400">羽毛球的步幅远小于跑步步幅 —— 这不是「步长」，也不能与我们跑步指南里米级的步幅相类比。</p>
+      </div>
+
+      <div class="card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-rose-400"></span><h3 class="text-lg font-semibold text-ink-900 dark:text-white">无多余步</h3></div>
+          <span class="badge bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300">权重 11%</span>
+        </div>
+        <p class="text-xs font-medium uppercase tracking-wider text-ink-400">比最少步数多走了几步</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么 ——</strong> 就你覆盖的距离而言，你比理论最少步数多走了几步。超出的部分都算多余的调整步。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">什么算满分 ——</strong> 到达击球位置时没有多余的调整步。</p>
+        <ul class="text-sm text-ink-600 dark:text-ink-300 list-disc pl-5 space-y-1">
+          <li>提前预判方向</li>
+          <li>用最少步数到达击球位置</li>
+        </ul>
+        <p class="text-xs text-amber-700 dark:text-amber-400"><strong>当前区分度有限 ——</strong> 在现有录制上，这一维大多落在满分或接近满分，而在定点类练习上会骤降。低分更应视为「去看一下这段录制」的提示，而不是你步法上一个已测准的差距。</p>
+        <p class="text-xs text-ink-500 dark:text-ink-400"><strong>「无多余步」不是「步数效率」。</strong>步数效率问的是<em>每一步带你走了多远</em>；无多余步问的是<em>你比需要的多花了几步</em>。</p>
+      </div>
+
+      <div class="card space-y-4 border-dashed">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-ink-300 dark:bg-ink-600"></span><h3 class="text-lg font-semibold text-ink-500 dark:text-ink-400">覆盖</h3></div>
+          <span class="badge bg-ink-100 text-ink-500 dark:bg-ink-800 dark:text-ink-400">不计分</span>
+        </div>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">测什么 ——</strong> 这段录制里检测到了多少个步法循环，反映你在场上的活跃程度。它确实有用（站着挥拍和满场跑动不是同一种训练），但<strong>它不是质量指标</strong>。</p>
+        <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">为什么不计分 ——</strong> 移动得多不等于移动得好。把它算进总分只会奖励跑得多的人。它单独展示、用中性灰呈现，以免评分卡被读成六条等权重的进度条。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section bg-ink-50 dark:bg-ink-900/40">
+  <div class="container-page max-w-3xl space-y-6">
+    <h2 class="section-title">评分卡逐项解读</h2>
+    <p class="section-lead mt-0">打开步法评分卡，每个元素都在告诉你一件事。</p>
+    <ul class="space-y-3 text-sm text-ink-600 dark:text-ink-300">
+      <li><strong class="text-ink-900 dark:text-white">评分环 + 等级徽章</strong> —— 0–100 综合分及其 S/A/B/C/D 字母，附一句定性。</li>
+      <li><strong class="text-ink-900 dark:text-white">一句话总结</strong> —— 指出最该先改的地方。当五个维度都已不错时，会切换成「继续保持」的措辞。</li>
+      <li><strong class="text-ink-900 dark:text-white">五条维度进度条</strong> —— 方向一致 / 终点稳定 / 重心平稳 / 步数效率 / 无多余步，各带分数与一行细节。</li>
+      <li><strong class="text-ink-900 dark:text-white">单独列出的覆盖</strong> —— 显示在分隔线之下，中性灰，并标注「不计入综合分」。</li>
+      <li><strong class="text-ink-900 dark:text-white">改进建议</strong> —— <strong>最多三条</strong>，有时更少，有时没有。</li>
+      <li><strong class="text-ink-900 dark:text-white">逐循环明细</strong> —— 每个循环的分数、起止时间，以及它是由哪种启动步锚定的。</li>
+      <li><strong class="text-ink-900 dark:text-white">引擎版本 + 提示</strong> —— 评分引擎版本、beta 标记，以及「分数仅为方向性参考」的诚实提醒。</li>
+    </ul>
+    <div class="rounded-2xl border border-ink-100 dark:border-ink-800 bg-white dark:bg-ink-900 p-5 border-l-4 border-l-posecoach">
+      <p class="text-sm text-ink-700 dark:text-ink-200"><strong>置信度：</strong>当检测到的<strong>步法循环少于 2 个</strong>时，综合分会被封顶并标注为仅供参考。多打几拍，分数才有意义。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page max-w-3xl space-y-6">
+    <h2 class="section-title">不是「多练步法」—— 而是先练哪一块</h2>
+    <p class="section-lead mt-0">评分会挑出拖后腿的维度，按从弱到强排序，返回<strong>最多三条建议</strong> —— 让你先修最拉分的那一项。</p>
+    <div class="overflow-hidden rounded-xl border border-ink-100 dark:border-ink-800 bg-white dark:bg-ink-900">
+      <table class="w-full text-sm">
+        <tbody class="divide-y divide-ink-100 dark:divide-ink-800 text-ink-700 dark:text-ink-200">
+          <tr><td class="px-4 py-2.5 w-28 font-semibold text-posecoach">步数效率</td><td class="px-4 py-2.5">用并步和交叉步替代小碎步，减少无效移动</td></tr>
+          <tr><td class="px-4 py-2.5 font-semibold text-posecoach">方向一致</td><td class="px-4 py-2.5">练习六点移动和方向切换，每次移动有明确起点和终点</td></tr>
+          <tr><td class="px-4 py-2.5 font-semibold text-posecoach">终点稳定</td><td class="px-4 py-2.5">击球后控制重心，站稳了再启动下一步</td></tr>
+          <tr><td class="px-4 py-2.5 font-semibold text-posecoach">重心平稳</td><td class="px-4 py-2.5">移动中保持膝盖微屈，避免上下颠簸</td></tr>
+          <tr><td class="px-4 py-2.5 font-semibold text-posecoach">无多余步</td><td class="px-4 py-2.5">提前预判方向，用最少步数到达击球位置</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm text-ink-600 dark:text-ink-300"><strong class="text-ink-900 dark:text-white">建议越少越是好事。</strong>只有拖后腿的维度才会产生建议。只有一个维度偏弱就只给一条；五个维度都不错时一条都没有，评分卡会告诉你继续保持。</p>
+  </div>
+</section>
+
+<section class="section bg-ink-50 dark:bg-ink-900/40">
+  <div class="container-page max-w-3xl space-y-6">
+    <h2 class="section-title">这个分数能做什么、不能做什么</h2>
+    <div class="rounded-2xl border border-posecoach/30 bg-posecoach/5 p-5 space-y-2">
+      <p class="text-sm font-medium text-ink-800 dark:text-ink-100">分数来自 AI 动作分析，仅为方向性参考 —— 不构成临床或专业评估。</p>
+      <p class="text-sm font-medium text-amber-700 dark:text-amber-400">步法评分处于 beta 测试中，随 v1.1 发布。当前阈值是校准前的开发值，尚未在标注过的真实球员样本上验证 —— 分数是方向性读数，不是步法水平的标尺。</p>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-posecoach mb-3">它能做到</h3>
+        <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+          <li>把移动切成步法循环，逐循环给五个维度打分</li>
+          <li>指出最该练的那一维，并给出可执行的练法</li>
+          <li>报告你在场上的活跃程度，且与质量分开呈现</li>
+          <li>检测启动步，并以此切分循环</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-[#ff5a3c] mb-3">需要留意</h3>
+        <ul class="space-y-2 text-sm text-ink-600 dark:text-ink-300 list-disc pl-5">
+          <li><strong>步数效率当前更多反映你录了什么</strong>，而非你移动得多好 —— 不同练习类型的录制在这一维上不可比</li>
+          <li><strong>步数是估算的</strong> —— 由脚部速度峰值推得，不是逐次落地计数</li>
+          <li>需要<strong>下半身在画面内</strong> —— 拍不到腿就没有分数</li>
+          <li>需要<strong>20 fps 及以上</strong> —— 低于此不返回分数</li>
+          <li>没有启动步时会退化到用击球时刻、再退化到整段录制，「循环」这个单元随之变弱</li>
+          <li>最多三条建议，有时更少或没有 —— 不能替代教练的现场判断</li>
+        </ul>
+      </div>
+    </div>
+    <p class="text-xs text-ink-500 dark:text-ink-400">如果下半身不可见或帧率过低，系统不会返回分数，App 会提示你重新取景或在 App 内重录。腾空与触地检测尚未实现 —— 当前的步伐识别仅基于脚部水平速度。</p>
+  </div>
+</section>
+
+<section class="section bg-gradient-to-br from-posecoach/10 via-transparent to-transparent dark:from-posecoach/20">
+  <div class="container-page text-center space-y-6">
+    <h2 class="section-title">赢球从脚下开始。</h2>
+    <p class="section-lead mx-auto">录一段多拍对抗，看看你的五个维度、你的等级，以及最该改的那一项。</p>
+    <div class="pt-2">
+      <a href="https://apps.apple.com/app/id6760837820" rel="noopener" target="_blank" class="btn-primary">给我的步法打个分</a>
+      <p class="mt-3"><span class="badge-beta">v1.1 beta</span></p>
+    </div>
+    <p class="text-xs text-ink-400 dark:text-ink-500">评分引擎 v0.7.0 · beta · 分数来自 AI 动作分析，仅为方向性参考，不构成临床或专业评估。</p>
+  </div>
+</section>
+
+  </main>
+  
+
+  
+  
+  
+  
+  
+
+<footer class="border-t border-ink-100 bg-ink-50 dark:border-ink-800 dark:bg-ink-950">
+  <div class="container-page py-12 grid gap-8 md:grid-cols-4">
+    <div class="space-y-3">
+      <a href="/zh/" class="flex items-center gap-3 text-ink-900 dark:text-white" aria-label="PoseCap">
+        <img src="/assets/branding/posecap_wordmark.svg" alt="PoseCap" width="65" height="24" class="h-6 w-auto block dark:hidden">
+        <span class="hidden dark:inline font-semibold tracking-tight text-lg">PoseCap</span>
+      </a>
+      <p class="text-sm text-ink-500 dark:text-ink-400 max-w-xs">为每一位运动爱好者，提供精准的动作分析。</p>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">资源</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/zh/">关于 PoseCap Inc.</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/methodology/zh/">分析方法论</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/privacy/zh/">隐私政策</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="/about/tos/zh/">服务条款</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">语言</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/posecoach/footwork-scoring/en/">English</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 font-semibold" href="/posecoach/footwork-scoring/zh/">中文</a></li>
+        <li><a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300 " href="/fr/">Français</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-ink-500 dark:text-ink-400 mb-3">关注我们</h4>
+      <ul class="space-y-2 text-sm">
+        <li><span class="text-ink-500 dark:text-ink-400">邮箱:</span> <a class="text-ink-700 hover:text-brand-600 dark:text-ink-200 dark:hover:text-brand-300" href="mailto:contact@posecap.com">contact@posecap.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-ink-100 dark:border-ink-800">
+    <div class="container-page py-6 text-xs text-ink-500 dark:text-ink-400">
+      © 2026 PoseCap Inc. 保留所有权利。
+    </div>
+  </div>
+</footer>
+
+  <script>
+    // YouTube facade: swap thumbnail+button for iframe on click.
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-yt-id]');
+      if (!btn) return;
+      e.preventDefault();
+      var id = btn.dataset.ytId;
+      var title = btn.dataset.ytTitle || 'YouTube video';
+      var iframe = document.createElement('iframe');
+      var p = [
+        'autoplay=1',
+        'controls=0',
+        'modestbranding=1',
+        'rel=0',
+        'playsinline=1',
+        'iv_load_policy=3',
+        'disablekb=1',
+        'loop=1',
+        'playlist=' + encodeURIComponent(id)
+      ].join('&');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?' + p;
+      iframe.title = title;
+      iframe.className = 'w-full h-full';
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+      iframe.setAttribute('allowfullscreen', '');
+      var wrap = document.createElement('div');
+      wrap.className = 'aspect-video w-full rounded-2xl overflow-hidden shadow-soft ring-1 ring-ink-200 dark:ring-ink-800';
+      wrap.appendChild(iframe);
+      btn.replaceWith(wrap);
+    });
+  </script>
+  <script>
+    // Hero showcase carousel: auto-rotate synced photo + caption stacks; no-op when absent.
+    (function () {
+      var root = document.querySelector('[data-carousel]');
+      if (!root) return;
+      var slice = function (n) { return Array.prototype.slice.call(n); };
+      var photos = slice(root.querySelectorAll('[data-photo]'));
+      var captions = slice(root.querySelectorAll('[data-caption]'));
+      var dots = slice(root.querySelectorAll('[data-dot]'));
+      var count = Math.max(photos.length, captions.length);
+      if (count < 2) return;
+      var i = 0, timer = null;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function fade(el, on) {
+        el.classList.toggle('opacity-100', on);
+        el.classList.toggle('opacity-0', !on);
+        el.classList.toggle('pointer-events-none', !on);
+        if (on) { el.removeAttribute('aria-hidden'); } else { el.setAttribute('aria-hidden', 'true'); }
+      }
+      function show(n) {
+        i = (n + count) % count;
+        photos.forEach(function (el, idx) { fade(el, idx === i); });
+        captions.forEach(function (el, idx) { fade(el, idx === i); });
+        dots.forEach(function (d, idx) {
+          var on = idx === i;
+          d.classList.toggle('w-4', on);
+          d.classList.toggle('bg-posecoach', on);
+          d.classList.toggle('w-2', !on);
+          d.classList.toggle('bg-ink-300', !on);
+          d.classList.toggle('dark:bg-ink-600', !on);
+        });
+      }
+      function next() { show(i + 1); }
+      function start() { if (!reduce && !timer) timer = setInterval(next, 5000); }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      dots.forEach(function (d, idx) {
+        d.addEventListener('click', function () { show(idx); stop(); start(); });
+      });
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+      root.addEventListener('focusin', stop);
+      root.addEventListener('focusout', start);
+      show(0);
+      start();
+    })();
+  </script>
+</body>
+</html>

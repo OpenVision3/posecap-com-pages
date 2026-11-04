@@ -1,0 +1,29 @@
+{
+ "name": "场边打点",
+ "short_name": "场边打点",
+ "lang": "zh-CN",
+ "id": "https://posecap.com/courtside/",
+ "start_url": "https://posecap.com/courtside/",
+ "scope": "https://posecap.com/courtside/",
+ "display": "standalone",
+ "background_color": "#185943",
+ "theme_color": "#185943",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
