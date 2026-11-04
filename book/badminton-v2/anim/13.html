@@ -211,7 +211,7 @@ function cam(){ const cp=Math.cos(pitch); return {C:[Math.sin(yaw)*cp*dist, Math
 let K=null;
 function setup(){ const {C,T}=cam(); const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]], dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
   const cr=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]], nm=a=>{const l=Math.hypot(...a);return a.map(v=>v/l);};
-  const f=nm(sub(T,C)), r=nm(cr(f,[0,0,1])), u=cr(r,f); K={C,f,r,u,sub,dot}; }
+  const f=nm(sub(T,C)), r=nm(cr([0,0,1],f)), u=cr(f,r); K={C,f,r,u,sub,dot}; }   // 右 = 上 × 前；反过来乘左右镜像（2026-11-03 修）
 function P(x,y,z){ const {C,f,r,u,sub,dot}=K, d=sub([x,y,z||0],C), zc=dot(d,f); if(zc<0.3) return null;
   const s=560/zc; return {x:220+dot(d,r)*s, y:300-dot(d,u)*s, s}; }
 const el=(t,a,p)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); (p||svg).appendChild(e); return e; };
