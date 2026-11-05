@@ -22,8 +22,12 @@ body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 -apple-system,"
 .page{min-height:100%;display:flex;flex-direction:column;gap:10px;
   padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 [hidden]{display:none!important}
-.ver{color:var(--muted);font-size:12px;font-weight:600}
-header{display:flex;align-items:baseline;gap:8px}header b{font-size:20px}header span{color:var(--muted);font-size:14px;flex:1}
+/* 应用顶栏（试用者 2026-11-04：要像一个工具产品，不像标注器的对话框）：图标 + 名字 + 版本，二级页右边「‹ 记录」 */
+.appbar{display:flex;align-items:center;gap:10px}
+.appicon{width:38px;height:38px;flex:none;border-radius:9px;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.brand{display:flex;align-items:baseline;gap:6px}.brand b{font-size:20px;letter-spacing:.02em}
+.ver{color:var(--muted);font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:0 6px}
+.appbar #sub{color:var(--muted);font-size:14px;flex:1}
 .hint{color:var(--muted);font-size:13px;margin:0}
 button{font:inherit;cursor:pointer;touch-action:manipulation;color:inherit}
 .btn{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:15px}
@@ -37,12 +41,35 @@ input[type=number]{width:3.6em}
 .msg{margin:0;padding:10px 12px;border-radius:10px;background:var(--warnbg);color:var(--warn);font-size:14px}
 
 /* 首页 */
-.home{display:flex;flex-direction:column;gap:12px;max-width:640px;width:100%;margin:0 auto}
+/* 首页：一句话说清楚 → 新的一局（双方、局数比分、开关）→ 两种打点 → 我的记录 */
+.home{display:flex;flex-direction:column;gap:14px;max-width:640px;width:100%;margin:0 auto}
+.hero{display:flex;gap:14px;align-items:center;padding:16px;border-radius:16px;background:linear-gradient(135deg,#185943,#2f8f68);color:#fff}
+.hero .appicon{width:64px;height:64px;border-radius:15px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.hero b{display:block;font-size:20px}.hero p{margin:2px 0 0;font-size:13.5px;opacity:.9;line-height:1.5}
+.panel{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:14px;display:flex;flex-direction:column;gap:12px}
+.panel h2{margin:0;font-size:15px;color:var(--muted);font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
+.vs input{width:100%;font-weight:700;font-size:17px}
+.vs .pa{border-left:5px solid var(--a)}.vs .pb{border-left:5px solid var(--b)}
+.vs i{font-style:normal;color:var(--muted);font-weight:800}
+.small-row{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:14px;color:var(--muted)}
+.small-row label{display:flex;gap:6px;align-items:center}
+.sel{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg)}
+.switch{display:flex;gap:8px;align-items:flex-start;font-size:14px;cursor:pointer}.switch input{width:auto;margin-top:3px}
+.switch small{display:block;color:var(--muted);font-size:12.5px}
 .modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.modes button{text-align:left;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start}   /* 两张卡片标题顶对齐（试用者 2026-11-04：说明行数不同时标题高低不一） */.modes small{display:block;font-weight:500;font-size:13px;opacity:.85;margin-top:4px}
+.modes button{text-align:left;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;gap:6px;padding:16px}   /* 两张卡片标题顶对齐（试用者 2026-11-04：说明行数不同时标题高低不一） */
+.modes svg{width:30px;height:30px}
+.modes small{display:block;font-weight:500;font-size:13px;opacity:.88}
 .list{display:flex;flex-direction:column;gap:8px}
-.it{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--card);display:flex;flex-direction:column;gap:8px}
-.it .acts{display:flex;flex-wrap:wrap;gap:6px}
+.it{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center}
+.it .ic{grid-row:span 2;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:18px}
+.it .ic.live{background:#185943}.it .ic.replay{background:#2F7FD9}
+.it .t{font-weight:800}.it .m{color:var(--muted);font-size:13px}
+.it .acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.it .acts .btn{padding:6px 10px;font-size:14px}
+.linkbtn{background:none;border:0;color:var(--ok);font-weight:700;font-size:14px;padding:0}
+.foot{text-align:center;color:var(--muted);font-size:12px}
 
 /* 打点（现场全屏；看录像时在视频下面） */
 .score{text-align:center;font-weight:900;font-size:44px;line-height:1.1}
@@ -51,6 +78,10 @@ input[type=number]{width:3.6em}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .btns button{border:0;border-radius:18px;color:#fff;font-weight:900;font-size:26px;line-height:1.2;-webkit-user-select:none;user-select:none;padding:14px 6px}
 .btns button small{display:block;font-weight:600;font-size:14px;opacity:.85;margin-top:4px}
+/* 回合结束（试用者 2026-11-04，熟练用户用）：球一落地就点，记这一分的结束时间；已经点过变成浅色，再点就改时间 */
+.fin{border:0;border-radius:14px;padding:14px;font-weight:900;font-size:20px;background:#3a3f3c;color:#fff;margin-top:10px;width:100%}
+.fin.done{background:var(--card);color:var(--muted);border:1px solid var(--line);font-size:16px}
+.fin:disabled{opacity:.4}
 .bA{background:var(--a)}.bB{background:var(--b)}
 .btns button:active{filter:brightness(.85);transform:scale(.98)}
 .live{display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
@@ -118,21 +149,30 @@ progress{width:100%}
 </head>
 <body>
 <div class="page">
-<header><b>场边打点</b><small class="ver" id="ver"></small><span id="sub"></span><button class="btn" id="bHome" type="button" hidden>记录</button></header>
+<header class="appbar"><svg class="appicon" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="ig" cx=".3" cy=".2" r=".9"><stop offset="0" stop-color="#2f8f68"/><stop offset=".75" stop-color="#185943"/></radialGradient></defs><rect width="100" height="100" rx="22" fill="url(#ig)"/><rect x="14" y="12" width="72" height="44" rx="3" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6"/><text x="50" y="42" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="22" fill="#F2B01E">15:13</text><rect x="10" y="62" width="37" height="28" rx="8" fill="#F07A2A"/><rect x="53" y="62" width="37" height="28" rx="8" fill="#2F7FD9"/><text x="28.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">A</text><text x="71.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">B</text></svg><div class="brand"><b>场边打点</b><small class="ver" id="ver"></small></div><span id="sub"></span><button class="btn" id="bHome" type="button" hidden>‹ 记录</button></header>
 
-<!-- 首页：开一局 + 记录 -->
+<!-- 首页（试用者 2026-11-04 重做：像一个工具产品） -->
 <section class="home" id="home">
-  <p class="hint">每分发球前，谁发球就点谁，一分只点一下；谁得分、比分都自动算——赢了这一分的人发下一个球。打点和视频都只在这台设备上，不上传。</p>
-  <div class="row"><label>A 叫<input id="nA" maxlength="30" placeholder="A"></label><label>B 叫<input id="nB" maxlength="30" placeholder="B"></label></div>
-  <div class="row"><label>第几局<input id="setNo" type="number" min="1" max="3" value="1"></label>
-    <label>开局比分<input id="sA" type="number" min="0" max="29" value="0"> : <input id="sB" type="number" min="0" max="29" value="0"></label></div>
-  <div class="modes">
-    <button class="go" id="bLive" type="button">现场打点<small>比赛正在打：在场边用另一台手机点（别碰录像的手机）</small></button>
-    <button class="go alt" id="bReplay" type="button">看录像打点<small>已经录好了：载入视频边看边点，可以暂停、倒回去补</small></button>
+  <div class="hero"><svg class="appicon" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="ig" cx=".3" cy=".2" r=".9"><stop offset="0" stop-color="#2f8f68"/><stop offset=".75" stop-color="#185943"/></radialGradient></defs><rect width="100" height="100" rx="22" fill="url(#ig)"/><rect x="14" y="12" width="72" height="44" rx="3" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6"/><text x="50" y="42" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="22" fill="#F2B01E">15:13</text><rect x="10" y="62" width="37" height="28" rx="8" fill="#F07A2A"/><rect x="53" y="62" width="37" height="28" rx="8" fill="#2F7FD9"/><text x="28.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">A</text><text x="71.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">B</text></svg><div><b>一分一点，比分自动算</b><p>每分发球前点一下谁发球，谁得分、比分都替你算好——赢了这一分的人发下一个球。赛后按分回看、剪出带比分的精简视频。</p></div></div>
+  <div class="panel">
+    <h2>新的一局</h2>
+    <div class="vs"><input class="pa" id="nA" maxlength="30" placeholder="A 的名字"><i>vs</i><input class="pb" id="nB" maxlength="30" placeholder="B 的名字"></div>
+    <div class="small-row"><label>每局<select id="pts" class="sel"><option value="15">15 分</option><option value="21">21 分</option></select></label>
+      <label>第<input id="setNo" type="number" min="1" max="3" value="1">局</label>
+      <label>开局比分<input id="sA" type="number" min="0" max="29" value="0">:<input id="sB" type="number" min="0" max="29" value="0"></label></div>
+    <div class="modes">
+      <button class="go" id="bLive" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>现场打点<small>比赛正在打：在场边用另一台手机点（别碰录像的手机）</small></button>
+      <button class="go alt" id="bReplay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="M17 10l5-3v10l-5-3z"/></svg>看录像打点<small>已经录好了：载入视频边看边点，可以暂停、倒回去补</small></button>
+    </div>
+    <label class="switch"><input type="checkbox" id="advLive"><span>高级：现场打点也显示「回合结束」按钮<small>熟练以后用：球一落地就点，回合结束时间就有了，赛后不用再调（看录像打点一直有这个按钮）</small></span></label>
   </div>
-  <div class="list" id="list"></div>
+  <div class="panel">
+    <h2>我的记录<button class="linkbtn" id="bImport" type="button">载入打点文件</button></h2>
+    <div class="list" id="list"></div>
+  </div>
   <div id="raw" hidden><p class="hint">这里不能直接保存文件：长按下面的文字全选、复制，粘贴到备忘录，存成 .json 文件。</p>
     <textarea id="rawText" readonly style="width:100%;min-height:8em;font:12px/1.4 ui-monospace,Menlo,monospace"></textarea></div>
+  <p class="foot">打点和视频只在这台设备上，不上传。</p>
   <input type="file" id="fJson" accept=".json,application/json" hidden>
 </section>
 
@@ -141,6 +181,7 @@ progress{width:100%}
   <div class="score" id="score"></div>
   <div class="tip" id="tip"></div>
   <div class="btns"><button class="bA" id="lA" type="button"></button><button class="bB" id="lB" type="button"></button></div>
+  <button class="fin" id="lFin" type="button" hidden>回合结束</button>
   <div class="ask" id="askLive" hidden></div>
   <div class="bar"><button class="btn" id="lUndo" type="button">↶ 撤销上一下</button><button class="btn" id="lEnd" type="button">本局结束</button></div>
   <p class="hint">发球前点发球的那一方；重发（擦网等）不用再点。点错了马上「撤销」。</p>
@@ -166,9 +207,10 @@ progress{width:100%}
     <div id="rtap" hidden>
       <div class="tip" id="rtip"></div>
       <div class="btns"><button class="bA" id="rA" type="button"></button><button class="bB" id="rB" type="button"></button></div>
+      <button class="fin" id="rFin" type="button">回合结束</button>
       <div class="ask" id="askReplay" hidden></div>
       <div class="bar" style="margin-top:8px"><button class="btn" id="rUndo" type="button">↶ 撤销上一下</button><button class="btn" id="rEnd" type="button">本局结束</button></div>
-      <p class="hint">播放到发球前就点发球方（电脑上按 A / B 键，空格播放 / 暂停，[ ] 设这一分的开始 / 结束）。倒回去补一分：退到那一分发球前再点，会按时间插进去。</p>
+      <p class="hint">播放到发球前就点发球方（电脑上按 A / B 键，空格播放 / 暂停，E 回合结束，[ ] 设这一分的开始 / 结束）。倒回去补一分：退到那一分发球前再点，会按时间插进去。</p>
     </div>
     <!-- 现场打的：先对齐 -->
     <div id="align" class="exp" hidden>
@@ -180,6 +222,8 @@ progress{width:100%}
   <div class="side">
     <!-- 名字可以在这里改（试用者 2026-11-04：打点时可能没写名字） -->
     <div class="rscore"><input id="eA" class="ename" maxlength="30" title="点一下改名字"><b id="rScore"></b><input id="eB" class="ename" maxlength="30" title="点一下改名字"></div>
+    <!-- 回看时也能改开局比分（试用者 2026-11-05） -->
+    <div class="small-row" style="justify-content:center"><label>每局<select id="rPts" class="sel"><option value="15">15 分</option><option value="21">21 分</option></select></label><label>开局比分 <input id="rsA" type="number" min="0" max="29">:<input id="rsB" type="number" min="0" max="29"></label></div>
     <div class="plist"><table><thead><tr><th data-k="star" title="点一下：有 ★ 的排前面">★</th><th data-k="no" title="点一下：按第几分排">#</th><th data-k="srv" title="点一下：按谁发球排">发球</th><th data-k="win" title="点一下：按谁得分排">打完</th><th data-k="len" title="点一下：按长度排（再点一下反过来）">长度</th></tr></thead><tbody id="rows"></tbody><tfoot><tr><td colspan="5" id="tot"></td></tr></tfoot></table></div>
     <div class="row"><label class="hint">只看 <select id="filt" style="font:inherit;padding:4px 6px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg)"></select></label></div>
     <div class="row"><button class="btn" id="bChain" type="button" title="从列表第一行开始，一分接一分放（按列表现在的排序和「只看」）">▶ 按列表连着放</button>
@@ -204,12 +248,13 @@ progress{width:100%}
 
 <script>
 const $ = id => document.getElementById(id);
-const VERSION = "v1.0";   // 试用者 2026-11-04 定为 v1.0；改了功能往上加，打点文件里记着是哪一版打的
+const VERSION = "v1.1";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做。改了功能往上加，打点文件里记着是哪一版打的
 const KEY = "courtside-taps-v1", PRE = 1.5, GAP = 1.0, LAST = 15;   // 回合 = 发球前 1.5 s 到下一分开始前 1 s；最后一分到发球后 15 s
 let cur = null, lock = null, view = "home", sel = -1, playEnd = null, videoStart = null, exporting = false;
 const video = $("video");
 function esc(v){ return String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
-function gameOverAt(a,b){ const hi=Math.max(a,b), lo=Math.min(a,b); return hi>=30 || (hi>=21 && hi-lo>=2); }
+/* 一局打完了没有：21 分制 = 先到 21 且领先 2 分、最多到 30；15 分制（试用者 2026-11-05：现在也打 15 分）= 先到 15 且领先 2 分、最多到 21 */
+function gameOverAt(a,b,to=21){ const hi=Math.max(a,b), lo=Math.min(a,b), cap=to>=21?30:21; return hi>=cap || (hi>=to && hi-lo>=2); }
 /* 每一分谁发球、谁得分、打完的比分；last = 最后一分的得分方（本局结束时定） */
 function tapRallies(s){
   const out=[]; let a=s.start.A, b=s.start.B; const T=s.taps;
@@ -219,7 +264,7 @@ function tapRallies(s){
   return {rallies:out, score:{A:a,B:b}};
 }
 /* 只有一方得分能让这局打完，就是它；两方都能或都不能 → 定不了 */
-function tapLastWinner(s){ const sc=tapRallies({...s, last:""}).score, ok=p=>gameOverAt(sc.A+(p==="A"), sc.B+(p==="B"));
+function tapLastWinner(s){ const sc=tapRallies({...s, last:""}).score, ok=p=>gameOverAt(sc.A+(p==="A"), sc.B+(p==="B"), s.to||21);
   return ok("A")&&!ok("B")?"A":ok("B")&&!ok("A")?"B":""; }
 
 /* ===== 存取 ===== */
@@ -251,10 +296,12 @@ function fmt(t){ if(t==null||isNaN(t)) return "—"; const m=Math.floor(t/60), s
    回合起止：人调过的 s / e，没调过的按发球前 PRE 秒到下一分开始前 GAP 秒 */
 function onVideo(s){ return s.taps.length>0 && (s.taps[0].v!=null || s.align!=null); }
 function serveAt(s,i){ const x=s.taps[i]; return x.v!=null ? x.v : s.align + (x.t-s.taps[0].t)/1000; }
+/* 点了「回合结束」的那一刻在视频上的位置：看录像点的直接是 ev；现场点的按两台手机的时间差、对齐后才知道 */
+function finAt(s,i){ const x=s.taps[i]; if(x.ev!=null) return x.ev; if(x.end!=null && x.v==null && s.align!=null) return s.align+(x.end-s.taps[0].t)/1000; return null; }
 function spans(s){
   const n=s.taps.length, dur=video.duration||Infinity, st=[];
   for(let i=0;i<n;i++){ const x=s.taps[i]; st.push(x.s!=null ? x.s : Math.max(0, serveAt(s,i)-PRE)); }
-  return st.map((a,i)=>{ const x=s.taps[i]; const e=x.e!=null ? x.e : i+1<n ? Math.max(a+1, st[i+1]-GAP) : Math.min(dur, serveAt(s,i)+LAST); return [a,e]; });
+  return st.map((a,i)=>{ const x=s.taps[i], fin=finAt(s,i); const e=x.e!=null ? x.e : fin!=null ? Math.max(a+0.5, fin) : i+1<n ? Math.max(a+1, st[i+1]-GAP) : Math.min(dur, serveAt(s,i)+LAST); return [a,e]; });
 }
 
 /* ===== 首页 ===== */
@@ -268,27 +315,30 @@ function render(){
   if(view==="review") renderReview();
 }
 function renderList(){
-  const box=$("list"); box.innerHTML="";
-  const top=document.createElement("div"); top.className="row";
-  const imp=document.createElement("button"); imp.className="btn"; imp.type="button"; imp.textContent="载入打点文件"; imp.onclick=()=>$("fJson").click(); top.appendChild(imp);
-  const h=document.createElement("span"); h.className="hint"; h.textContent=sessions().length?"这台设备上的记录：":"这台设备上还没有记录。"; top.appendChild(h); box.appendChild(top);
-  for(const s of sessions()){ const {score}=tapRallies(s), d=document.createElement("div"); d.className="it";
-    const t=document.createElement("div");
-    t.textContent=`${s.mode==="replay"?"🎬 看录像":"📍 现场"} · ${new Date(s.created).toLocaleString()} · ${nm(s,"A")} ${score.A}:${score.B} ${nm(s,"B")} · 第 ${s.setNo} 局 · ${s.taps.length} 分${s.ended?"":"（没结束）"}${(s.taps||[]).some(x=>x.star)?" · ★"+s.taps.filter(x=>x.star).length:""}`;
-    d.appendChild(t);
+  const box=$("list"); box.innerHTML=""; const all=sessions();
+  if(!all.length){ const p=document.createElement("p"); p.className="hint"; p.textContent="还没有记录。开一局打点，或者载入别的手机上下载的打点文件。"; box.appendChild(p); return; }
+  for(const s of all){ const {score}=tapRallies(s), d=document.createElement("div"), stars=(s.taps||[]).filter(x=>x.star).length; d.className="it";
+    const ic=document.createElement("div"); ic.className="ic "+(s.mode==="replay"?"replay":"live"); ic.textContent=s.mode==="replay"?"▶":"●"; ic.title=s.mode==="replay"?"看录像打的":"现场打的"; d.appendChild(ic);
+    const t=document.createElement("div"); t.className="t"; t.textContent=`${nm(s,"A")} ${score.A} : ${score.B} ${nm(s,"B")}${s.ended?"":" · 没打完"}`; d.appendChild(t);
+    const m=document.createElement("div"); m.className="m"; const dt=new Date(s.created);
+    m.textContent=`第 ${s.setNo} 局 · ${s.taps.length} 分${stars?` · ★${stars}`:""} · ${dt.getMonth()+1}月${dt.getDate()}日 ${String(dt.getHours()).padStart(2,"0")}:${String(dt.getMinutes()).padStart(2,"0")} · ${s.mode==="replay"?"看录像":"现场"}`; d.appendChild(m);
     const acts=document.createElement("div"); acts.className="acts"; d.appendChild(acts);
-    const b=(txt,fn)=>{ const x=document.createElement("button"); x.className="btn"; x.type="button"; x.textContent=txt; x.onclick=fn; acts.appendChild(x); };
+    const b=(txt,fn)=>{ const x=document.createElement("button"); x.className="btn"; x.type="button"; x.textContent=txt; x.onclick=fn; acts.appendChild(x); return x; };
     if(!s.ended && s.mode!=="replay") b("接着点",()=>{ cur=s; msg(""); show("live"); wake(); });
-    b(s.ended?"载入视频回看":"载入视频",()=>{ cur=s; pickVideo(); });
+    b(s.ended?"回看 / 剪视频":"载入视频",()=>{ cur=s; pickVideo(); });
     b("下载",()=>download(s));
+    // 接着打下半段（试用者 2026-11-05：一局分两段录 / 打了一半换视频）：名字、局数照旧，开局比分 = 这条记录打完的比分
+    b("接着打下半段",()=>{ const sc=tapRallies(s).score; $("nA").value=full(s,"A"); $("nB").value=full(s,"B"); $("setNo").value=s.setNo; $("sA").value=sc.A; $("sB").value=sc.B; $("pts").value=String(s.to||21); window.scrollTo(0,0);
+      msg(`名字、第 ${s.setNo} 局照上一段填好了，开局比分带过来 ${sc.A}:${sc.B}${s.ended?"":"（上一段没点「本局结束」，最后一分谁得的没算进去，不对就改一下）"}。选「现场打点」或「看录像打点」开始。`); });
     if(s.ended) b("打下一局",()=>{ $("nA").value=full(s,"A"); $("nB").value=full(s,"B"); $("setNo").value=Math.min(3,s.setNo+1); $("sA").value=0; $("sB").value=0; window.scrollTo(0,0); msg("名字照上一局填好了，选「现场打点」或「看录像打点」开始。"); });
-    b("删除",()=>{ if(d.dataset.sure){ store(sessions().filter(x=>x.id!==s.id)); render(); msg(""); } else { d.dataset.sure="1"; msg("再点一次「删除」才会删掉（删了找不回来）。"); } });
+    const del=b("删除",()=>{ if(d.dataset.sure){ store(sessions().filter(x=>x.id!==s.id)); render(); msg(""); } else { d.dataset.sure="1"; del.textContent="再点一次删除"; } }); del.style.color="#c0392b";
     box.appendChild(d); }
 }
+$("bImport").addEventListener("click",()=>$("fJson").click());
 function newSession(mode){
   const v=id=>Math.max(0,Math.min(29,parseInt($(id).value,10)||0));
   return {id:"tap"+Date.now(), created:Date.now(), names:{A:$("nA").value.trim()||"A", B:$("nB").value.trim()||"B"}, setNo:parseInt($("setNo").value,10)||1,
-          start:{A:v("sA"), B:v("sB")}, taps:[], last:"", ended:false, mode, clock:"wall", ver:VERSION};
+          start:{A:v("sA"), B:v("sB")}, to:parseInt($("pts").value,10)||15, taps:[], last:"", ended:false, mode, clock:"wall", ver:VERSION};
 }
 $("bLive").addEventListener("click",()=>{ cur=newSession("live"); persist(); msg(""); show("live"); wake(); });
 $("bReplay").addEventListener("click",()=>{ cur=newSession("replay"); pickVideo(); });
@@ -301,7 +351,7 @@ $("fJson").addEventListener("change",async e=>{ const f=e.target.files[0]; e.tar
 
 /* ===== 打点（现场 / 看录像共用） ===== */
 function addTap(p){
-  if(!cur||cur.ended) return;
+  if(!cur||cur.ended) return; cur.lastEnd=null;
   let tap;
   if(cur.mode==="replay"){
     const v=Math.max(0, video.currentTime - (video.paused?0:0.2*video.playbackRate));   // 播放中扣掉反应时间
@@ -313,8 +363,29 @@ function addTap(p){
   if(cur.mode!=="replay") msg(""); render();
 }
 function undo(){ if(!cur||!cur.taps.length) return;
+  const le=cur.lastEnd; if(le!=null && cur.taps[le] && cur.taps[le].end!=null){ delete cur.taps[le].end; delete cur.taps[le].ev; cur.lastEnd=null; persist(); msg(`撤销了：第 ${le+1} 分的回合结束`); render(); return; }   // 最近一下是「回合结束」就只撤它
   let i=cur.taps.length-1; if(cur.mode==="replay"){ i=cur.taps.reduce((k,x,j)=>x.v<=video.currentTime+0.05?j:k, cur.taps.length-1); }   // 看录像：撤掉当前位置之前最近的一下
   const x=cur.taps.splice(i,1)[0]; persist(); msg(`撤销了：第 ${i+1} 分 ${nm(cur,x.p)} 发球`); if(sel>=cur.taps.length) sel=cur.taps.length-1; render(); }
+/* 回合结束：记在这一分（现场 = 最后一次发球；看录像 = 视频当前位置之前最近的一次发球）。再点覆盖成最后这次 */
+function finTarget(){ if(!cur||!cur.taps.length) return -1; if(cur.mode!=="replay") return cur.taps.length-1;
+  let k=-1; cur.taps.forEach((x,j)=>{ if(x.v<=video.currentTime+0.05) k=j; }); return k; }
+function addFin(){
+  if(!cur||cur.ended) return; const i=finTarget(); if(i<0){ msg("还没有发球，先点谁发球。"); return; }
+  const x=cur.taps[i];
+  if(cur.mode==="replay"){ const v=Math.max(0, video.currentTime-(video.paused?0:0.2*video.playbackRate));
+    if(v<=x.v){ msg("这个位置还在发球之前，放到球落地再点。"); return; }
+    x.ev=Math.round(v*100)/100; x.end=videoStart!=null ? Math.round(videoStart+v*1000) : Math.round(v*1000); }
+  else x.end=Date.now();
+  cur.lastEnd=i; persist(); try{ navigator.vibrate&&navigator.vibrate([20,40,20]); }catch(e){} msg(""); render(); }
+function finState(){ const i=finTarget(), x=i>=0&&cur.taps[i]; return {i, done:!!(x&&x.end!=null)}; }
+function drawFin(btn){ const {i,done}=finState(); btn.disabled=i<0; btn.classList.toggle("done",done); btn.textContent=done?`第 ${i+1} 分已结束 ✓（再点改时间）`:"回合结束"; }
+for(const id of ["lFin","rFin"]) $(id).addEventListener("click",e=>{ addFin(); e.currentTarget.blur(); });
+const ADV="courtside-adv", PTS="courtside-pts";   // 每局几分：记住上次选的，默认 15 分（试用者 2026-11-05）
+try{ $("pts").value=localStorage.getItem(PTS)||"15"; }catch(e){ $("pts").value="15"; }
+$("pts").addEventListener("change",e=>{ try{ localStorage.setItem(PTS, e.target.value); }catch(err){} });
+function advOn(){ try{ return localStorage.getItem(ADV)==="1"; }catch(e){ return false; } }
+$("advLive").checked=advOn();
+$("advLive").addEventListener("change",e=>{ try{ localStorage.setItem(ADV, e.target.checked?"1":"0"); }catch(err){} });
 function endGame(askBox){
   const s=cur; if(!s) return;
   if(!s.taps.length){ store(sessions().filter(x=>x.id!==s.id)); cur=null; show("home"); return; }
@@ -328,13 +399,15 @@ function endGame(askBox){
   const n=document.createElement("button"); n.type="button"; n.className="no"; n.textContent="不知道"; n.onclick=()=>done(""); box.appendChild(n);
 }
 function tipText(s){ const {score}=tapRallies(s), last=s.taps[s.taps.length-1];
-  if(gameOverAt(score.A,score.B)) return `比分 ${score.A}:${score.B} 这局已经结束了：点「本局结束」`;
+  if(gameOverAt(score.A,score.B,s.to||21)) return `比分 ${score.A}:${score.B} 这局已经结束了：点「本局结束」`;
   // 发球方的分数：双数右区、单数左区（站在自己半场看）
   return last?`${nm(s,last.p)} 现在 ${score[last.p]} 分，应在${score[last.p]%2?"左":"右"}区发球——对不上就是点错了，「撤销」重点`:"第一分发球前点发球的一方"; }
 function renderLive(score, n){
   const s=cur, last=s.taps[n-1];
   $("lA").innerHTML=`${esc(nm(s,"A"))}<small>发球</small>`; $("lB").innerHTML=`${esc(nm(s,"B"))}<small>发球</small>`;
-  $("score").innerHTML=`${esc(nm(s,"A"))} ${score.A} : ${score.B} ${esc(nm(s,"B"))}<small>${n?`第 ${n} 分进行中（${esc(nm(s,last.p))} 发球）`:"还没开始"}</small>`;
+  const finOn=advOn(); $("lFin").hidden=!finOn; if(finOn) drawFin($("lFin"));
+  const st=!n?"还没开始":finOn&&last.end!=null?`第 ${n} 分已结束，等下一次发球`:`第 ${n} 分进行中（${esc(nm(s,last.p))} 发球）`;
+  $("score").innerHTML=`${esc(nm(s,"A"))} ${score.A} : ${score.B} ${esc(nm(s,"B"))}<small>${st}</small>`;
   $("tip").textContent=tipText(s); $("lUndo").disabled=!n; $("lEnd").disabled=s.ended;
 }
 for(const p of ["A","B"]){ $("l"+p).addEventListener("click",e=>{ addTap(p); e.currentTarget.blur(); }); $("r"+p).addEventListener("click",e=>{ addTap(p); e.currentTarget.blur(); }); }
@@ -384,6 +457,7 @@ function tick(){
   if(playEnd!=null && t>=playEnd){ const nx=listOrder[listOrder.indexOf(sel)+1]; if($("chain").checked && cur && nx!=null && onVideo(cur)){ playRally(nx); } else { video.pause(); playEnd=null; } }
   // 编辑时放着放着进了下一分（试用者 2026-11-04：好连续标每分的结束）：选中的那一分跟着换；只在播放中换，拖把手、暂停时不动
   if(!video.paused && sel>=0 && onVideo(cur)){ const sp=spans(cur), j=sp.findIndex(([a,e])=>t>=a&&t<e); if(j>=0 && j!==sel){ sel=j; renderReview(); return; } }
+  if(cur.mode==="replay" && !cur.ended) drawFin($("rFin"));   // 放到别的分，按钮上写的是哪一分跟着变
   drawNow(); drawBoard(t);
 }
 document.addEventListener("keydown",e=>{
@@ -391,6 +465,7 @@ document.addEventListener("keydown",e=>{
   const k=e.key.toLowerCase();
   if(k===" "){ e.preventDefault(); $("vPlay").click(); }
   else if((k==="a"||k==="b") && cur && cur.mode==="replay" && !cur.ended){ e.preventDefault(); addTap(k.toUpperCase()); }
+  else if(k==="e" && cur && cur.mode==="replay" && !cur.ended){ e.preventDefault(); addFin(); }
   else if(k==="["||k==="i"){ e.preventDefault(); markHere("s"); }
   else if(k==="]"||k==="o"){ e.preventDefault(); markHere("e"); }
   else if(e.key==="ArrowLeft"){ e.preventDefault(); video.currentTime=Math.max(0,video.currentTime-(e.shiftKey?0.2:2)); }
@@ -401,11 +476,14 @@ document.addEventListener("keydown",e=>{
 function renderReview(){
   const s=cur, n=s.taps.length, ready=onVideo(s);
   $("rtap").hidden=!(s.mode==="replay" && !s.ended);
+  if(!$("rtap").hidden) drawFin($("rFin"));
   if(!$("rtap").hidden){ $("rA").innerHTML=`${esc(nm(s,"A"))}<small>发球</small>`; $("rB").innerHTML=`${esc(nm(s,"B"))}<small>发球</small>`; $("rtip").textContent=tipText(s); $("rUndo").disabled=!n; }
   $("align").hidden=ready || s.mode==="replay" || !n;
   if(!$("align").hidden){ const g=guess(); $("alignInfo").textContent=`第 1 分 ${nm(s,s.taps[0].p)} 发球。`+(g!=null?`按视频的拍摄时间估计在 ${fmt(g)} 附近。`:"视频里读不到拍摄时间，请自己找到第 1 次发球。"); $("aSeek").hidden=g==null; }
   const {rallies, score}=tapRallies(s), sp=ready?spans(s):[];
   $("rScore").textContent=`${score.A} : ${score.B}`;
+  for(const p of ["A","B"]){ const el2=$("rs"+p); if(document.activeElement!==el2) el2.value=s.start[p]; }
+  $("rPts").value=String(s.to||21);
   for(const p of ["A","B"]){ const el=$("e"+p); if(document.activeElement!==el) el.value=full(s,p); el.title=`${full(s,p)}（其他地方显示成「${nm(s,p)}」；点一下改名字）`; el.placeholder=p; }
   const tb=$("rows"); tb.innerHTML="";
   // 排序（试用者 2026-11-04：按长度排好挑最长的几分打 ★）：编号 / 长度（长的在前，再点反过来）/ ★ 在前；编号一直是第几分，不跟着变
@@ -450,6 +528,9 @@ for(const p of ["A","B"]){ const el=$("e"+p);
   const apply=()=>{ if(!cur) return; const v=el.value.trim()||p; if(v===full(cur,p)) return; cur.names={...(cur.names||{}), [p]:v}; persist(); msg(`${p} 改名为「${v}」`+(nm(cur,p)!==v?`，其他地方显示成「${nm(cur,p)}」。`:"。")); render(); };
   // 输入法（试用者 2026-11-04：中文输入法打 Daniel 按回车变成 DanielDa）：选字时的回车是给输入法的，不能当「输完了」
   el.addEventListener("change",apply); el.addEventListener("keydown",e=>{ if(e.key==="Enter" && !e.isComposing && e.keyCode!==229) el.blur(); e.stopPropagation(); }); }
+for(const p of ["A","B"]) $("rs"+p).addEventListener("change",e=>{ if(!cur) return; const v=Math.max(0,Math.min(29,parseInt(e.target.value,10)||0));
+  cur.start={...cur.start, [p]:v}; persist(); const sc=tapRallies(cur).score; msg(`开局比分改成 ${cur.start.A}:${cur.start.B}，现在 ${sc.A}:${sc.B}。`); render(); });
+$("rPts").addEventListener("change",e=>{ if(!cur) return; cur.to=parseInt(e.target.value,10); persist(); msg(`改成每局 ${cur.to} 分。`); render(); });
 function toggleStar(i){ const x=cur.taps[i], max=Math.max(1,parseInt($("starMax").value,10)||3);
   if(!x.star && cur.taps.filter(y=>y.star).length>=max){ msg(`高亮最多 ${max} 个：先取消一个，或者把上限改大。`); return; }
   x.star=!x.star; if(!x.star) delete x.star; persist(); msg(""); render(); }
