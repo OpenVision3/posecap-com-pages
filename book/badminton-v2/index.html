@@ -103,7 +103,7 @@ addEventListener("keydown",e=>{ if(e.key==="Escape"&&modal.classList.contains("o
 /* 打印版二维码指向「网页版地址#a13」：打开就直接放第 13 页的动画 */
 
 /* ---------- 一个回合怎么走 ---------- */
-const RSTEPS=[{"node": "开局", "edge": null, "say": "一分球从开局开始：发球、接发球。", "voice": "一分球从这里开始：开局，也就是发球和接发球。", "pages": []}, {"node": "平手", "edge": "open_ctrl", "say": "开出平手，到了控制：谁也不占便宜，慢慢找机会。", "voice": "开局开出平手，就到了控制。谁也不占便宜，这时候用网前、调动、变节奏，慢慢找机会。", "pages": [["开出平手", [1, 2, 28]], ["控制时练", [7, 33, 6, 10, 11, 12, 19, 9, 8, 20, 26, 27]]]}, {"node": "主动", "edge": "ctrl_att", "say": "抓到机会，由控转攻：我压着他打。", "voice": "抓到机会，由控转攻，就到了进攻，我压着他打。", "pages": [["由控转攻", [21, 23]], ["进攻时练", [13, 14, 16, 17, 18, 24, 25]]]}, {"node": "得分", "edge": "att_score", "say": "连续进攻，拿下这一分！", "voice": "连续进攻，拿下这一分！", "pages": []}, {"node": "被压", "edge": "att_def", "say": "打坏了会往下掉：被对手压着打，到了防守。", "voice": "可是打坏了，就会往下掉，被对手压着打，到了防守。", "pages": [["防守时练", [3, 5, 35, 4, 30]]]}, {"node": "平手", "edge": "def_ctrl", "say": "被压住别慌：先活下来，打回平手。", "voice": "被压住了别慌，先活下来，把球打回平手，再重新找机会。", "pages": []}, {"node": "主动", "edge": "def_att", "say": "厉害的一招：被压着也能一下翻身进攻。", "voice": "还有更厉害的：被压着打的时候，一下就翻身进攻，这叫由守转攻。", "pages": [["由守转攻", [15, 22]]]}, {"node": "主动", "edge": "open_att", "say": "开局也能直接抢攻。", "voice": "开局的时候，也可以直接抢攻。", "pages": [["开局就抢", [29, 31, 34, 32]]]}], REND="每页左上角的色块，就是这一页在这张图上的位置。点页码，就能看那一页的动画。", RNODE={"开局": [26, 104], "平手": [112, 104], "主动": [250, 104], "得分": [336, 104], "被压": [181, 236]};
+const RSTEPS=[{"node": "开局", "edge": null, "say": "一分球从开局开始：发球、接发球。", "voice": "一分球从这里开始：开局，也就是发球和接发球。", "pages": []}, {"node": "平手", "edge": "open_ctrl", "say": "开出平手，到了控制：谁也不占便宜，慢慢找机会。", "voice": "开局开出平手，就到了控制。谁也不占便宜，这时候用网前、调动、变节奏，慢慢找机会。", "pages": [["开出平手", [1, 2, 28]], ["控制时练", [7, 33, 6, 10, 11, 12, 19, 9, 8, 20, 26, 27]]]}, {"node": "主动", "edge": "ctrl_att", "say": "抓到机会，由控转攻：我压着他打。", "voice": "抓到机会，由控转攻，就到了进攻，我压着他打。", "pages": [["由控转攻", [21, 23]], ["进攻时练", [13, 14, 16, 17, 18, 24, 25]]]}, {"node": "得分", "edge": "att_score", "say": "连续进攻，拿下这一分！", "voice": "连续进攻，拿下这一分！", "pages": []}, {"node": "被压", "edge": "att_def", "say": "打坏了会往下掉：被对手压着打，到了防守。", "voice": "可是打坏了，就会往下掉，被对手压着打，到了防守。", "pages": [["防守时练", [3, 5, 35, 4, 30]]]}, {"node": "平手", "edge": "def_ctrl", "say": "被压住别慌：先活下来，打回平手。", "voice": "被压住了别慌，先活下来，把球打回平手，再重新找机会。", "pages": []}, {"node": "主动", "edge": "def_att", "say": "厉害的一招：被压着也能一下翻身进攻。", "voice": "还有更厉害的：被压着打的时候，一下就翻身进攻，这叫由守转攻。", "pages": [["由守转攻", [15, 22]]]}, {"node": "主动", "edge": "open_att", "say": "开局也能直接抢攻。", "voice": "开局的时候，也可以直接抢攻。", "pages": [["开局就抢", [29, 31, 34, 32]]]}], REND="每页左上角的色块，就是这一页在这张图上的位置。点页码，就能看那一页的动画。", RNODE={"开局": [26, 69], "平手": [112, 69], "主动": [250, 69], "得分": [336, 69], "被压": [181, 202]}, REDGE_FROM={"open_ctrl": "开局", "open_att": "开局", "open_def": "开局", "ctrl_att": "平手", "att_ctrl": "主动", "def_ctrl": "被压", "ctrl_def": "平手", "def_att": "被压", "att_def": "主动", "att_score": "主动"};   /* 上面一排（开局、控制、进攻、得分）球停在同一条水平线上、圈的上面，不压圈里的字；防守停在「防守」两个字上（试用者 2026-11-05 / 11-06） */
 let rk=0, rbusy=false, rauto=false, rhalt=false, rtimer=null;
 const rsvg=document.getElementById("roundsvg");
 function rpath(d,ms,fn){ const p=document.createElementNS("http://www.w3.org/2000/svg","path"); p.setAttribute("d",d); const L=p.getTotalLength(), t0=performance.now();
@@ -120,7 +120,8 @@ function rstop(){ rauto=false; if(rtimer!==null){ clearTimeout(rtimer); rtimer=n
 async function rstep(){ rtimer=null; if(rbusy||rk>=RSTEPS.length) return; rbusy=true; rui(); const s=RSTEPS[rk], ball=document.getElementById("rball");
   document.getElementById("rsay").innerHTML=`<b>${rk+1}</b>　${s.say}`; rchips(s.pages);
   let mv=Promise.resolve();
-  if(s.edge){ rlight(s.node,s.edge); ball.style.opacity=1; mv=rpath(document.getElementById("re_"+s.edge).getAttribute("d"),1200,q=>{ ball.setAttribute("transform",`translate(${q.x} ${q.y})`); }); }
+  if(s.edge){ rlight(s.node,s.edge); ball.style.opacity=1; const [x0,y0]=RNODE[REDGE_FROM[s.edge]], [x1,y1]=RNODE[s.node];   /* 球直接平移过去（同一排就是水平走），不沿着箭头绕（试用者 2026-11-06） */
+    mv=rpath(`M${x0} ${y0} L ${x1} ${y1}`,1200,q=>{ ball.setAttribute("transform",`translate(${q.x} ${q.y})`); }); }
   else{ rlight(s.node,null); const [x,y]=RNODE[s.node]; ball.setAttribute("transform",`translate(${x} ${y})`); ball.style.opacity=1; }
   await Promise.all([mv.then(()=>{ const [x,y]=RNODE[s.node]; ball.setAttribute("transform",`translate(${x} ${y})`); }), say(s.voice,rhalt)]);
   rk++; if(rk===RSTEPS.length){ rsvg.classList.remove("dim"); document.getElementById("rsay").innerHTML=REND; await say(REND,rhalt); }
@@ -140,7 +141,12 @@ function pick(n){ const c=chain(String(n)); wrap.classList.add("sel");
   const p=PRE[n], direct=p.pre.map(q=>`第 ${q} 页`).join("、"), all=[...c].filter(x=>x!==String(n)).sort((a,b)=>a-b);
   info.innerHTML=`<b>第 ${n} 页 · ${p.name}</b><br>`+(p.pre.length?`先学会：${direct}`+(all.length>p.pre.length?`（再往前：${all.filter(x=>!p.pre.includes(+x)).map(x=>"第 "+x+" 页").join("、")}）`:""):"不用先学别的，可以直接练。")
     +`<div class="acts"><button class="go">▶ 看动画</button><button class="jump">跳到这页</button></div>`;
-  info.querySelector(".go").onclick=()=>openAnim(n); info.querySelector(".jump").onclick=()=>document.getElementById("p"+n).scrollIntoView({behavior:"smooth"}); }
+  info.querySelector(".go").onclick=()=>openAnim(n); info.querySelector(".jump").onclick=()=>{ document.getElementById("p"+n).scrollIntoView({behavior:"smooth"}); backBtn().hidden=false; }; }
+/* 从学习路线跳到某一页后，右下角出「↑ 回学习路线」（试用者 2026-11-05：跳过去以后回不来） */
+function backBtn(){ let b=document.getElementById("toMap"); if(b) return b;
+  b=document.createElement("button"); b.id="toMap"; b.hidden=true; b.textContent="↑ 回学习路线";
+  b.style.cssText="position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:30;border:0;border-radius:999px;padding:10px 16px;font:800 15px/1 'Noto Sans SC',sans-serif;background:#2F7FD9;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer";
+  b.onclick=()=>{ document.getElementById("map").scrollIntoView({behavior:"smooth"}); b.hidden=true; }; document.body.appendChild(b); return b; }
 for(const g of wrap.querySelectorAll("[data-no]")) g.addEventListener("click",e=>{ e.stopPropagation(); pick(g.dataset.no); });
 wrap.addEventListener("click",()=>{ wrap.classList.remove("sel"); info.textContent="先点图上的一页。"; });
 
