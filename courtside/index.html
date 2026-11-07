@@ -777,5 +777,11 @@ $("ver").textContent=VERSION;
 cur=sessions().find(s=>!s.ended && s.mode!=="replay")||null;
 show(cur?"live":"home"); if(cur) wake();
 </script>
+<a id="xsBack" href="https://posecap.com/book/" hidden style="position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:5;background:#185943;color:#F2B01E;font:800 15px/1 'Noto Sans SC','PingFang SC',sans-serif;padding:10px 14px;border-radius:999px;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,.25)">← 返回</a>
+<style>body:has(#home[hidden]) #xsBack{display:none!important}body.xs-back .page{padding-bottom:64px}</style>
+<script>(function(){var a=document.getElementById("xsBack"),k="xsFromBook",b="https://posecap.com/book/",f=false;
+try{var r=document.referrer||"";if(r){f=r.indexOf(b)===0;sessionStorage.setItem(k,f?"1":"0");}else f=sessionStorage.getItem(k)==="1";}catch(e){f=(document.referrer||"").indexOf(b)===0;}
+if(!f)return;a.hidden=false;document.body.classList.add("xs-back");
+a.addEventListener("click",function(e){if(history.length>1){e.preventDefault();history.back();}});})();</script>
 </body>
 </html>
