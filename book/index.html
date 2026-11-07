@@ -78,16 +78,17 @@ h1,h2{text-wrap:balance;margin:0}
 .chips{display:flex;flex-wrap:wrap;gap:5px;padding-top:4px}
 .chips span{font-size:11.5px;padding:1px 7px;border-radius:6px;background:var(--chip);color:var(--muted)}
 
-/* 电脑一屏：高度够时锁在视口内，截图随高度伸缩 */
-@media (min-width:1024px) and (min-height:620px){
-  html,body{height:100%}
-  .app{height:100%}
-  .side{overflow:auto}
-  .tools{grid-auto-rows:minmax(0,1fr)}   /* 卡片几行都平分高度（2026-11-06 加场边打点后内部版 7 张、3 行） */
-  .shot{aspect-ratio:auto;flex:1 1 0;min-height:60px}
+/* 电脑横屏：左栏贴住屏幕，卡片按截图原比例（16:10）排、在右边上下居中，排不下就滚动。
+   原来把卡片拉伸到平分屏幕高度，截图按卡片形状裁——屏幕越接近竖着，裁得越多（试用者 2026-11-07：iPad Pro 竖放时卡片图被切）；
+   截图区不再拉伸，tests/test_intro.py::test_cards_not_cropped 在 11 种屏幕上量 */
+@media (min-width:1024px) and (orientation:landscape){
+  .app{min-height:100vh;min-height:100dvh}
+  .side{position:sticky;top:0;align-self:start;height:100vh;height:100dvh;box-sizing:border-box;overflow:auto}
+  .tools{align-content:center}
   .tool p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 }
-@media (max-width:1023px){
+/* 窄屏和竖屏（含 iPad Pro 竖放 1024 宽）：左栏在上、卡片两列 */
+@media (max-width:1023px), (orientation:portrait){
   .wide{display:none}.narrow{display:inline}
   .app{grid-template-columns:1fr}
   .side{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
