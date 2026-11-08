@@ -105,7 +105,7 @@ button:focus-visible{outline:3px solid #F2B01E;outline-offset:2px}
 const SIDE=false, BEATS=[{"say": "他打来高远球，我退到后场，在最高点打回他底线。", "voice": "第一拍。对手打来高远球，我退到后场，在球最高的时候打回去，落到他的底线。", "shot": 0, "before": {"me": [307, 510]}, "after": {"me": [220, 470]}, "mood": {}, "bubble": false, "hide": false}, {"say": "他也只能再回一个高远球。", "voice": "第二拍。球又高又深，对手也只能再回一个高远球。", "shot": 1, "before": {"op": [332, 78]}, "after": {}, "mood": {}, "bubble": true, "hide": false}, {"say": "我再拉一拍，又高又深，打完回中。等他先打出差球。", "voice": "第三拍。我再拉一拍，又高又深，打完回中。比耐心，等他先打出差的球。", "shot": 2, "before": {"me": [108, 505]}, "after": {}, "mood": {}, "bubble": true, "hide": false}], GOAL=1, START={"me": [220, 470], "op": [220, 150]}, FINAL={"me": [108, 505], "op": [332, 78]};
 const WRONG=[{"say": "球拉短了，落在中场……", "voice": "小心！高远球要是拉短了，落在中场，", "players": {"op": [220, 120], "me": [307, 510]}, "moods": {"op": "smile", "me": "smile"}, "clear": null, "line": 3, "x": false, "bubble": false}, {"say": "他直接杀！打高远球要侧身、举拍，把拍子甩到最快。", "voice": "他直接杀下来！打高远球要侧身、举拍，把拍子甩到最快，拉到底线。", "players": {"op": [312, 180]}, "moods": {"op": "fierce", "me": "worry"}, "clear": null, "line": 4, "x": true, "bubble": true}], CARES=["球拉短了，落在中场，他会直接杀！", "打高远球要侧身、举拍，把拍子甩到最快。"], N_OK=3, N_LINES=5, DUR=[1000, 1000, 1000, 900, 420], ARROW={"0": true, "1": true, "2": true, "3": true, "4": true};
 const KOUJUE="拉得高，拉得深，你来我往比耐心。", END_VOICE="这就是后场对拉，比耐心。对拉比的是耐心。记住口诀：拉得高，拉得深，你来我往比耐心。", ICON={"play": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 5.5v13l10.5-6.5z\" fill=\"currentColor\" stroke=\"none\"/></svg>", "stop": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"6.5\" y=\"6.5\" width=\"11\" height=\"11\" rx=\"2.5\" fill=\"currentColor\" stroke=\"none\"/></svg>", "next": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 6l8 6-8 6z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M17.5 6v12\"/></svg>", "reset": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4.5 12a7.5 7.5 0 1 0 2.2-5.3\"/><path d=\"M4.5 4.5v4h4\"/></svg>", "sound": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 9.5h3.5L12 5.5v13l-4.5-4H4z\" fill=\"currentColor\"/><path d=\"M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11\"/></svg>", "mute": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 9.5h3.5L12 5.5v13l-4.5-4H4z\" fill=\"currentColor\"/><path d=\"M16 9.5l5 5M21 9.5l-5 5\"/></svg>", "voice": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"8.5\" r=\"3.5\"/><path d=\"M3 19.5c.8-3.3 3.2-5 6-5s5.2 1.7 6 5\"/><path d=\"M17.5 6.5a4 4 0 0 1 0 5M20 4.5a7 7 0 0 1 0 9\"/></svg>"};
-const V3={"lines": [{"t": "clear", "kind": "arc", "z0": 2.4, "H": 6.0, "ua": 0.62, "c": 1.0, "flat": false, "z1": 2.4}, {"t": "clear", "kind": "arc", "z0": 2.4, "H": 6.0, "ua": 0.62, "c": 1.0, "flat": false, "z1": 2.4}, {"t": "clear", "kind": "arc", "z0": 2.4, "H": 6.0, "ua": 0.62, "c": 1.0, "flat": false, "z1": 0}, {"t": "clear_short", "kind": "arc", "z0": 2.4, "H": 3.8, "ua": 0.45, "c": 0.6, "flat": false, "z1": 2.8}, {"t": "smash", "kind": "down", "z0": 2.8, "H": 0, "ua": 0.5, "c": 0.15, "flat": false, "z1": 0}], "x": [null, [148, 486]], "bubs": {"b1": ["op", "比耐心！"], "b2": ["me", "又高又深！"], "wb1": ["op", "短了，杀！"]}}, PXM_X=57.915057915057915, PXM_Y=40.4040404040404, NET_Y=311, MID_X=220; let CUR=null;   // 3D 视图用：CUR = 正在飞的那条线和飞到哪
+const V3={"lines": [{"t": "clear", "kind": "arc", "z0": 2.4, "H": 6.0, "ua": 0.62, "c": 1.0, "flat": false, "land": [5.9, 6.6], "z1": 2.4}, {"t": "clear", "kind": "arc", "z0": 2.4, "H": 6.0, "ua": 0.62, "c": 1.0, "flat": false, "land": [5.9, 6.6], "z1": 2.4}, {"t": "clear", "kind": "arc", "z0": 2.4, "H": 6.0, "ua": 0.62, "c": 1.0, "flat": false, "land": [5.9, 6.6], "z1": 0}, {"t": "clear_short", "kind": "arc", "z0": 2.4, "H": 3.8, "ua": 0.45, "c": 0.6, "flat": false, "land": [3.0, 5.0], "z1": 2.8}, {"t": "smash", "kind": "down", "z0": 2.8, "H": 0, "ua": 0.5, "c": 0.15, "flat": false, "land": [3.0, 6.6], "z1": 0}], "x": [null, [148, 486]], "bubs": {"b1": ["op", "比耐心！"], "b2": ["me", "又高又深！"], "wb1": ["op", "短了，杀！"]}}, PXM_X=57.915057915057915, PXM_Y=40.4040404040404, NET_Y=311, MID_X=220; let CUR=null;   // 3D 视图用：CUR = 正在飞的那条线和飞到哪
 const $=id=>document.getElementById(id); let wbusy=false, pendingWrong=false, k=0, busy=false, auto=false, halt=false, timer=null, pendingReset=false;
 const POS={};
 function setMood(who,m){ const el=$(who); if(!el) return; for(const g of el.querySelectorAll(".mood")) g.style.display=g.dataset.mood===m?"inline":"none"; }
@@ -210,8 +210,10 @@ const svg=$("v3"), btn=$("b3d"), rst=$("b3r");
 let on=false, yaw=0, pitch=0.6, dist=15, raf=0;
 try{ on=localStorage.getItem("book_3d")==="on"; }catch(e){}
 const samples={};   // 每条线沿 2D 路径取 40 个点（米）
-function line(i){ if(samples[i]) return samples[i]; const s=$("s"+i), L=s.getTotalLength(), out=[];
-  for(let k=0;k<=40;k++){ const q=s.getPointAtLength(L*k/40); out.push(m(q.x,q.y)); } return samples[i]=out; }
+// 一拍 = 一条球路（试用者 2026-11-07：彩线和灰线应该是同一条线从击球点开始的不同画法）：没有风和旋转时，球在一个竖直平面里飞，
+// 俯视是从击球点出发的一条直线（过 2D 线的起点和终点 = 下一拍的击球点或画的落点）；高度只由出手速度、角度、重力和空气阻力决定
+function line(i){ if(samples[i]) return samples[i]; const s=$("s"+i), T=s.getTotalLength(), q0=s.getPointAtLength(0), q1=s.getPointAtLength(T), a=m(q0.x,q0.y), b=m(q1.x,q1.y), out=[];
+  for(let k=0;k<=40;k++) out.push([a[0]+(b[0]-a[0])*k/40, a[1]+(b[1]-a[1])*k/40]); return samples[i]=out; }
 /* 球的高度（2026-11-05 重做，试用者批注：杀 / 扑穿网、放网太贴网、平高不像平高……）：按 config/book_3d.yaml 的那种球，
    沿路径 41 个点算好高度；先找路径过网那一点 un（y 变号的地方），保证过网时离网顶至少 c 米：
    arc = 先升到 H（在 ua 处）再落；net = 最高点就在过网那点（网顶 + c）；down = 直线往下压，过网太低就在网上折一下再压下去 */
@@ -229,119 +231,85 @@ function dragAt(r,X){ const {xs,zs}=r; if(X>xs[xs.length-1]) return -9; let k=1;
 function dragFit(z0,sn,need,X,zX,thMax){   // thMax = 出手角度上限（0 = 只能往下或平着打：推、杀、扑）
   const forTh=th=>{ let lo=1,hi=60; for(let g=0;g<40;g++){ const m=(lo+hi)/2; if(dragAt(dragRun(z0,m,th),X)<zX) lo=m; else hi=m; } return dragRun(z0,(lo+hi)/2,th); };
   let lo=-1.2,hi=thMax==null?1.2:thMax,r=null; for(let g=0;g<30;g++){ const m=(lo+hi)/2; r=forTh(m); if(dragAt(r,sn)<need) lo=m; else hi=m; } return forTh((lo+hi)/2); }
+/* 统一的反算（2026-11-07）：θ 先粗后细地扫，每个 θ 二分速度让球过 (X, zE)；probe 只飞到 X 为止，快 */
+function probe(z0,v,th,X,sn){ const k=G/(VT*VT), dt=0.004; let x=0,z=z0,vx=v*Math.cos(th),vz=v*Math.sin(th),ap=z0,zn=null;
+  for(let n=0;n<6000;n++){ const sp=Math.hypot(vx,vz); vx+=-k*sp*vx*dt; vz+=(-G-k*sp*vz)*dt; const x2=x+vx*dt, z2=z+vz*dt;
+    if(sn!=null&&zn==null&&x2>=sn) zn=z+(z2-z)*(sn-x)/((x2-x)||1);
+    if(x2>=X){ const zX=z+(z2-z)*(X-x)/((x2-x)||1); return {zX,zn,ap:Math.max(ap,zX)}; }
+    x=x2; z=z2; ap=Math.max(ap,z); if(z<-1||vx<1e-3) break; }
+  return {zX:-9,zn,ap}; }
+function solveTh(z0,X,zE,sn,lo,hi,score){
+  const at=th=>{ let a=0.5,b=80; if(probe(z0,b,th,X,sn).zX<zE) return null;
+    for(let g=0;g<32;g++){ const m=(a+b)/2; if(probe(z0,m,th,X,sn).zX<zE) a=m; else b=m; }
+    const v=(a+b)/2, p=probe(z0,v,th,X,sn); return {...p,v,th}; };
+  let best=null, bs=1e9; const tryTh=th=>{ const p=at(th); if(!p) return; const sc=score(p); if(sc<bs){ bs=sc; best=p; } };
+  for(let th=lo;th<=hi+1e-9;th+=0.04) tryTh(th);
+  if(best){ const c=best.th; for(let th=Math.max(lo,c-0.04);th<=Math.min(hi,c+0.04)+1e-9;th+=0.004) tryTh(th); }
+  return best; }
 function dragFitApex(z0,H,X,zX){   // 最高点正好 H、终点 (X, zX)：按最高点二分出手角度（高远、挑、平高……）
   const forTh=th=>{ let lo=1,hi=60; for(let g=0;g<40;g++){ const m=(lo+hi)/2; if(dragAt(dragRun(z0,m,th),X)<zX) lo=m; else hi=m; } return dragRun(z0,(lo+hi)/2,th); };
   let lo=-0.3,hi=1.45; for(let g=0;g<30;g++){ const m=(lo+hi)/2, r=forTh(m); if(Math.max(...r.zs)<H) lo=m; else hi=m; } return forTh((lo+hi)/2); }
-const DEEP=new Set(["clear","serve_long","lift","flat_high","serve_flat","push"]);
 const fulls={};
+/* 一整条球路（2026-11-07 重做，试用者：彩线和灰线是同一条线的两种画法；落点是轨迹和地面的自然交点，不能拿旧的落点去凑曲线）：
+   每一拍只算一次：从击球点 (0, z0) 按重力 + 空气阻力（终端速度 6.8 m/s）一直飞到落地（dragRun 积分到 z = 0）。
+   出手速度、角度由两个条件反算：① 经过终点 (Lp, zE)——接下一拍 = 下一拍的击球高度，不接 = 2D 线画的落点（zE = 0）；
+   ② 这种球的样子——高球（arc）最高点 H、过网至少高出网顶 0.3 米；网前球 / 吊 / 推（net、drag）过网正好网顶 + c；杀 / 扑（down）过网网顶 + c 且出手不往上。
+   接下一拍时，彩线画到 Lp，灰线是同一条积分曲线从 Lp 接着飞到它自己落地的地方——落在哪里由曲线决定，不另设落点。 */
 function full(i){ if(fulls[i]) return fulls[i]; const L=line(i), h0=V3.lines[i], need=NETH+h0.c;
-  // 上一拍接到这一拍：这一拍从上一拍飞到这里时的高度出手（两条线正好接上）
-  const pv=i>0&&V3.lines[i-1].z1>0 ? full(i-1) : null, h={...h0, z0: pv ? pv.z(pv.uc) : h0.z0};
+  const pv=i>0&&V3.lines[i-1].z1>0 ? full(i-1) : null, h={...h0, z0: pv ? pv.z(pv.uc) : h0.z0};   // 上一拍接到这一拍：从上一拍飞到这里的高度出手
   let z1=h.z1||0; if(h.kind==="down"&&z1>=h.z0-0.05) z1=0;   // 往下压的球接不到比出手点还高的地方：不接
-  const conn=z1>0;
-  let Lp=0; for(let k=1;k<=40;k++) Lp+=Math.hypot(L[k][0]-L[k-1][0],L[k][1]-L[k-1][1]);
-  let dx=L[40][0]-L[0][0], dy=L[40][1]-L[0][1]; const nn=Math.hypot(dx,dy)||1; dx/=nn; dy/=nn;   // 没人接时接着飞的方向：按整条线的方向（俯视是直线），不按末端的切线——弯线末端往边上拐，会飞到边线去（试用者 2026-11-06：第 8 页发球落到了边线）
-  let un=null; for(let k=1;k<=40;k++) if((L[k][1]>0)!==(L[k-1][1]>0)){ const a=L[k-1][1], b=L[k][1]; un=(k-1+a/(a-b))/40; break; }
-  const y0=Math.abs(L[40][1]), out=Math.sign(L[40][1])*dy>0, maxLe=out ? Math.max(0.15,(6.6-y0)/Math.max(0.05,Math.abs(dy))) : 4;
-  let Le=0, quad=null;
-  if(conn){
-    if(h.kind==="down"){   // 杀 / 扑接到下一拍：一条直线压下去（试用者 2026-11-06：落点太靠前、不像杀球）——直线要过得了网，落点就往后放，
-      // 接球人在半路接到，接到时多高就是多高；直线怎么都过不了网（出手太低、离网太远）才在网上折一下
-      // 杀 / 扑（试用者 2026-11-06：折得太厉害、不像杀球；落点要往后）：一条往下弯的抛物线 z = z0 − a·s − b·s²（s = 沿路的米数），
-      // 过网那点正好网顶 + c、落地在目标落点：杀球落在对方中后场（离网至少 4.5 米），网前扑落在中前场（离网 2–3.5 米）。
-      // 出手后不能往上走（a ≥ 0），不行就把落点再往后挪
-      const sn=(un==null?0:un)*Lp, yEnd=Math.abs(L[40][1]), along=Math.max(0.05,Math.abs(dy)), Sx=Lp+maxLe;
-      const want=h.t==="net_kill" ? Math.min(3.5,Math.max(2.0,yEnd)) : Math.max(4.5,yEnd);
-      let S=Math.min(Sx, Lp+Math.max(0,(want-yEnd)/along)), ab=null;
-      const solve=S=>{ if(sn<=0.05) return {a:h.z0/S,b:0}; const d=sn*S*(S-sn), a=((h.z0-need)*S*S-h.z0*sn*sn)/d, b=(h.z0*sn-(h.z0-need)*S)/d; return {a,b}; };
-      for(let g=0;g<80;g++){ ab=solve(S); if(ab.a>=0&&ab.b>=0) break; if(S>=Sx) break; S=Math.min(Sx,S+0.1); }
-      if(!(ab.a>=0&&ab.b>=0)){ ab={a:0,b:Math.max(0,(h.z0-need)/(sn*sn||1))}; S=ab.b>0?Math.sqrt(h.z0/ab.b):S; }
-      quad={...ab,S}; Le=Math.max(0,S-Lp); }
-    else if(DEEP.has(h.t)&&Math.abs(dy)>0.2) Le=y0>=6.5 ? 0.15 : Math.max(0.2,(6.35-y0)/Math.abs(dy));
-    else if(h.kind==="arc"){   // 别的上旋高球：按这种球本来的高度，落进 z1 那一点之后再飞多远落地（矮高球被拦在 2.5 米，落点就在后面一两米）
-      const T=Math.max(h.H,z1+0.3), ua=Math.min(.92,Math.max(.08,h.ua)), ucw=ua+(1-ua)*Math.acos(Math.min(1,z1/T))*2/Math.PI;
-      Le=Math.max(0.3,Lp/Math.min(0.97,ucw)-Lp); }
-    else Le=1.2;
-    if(!quad) Le=Math.min(Le,maxLe); }
-  // 挡网、放网、推（net 类）：一条真正的抛物线 z = z0 + p·s − q·s²（试用者 2026-11-06：挡高了的球、扑球要符合抛物线），
-  // 过三个点：出手点、过网那点（网顶 + c）、终点（不接 = 落地；接 = 下一拍的击球高度；被扑 = 比网高一点）。没人接时灰色就是同一条抛物线接着落地
-  const toKill=conn&&V3.lines[i+1]&&V3.lines[i+1].t==="net_kill";   // 「比网低还扑」（kill_net）不算：那一下就是要演扑下网
-  let par=null, drag=null;
-  if(h.kind==="net"&&un!=null&&un>0.02&&un<0.98){
-    const sn=un*Lp, zEnd=toKill ? Math.max(NETH+0.3,need-0.05) : (conn ? Math.min(z1,need) : 0);   // 网前球接上下一拍：接的高度不高过它过网的高度（不然要往上飘）
-    // 先按真的物理（重力 + 空气阻力，同吊球）算；算不出合理的（终点对不上、飞得比网顶高 0.6 米还多）才退回无阻力抛物线（试用者 2026-11-06：勾对角勾高了有点飘）
-    let dg=dragFit(h.z0,sn,need,Lp,zEnd,h.flat?0:null);
-    if(h.flat&&dragAt(dg,sn)<need-0.03) dg=dragFit(h.z0,sn,need,Lp,zEnd,h.z0<NETH ? 0.35 : 0.12);   // 推：出手比网顶低时只能略往上推过去（网顶以上 ≤ 7°，网顶以下 ≤ 20°）
-    if(Math.abs(dragAt(dg,Lp)-zEnd)<0.05&&Math.max(...dg.zs)<=need+0.6){ drag=dg; if(conn) Le=Math.min(maxLe,Math.max(0.1,dg.xs[dg.xs.length-1]-Lp)); }
-  }
-  if(!drag&&h.kind==="net"&&un!=null&&un>0.02&&un<0.98){
-    const sn=un*Lp, zEnd=toKill ? Math.max(NETH+0.3,need-0.05) : (conn ? Math.min(z1,need) : 0);
-    const q=((need-h.z0)/sn-(zEnd-h.z0)/Lp)/(Lp-sn), pp=(need-h.z0)/sn+q*sn;
-    if(q>0&&pp>0&&h.z0+pp*pp/(4*q)<=need+0.5){ par={p:pp,q};
-      if(conn){ const sr=(pp+Math.sqrt(pp*pp+4*q*h.z0))/(2*q); Le=Math.min(maxLe,Math.max(0.1,sr-Lp)); } } }
-  if(h.kind==="drag"&&un!=null&&un>0.02&&un<0.98){ drag=dragFit(h.z0,un*Lp,need,Lp,toKill ? Math.max(NETH+0.3,need-0.05) : (conn ? Math.min(z1,need) : 0));   // 吊到网前被扑：扑的时候球还高过网
-    Le=conn ? Math.min(maxLe,Math.max(0.1,drag.xs[drag.xs.length-1]-Lp)) : 0; }
-  // 高球（arc：高远、挑、平高、发高远……）也按重力 + 空气阻力飞（试用者 2026-11-06：挑球像两段拼起来的）：
-  // 不接 = 最高点 H、落在 2D 终点；接 = 过下一拍的击球点 (Lp, z1)、没人接时落在 Lp + Le。过网不够高就把最高点往上抬；算不出合理的才退回原来的弧线
-  // 杀 / 扑也按重力 + 空气阻力飞，而且出手就往下（角度 ≤ 0）、出手速度快（试用者 2026-11-06：推、扑、杀都是往下、初速快）：
-  // 过网正好网顶 + c、落在目标落点；往下打怎么都过不了网（出手太低、离网太远）才退回原来的下压抛物线
-  if(h.kind==="down"&&h.c>=0&&un!=null&&un>0.02&&un<0.98){
-    const sn=un*Lp, X=quad ? quad.S : Lp, r=dragFit(h.z0,sn,need,X,0,0);
-    if(Math.abs(dragAt(r,X))<0.05&&dragAt(r,sn)>=need-0.03&&Math.max(...r.zs)<=h.z0+0.01){ drag=r; quad=null; if(conn) Le=Math.max(0,X-Lp); }
-    else{ const r2=dragFit(h.z0,sn,need,X,0,0.12);   // 往下打实在过不了网（出手比网顶高不了多少、离网又远）：允许略微平着往上一点点（≤ 7°）
-      if(Math.abs(dragAt(r2,X))<0.05&&dragAt(r2,sn)>=need-0.03&&Math.max(...r2.zs)<=h.z0+0.12){ drag=r2; quad=null; if(conn) Le=Math.max(0,X-Lp); } } }
-  if(!drag&&h.kind==="arc"&&un!=null&&un>0.02&&un<0.98){
-    const sn=un*Lp, ok=r=>Math.abs(dragAt(r,Lp)-(conn?z1:0))<0.05&&dragAt(r,sn)>=Math.min(need,NETH+0.3)-0.02;   // 高球过网至少高出网顶 0.3 米
-    let r=null;
-    if(conn){ let best=1e9;   // 没人接时落多远不定死：0.2–4 米里挑最高点最接近这种球该有的高度 H 的那条
-      for(let LL=0.2;LL<=Math.max(0.2,Le)+4;LL+=0.25){ const t=dragFit(h.z0,Lp,z1,Lp+LL,0), ap=Math.max(...t.zs); if(ok(t)&&ap<=Math.max(h.H*1.4,z1+0.5)&&Math.abs(ap-h.H)<best){ best=Math.abs(ap-h.H); r=t; } } }
-    else{ for(let HH=h.H;HH<=h.H+3;HH+=0.2){ const t=dragFitApex(h.z0,HH,Lp,0); if(ok(t)){ r=t; break; } } }
-    if(r){ drag=r; if(conn) Le=Math.min(maxLe,Math.max(0.1,r.xs[r.xs.length-1]-Lp)); } }
-  // 接下一拍的球，没人接时也要落在场内（试用者 2026-11-06：推球的线画出界了）：按物理飞出了底线 / 边线，
-  // 就在场内 0.2 米 ~ maxLe 里重找一条也过 (Lp, 下一拍的击球高度) 的线，挑过网高度、最高点最合适的
-  const parLand=par ? (par.p+Math.sqrt(par.p*par.p+4*par.q*h.z0))/(2*par.q) : 0;
-  // 网前短球（发短球、放网、挡）没人接时就落在接球人身后一点点（≤ 1.2 米），不会一路飞到后场；推、抽才往后场去
-  const nxt=V3.lines[i+1]&&V3.lines[i+1].t;
-  const gMax=(h.kind!=="net"||["push","drive"].includes(h.t)||toKill) ? maxLe : (h.t==="serve_short" ? Math.min(maxLe,1.0) : ["push","drive"].includes(nxt) ? Math.min(maxLe,2.2) : Math.min(maxLe,1.2));   // 发短球没人接就落在前发球线后面一点（试用者 2026-11-06）   // 被推、被抽的短球要在网顶附近被接到，落得远一点
-  if(conn&&un!=null&&(h.kind==="net"||h.kind==="arc")&&(drag ? drag.xs[drag.xs.length-1]>Lp+gMax+0.05 : (par ? parLand>Lp+gMax+0.05 : h.kind==="net"))){
-    const sn=un*Lp, zE=drag ? dragAt(drag,Lp) : par ? h.z0+par.p*Lp-par.q*Lp*Lp : Math.min(z1,need), lowNet=Math.min(need,NETH+0.3)-0.02; let best=1e9, pick=null;
-    // 先找过网高度合适（不飘：不超过网顶 + c 再高 0.12 米）的；接的高度可以往下放（球快落地才够到，比如第 35 页「球到了身后」）；都找不到再放宽
-    for(const tol of [0.12,0.6]) for(const thM of (h.flat?[0,h.z0<NETH?0.35:0.12]:[null])) for(let zz=zE;zz>=0.3&&!pick;zz-=0.1) for(let LL=0.2;LL<=gMax+1e-6;LL+=0.1){ const t=dragFit(h.z0,Lp,zz,Lp+LL,0,thM), zn=dragAt(t,sn), ap=Math.max(...t.zs);
-      if(Math.abs(dragAt(t,Lp)-zz)>0.05||zn<lowNet||zn>need+(h.kind==="net"?tol:9)||(h.kind==="net"&&ap>need+0.6)||(h.kind==="arc"&&ap>Math.max(h.H*1.4,zz+0.5))) continue;   // 推、抽是平的：不能为了落在场内变成高球
-      const cost=h.kind==="arc" ? Math.abs(ap-h.H) : Math.abs(zn-need); if(cost<best){ best=cost; pick=t; } }
-    if(pick){ drag=pick; par=null; Le=Math.min(maxLe,Math.max(0.1,pick.xs[pick.xs.length-1]-Lp)); } }
-  const S=Lp+Le, uc=Lp/S, unF=un==null?null:un*uc; let z;
-  if(drag){ z=u=>Math.max(0,dragAt(drag,u*S)); }
-  else if(par){ z=u=>h.z0+par.p*(u*S)-par.q*(u*S)*(u*S); }
-  else if(h.kind==="down"&&quad){ const Sq=Lp+Le; z=u=>h.z0-quad.a*u*Sq-quad.b*(u*Sq)*(u*Sq); }
-  else if(h.kind==="down"&&h.c<0&&!conn){ const zn=need; z=u=>h.z0+(zn-h.z0)*u; }   // 扑下网（c < 0）：2D 线停在网前，球一路往下压、撞在网上（网顶下 −c 米）
-  else if(h.kind==="down"&&unF!=null&&unF>0.02&&unF<0.98){   // 杀 / 扑打到底（没人接）：也是一条抛物线，过网那点网顶 + c、落在 2D 线的终点，不在网上折
-    const sn=unF*S; let z0=h.z0, b2=(z0/S-(z0-need)/sn)/(S-sn), a2=(z0-need)/sn-b2*sn;
-    if(a2<0&&!pv){ z0=Math.min(h.t==="smash"?3.2:2.3,Math.max(h.z0,need/(1-(sn/S)*(sn/S)))); b2=(z0/S-(z0-need)/sn)/(S-sn); a2=(z0-need)/sn-b2*sn; }   // 最高抬到 2.3 米（举拍够得着），还差一点就让它出手时略往上   // 出手太低得往上打才过网：杀 / 扑不往上走，出手点抬到正好往下压能过网的高度
-    if(b2<0){ a2=z0/S; b2=0; }   // 过网绰绰有余（拦截杀、离网近）：不要先陡后平的反弯，直线压到落点（试用者 2026-11-06：34 页拦下来杀的轨迹不对）
-    z=u=>z0-a2*(u*S)-b2*(u*S)*(u*S); }
-  else if(h.kind==="down"){ const lin=u=>h.z0*(1-u);
-    z=(unF!=null&&unF>0.02&&lin(unF)<need) ? (u=>u<=unF ? h.z0+(need-h.z0)*(u/unF) : need*(1-Math.pow((u-unF)/(1-unF),1.4))) : lin; }
-  else{ let ua=h.kind==="net"&&unF!=null?unF:h.ua; ua=Math.min(.92,Math.max(.08,ua));
-    const mk=a=>T=>u=>u<=a ? h.z0+(T-h.z0)*Math.sin(Math.PI/2*u/a) : T*Math.cos(Math.PI/2*(u-a)/(1-a));
-    // 接上下一拍：最高点的高度二分出来，让曲线在 uc 处正好是下一拍的击球高度
-    // 最高点只在这种球合理的范围里找（arc：H 的 0.75–1.3 倍；net：网顶 + c 到再高 0.4 米），找不到就取边上，下一拍从实际高度接
-    const fit=a=>{ const f=mk(a); if(!conn) return h.kind==="net"?need:h.H;
-      let lo=h.kind==="net"?need:Math.max(z1,h.H*0.75), hi=h.kind==="net"?need+0.4:Math.max(lo+0.1,h.H*1.3);
-      if(f(hi)(uc)<z1) return hi; if(f(lo)(uc)>z1) return lo; for(let g=0;g<40;g++){ const mid=(lo+hi)/2; if(f(mid)(uc)<z1) lo=mid; else hi=mid; } return (lo+hi)/2; };
-    let top=fit(ua);
-    z=mk(ua)(top);
-    // 过网那点太低：网在下坡段就把最高点挪到网上，还不够再抬高
-    if(unF!=null&&z(unF)<need&&unF>ua){ ua=Math.min(.92,Math.max(.08,unF)); top=Math.max(fit(ua),need); z=mk(ua)(top); }
-    if(unF!=null) for(let g=0;g<60&&z(unF)<need;g++){ top+=0.1; z=mk(ua)(top); } }
-  return fulls[i]={z,uc,Le,dx,dy,phys:!!drag||!!par||h.kind==="down"}; }
+  const conn=z1>0, Lp=Math.hypot(L[40][0]-L[0][0],L[40][1]-L[0][1])||0.01, dx=(L[40][0]-L[0][0])/Lp, dy=(L[40][1]-L[0][1])/Lp;
+  const ya=L[0][1], yb=L[40][1], un=(ya>0)!==(yb>0) ? ya/(ya-yb) : null, sn=un==null?null:un*Lp;   // 过网那点（沿路的米数）
+  const toKill=conn&&V3.lines[i+1]&&V3.lines[i+1].t==="net_kill";   // 被扑的那一球：扑的时候球还高过网
+  const zE=!conn ? 0 : toKill ? Math.max(z1,NETH+0.15) : (h.kind==="net"||h.kind==="drag") ? Math.min(z1,need) : z1;   // 要被扑的球：照常过网，扑的时候还在扑的高度（冒起来、好扑；试用者 2026-11-07 第 5 轮：新算法挡得太好、不好扑，借鉴线上的）   // 网前球接的高度不高过它过网的高度（不然要往上飘）
+  const hits=r=>r&&Math.abs(dragAt(r,Lp)-zE)<0.05;
+  if(h.kind==="down"&&h.c<0){   // 扑下网（c < 0）：一路往下压、撞在网上（网顶下 −c 米），撞网就停，没有灰线
+    const zn=need; return fulls[i]={z:u=>h.z0+(zn-h.z0)*u,uc:1,Le:0,dx,dy,Lp,ok:true}; }
+  // 出手角度 θ 在这种球合理的范围里找；每个 θ 二分出速度让球正好经过终点 (Lp, zE)；再按这种球的样子打分，取最好的：
+  //   高球 = 过网至少网顶 + 0.3、最高点最接近 H；网前 / 吊 / 推 / 杀 / 扑 = 过网最接近网顶 + c（不能低）；没过网的线 = 最平的那条
+  const lowArc=Math.min(need,NETH+0.3);
+  const score=p=>{ if(p==null) return 1e9; const pen=sn==null?0:Math.max(0,(h.kind==="arc"?lowArc:need)-0.03-p.zn)*100;
+    // 要被扑的那一球也按这种球本来的过网高度（试用者 2026-11-07 第 3 轮：吊高了过网 2.15 就够、放网轨迹照旧，再高就不像了）
+    return pen+(h.kind==="arc" ? Math.abs(p.ap-h.H) : sn==null ? Math.abs(p.th) : Math.abs(p.zn-need)); };
+  const ranges=h.kind==="arc" ? [[-0.3,1.45]] : h.kind==="down" ? [[-1.3,0],[-1.3,0.12]] : h.flat ? [[-1.3,0],[-1.3,h.z0<NETH?0.35:0.12]] : [[-1.3,1.3]];   // 杀 / 扑 / 推出手不往上，过不了网才略往上
+  const low=p=>sn!=null&&p&&p.zn<(h.kind==="arc"?lowArc:need)-0.03;
+  // 打到 (X, zX) 的那条：先在这种球的角度范围里找，过不了网才放宽
+  const fitTo=(X,zX,extra)=>{ const sc=extra ? p=>score(p)+extra(p) : score; let b=null, w=""; for(const [lo,hi] of ranges){ b=solveTh(h.z0,X,zX,sn,lo,hi,sc); if(b&&!low(b)) break; if(hi<0.5) w="往下打过不了网，略往上出手"; }
+    if(!b){ b=solveTh(h.z0,X,zX,sn,-1.3,1.45,sc); w="这种球的角度范围里到不了，放宽角度"; } if(low(b)) w=(w?w+"；":"")+"过网不够高"; return b&&{...b,w}; };
+  let best=null, why="";
+  if(!conn){ best=fitTo(Lp,0); }   // 不接：落在 2D 图上画的落点
+  else{
+    // 接下一拍（2026-11-07 试用者核对第 2 轮）：落点在这种球的落点范围（land，离网多远）里、单打边线以内挑；
+    // 每个候选落点反算一条球路，看它飞到下一拍击球点时多高——最接近下一拍该有的击球高度 z1 的那条就是（z1 只作参考，不硬凑）。
+    // 硬条件：接的时候至少离地 0.3 米；下一拍是推的，接的高度不超过 1.8 米（试用者：再高就是扑了）；下一拍是扑的，球要高过网 0.3 米
+    const side=Math.sign(L[40][1])||1, ext=(lim,y0,d)=>Math.abs(d)<1e-6?1e9:(lim-y0)/d;
+    const sideS=Math.min(dx>0?ext(2.54,L[0][0],dx):dx<0?ext(-2.54,L[0][0],dx):1e9);
+    // 要被扑的那一球：过网就在这种球本来的高度，过网后还往上冒一点，扑的时候在网顶 0.3 米以上（试用者 2026-11-07 第 3–5 轮：放网冒起 / 挡网的轨迹借鉴线上的）；
+    // 没人接也照这种球的落点范围落（试用者 2026-11-08：挡网没人扑就该短短地落在网前，不能飞到底线）；
+    // 落得短、扑的时候又要高，过网就得高一点——扑的高度降到网顶 0.15 米以上，让过网不至于太飘
+    const lr=h.land&&h.land.length===2 ? h.land : [0.3,6.6];
+    let Sa=dy===0?Lp+0.15:Math.max(Lp+0.15,(side*lr[0]-L[0][1])/dy), Sb=dy===0?Lp+2:Math.min((side*lr[1]-L[0][1])/dy,sideS);
+    if(!(Sb>=Sa)){ Sa=Lp+0.15; Sb=Math.max(Sa,Math.min(Lp+1.0,sideS)); why="下一拍的击球点已经在这种球的落点范围外"; }
+    const nxt=V3.lines[i+1]&&V3.lines[i+1].t, cap=nxt==="push"?1.8:9, floor=toKill?NETH+0.15:0.3;   // 扑：球要高过网顶 0.15 米（试用者 2026-11-07 第 5 轮：挡得太好就不好扑；11-08 落点要短，从 0.3 降到 0.15）
+    let bc=1e9; const n=Math.max(1,Math.min(14,Math.round((Sb-Sa)/0.2)));
+    // 出手角度和落点一起挑：每个候选落点里，按「样子 + 接的高度」一起打分选角度（不先按样子定死角度再看接得着接不着）
+    const extra=p=>{ const zL=probe(h.z0,p.v,p.th,Lp,null).zX; return Math.abs(zL-zE)*0.5+Math.max(0,floor-zL)*100+Math.max(0,zL-cap)*100; };
+    for(let k=0;k<=n;k++){ const S=Sa+(Sb-Sa)*k/n, p=fitTo(S,0,extra); if(!p) continue;
+      const zL=probe(h.z0,p.v,p.th,Lp,null).zX, c=score(p)+extra(p);
+      if(c<bc){ bc=c; best={...p,zL,S}; } }
+    if(best&&best.zL<floor-0.05) why=(why?why+"；":"")+"接的时候球太低"; if(best&&best.zL>cap+0.05) why=(why?why+"；":"")+"接的时候球比 1.8 米高（推不了）"; }
+  if(best&&best.w) why=(why?why+"；":"")+best.w;
+  const r=best ? dragRun(h.z0,best.v,best.th) : dragRun(h.z0,10,0);
+  const X=r.xs[r.xs.length-1], S=conn ? Math.max(Lp,X) : Lp, uc=Lp/S, ok=conn ? !why : hits(r);
+  return fulls[i]={z:u=>Math.max(0,dragAt(r,u*S)),uc,Le:S-Lp,dx,dy,Lp,r,ok,why}; }
 const profs={};
 function prof(i){ if(profs[i]) return profs[i]; const F=full(i); return profs[i]=Array.from({length:41},(_,k)=>Math.max(0,F.z(F.uc*k/40))); }
 const ghosts={};
 function ghost(i){ if(ghosts[i]) return ghosts[i]; const F=full(i), L=line(i); if(!(V3.lines[i].z1>0)||F.Le<=0) return ghosts[i]=[];
-  const out=[]; for(let k=0;k<=20;k++){ const s=k/20, u=F.uc+(1-F.uc)*s; out.push([Math.max(-2.54,Math.min(2.54,L[40][0]+F.dx*F.Le*s)), L[40][1]+F.dy*F.Le*s, Math.max(0,F.z(u))]); }
+  // 灰线 = 同一条曲线从下一拍的击球点接着飞到落地：同一条俯视直线、同一个高度函数，只是 u 从 uc 到 1
+  const out=[]; for(let k=0;k<=20;k++){ const u=F.uc+(1-F.uc)*k/20, sm=u*(F.Lp+F.Le); out.push([L[0][0]+F.dx*sm, L[0][1]+F.dy*sm, F.z(u)]); }
   return ghosts[i]=out; }
-window.__v3={prof,line,ghost,full,dragFit,dragAt};   // 测试用：tests/test_book_v2.py 查每条线过网够不够高
+window.__v3={prof,line,ghost,full,dragFit,dragAt,reset:()=>{ for(const o of [samples,fulls,profs,ghosts]) for(const k in o) delete o[k]; }};   // reset：测试改了 V3.lines 以后重算   // 测试用：tests/test_book_v2.py 查每条线过网够不够高
 function z3(i,u){ const p=prof(i), x=Math.min(40,Math.max(0,u*40)), k=Math.floor(x); return k>=40?p[40]:p[k]+(p[k+1]-p[k])*(x-k); }
 function cam(){ const cp=Math.cos(pitch); return {C:[Math.sin(yaw)*cp*dist, Math.cos(yaw)*cp*dist, 0.6+Math.sin(pitch)*dist], T:[0,0,0.6]}; }
 let K=null;
@@ -351,6 +319,8 @@ function setup(){ const {C,T}=cam(); const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-
 function P(x,y,z){ const {C,f,r,u,sub,dot}=K, d=sub([x,y,z||0],C), zc=dot(d,f); if(zc<0.3) return null;
   const s=560/zc; return {x:220+dot(d,r)*s, y:300-dot(d,u)*s, s}; }
 const el=(t,a,p)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); (p||svg).appendChild(e); return e; };
+// 地上的圈 / 影子按真的地面圆投影（试用者 2026-11-07：顶视角时落点的圈画得不对——以前是屏幕上固定扁的椭圆，从上往下看也是扁的）
+function gcirc(x,y,r,a){ const q=[]; for(let k=0;k<24;k++){ const t=k/24*2*Math.PI, p=P(x+r*Math.cos(t), y+r*Math.sin(t), 0); if(!p) return; q.push(p); } el("polygon",Object.assign({points:pts(q)},a)); }
 const pts=a=>a.filter(Boolean).map(p=>p.x.toFixed(1)+","+p.y.toFixed(1)).join(" ");
 function seg(x0,y0,x1,y1,w,col,op,dash){ const a=P(x0,y0,0), b=P(x1,y1,0); if(a&&b) el("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:col||"#fff","stroke-width":w,opacity:op||.9,"stroke-dasharray":dash||"","stroke-linecap":"round"}); }
 function quad(x0,y0,x1,y1,fill){ const q=[P(x0,y0),P(x1,y0),P(x1,y1),P(x0,y1)]; if(q.every(Boolean)) el("polygon",{points:pts(q),fill}); }
@@ -358,7 +328,7 @@ function quad(x0,y0,x1,y1,fill){ const q=[P(x0,y0),P(x1,y0),P(x1,y1),P(x0,y1)]; 
 // 那样从正上方看时投影几乎为零，小人只剩最小值那么点（试用者 2026-11-06：Top 视图小人太小）
 function person(px,py,col,lab,top){ const [x,y]=m(px,py), f=P(x,y,0); if(!f) return;
   const H=Math.max(14,1.6*f.s), w=H*.42;
-  el("ellipse",{cx:f.x,cy:f.y,rx:w*.8,ry:w*.28,fill:"rgba(0,0,0,.25)"});
+  gcirc(x,y,.4,{fill:"rgba(0,0,0,.25)"});
   el("rect",{x:f.x-w/2,y:f.y-H*.75,width:w,height:H*.62,rx:w*.4,fill:col});
   el("circle",{cx:f.x,cy:f.y-H*.88,r:H*.17,fill:"#FFE0BD",stroke:"#3a2a1a","stroke-width":1});
   const t=el("text",{x:f.x,y:f.y-H*.4,"text-anchor":"middle","font-size":Math.max(9,H*.24),"font-weight":800,fill:"#fff"}); t.textContent=lab;
@@ -385,7 +355,7 @@ function draw(){
     el("polyline",{points:pts(air),fill:"none",stroke:s.getAttribute("stroke"),"stroke-width":+s.getAttribute("stroke-width")*.8,"stroke-dasharray":s.getAttribute("stroke-dasharray")||"","stroke-linecap":"round",opacity:op});
     // 接上下一拍（connect_hits）时：线停在下一拍的击球点，后面用灰色细虚线画出「没人接会落在哪」（试用者 2026-11-06）
     if(H.z1>0&&end>=1){ const g=ghost(i); if(g.length>1){ el("polyline",{points:pts(g.map(q=>P(q[0],q[1],q[2]))),fill:"none",stroke:"#8a8f8c","stroke-width":2,"stroke-dasharray":"4 5",opacity:.7*op});
-      const e=g[g.length-1], c=P(e[0],e[1],0); if(c) el("ellipse",{cx:c.x,cy:c.y,rx:6,ry:2.5,fill:"none",stroke:"#8a8f8c","stroke-width":1.5,opacity:.8*op}); } }
+      const e=g[g.length-1], c=P(e[0],e[1],0); if(c) gcirc(e[0],e[1],.22,{fill:"none",stroke:"#8a8f8c","stroke-width":1.5,opacity:.8*op}); } }
     if(CUR&&CUR.i===i){ const k=Math.min(40,Math.round(40*CUR.e)); ball={x:L[k][0],y:L[k][1],z:z3(i,CUR.e)}; } }
   // 错误打法的红叉
   V3.x.forEach((p,j)=>{ if(!p||!$("x"+j)||$("x"+j).style.opacity!=="1") return; const [x,y]=m(...p), c=P(x,y,0); if(!c) return;
@@ -393,7 +363,7 @@ function draw(){
   items.push({y:0, fn:net, net:true});
   items.sort((a,b)=>behindNet ? b.y-a.y : a.y-b.y);   // 远的先画
   for(const it of items) it.fn();
-  if(ball){ const g=P(ball.x,ball.y,0), b=P(ball.x,ball.y,ball.z); if(g&&b){ el("ellipse",{cx:g.x,cy:g.y,rx:5,ry:2,fill:"rgba(0,0,0,.35)"});
+  if(ball){ const g=P(ball.x,ball.y,0), b=P(ball.x,ball.y,ball.z); if(g&&b){ gcirc(ball.x,ball.y,.1,{fill:"rgba(0,0,0,.35)"});
     el("circle",{cx:b.x,cy:b.y,r:Math.max(3.5,b.s*.09),fill:"#fff",stroke:"#555","stroke-width":1.2}); } }
   const hint=el("text",{x:220,y:578,"text-anchor":"middle","font-size":12,fill:"#2B2B2B",opacity:.55}); hint.textContent="拖动转着看 · 双指 / 滚轮缩放";
   raf=on?requestAnimationFrame(draw):0; }
