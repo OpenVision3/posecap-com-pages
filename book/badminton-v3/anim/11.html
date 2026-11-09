@@ -1,0 +1,400 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>吊一拍，挑到底线</title><link rel="stylesheet" href="../fonts/fonts.css"><style>
+:root{--bg:#FFFDF7;--fg:#2B2B2B;--card:#fff;--muted:#777}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1d1f1e;--fg:#eee;--card:#2a2d2b;--muted:#aaa}}
+:root[data-theme="dark"]{--bg:#1d1f1e;--fg:#eee;--card:#2a2d2b;--muted:#aaa}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans SC",sans-serif}
+main{max-width:560px;margin:0 auto;padding:8px 12px;height:100vh;height:100dvh;box-sizing:border-box;display:flex;flex-direction:column}
+.head{flex:none;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:0 2px}
+h1{font-size:18px;margin:0;white-space:nowrap} h1 .no{display:inline-block;min-width:1.5em;margin-right:6px;padding:0 6px;border-radius:8px;background:#2F7FD9;color:#fff;text-align:center;font-size:15px;vertical-align:1px} .k{color:#B07800;font-weight:700;font-size:13px}
+.court{background:#EAF6EE;border-radius:14px;padding:2px;margin:6px 0;flex:1;min-height:0;position:relative;overflow:hidden} .court>svg{width:100%;height:100%;display:block}
+.say{position:absolute;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 12px);box-sizing:border-box;text-align:center;bottom:4px;background:rgba(20,30,25,.62);color:#fff;border-radius:8px;padding:2px 8px;font-size:13px;line-height:1.4;z-index:2}
+.say b{color:#F07A2A}
+.btns{display:flex;gap:6px;margin:6px 0 0;flex:none;align-items:stretch}
+button,.vbtn{flex:none;width:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:5px 0 4px;border-radius:14px;border:0;background:#2F7FD9;color:#fff;font-weight:700;font-family:inherit}
+button .i,.vbtn .i{height:22px;display:flex} button small,.vbtn small{font-size:11px;line-height:1.2;font-weight:700;white-space:nowrap}
+#play{flex:1;width:auto}
+.vbtn{position:relative;background:#E7EEF8;color:#2F7FD9;box-shadow:0 2px 0 rgba(0,0,0,.15)} .vbtn:active{transform:translateY(2px) scale(.96);filter:brightness(.88);box-shadow:none}
+button.sec{background:#E7EEF8;color:#2F7FD9}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .08s,filter .08s,background .2s;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+button:active:not(:disabled){transform:translateY(2px) scale(.96);filter:brightness(.88);box-shadow:none}
+button:disabled{opacity:.45;cursor:default;box-shadow:none}
+button:focus-visible{outline:3px solid #F2B01E;outline-offset:2px}
+#play.playing{background:#E0573A}
+.pills{display:flex;gap:4px;flex:none} .pill{flex:1;text-align:center;border-radius:999px;padding:3px 0;font-size:12px;background:#EEE;color:#999;font-weight:700;transition:all .3s}
+.pill.on{background:#CFE8D8;color:#1E6B45} .pill.goal{background:#F2B01E;color:#5A3D00}
+#vsel{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px} #vnote{font-size:12px;color:var(--muted);flex:none} #vnote:empty{display:none}
+.badge{position:absolute;top:8px;left:50%;transform:translateX(-50%) scale(.9);opacity:0;transition:all .3s;background:#E0301E;color:#fff;font-weight:900;font-size:15px;padding:4px 14px;border-radius:999px;box-shadow:0 3px 10px rgba(0,0,0,.2);z-index:2}
+.badge.on{opacity:1;transform:translateX(-50%) scale(1)}
+#v3{display:none;position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);touch-action:none;cursor:grab;background:#EAF6EE;border-radius:12px}
+.v3btn{position:absolute;top:6px;right:6px;z-index:3;width:auto;min-width:40px;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:800;background:#2F7FD9;color:#fff;flex-direction:row}
+.v3btn.r{right:56px;background:#E7EEF8;color:#2F7FD9}
+</style></head><body><main>
+<div class="head" title="想三拍 · 第 3 版 · 第 11 页"><h1><span class="no">11</span>吊一拍，挑到底线</h1><span class="k">先吊网前，他放网，我一挑深，他跑后。</span></div>
+<div class="court"><svg viewBox="0 4 440 589" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="amF07A2A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#F07A2A"/></marker><marker id="am2F7FD9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#2F7FD9"/></marker><marker id="am6B6B6B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#6B6B6B"/></marker>
+    </defs>
+    <rect x="34.4" y="31" width="371.2" height="558" rx="8" fill="#3F9A70"/>
+    <rect x="43.4" y="40" width="353.2" height="540" fill="#52B788"/>
+    <rect x="70" y="129.2" width="300" height="101.8" fill="#fff" opacity=".10"/>
+    <rect x="70" y="391.0" width="300" height="101.8" fill="#fff" opacity=".10"/>
+    <g stroke="#fff" stroke-width="2" fill="none" opacity=".85">
+      <rect x="43.4" y="40" width="353.2" height="540"/>
+      <line x1="43.4" y1="70.7" x2="396.6" y2="70.7"/><line x1="43.4" y1="549.3" x2="396.6" y2="549.3"/>
+    </g>
+    <g stroke="#fff" stroke-width="2" fill="none" stroke-dasharray="6 9" opacity=".5">
+      <line x1="139.5" y1="40" x2="139.5" y2="580"/><line x1="300.5" y1="40" x2="300.5" y2="580"/>
+      <line x1="70" y1="129.2" x2="370" y2="129.2"/><line x1="70" y1="492.8" x2="370" y2="492.8"/>
+    </g>
+    <g stroke="#fff" stroke-width="4" fill="none">
+      <rect x="70" y="40" width="300" height="540"/>
+      <line x1="70" y1="231" x2="370" y2="231"/><line x1="70" y1="391" x2="370" y2="391"/>
+      <line x1="220" y1="40" x2="220" y2="231"/><line x1="220" y1="391" x2="220" y2="580"/>
+    </g>
+    <text x="226" y="245" font-size="11" fill="#fff" opacity=".9">前发球线</text>
+    <text x="226" y="386" font-size="11" fill="#fff" opacity=".9">前发球线</text>
+    <text x="226" y="570" font-size="11" fill="#fff" opacity=".9">中线</text>
+    <rect x="30.4" y="305" width="379.2" height="12" rx="4" fill="#2B2B2B"/>
+    <text x="220" y="314" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">球网</text>
+    <g font-size="13" fill="#555" text-anchor="end">
+      <text x="28.4" y="90">后场</text><text x="28.4" y="185">中场</text><text x="28.4" y="276">前场</text>
+    </g>
+    <g font-size="13" fill="#555" text-anchor="start"><text x="411.6" y="356">前场</text><text x="411.6" y="447">中场</text><text x="411.6" y="541">后场</text></g>
+    <defs><marker id="amE0301E" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#E0301E"/></marker><marker id="am6B6B6B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#6B6B6B"/></marker></defs><g id="right" style="transition:opacity .4s"><mask id="m0" maskUnits="userSpaceOnUse" x="-20" y="-20" width="480" height="660"><path d="M321 520 Q 236 380 139 255" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/></mask><path id="s0" d="M321 520 Q 236 380 139 255" fill="none" stroke="#F07A2A" stroke-width="5" stroke-linecap="round" style="visibility:hidden"/><mask id="m1" maskUnits="userSpaceOnUse" x="-20" y="-20" width="480" height="660"><path d="M139 255 Q 246 302 318 372" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/></mask><path id="s1" d="M139 255 Q 246 302 318 372" fill="none" stroke="#2F7FD9" stroke-width="5" stroke-linecap="round" stroke-dasharray="12 8" style="visibility:hidden"/><mask id="m2" maskUnits="userSpaceOnUse" x="-20" y="-20" width="480" height="660"><path d="M318 372 Q 342 200 321 90" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/></mask><path id="s2" d="M318 372 Q 342 200 321 90" fill="none" stroke="#F07A2A" stroke-width="5" stroke-linecap="round" style="visibility:hidden"/></g><g id="wrongG"><mask id="m3" maskUnits="userSpaceOnUse" x="-20" y="-20" width="480" height="660"><path d="M318 372 Q 330 280 300 186" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/></mask><path id="s3" d="M318 372 Q 330 280 300 186" fill="none" stroke="#E0301E" stroke-width="5" stroke-linecap="round" style="visibility:hidden"/><mask id="m4" maskUnits="userSpaceOnUse" x="-20" y="-20" width="480" height="660"><path d="M300 186 L 240 470" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round"/></mask><path id="s4" d="M300 186 L 240 470" fill="none" stroke="#2F7FD9" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 8" style="visibility:hidden"/><mask id="m5" maskUnits="userSpaceOnUse" x="-20" y="-20" width="480" height="660"><path d="M300 110 Q 220 300 120 540" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round"/></mask><path id="s5" d="M300 110 Q 220 300 120 540" fill="none" stroke="#2F7FD9" stroke-width="5" stroke-linecap="round" stroke-dasharray="12 8" style="visibility:hidden"/><g id="x1" style="opacity:0;transition:opacity .2s"><path d="M226 468 l24 24 M250 468 l-24 24" stroke="#E0301E" stroke-width="6" stroke-linecap="round"/></g><g id="wb1" style="opacity:0;transition:opacity .3s"><g><path d="M226 123 L247 137 L240 123z" fill="#fff" stroke="#2F7FD9" stroke-width="2.5"/><rect x="194" y="93.0" width="52" height="30" rx="15" fill="#fff" stroke="#2F7FD9" stroke-width="2.5"/><rect x="227" y="120" width="12" height="4" fill="#fff"/><text x="220" y="114" text-anchor="middle" font-size="16" font-weight="900" fill="#2F7FD9">杀！</text></g></g><g id="x2" style="opacity:0;transition:opacity .2s"><path d="M108 528 l24 24 M132 528 l-24 24" stroke="#E0301E" stroke-width="6" stroke-linecap="round"/></g></g><g id="op" transform="translate(101 160)"><g class="mood" data-mood="smile" style="display:inline">
+    <g>
+      <circle cx="0" cy="-22" r="16" fill="#FFE2C4" stroke="#333" stroke-width="2"/>
+      <circle cx="-5" cy="-25" r="2" fill="#333"/><circle cx="5" cy="-25" r="2" fill="#333"/><path d="M-6 -17 q6 5 12 0" stroke="#333" stroke-width="2" fill="none"/>
+      <rect x="-14" y="-6" width="28" height="34" rx="8" fill="#2F7FD9"/>
+      <text x="0" y="17" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">对手</text>
+    </g></g><g class="mood" data-mood="worry" style="display:none">
+    <g>
+      <circle cx="0" cy="-22" r="16" fill="#FFE2C4" stroke="#333" stroke-width="2"/>
+      <path d="M-10 -31 l7 3 M10 -31 l-7 3" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="-5" cy="-25" r="2" fill="#333"/><circle cx="5" cy="-25" r="2" fill="#333"/><path d="M-6 -14 q6 -5 12 0" stroke="#333" stroke-width="2" fill="none"/><path d="M15 -36 q4 6 0 9 q-4 -3 0 -9z" fill="#7CC7F2" stroke="#3A8FC4" stroke-width="1"/>
+      <rect x="-14" y="-6" width="28" height="34" rx="8" fill="#2F7FD9"/>
+      <text x="0" y="17" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">对手</text>
+    </g></g><g class="mood" data-mood="fierce" style="display:none">
+    <g>
+      <circle cx="0" cy="-22" r="16" fill="#FFE2C4" stroke="#333" stroke-width="2"/>
+      <path d="M-10 -32 l7 4 M10 -32 l-7 4" stroke="#333" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="-5" cy="-25" r="2.2" fill="#333"/><circle cx="5" cy="-25" r="2.2" fill="#333"/><path d="M-6 -18 q6 9 12 0z" fill="#B23A2A" stroke="#333" stroke-width="1.6"/>
+      <rect x="-14" y="-6" width="28" height="34" rx="8" fill="#2F7FD9"/>
+      <text x="0" y="17" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">对手</text>
+    </g></g></g><g id="me" transform="translate(346 505)"><g class="mood" data-mood="smile" style="display:inline">
+    <g>
+      <circle cx="0" cy="-22" r="16" fill="#FFE2C4" stroke="#333" stroke-width="2"/>
+      <circle cx="-5" cy="-25" r="2" fill="#333"/><circle cx="5" cy="-25" r="2" fill="#333"/><path d="M-6 -17 q6 5 12 0" stroke="#333" stroke-width="2" fill="none"/>
+      <rect x="-14" y="-6" width="28" height="34" rx="8" fill="#F07A2A"/>
+      <text x="0" y="17" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">我</text>
+    </g></g><g class="mood" data-mood="worry" style="display:none">
+    <g>
+      <circle cx="0" cy="-22" r="16" fill="#FFE2C4" stroke="#333" stroke-width="2"/>
+      <path d="M-10 -31 l7 3 M10 -31 l-7 3" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="-5" cy="-25" r="2" fill="#333"/><circle cx="5" cy="-25" r="2" fill="#333"/><path d="M-6 -14 q6 -5 12 0" stroke="#333" stroke-width="2" fill="none"/><path d="M15 -36 q4 6 0 9 q-4 -3 0 -9z" fill="#7CC7F2" stroke="#3A8FC4" stroke-width="1"/>
+      <rect x="-14" y="-6" width="28" height="34" rx="8" fill="#F07A2A"/>
+      <text x="0" y="17" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">我</text>
+    </g></g><g class="mood" data-mood="fierce" style="display:none">
+    <g>
+      <circle cx="0" cy="-22" r="16" fill="#FFE2C4" stroke="#333" stroke-width="2"/>
+      <path d="M-10 -32 l7 4 M10 -32 l-7 4" stroke="#333" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="-5" cy="-25" r="2.2" fill="#333"/><circle cx="5" cy="-25" r="2.2" fill="#333"/><path d="M-6 -18 q6 9 12 0z" fill="#B23A2A" stroke="#333" stroke-width="1.6"/>
+      <rect x="-14" y="-6" width="28" height="34" rx="8" fill="#F07A2A"/>
+      <text x="0" y="17" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">我</text>
+    </g></g></g><g id="b2" class="bub" style="opacity:0;transition:opacity .3s"><g><path d="M235 81 L256 95 L249 81z" fill="#fff" stroke="#2F7FD9" stroke-width="2.5"/><rect x="158" y="51.0" width="112" height="30" rx="15" fill="#fff" stroke="#2F7FD9" stroke-width="2.5"/><rect x="236" y="78" width="12" height="4" fill="#fff"/><text x="214" y="72" text-anchor="middle" font-size="16" font-weight="900" fill="#2F7FD9">又得往后跑！</text></g></g><g id="ball" style="opacity:0"><g transform="scale(.95)"><polygon points="0,10 -9,-8 9,-8" fill="#fff" stroke="#555" stroke-width="1.5"/><line x1="-3" y1="-8" x2="-1" y2="9" stroke="#bbb" stroke-width="1"/><line x1="3" y1="-8" x2="1" y2="9" stroke="#bbb" stroke-width="1"/><circle cx="0" cy="11" r="4.5" fill="#F7F7F7" stroke="#555" stroke-width="1.5"/></g></g></svg><svg id="v3" viewBox="0 4 440 589" preserveAspectRatio="xMidYMid meet" aria-label="3D 球场，拖动转着看"></svg><button class="v3btn" id="b3d" title="切换 2D / 3D">3D</button><button class="v3btn r" id="b3r" title="回到默认角度" hidden>↺</button><div class="badge" id="badge">✕ 错误打法</div><div class="say" id="say">点「播放」，一拍一拍看。</div></div>
+<div class="pills" id="pills"><div class="pill" data-i="0">没丢分</div><div class="pill" data-i="1">打平手</div><div class="pill" data-i="2">我占上风</div><div class="pill" data-i="3">他回弱球</div><div class="pill" data-i="4">得分</div></div>
+<div class="btns"><button id="play"><span class="i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" stroke="none"/></svg></span><small>播放</small></button><button class="sec" id="next"><span class="i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l8 6-8 6z" fill="currentColor" stroke="none"/><path d="M17.5 6v12"/></svg></span><small>下一拍</small></button><button class="sec" id="wbtn" hidden><span class="i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l8 6-8 6z" fill="currentColor" stroke="none"/><path d="M17.5 6v12"/></svg></span><small>错误打法</small></button><button class="sec" id="reset"><span class="i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4.5v4h4"/></svg></span><small>重来</small></button><button class="sec" id="voice"><span class="i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></span><small>讲解开</small></button><label class="vbtn" id="vbtn" title="换声音"><span class="i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5"/><path d="M3 19.5c.8-3.3 3.2-5 6-5s5.2 1.7 6 5"/><path d="M17.5 6.5a4 4 0 0 1 0 5M20 4.5a7 7 0 0 1 0 9"/></svg></span><small id="vname">声音</small><select id="vsel" aria-label="换声音"></select></label></div>
+<div id="vnote"></div>
+</main><script>
+const SIDE=false, BEATS=[{"say": "我在后场吊到他网前。吊完回中。", "voice": "第一拍。我在后场，轻轻吊一个球到他网前。吊完马上回中。", "shot": 0, "before": {"me": [307, 510]}, "after": {"me": [220, 470]}, "mood": {}, "bubble": false, "hide": false}, {"say": "他跑上来，把球轻轻放回来。", "voice": "第二拍。对手跑到网前，把球轻轻放回来。", "shot": 1, "before": {"op": [153, 233]}, "after": {}, "mood": {}, "bubble": false, "hide": false}, {"say": "我上网不放，把球挑得又高又深，直落他底线。", "voice": "第三拍。我上网，不放回去，把球挑得又高又深，直落他底线。他刚到网前，又得跑回去！", "shot": 2, "before": {"me": [304, 362]}, "after": {"op": [300, 120], "me": [220, 470]}, "mood": {"op": "worry"}, "bubble": true, "hide": false}], GOAL=2, START={"me": [346, 505], "op": [101, 160]}, FINAL={"me": [220, 470], "op": [300, 120]};
+const WRONG=[{"say": "挑短了，球只到他中场……", "voice": "小心！要是挑短了，球只到他中场，", "players": {"op": [153, 233], "me": [304, 362]}, "moods": {"op": "smile", "me": "smile"}, "clear": null, "line": 3, "x": false, "bubble": false}, {"say": "他在中场就能杀！宁可挑高挑深，也别图快。", "voice": "他在中场就杀下来了。宁可挑高挑深，也别图快。", "players": {"op": [314, 164]}, "moods": {"op": "fierce", "me": "worry"}, "clear": null, "line": 4, "x": true, "bubble": true}, {"say": "挑完要回中，别站在网前看。", "voice": "还有，挑完别站在网前看。他把球打到你身后，你就够不着了。", "players": {"op": [300, 120], "me": [304, 362]}, "moods": {"op": "smile", "me": "worry"}, "clear": true, "line": 5, "x": true, "bubble": false}], CARES=["挑短了，他在中场就能杀！宁可挑高挑深，也别图快。", "挑完要回中，别站在网前看。"], N_OK=3, N_LINES=6, DUR=[1000, 1000, 1000, 900, 420, 1000], ARROW={"0": true, "1": true, "2": true, "3": true, "4": true, "5": true};
+const KOUJUE="先吊网前，他放网，我一挑深，他跑后。", END_VOICE="这就是吊一拍，挑到底线。一前一后，让他跑最长的路。记住口诀：先吊网前，他放网，我一挑深，他跑后。", ICON={"play": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 5.5v13l10.5-6.5z\" fill=\"currentColor\" stroke=\"none\"/></svg>", "stop": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"6.5\" y=\"6.5\" width=\"11\" height=\"11\" rx=\"2.5\" fill=\"currentColor\" stroke=\"none\"/></svg>", "next": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 6l8 6-8 6z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M17.5 6v12\"/></svg>", "reset": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4.5 12a7.5 7.5 0 1 0 2.2-5.3\"/><path d=\"M4.5 4.5v4h4\"/></svg>", "sound": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 9.5h3.5L12 5.5v13l-4.5-4H4z\" fill=\"currentColor\"/><path d=\"M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11\"/></svg>", "mute": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 9.5h3.5L12 5.5v13l-4.5-4H4z\" fill=\"currentColor\"/><path d=\"M16 9.5l5 5M21 9.5l-5 5\"/></svg>", "voice": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"8.5\" r=\"3.5\"/><path d=\"M3 19.5c.8-3.3 3.2-5 6-5s5.2 1.7 6 5\"/><path d=\"M17.5 6.5a4 4 0 0 1 0 5M20 4.5a7 7 0 0 1 0 9\"/></svg>"};
+const V3={"lines": [{"t": "drop", "kind": "drag", "z0": 2.4, "H": 0, "ua": 0.5, "c": 0.15, "flat": false, "land": [0.5, 2.5], "z1": 0.9}, {"t": "net", "kind": "net", "z0": 0.9, "H": 0, "ua": 0.5, "c": 0.1, "flat": false, "land": [0.3, 2.0], "z1": 0.8}, {"t": "lift", "kind": "arc", "z0": 0.8, "H": 5.0, "ua": 0.65, "c": 0.3, "flat": false, "land": [5.9, 6.6], "z1": 0}, {"t": "lift_short", "kind": "arc", "z0": 0.8, "H": 3.2, "ua": 0.55, "c": 0.3, "flat": false, "land": [3.0, 5.0], "z1": 2.8}, {"t": "smash", "kind": "down", "z0": 2.8, "H": 0, "ua": 0.5, "c": 0.15, "flat": false, "land": [3.0, 6.6], "z1": 0}, {"t": "clear", "kind": "arc", "z0": 2.4, "H": 6.0, "ua": 0.62, "c": 1.0, "flat": false, "land": [5.9, 6.6], "z1": 0}], "x": [null, [238, 480], [120, 540]], "bubs": {"b2": ["op", "又得往后跑！"], "wb1": ["op", "杀！"]}}, PXM_X=57.915057915057915, PXM_Y=40.4040404040404, NET_Y=311, MID_X=220; let CUR=null;   // 3D 视图用：CUR = 正在飞的那条线和飞到哪
+const $=id=>document.getElementById(id); let wbusy=false, pendingWrong=false, k=0, busy=false, auto=false, halt=false, timer=null, pendingReset=false;
+const POS={};
+function setMood(who,m){ const el=$(who); if(!el) return; for(const g of el.querySelectorAll(".mood")) g.style.display=g.dataset.mood===m?"inline":"none"; }
+function place(who,x,y){ POS[who]=[x,y]; $(who).setAttribute("transform",`translate(${x} ${y})`); }
+/* 停止：halt 置上后，正在跑的动画直接跳到这一拍的结尾、朗读掐掉，然后停下 */
+function along(d,ms,fn){ const p=document.createElementNS("http://www.w3.org/2000/svg","path"); p.setAttribute("d",d); const L=p.getTotalLength(), t0=performance.now();
+  return new Promise(ok=>{ const step=t=>{ const f=halt?1:Math.min(1,(t-t0)/ms), e=f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2, q=p.getPointAtLength(L*e); fn(q,e);
+    f<1?requestAnimationFrame(step):ok(); }; requestAnimationFrame(step); }); }
+function moveTo(who,x,y,ms){ const [x0,y0]=POS[who]; if(Math.abs(x-x0)+Math.abs(y-y0)<1) return Promise.resolve(); return along(`M${x0} ${y0} L ${x} ${y}`,ms,q=>place(who,q.x,q.y)); }
+function runAll(m){ return Promise.all(Object.entries(m||{}).map(([w,[x,y]])=>moveTo(w,x,y,650))); }
+async function shot(i){ const s=$("s"+i), m=$("m"+i).firstChild, L=m.getTotalLength(), ball=$("ball");
+  m.style.strokeDasharray=`${L} ${L}`; m.style.strokeDashoffset=L; s.setAttribute("mask",`url(#m${i})`); s.style.visibility="visible"; ball.style.opacity=1;
+  const SL=s.getTotalLength(); CUR={i,e:0};
+  await along(s.getAttribute("d"), DUR[i], (q,e)=>{ m.style.strokeDashoffset=L*(1-e); CUR.e=e;
+    const a=s.getPointAtLength(Math.max(0,SL*e-2)), b=s.getPointAtLength(Math.min(SL,SL*e+2)), deg=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI-90;  // 球托朝前
+    ball.setAttribute("transform",`translate(${q.x} ${q.y}) rotate(${deg})`); });
+  s.removeAttribute("mask"); if(ARROW[i]) s.setAttribute("marker-end",`url(#am${s.getAttribute("stroke").slice(1)})`); ball.style.opacity=0; CUR=null; }
+function hideLine(i){ const s=$("s"+i); s.style.visibility="hidden"; s.removeAttribute("mask"); s.removeAttribute("marker-end"); }
+/* 语音讲解：浏览器自带的中文朗读；一拍的动画和讲解都放完才进下一拍；朗读偶尔不回 onend，按字数兜底超时 */
+const TTS=window.speechSynthesis||null;
+let voiceOn=true; try{ voiceOn=localStorage.getItem("book_voice")!=="off"; }catch(e){}
+const PREFER=[/Xiaoxiao/i,/Xiaoyi/i,/Google.*普通话|Google.*Mandarin/i,/Tingting|婷婷/i,/Lili|莉莉/i,/Shanshan|姗姗/i,/Yaoyao|Huihui/i];
+let pick=""; try{ pick=localStorage.getItem("book_voice_name")||""; }catch(e){}
+function rank(v){ const i=PREFER.findIndex(r=>r.test(v.name)); return (/^zh[-_]CN/i.test(v.lang)?0:100)+(i<0?50:i); }
+function zhVoices(){ return (TTS?TTS.getVoices():[]).filter(v=>/^zh|^cmn/i.test(v.lang)).sort((a,b)=>rank(a)-rank(b)); }
+function zhVoice(){ const vs=zhVoices(); return vs.find(v=>v.name===pick)||vs[0]||null; }
+function speak(text){ return new Promise(ok=>{ if(!TTS||!voiceOn||!text||halt) return ok();
+  const u=new SpeechSynthesisUtterance(text), v=zhVoice(); u.lang=v?v.lang:"zh-CN"; if(v) u.voice=v; u.rate=1.15; u.pitch=1.05;
+  const t=setTimeout(ok, 2000+text.length*330); u.onend=u.onerror=()=>{ clearTimeout(t); ok(); }; TTS.speak(u); }); }
+const VNAME={Tingting:"婷婷",Lili:"莉莉",Shanshan:"姗姗",Meijia:"美佳",Sinji:"善怡",Xiaoxiao:"晓晓",Xiaoyi:"晓伊",Yaoyao:"瑶瑶",Huihui:"慧慧",Kangkang:"康康",Yunxi:"云希"};
+function vshort(v){ const m=Object.keys(VNAME).find(n=>v.name.includes(n)); return m?VNAME[m]:/Google/i.test(v.name)?"谷歌":v.name.replace(/^Microsoft |^Google /,"").slice(0,4); }
+function showVoice(){ $("voice").innerHTML=`<span class="i">${ICON[voiceOn?"sound":"mute"]}</span><small>讲解${voiceOn?"开":"关"}</small>`;
+  const vs=zhVoices(), cur=zhVoice(), sel=$("vsel"); $("vbtn").hidden=!vs.length; $("vname").textContent=cur?vshort(cur):"声音";
+  sel.innerHTML=vs.map(v=>`<option value="${v.name}">${vshort(v)}（${v.name.replace(/^Microsoft |^Google /,"").replace(/ Online \(Natural\)/," 自然")} · ${v.lang}）</option>`).join("");
+  if(cur) sel.value=cur.name;
+  $("vnote").textContent=!TTS?"这个浏览器不支持朗读":(TTS.getVoices().length&&!vs.length?"没找到中文声音":""); }
+$("vsel").onchange=e=>{ pick=e.target.value; showVoice(); try{ localStorage.setItem("book_voice_name",pick); }catch(err){} if(TTS){ TTS.cancel(); speak("你好，我来给你讲这条球路。"); } };
+if(TTS) TTS.onvoiceschanged=showVoice; showVoice();
+$("voice").onclick=()=>{ voiceOn=!voiceOn; try{ localStorage.setItem("book_voice",voiceOn?"on":"off"); }catch(e){} if(!voiceOn&&TTS) TTS.cancel(); showVoice(); };
+function ui(){ const playing=auto&&(busy||timer!==null), p=$("play");
+  const [ic,tx]=playing?["stop","停止"]:k>=BEATS.length?["reset","再播一次"]:k>0?["play","接着播"]:["play","播放"]; p.innerHTML=`<span class="i">${ICON[ic]}</span><small>${tx}</small>`; p.classList.toggle("playing",playing);
+  $("next").disabled=busy||k>=BEATS.length; $("reset").disabled=k===0&&!busy;
+  $("wbtn").hidden=!(WRONG.length||CARES.length); $("wbtn").innerHTML=wbusy?`<span class="i">${ICON.stop}</span><small>停止</small>`:`<span class="i">${ICON.next}</span><small>错误打法</small>`; }
+function stop(){ auto=false; if(timer!==null){ clearTimeout(timer); timer=null; } if(busy){ halt=true; if(TTS) TTS.cancel(); } ui(); }
+async function beat(){ timer=null; if(busy||k>=BEATS.length) return; busy=true; ui(); const b=BEATS[k];
+  $("say").innerHTML=`<b>第 ${k+1} 拍</b>　${b.say}`;
+  let anim;
+  if(SIDE){ for(const id of b.show) { const el=$(id); if(el) el.style.opacity=1; } anim=b.lines.reduce((p,i)=>p.then(()=>shot(i)),Promise.resolve()); }
+  else{ for(const [w,m] of Object.entries(b.mood)) setMood(w,m);
+    for(const g of document.querySelectorAll(".bub")) g.style.opacity=0; if(b.bubble) $("b"+k).style.opacity=1;
+    anim=runAll(b.before).then(()=>shot(b.shot)).then(()=>{ if(b.hide) $("b"+k).style.opacity=0; return runAll(b.after); }); }
+  await Promise.all([anim, speak(b.voice)]);
+  k++; if(k===BEATS.length){ for(const p of document.querySelectorAll(".pill")){ const i=+p.dataset.i; p.classList.toggle("on",i<GOAL); p.classList.toggle("goal",i===GOAL); }
+    await showWrong();
+    $("say").innerHTML=`<b>记住口诀</b>　${KOUJUE}`; await speak(END_VOICE); }
+  busy=false; halt=false; if(pendingReset){ pendingReset=false; reset(); return; }
+  if(pendingWrong){ pendingWrong=false; playWrong(); return; }
+  if(auto&&k<BEATS.length) timer=setTimeout(beat,500); else auto=false; ui(); }
+/* 小心：对的球路淡下去、标「错误打法」，人走到出错时的位置，一句讲解配一个动作；演完换回对的球路。没写错误打法的页，只读「小心」 */
+function clearWrong(){ for(let i=N_OK;i<N_LINES;i++) hideLine(i); WRONG.forEach((w,j)=>{ if($("x"+j)) $("x"+j).style.opacity=0; if($("wb"+j)) $("wb"+j).style.opacity=0; }); }
+async function showWrong(){
+  if(!WRONG.length){ $("badge").textContent="⚠ 小心"; $("badge").classList.add("on");
+    for(const c of CARES){ $("say").innerHTML=`<b>小心</b>　${c}`; await speak("小心！"+c); if(!halt) await new Promise(r=>setTimeout(r,400)); }
+    $("badge").classList.remove("on"); return; }
+  const keep={op:[...POS.op], me:[...POS.me]}, moods={};
+  for(const w of ["op","me"]){ const g=[...$(w).querySelectorAll(".mood")].find(g=>g.style.display!=="none"); moods[w]=g?g.dataset.mood:"smile"; }
+  const bubs=[...document.querySelectorAll(".bub")].map(g=>[g,g.style.opacity]);
+  $("badge").textContent="✕ 错误打法"; $("right").style.opacity=.15; for(const [g] of bubs) g.style.opacity=0; $("badge").classList.add("on");
+  for(const [j,w] of WRONG.entries()){
+    $("say").innerHTML=`<b>小心</b>　${w.say}`;
+    if(w.clear) clearWrong();
+    if(w.players) await runAll(w.players);
+    for(const [who,m] of Object.entries(w.moods||{})) setMood(who,m);
+    if(w.bubble) $("wb"+j).style.opacity=1;
+    const ln=w.line==null?Promise.resolve():shot(w.line);
+    await Promise.all([ln.then(()=>{ if(w.x) $("x"+j).style.opacity=1; }), speak(w.voice)]);
+    if(!halt) await new Promise(r=>setTimeout(r,250));
+  }
+  clearWrong(); $("badge").classList.remove("on"); $("right").style.opacity=1;
+  for(const w of ["op","me"]){ place(w,...keep[w]); setMood(w,moods[w]); } for(const [g,o] of bubs) g.style.opacity=o;
+}
+function reset(){ if(busy){ pendingReset=true; stop(); return; } stop(); if(TTS) TTS.cancel(); clearWrong(); $("badge").classList.remove("on"); if($("right")) $("right").style.opacity=1; k=0; auto=false;
+  for(let i=0;i<N_OK;i++) hideLine(i);
+  if(SIDE) for(const el of document.querySelectorAll("[id^=lb],[id^=pt]")) el.style.opacity=0;
+  else{ for(const w of ["me","op"]){ setMood(w,"smile"); place(w,...START[w]); } for(const g of document.querySelectorAll(".bub")) g.style.opacity=0; }
+  for(const p of document.querySelectorAll(".pill")) p.className="pill"; $("say").textContent="点「播放」，一拍一拍看。"; ui(); }
+$("play").onclick=()=>{ if(auto){ stop(); return; } if(k>=BEATS.length) reset(); auto=true; beat(); };
+$("next").onclick=()=>{ auto=false; beat(); }; $("reset").onclick=reset;
+/* 放完一遍后「错误打法」：只重放错误打法那一段（试用者 2026-11-05） */
+/* 随时都能点（试用者 2026-11-06：播放中点了没反应）：正在播就先停下，停稳了再从错误打法开始放；正在放错误打法时再点 = 停 */
+async function playWrong(){ if(busy) return; busy=true; wbusy=true; ui(); clearWrong(); await showWrong(); if(!halt) $("say").innerHTML=`<b>记住口诀</b>　${KOUJUE}`; busy=false; wbusy=false; halt=false; ui(); }
+$("wbtn").onclick=()=>{ if(wbusy){ stop(); return; } if(busy){ pendingWrong=true; stop(); return; } playWrong(); };
+document.addEventListener("touchstart",()=>{},{passive:true});  // iOS Safari 要有触摸监听，:active 按下效果才出来
+if(!SIDE) for(const w of ["me","op"]) place(w,...START[w]); ui();
+</script><script>
+/* ---------- 3D 视图：读 2D 动画的状态（人在哪、哪条线露出来、球飞到哪），换成米再投影；拖着转 360 度、上下看、滚轮 / 双指缩放 ---------- */
+(function(){
+if(!V3) return;
+const NS="http://www.w3.org/2000/svg", W=2.59, DW=3.05, D=6.7, SS=1.98, LS=5.94, NETH=1.55;
+const m=(x,y)=>[(x-MID_X)/PXM_X,(y-NET_Y)/PXM_Y];   // 2D 像素 → 米（我方 y > 0）
+const svg=$("v3"), btn=$("b3d"), rst=$("b3r");
+let on=false, yaw=0, pitch=0.6, dist=15, raf=0;
+try{ on=localStorage.getItem("book_3d")==="on"; }catch(e){}
+const samples={};   // 每条线沿 2D 路径取 40 个点（米）
+// 一拍 = 一条球路（试用者 2026-11-07：彩线和灰线应该是同一条线从击球点开始的不同画法）：没有风和旋转时，球在一个竖直平面里飞，
+// 俯视是从击球点出发的一条直线（过 2D 线的起点和终点 = 下一拍的击球点或画的落点）；高度只由出手速度、角度、重力和空气阻力决定
+function line(i){ if(samples[i]) return samples[i]; const s=$("s"+i), T=s.getTotalLength(), q0=s.getPointAtLength(0), q1=s.getPointAtLength(T), a=m(q0.x,q0.y), b=m(q1.x,q1.y), out=[];
+  for(let k=0;k<=40;k++) out.push([a[0]+(b[0]-a[0])*k/40, a[1]+(b[1]-a[1])*k/40]); return samples[i]=out; }
+/* 球的高度（2026-11-05 重做，试用者批注：杀 / 扑穿网、放网太贴网、平高不像平高……）：按 config/book_3d.yaml 的那种球，
+   沿路径 41 个点算好高度；先找路径过网那一点 un（y 变号的地方），保证过网时离网顶至少 c 米：
+   arc = 先升到 H（在 ua 处）再落；net = 最高点就在过网那点（网顶 + c）；down = 直线往下压，过网太低就在网上折一下再压下去 */
+/* 一整条球路：从击球点一直飞到落地。接上下一拍（connect_hits）时，2D 的线停在下一拍的击球点（整条路的 uc 处），
+   后面那一段（灰色）就是同一条曲线没人接时接着飞到落地的部分（试用者 2026-11-06：灰色要是整条轨迹的一部分，不能从击球点另画一条）。
+   落地点：往后场去的高球（高远、高发、挑、平高、平高发、推）落在双打后发球线和底线之间（离网约 6.35 米），杀 / 扑按直线压下去自然落地，
+   其他球在击球点后约 1.2 米；都不出单打边线。曲线的最高点高度按「在 uc 处正好是下一拍的击球高度」反算 */
+/* 吊球（kind: drag）：羽毛球有很大的空气阻力，按真的物理飞——重力 9.8 + 平方阻力（终端速度约 6.8 米 / 秒），
+   试用者 2026-11-06：吊球要符合物理、贴网、过网离网顶 0.25 米以内。出手速度和角度二分出来：过网那点正好网顶 + c、终点正好在 2D 线的终点（接 = 下一拍的击球高度） */
+const G=9.8, VT=6.8;
+function dragRun(z0,v,th){ const k=G/(VT*VT), dt=0.004; let x=0,z=z0,vx=v*Math.cos(th),vz=v*Math.sin(th); const xs=[0],zs=[z0];
+  for(let n=0;n<4000&&z>0;n++){ const sp=Math.hypot(vx,vz); vx+=-k*sp*vx*dt; vz+=(-G-k*sp*vz)*dt; x+=vx*dt; z+=vz*dt; xs.push(x); zs.push(z); }
+  return {xs,zs}; }
+function dragAt(r,X){ const {xs,zs}=r; if(X>xs[xs.length-1]) return -9; let k=1; while(xs[k]<X) k++; const t=(X-xs[k-1])/((xs[k]-xs[k-1])||1); return zs[k-1]+(zs[k]-zs[k-1])*t; }
+function dragFit(z0,sn,need,X,zX,thMax){   // thMax = 出手角度上限（0 = 只能往下或平着打：推、杀、扑）
+  const forTh=th=>{ let lo=1,hi=60; for(let g=0;g<40;g++){ const m=(lo+hi)/2; if(dragAt(dragRun(z0,m,th),X)<zX) lo=m; else hi=m; } return dragRun(z0,(lo+hi)/2,th); };
+  let lo=-1.2,hi=thMax==null?1.2:thMax,r=null; for(let g=0;g<30;g++){ const m=(lo+hi)/2; r=forTh(m); if(dragAt(r,sn)<need) lo=m; else hi=m; } return forTh((lo+hi)/2); }
+/* 统一的反算（2026-11-07）：θ 先粗后细地扫，每个 θ 二分速度让球过 (X, zE)；probe 只飞到 X 为止，快 */
+function probe(z0,v,th,X,sn){ const k=G/(VT*VT), dt=0.004; let x=0,z=z0,vx=v*Math.cos(th),vz=v*Math.sin(th),ap=z0,zn=null;
+  for(let n=0;n<6000;n++){ const sp=Math.hypot(vx,vz); vx+=-k*sp*vx*dt; vz+=(-G-k*sp*vz)*dt; const x2=x+vx*dt, z2=z+vz*dt;
+    if(sn!=null&&zn==null&&x2>=sn) zn=z+(z2-z)*(sn-x)/((x2-x)||1);
+    if(x2>=X){ const zX=z+(z2-z)*(X-x)/((x2-x)||1); return {zX,zn,ap:Math.max(ap,zX)}; }
+    x=x2; z=z2; ap=Math.max(ap,z); if(z<-1||vx<1e-3) break; }
+  return {zX:-9,zn,ap}; }
+function solveTh(z0,X,zE,sn,lo,hi,score){
+  const at=th=>{ let a=0.5,b=80; if(probe(z0,b,th,X,sn).zX<zE) return null;
+    for(let g=0;g<32;g++){ const m=(a+b)/2; if(probe(z0,m,th,X,sn).zX<zE) a=m; else b=m; }
+    const v=(a+b)/2, p=probe(z0,v,th,X,sn); return {...p,v,th}; };
+  let best=null, bs=1e9; const tryTh=th=>{ const p=at(th); if(!p) return; const sc=score(p); if(sc<bs){ bs=sc; best=p; } };
+  for(let th=lo;th<=hi+1e-9;th+=0.04) tryTh(th);
+  if(best){ const c=best.th; for(let th=Math.max(lo,c-0.04);th<=Math.min(hi,c+0.04)+1e-9;th+=0.004) tryTh(th); }
+  return best; }
+function dragFitApex(z0,H,X,zX){   // 最高点正好 H、终点 (X, zX)：按最高点二分出手角度（高远、挑、平高……）
+  const forTh=th=>{ let lo=1,hi=60; for(let g=0;g<40;g++){ const m=(lo+hi)/2; if(dragAt(dragRun(z0,m,th),X)<zX) lo=m; else hi=m; } return dragRun(z0,(lo+hi)/2,th); };
+  let lo=-0.3,hi=1.45; for(let g=0;g<30;g++){ const m=(lo+hi)/2, r=forTh(m); if(Math.max(...r.zs)<H) lo=m; else hi=m; } return forTh((lo+hi)/2); }
+const fulls={};
+/* 一整条球路（2026-11-07 重做，试用者：彩线和灰线是同一条线的两种画法；落点是轨迹和地面的自然交点，不能拿旧的落点去凑曲线）：
+   每一拍只算一次：从击球点 (0, z0) 按重力 + 空气阻力（终端速度 6.8 m/s）一直飞到落地（dragRun 积分到 z = 0）。
+   出手速度、角度由两个条件反算：① 经过终点 (Lp, zE)——接下一拍 = 下一拍的击球高度，不接 = 2D 线画的落点（zE = 0）；
+   ② 这种球的样子——高球（arc）最高点 H、过网至少高出网顶 0.3 米；网前球 / 吊 / 推（net、drag）过网正好网顶 + c；杀 / 扑（down）过网网顶 + c 且出手不往上。
+   接下一拍时，彩线画到 Lp，灰线是同一条积分曲线从 Lp 接着飞到它自己落地的地方——落在哪里由曲线决定，不另设落点。 */
+function full(i){ if(fulls[i]) return fulls[i]; const L=line(i), h0=V3.lines[i], need=NETH+h0.c;
+  const pv=i>0&&V3.lines[i-1].z1>0 ? full(i-1) : null, h={...h0, z0: pv ? pv.z(pv.uc) : h0.z0};   // 上一拍接到这一拍：从上一拍飞到这里的高度出手
+  let z1=h.z1||0; if(h.kind==="down"&&z1>=h.z0-0.05) z1=0;   // 往下压的球接不到比出手点还高的地方：不接
+  const conn=z1>0, Lp=Math.hypot(L[40][0]-L[0][0],L[40][1]-L[0][1])||0.01, dx=(L[40][0]-L[0][0])/Lp, dy=(L[40][1]-L[0][1])/Lp;
+  const ya=L[0][1], yb=L[40][1], un=(ya>0)!==(yb>0) ? ya/(ya-yb) : null, sn=un==null?null:un*Lp;   // 过网那点（沿路的米数）
+  const toKill=conn&&V3.lines[i+1]&&V3.lines[i+1].t==="net_kill";   // 被扑的那一球：扑的时候球还高过网
+  const zE=!conn ? 0 : toKill ? Math.max(z1,NETH+0.15) : (h.kind==="net"||h.kind==="drag") ? Math.min(z1,need) : z1;   // 要被扑的球：照常过网，扑的时候还在扑的高度（冒起来、好扑；试用者 2026-11-07 第 5 轮：新算法挡得太好、不好扑，借鉴线上的）   // 网前球接的高度不高过它过网的高度（不然要往上飘）
+  const hits=r=>r&&Math.abs(dragAt(r,Lp)-zE)<0.05;
+  if(h.kind==="down"&&h.c<0){   // 扑下网（c < 0）：一路往下压、撞在网上（网顶下 −c 米），撞网就停，没有灰线
+    const zn=need; return fulls[i]={z:u=>h.z0+(zn-h.z0)*u,uc:1,Le:0,dx,dy,Lp,ok:true}; }
+  // 出手角度 θ 在这种球合理的范围里找；每个 θ 二分出速度让球正好经过终点 (Lp, zE)；再按这种球的样子打分，取最好的：
+  //   高球 = 过网至少网顶 + 0.3、最高点最接近 H；网前 / 吊 / 推 / 杀 / 扑 = 过网最接近网顶 + c（不能低）；没过网的线 = 最平的那条
+  const lowArc=Math.min(need,NETH+0.3);
+  const score=p=>{ if(p==null) return 1e9; const pen=sn==null?0:Math.max(0,(h.kind==="arc"?lowArc:need)-0.03-p.zn)*100;
+    // 要被扑的那一球也按这种球本来的过网高度（试用者 2026-11-07 第 3 轮：吊高了过网 2.15 就够、放网轨迹照旧，再高就不像了）
+    return pen+(h.kind==="arc" ? Math.abs(p.ap-h.H) : sn==null ? Math.abs(p.th) : Math.abs(p.zn-need)); };
+  const ranges=h.kind==="arc" ? [[-0.3,1.45]] : h.kind==="down" ? [[-1.3,0],[-1.3,0.12]] : h.flat ? [[-1.3,0],[-1.3,h.z0<NETH?0.35:0.12]] : [[-1.3,1.3]];   // 杀 / 扑 / 推出手不往上，过不了网才略往上
+  const low=p=>sn!=null&&p&&p.zn<(h.kind==="arc"?lowArc:need)-0.03;
+  // 打到 (X, zX) 的那条：先在这种球的角度范围里找，过不了网才放宽
+  const fitTo=(X,zX,extra)=>{ const sc=extra ? p=>score(p)+extra(p) : score; let b=null, w=""; for(const [lo,hi] of ranges){ b=solveTh(h.z0,X,zX,sn,lo,hi,sc); if(b&&!low(b)) break; if(hi<0.5) w="往下打过不了网，略往上出手"; }
+    if(!b){ b=solveTh(h.z0,X,zX,sn,-1.3,1.45,sc); w="这种球的角度范围里到不了，放宽角度"; } if(low(b)) w=(w?w+"；":"")+"过网不够高"; return b&&{...b,w}; };
+  let best=null, why="";
+  if(!conn){ best=fitTo(Lp,0); }   // 不接：落在 2D 图上画的落点
+  else{
+    // 接下一拍（2026-11-07 试用者核对第 2 轮）：落点在这种球的落点范围（land，离网多远）里、单打边线以内挑；
+    // 每个候选落点反算一条球路，看它飞到下一拍击球点时多高——最接近下一拍该有的击球高度 z1 的那条就是（z1 只作参考，不硬凑）。
+    // 硬条件：接的时候至少离地 0.3 米；下一拍是推的，接的高度不超过 1.8 米（试用者：再高就是扑了）；下一拍是扑的，球要高过网 0.3 米
+    const side=Math.sign(L[40][1])||1, ext=(lim,y0,d)=>Math.abs(d)<1e-6?1e9:(lim-y0)/d;
+    const sideS=Math.min(dx>0?ext(2.54,L[0][0],dx):dx<0?ext(-2.54,L[0][0],dx):1e9);
+    // 要被扑的那一球：过网就在这种球本来的高度，过网后还往上冒一点，扑的时候在网顶 0.3 米以上（试用者 2026-11-07 第 3–5 轮：放网冒起 / 挡网的轨迹借鉴线上的）；
+    // 没人接也照这种球的落点范围落（试用者 2026-11-08：挡网没人扑就该短短地落在网前，不能飞到底线）；
+    // 落得短、扑的时候又要高，过网就得高一点——扑的高度降到网顶 0.15 米以上，让过网不至于太飘
+    const lr=h.land&&h.land.length===2 ? h.land : [0.3,6.6];
+    let Sa=dy===0?Lp+0.15:Math.max(Lp+0.15,(side*lr[0]-L[0][1])/dy), Sb=dy===0?Lp+2:Math.min((side*lr[1]-L[0][1])/dy,sideS);
+    if(!(Sb>=Sa)){ Sa=Lp+0.15; Sb=Math.max(Sa,Math.min(Lp+1.0,sideS)); why="下一拍的击球点已经在这种球的落点范围外"; }
+    const nxt=V3.lines[i+1]&&V3.lines[i+1].t, cap=nxt==="push"?1.8:9, floor=toKill?NETH+0.15:0.3;   // 扑：球要高过网顶 0.15 米（试用者 2026-11-07 第 5 轮：挡得太好就不好扑；11-08 落点要短，从 0.3 降到 0.15）
+    let bc=1e9; const n=Math.max(1,Math.min(14,Math.round((Sb-Sa)/0.2)));
+    // 出手角度和落点一起挑：每个候选落点里，按「样子 + 接的高度」一起打分选角度（不先按样子定死角度再看接得着接不着）
+    const extra=p=>{ const zL=probe(h.z0,p.v,p.th,Lp,null).zX; return Math.abs(zL-zE)*0.5+Math.max(0,floor-zL)*100+Math.max(0,zL-cap)*100; };
+    for(let k=0;k<=n;k++){ const S=Sa+(Sb-Sa)*k/n, p=fitTo(S,0,extra); if(!p) continue;
+      const zL=probe(h.z0,p.v,p.th,Lp,null).zX, c=score(p)+extra(p);
+      if(c<bc){ bc=c; best={...p,zL,S}; } }
+    if(best&&best.zL<floor-0.05) why=(why?why+"；":"")+"接的时候球太低"; if(best&&best.zL>cap+0.05) why=(why?why+"；":"")+"接的时候球比 1.8 米高（推不了）"; }
+  if(best&&best.w) why=(why?why+"；":"")+best.w;
+  const r=best ? dragRun(h.z0,best.v,best.th) : dragRun(h.z0,10,0);
+  const X=r.xs[r.xs.length-1], S=conn ? Math.max(Lp,X) : Lp, uc=Lp/S, ok=conn ? !why : hits(r);
+  return fulls[i]={z:u=>Math.max(0,dragAt(r,u*S)),uc,Le:S-Lp,dx,dy,Lp,r,ok,why}; }
+const profs={};
+function prof(i){ if(profs[i]) return profs[i]; const F=full(i); return profs[i]=Array.from({length:41},(_,k)=>Math.max(0,F.z(F.uc*k/40))); }
+const ghosts={};
+function ghost(i){ if(ghosts[i]) return ghosts[i]; const F=full(i), L=line(i); if(!(V3.lines[i].z1>0)||F.Le<=0) return ghosts[i]=[];
+  // 灰线 = 同一条曲线从下一拍的击球点接着飞到落地：同一条俯视直线、同一个高度函数，只是 u 从 uc 到 1
+  const out=[]; for(let k=0;k<=20;k++){ const u=F.uc+(1-F.uc)*k/20, sm=u*(F.Lp+F.Le); out.push([L[0][0]+F.dx*sm, L[0][1]+F.dy*sm, F.z(u)]); }
+  return ghosts[i]=out; }
+window.__v3={prof,line,ghost,full,dragFit,dragAt,reset:()=>{ for(const o of [samples,fulls,profs,ghosts]) for(const k in o) delete o[k]; }};   // reset：测试改了 V3.lines 以后重算   // 测试用：tests/test_book_v2.py 查每条线过网够不够高
+function z3(i,u){ const p=prof(i), x=Math.min(40,Math.max(0,u*40)), k=Math.floor(x); return k>=40?p[40]:p[k]+(p[k+1]-p[k])*(x-k); }
+function cam(){ const cp=Math.cos(pitch); return {C:[Math.sin(yaw)*cp*dist, Math.cos(yaw)*cp*dist, 0.6+Math.sin(pitch)*dist], T:[0,0,0.6]}; }
+let K=null;
+function setup(){ const {C,T}=cam(); const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]], dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const cr=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]], nm=a=>{const l=Math.hypot(...a);return a.map(v=>v/l);};
+  const f=nm(sub(T,C)), r=nm(cr([0,0,1],f)), u=cr(f,r); K={C,f,r,u,sub,dot}; }   // 右 = 上 × 前；反过来乘左右镜像（2026-11-03 修）
+function P(x,y,z){ const {C,f,r,u,sub,dot}=K, d=sub([x,y,z||0],C), zc=dot(d,f); if(zc<0.3) return null;
+  const s=560/zc; return {x:220+dot(d,r)*s, y:300-dot(d,u)*s, s}; }
+const el=(t,a,p)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); (p||svg).appendChild(e); return e; };
+// 地上的圈 / 影子按真的地面圆投影（试用者 2026-11-07：顶视角时落点的圈画得不对——以前是屏幕上固定扁的椭圆，从上往下看也是扁的）
+function gcirc(x,y,r,a){ const q=[]; for(let k=0;k<24;k++){ const t=k/24*2*Math.PI, p=P(x+r*Math.cos(t), y+r*Math.sin(t), 0); if(!p) return; q.push(p); } el("polygon",Object.assign({points:pts(q)},a)); }
+const pts=a=>a.filter(Boolean).map(p=>p.x.toFixed(1)+","+p.y.toFixed(1)).join(" ");
+function seg(x0,y0,x1,y1,w,col,op,dash){ const a=P(x0,y0,0), b=P(x1,y1,0); if(a&&b) el("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:col||"#fff","stroke-width":w,opacity:op||.9,"stroke-dasharray":dash||"","stroke-linecap":"round"}); }
+function quad(x0,y0,x1,y1,fill){ const q=[P(x0,y0),P(x1,y0),P(x1,y1),P(x0,y1)]; if(q.every(Boolean)) el("polygon",{points:pts(q),fill}); }
+// 小人按真人 1.6 米、离镜头多远来缩放（f.s = 这一点每米多少像素），不按「竖着的 1.6 米在屏幕上投影多长」：
+// 那样从正上方看时投影几乎为零，小人只剩最小值那么点（试用者 2026-11-06：Top 视图小人太小）
+function person(px,py,col,lab,top){ const [x,y]=m(px,py), f=P(x,y,0); if(!f) return;
+  const H=Math.max(14,1.6*f.s), w=H*.42;
+  gcirc(x,y,.4,{fill:"rgba(0,0,0,.25)"});
+  el("rect",{x:f.x-w/2,y:f.y-H*.75,width:w,height:H*.62,rx:w*.4,fill:col});
+  el("circle",{cx:f.x,cy:f.y-H*.88,r:H*.17,fill:"#FFE0BD",stroke:"#3a2a1a","stroke-width":1});
+  const t=el("text",{x:f.x,y:f.y-H*.4,"text-anchor":"middle","font-size":Math.max(9,H*.24),"font-weight":800,fill:"#fff"}); t.textContent=lab;
+  if(top){ const b=el("text",{x:f.x,y:f.y-H*1.15,"text-anchor":"middle","font-size":14,"font-weight":800,fill:"#2B2B2B",stroke:"#fff","stroke-width":4,"paint-order":"stroke"}); b.textContent=top; } }
+function draw(){
+  setup(); svg.innerHTML="";
+  quad(-DW-.5,-D-.5,DW+.5,D+.5,"#3F9A70"); quad(-DW,-D,DW,D,"#52B788");
+  // 单打的线粗、双打多出来的那条边上的线细（试用者 2026-11-05：底线两端双打那段该是细线）
+  for(const s of [-1,1]){ seg(-W,s*D,W,s*D,2.5); seg(-W,s*SS,W,s*SS,2.5); for(const e of [-1,1]){ seg(e*W,s*D,e*DW,s*D,1.2,"#fff",.6); seg(e*W,s*SS,e*DW,s*SS,1.2,"#fff",.6); }
+    seg(-DW,s*LS,DW,s*LS,1.2,"#fff",.6); seg(0,s*SS,0,s*D,2.5); seg(s*W,-D,s*W,D,2.5); seg(s*DW,-D,s*DW,D,1.2,"#fff",.6); }
+  // 球网和球路闯关同一种画法（试用者 2026-11-08）：两根网柱立在双打边线上、高 1.55 米；网中间 1.524 米、往两边略高（网带下垂）；
+  // 网身 76 厘米高、下面是空的；黑色细网格半透明，白色网带；地上一道淡影。网跟人、球按远近一起画，网后面的会被网挡一点
+  { const s=[P(-DW,.25,0),P(DW,.25,0),P(DW,.05,0),P(-DW,.05,0)]; if(s.every(Boolean)) el("polygon",{points:pts(s),fill:"rgba(0,0,0,.12)"}); }
+  const netTop=x=>1.524+0.026*(x/DW)**2;
+  const net=()=>{ const N=24, xs=Array.from({length:N+1},(_,i)=>-DW+2*DW*i/N);
+    const top=xs.map(x=>P(x,0,netTop(x))), bot=xs.map(x=>P(x,0,netTop(x)-.76)), tape=xs.map(x=>P(x,0,netTop(x)-.075)); if(![...top,...bot].every(Boolean)) return;
+    el("polygon",{points:pts([...top,...bot.slice().reverse()]),fill:"rgba(18,20,22,.2)"});   // 网身：淡一点，代替画不出来的细网线（真网 2 厘米一格，隔远看是一层暗纱）
+    const mesh=[], f1=q=>q.x.toFixed(1)+" "+q.y.toFixed(1);
+    for(let x=-DW;x<=DW+1e-6;x+=.06){ const a=P(x,0,netTop(x)), b=P(x,0,netTop(x)-.76); if(a&&b) mesh.push("M"+f1(a)+"L"+f1(b)); }
+    for(let d=.06;d<.76;d+=.06) mesh.push("M"+xs.map(x=>f1(P(x,0,netTop(x)-d))).join("L"));
+    el("path",{d:mesh.join(""),fill:"none",stroke:"rgba(16,18,20,.42)","stroke-width":.5});   // 网格：真网的线是黑的；6 厘米一格（试用者 2026-11-09：12 厘米太稀，看着球能穿过去）
+    el("polyline",{points:pts(bot),fill:"none",stroke:"rgba(230,235,240,.5)","stroke-width":1.2});   // 下沿绳
+    el("polygon",{points:pts([...top,...tape.slice().reverse()]),fill:"#f4f4f2",stroke:"#d8d8d4","stroke-width":.6});   // 白色网带
+    for(const sx of [-1,1]){ const x=sx*(DW+.02), a=P(x,0,0), b=P(x,0,1.55); if(!a||!b) continue; const w=Math.max(2.5,.04*a.s);   // 网柱
+      el("ellipse",{cx:a.x,cy:a.y,rx:w*2.2,ry:w*.9,fill:"rgba(0,0,0,.3)"});
+      el("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:"#4a5058","stroke-width":w,"stroke-linecap":"round"});
+      el("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:"rgba(255,255,255,.35)","stroke-width":w*.35});
+      el("circle",{cx:b.x,cy:b.y,r:w*.75,fill:"#e8e8e8"}); } };
+  const behindNet=K.C[1]<0;   // 镜头在对方那边：网要画在我方的东西后面
+  // 人、球：按离镜头远近排，远的先画；网夹在两边中间
+  const items=[];
+  for(const w of ["op","me"]) if(POS[w]){ const [x,y]=m(...POS[w]); const bub=Object.entries(V3.bubs).find(([id,b])=>b[0]===w&&$(id)&&+getComputedStyle($(id)).opacity>.5);
+    items.push({y, fn:()=>person(POS[w][0],POS[w][1],w==="me"?"#F07A2A":"#2F7FD9",w==="me"?"我":"对手",bub?bub[1][1]:null)}); }
+  // 线：露出来的整条画，正在飞的画到球那里；地上画一道影子
+  let ball=null;
+  for(let i=0;i<V3.lines.length;i++){ const s=$("s"+i); if(!s) continue; const vis=s.style.visibility==="visible"; if(!vis&&!(CUR&&CUR.i===i)) continue;
+    const L=line(i), H=V3.lines[i], end=CUR&&CUR.i===i?CUR.e:1, n=Math.max(1,Math.round(40*end)), op=+getComputedStyle(s.parentNode).opacity||1;
+    const sh=[], air=[]; for(let k=0;k<=n;k++){ const u=k/40; sh.push(P(L[k][0],L[k][1],0)); air.push(P(L[k][0],L[k][1],z3(i,u))); }
+    el("polyline",{points:pts(sh),fill:"none",stroke:"rgba(0,0,0,.22)","stroke-width":3,opacity:op});
+    el("polyline",{points:pts(air),fill:"none",stroke:s.getAttribute("stroke"),"stroke-width":+s.getAttribute("stroke-width")*.8,"stroke-dasharray":s.getAttribute("stroke-dasharray")||"","stroke-linecap":"round",opacity:op});
+    // 接上下一拍（connect_hits）时：线停在下一拍的击球点，后面用灰色细虚线画出「没人接会落在哪」（试用者 2026-11-06）
+    if(H.z1>0&&end>=1){ const g=ghost(i); if(g.length>1){ el("polyline",{points:pts(g.map(q=>P(q[0],q[1],q[2]))),fill:"none",stroke:"#8a8f8c","stroke-width":2,"stroke-dasharray":"4 5",opacity:.7*op});
+      const e=g[g.length-1], c=P(e[0],e[1],0); if(c) gcirc(e[0],e[1],.22,{fill:"none",stroke:"#8a8f8c","stroke-width":1.5,opacity:.8*op}); } }
+    if(CUR&&CUR.i===i){ const k=Math.min(40,Math.round(40*CUR.e)); ball={x:L[k][0],y:L[k][1],z:z3(i,CUR.e)}; } }
+  // 错误打法的红叉
+  V3.x.forEach((p,j)=>{ if(!p||!$("x"+j)||$("x"+j).style.opacity!=="1") return; const [x,y]=m(...p), c=P(x,y,0); if(!c) return;
+    const r=Math.max(6,c.s*.25); el("path",{d:`M${c.x-r} ${c.y-r*.5} L${c.x+r} ${c.y+r*.5} M${c.x+r} ${c.y-r*.5} L${c.x-r} ${c.y+r*.5}`,stroke:"#E0301E","stroke-width":5,"stroke-linecap":"round"}); });
+  items.push({y:0, fn:net, net:true});
+  if(ball) items.push({y:ball.y, fn:()=>{ const g=P(ball.x,ball.y,0), b=P(ball.x,ball.y,ball.z); if(g&&b){ gcirc(ball.x,ball.y,.1,{fill:"rgba(0,0,0,.35)"});
+    el("circle",{cx:b.x,cy:b.y,r:Math.max(3.5,b.s*.09),fill:"#fff",stroke:"#555","stroke-width":1.2}); } }});   // 球也按远近：在网后面就隔着网看
+  items.sort((a,b)=>behindNet ? b.y-a.y : a.y-b.y);   // 远的先画
+  for(const it of items) it.fn();
+  const hint=el("text",{x:220,y:578,"text-anchor":"middle","font-size":12,fill:"#2B2B2B",opacity:.55}); hint.textContent="拖动转着看 · 双指 / 滚轮缩放";
+  raf=on?requestAnimationFrame(draw):0; }
+function show(v){ on=v; try{ localStorage.setItem("book_3d",on?"on":"off"); }catch(e){}
+  svg.style.display=on?"block":"none"; document.querySelector(".court>svg:not(#v3)").style.opacity=on?0:1; btn.textContent=on?"2D":"3D"; rst.hidden=!on;
+  cancelAnimationFrame(raf); if(on) draw(); }
+btn.onclick=()=>show(!on); rst.onclick=()=>{ yaw=0; pitch=.6; dist=15; };
+const ptrs=new Map(); let pinch=0;
+svg.addEventListener("pointerdown",e=>{ svg.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,[e.clientX,e.clientY]); });
+svg.addEventListener("pointermove",e=>{ const p=ptrs.get(e.pointerId); if(!p) return;
+  if(ptrs.size===2){ const [a,b]=[...ptrs.values()], d0=Math.hypot(a[0]-b[0],a[1]-b[1]); ptrs.set(e.pointerId,[e.clientX,e.clientY]); const [c,d]=[...ptrs.values()], d1=Math.hypot(c[0]-d[0],c[1]-d[1]);
+    if(d0>0) dist=Math.min(34,Math.max(8,dist*d0/d1)); return; }
+  yaw-=(e.clientX-p[0])*.008; pitch=Math.min(1.5,Math.max(.08,pitch+(e.clientY-p[1])*.006)); ptrs.set(e.pointerId,[e.clientX,e.clientY]); });
+for(const t of ["pointerup","pointercancel"]) svg.addEventListener(t,e=>ptrs.delete(e.pointerId));
+svg.addEventListener("wheel",e=>{ e.preventDefault(); dist=Math.min(34,Math.max(8,dist*(1+e.deltaY*.001))); },{passive:false});
+show(on);
+})();
+</script></body></html>
