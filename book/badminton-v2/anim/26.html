@@ -285,10 +285,26 @@ function draw(){
   // 单打的线粗、双打多出来的那条边上的线细（试用者 2026-11-05：底线两端双打那段该是细线）
   for(const s of [-1,1]){ seg(-W,s*D,W,s*D,2.5); seg(-W,s*SS,W,s*SS,2.5); for(const e of [-1,1]){ seg(e*W,s*D,e*DW,s*D,1.2,"#fff",.6); seg(e*W,s*SS,e*DW,s*SS,1.2,"#fff",.6); }
     seg(-DW,s*LS,DW,s*LS,1.2,"#fff",.6); seg(0,s*SS,0,s*D,2.5); seg(s*W,-D,s*W,D,2.5); seg(s*DW,-D,s*DW,D,1.2,"#fff",.6); }
-  const n0=P(-DW-.1,0,0), n1=P(DW+.1,0,0), t0=P(-DW-.1,0,NETH), t1=P(DW+.1,0,NETH);
-  const net=()=>{ if(n0&&n1&&t0&&t1){ el("polygon",{points:pts([n0,n1,t1,t0]),fill:"rgba(30,30,30,.35)"}); el("line",{x1:t0.x,y1:t0.y,x2:t1.x,y2:t1.y,stroke:"#eee","stroke-width":2.5}); } };
+  // 球网和球路闯关同一种画法（试用者 2026-11-08）：两根网柱立在双打边线上、高 1.55 米；网中间 1.524 米、往两边略高（网带下垂）；
+  // 网身 76 厘米高、下面是空的；黑色细网格半透明，白色网带；地上一道淡影。网跟人、球按远近一起画，网后面的会被网挡一点
+  { const s=[P(-DW,.25,0),P(DW,.25,0),P(DW,.05,0),P(-DW,.05,0)]; if(s.every(Boolean)) el("polygon",{points:pts(s),fill:"rgba(0,0,0,.12)"}); }
+  const netTop=x=>1.524+0.026*(x/DW)**2;
+  const net=()=>{ const N=24, xs=Array.from({length:N+1},(_,i)=>-DW+2*DW*i/N);
+    const top=xs.map(x=>P(x,0,netTop(x))), bot=xs.map(x=>P(x,0,netTop(x)-.76)), tape=xs.map(x=>P(x,0,netTop(x)-.075)); if(![...top,...bot].every(Boolean)) return;
+    el("polygon",{points:pts([...top,...bot.slice().reverse()]),fill:"rgba(18,20,22,.2)"});   // 网身：淡一点，代替画不出来的细网线（真网 2 厘米一格，隔远看是一层暗纱）
+    const mesh=[], f1=q=>q.x.toFixed(1)+" "+q.y.toFixed(1);
+    for(let x=-DW;x<=DW+1e-6;x+=.06){ const a=P(x,0,netTop(x)), b=P(x,0,netTop(x)-.76); if(a&&b) mesh.push("M"+f1(a)+"L"+f1(b)); }
+    for(let d=.06;d<.76;d+=.06) mesh.push("M"+xs.map(x=>f1(P(x,0,netTop(x)-d))).join("L"));
+    el("path",{d:mesh.join(""),fill:"none",stroke:"rgba(16,18,20,.42)","stroke-width":.5});   // 网格：真网的线是黑的；6 厘米一格（试用者 2026-11-09：12 厘米太稀，看着球能穿过去）
+    el("polyline",{points:pts(bot),fill:"none",stroke:"rgba(230,235,240,.5)","stroke-width":1.2});   // 下沿绳
+    el("polygon",{points:pts([...top,...tape.slice().reverse()]),fill:"#f4f4f2",stroke:"#d8d8d4","stroke-width":.6});   // 白色网带
+    for(const sx of [-1,1]){ const x=sx*(DW+.02), a=P(x,0,0), b=P(x,0,1.55); if(!a||!b) continue; const w=Math.max(2.5,.04*a.s);   // 网柱
+      el("ellipse",{cx:a.x,cy:a.y,rx:w*2.2,ry:w*.9,fill:"rgba(0,0,0,.3)"});
+      el("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:"#4a5058","stroke-width":w,"stroke-linecap":"round"});
+      el("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:"rgba(255,255,255,.35)","stroke-width":w*.35});
+      el("circle",{cx:b.x,cy:b.y,r:w*.75,fill:"#e8e8e8"}); } };
   const behindNet=K.C[1]<0;   // 镜头在对方那边：网要画在我方的东西后面
-  // 人：按离镜头远近排，远的先画；网夹在两边中间
+  // 人、球：按离镜头远近排，远的先画；网夹在两边中间
   const items=[];
   for(const w of ["op","me"]) if(POS[w]){ const [x,y]=m(...POS[w]); const bub=Object.entries(V3.bubs).find(([id,b])=>b[0]===w&&$(id)&&+getComputedStyle($(id)).opacity>.5);
     items.push({y, fn:()=>person(POS[w][0],POS[w][1],w==="me"?"#F07A2A":"#2F7FD9",w==="me"?"我":"对手",bub?bub[1][1]:null)}); }
@@ -307,10 +323,10 @@ function draw(){
   V3.x.forEach((p,j)=>{ if(!p||!$("x"+j)||$("x"+j).style.opacity!=="1") return; const [x,y]=m(...p), c=P(x,y,0); if(!c) return;
     const r=Math.max(6,c.s*.25); el("path",{d:`M${c.x-r} ${c.y-r*.5} L${c.x+r} ${c.y+r*.5} M${c.x+r} ${c.y-r*.5} L${c.x-r} ${c.y+r*.5}`,stroke:"#E0301E","stroke-width":5,"stroke-linecap":"round"}); });
   items.push({y:0, fn:net, net:true});
+  if(ball) items.push({y:ball.y, fn:()=>{ const g=P(ball.x,ball.y,0), b=P(ball.x,ball.y,ball.z); if(g&&b){ gcirc(ball.x,ball.y,.1,{fill:"rgba(0,0,0,.35)"});
+    el("circle",{cx:b.x,cy:b.y,r:Math.max(3.5,b.s*.09),fill:"#fff",stroke:"#555","stroke-width":1.2}); } }});   // 球也按远近：在网后面就隔着网看
   items.sort((a,b)=>behindNet ? b.y-a.y : a.y-b.y);   // 远的先画
   for(const it of items) it.fn();
-  if(ball){ const g=P(ball.x,ball.y,0), b=P(ball.x,ball.y,ball.z); if(g&&b){ gcirc(ball.x,ball.y,.1,{fill:"rgba(0,0,0,.35)"});
-    el("circle",{cx:b.x,cy:b.y,r:Math.max(3.5,b.s*.09),fill:"#fff",stroke:"#555","stroke-width":1.2}); } }
   const hint=el("text",{x:220,y:578,"text-anchor":"middle","font-size":12,fill:"#2B2B2B",opacity:.55}); hint.textContent="拖动转着看 · 双指 / 滚轮缩放";
   raf=on?requestAnimationFrame(draw):0; }
 function show(v){ on=v; try{ localStorage.setItem("book_3d",on?"on":"off"); }catch(e){}
