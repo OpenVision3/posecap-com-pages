@@ -408,4 +408,7 @@ const REQ = {"email": "hlliu211@gmail.com", "name": "Luke Liu", "subject": "【�
 })();
 </script>
 
+<button id="xsReload" type="button" hidden aria-label="刷新" style="position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:5;border:0;background:#185943;color:#F2B01E;font:800 15px/1 'Noto Sans SC','PingFang SC',sans-serif;padding:10px 14px;border-radius:999px;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer">↻</button>
+<script>(function(){var b=document.getElementById("xsReload");if(matchMedia("(display-mode: standalone)").matches||navigator.standalone){b.hidden=false;
+b.onclick=function(){location.replace(location.pathname+"?r="+Date.now()+location.hash);};}})();</script>
 </body></html>
