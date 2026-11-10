@@ -31,6 +31,10 @@ body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 -apple-system,"
 /* 顶栏只排一行（试用者 2026-11-10：回看页手机上「第 1 局 · 25 分」折成两行）：放不下用省略号，「‹ 返回」不缩；手机上二级页让出「场边打点」四个字，版本号留着 */
 .appbar #sub{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .appbar #bHome{flex:none;white-space:nowrap}
+.appbar #bReload{flex:none;padding:9px 11px}
+/* 新版提示条（试用者 2026-11-10：线上更新了，桌面 App 里还是旧页面） */
+.updbar{border:0;border-radius:10px;padding:10px 12px;background:#185943;color:#fff;font-weight:700;font-size:15px;text-align:center}
+:root.quiet .updbar{background:#1f3a2f;color:#cfe5da}
 @media (max-width:520px){.appbar:has(#bHome:not([hidden])) .brand b{display:none}}
 .hint{color:var(--muted);font-size:13px;margin:0}
 button{font:inherit;cursor:pointer;touch-action:manipulation;color:inherit}
@@ -289,7 +293,8 @@ progress{width:100%}
 <script>/* 有没打完的现场打点时页面一载入就用暗色（试用者 2026-11-10：页面重新载入时会先闪一下亮底） */
 try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!s.ended&&s.mode!=="replay")) document.documentElement.classList.add("quiet"); }catch(e){}</script>
 <div class="page">
-<header class="appbar"><svg class="appicon" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="ig" cx=".3" cy=".2" r=".9"><stop offset="0" stop-color="#2f8f68"/><stop offset=".75" stop-color="#185943"/></radialGradient></defs><rect width="100" height="100" rx="22" fill="url(#ig)"/><rect x="14" y="12" width="72" height="44" rx="3" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6"/><text x="50" y="42" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="22" fill="#F2B01E">15:13</text><rect x="10" y="62" width="37" height="28" rx="8" fill="#F07A2A"/><rect x="53" y="62" width="37" height="28" rx="8" fill="#2F7FD9"/><text x="28.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">A</text><text x="71.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">B</text></svg><div class="brand"><b>场边打点</b><small class="ver" id="ver"></small></div><span id="sub"></span><button class="btn" id="bHome" type="button" hidden>‹ 返回</button></header>
+<header class="appbar"><svg class="appicon" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="ig" cx=".3" cy=".2" r=".9"><stop offset="0" stop-color="#2f8f68"/><stop offset=".75" stop-color="#185943"/></radialGradient></defs><rect width="100" height="100" rx="22" fill="url(#ig)"/><rect x="14" y="12" width="72" height="44" rx="3" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6"/><text x="50" y="42" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="22" fill="#F2B01E">15:13</text><rect x="10" y="62" width="37" height="28" rx="8" fill="#F07A2A"/><rect x="53" y="62" width="37" height="28" rx="8" fill="#2F7FD9"/><text x="28.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">A</text><text x="71.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">B</text></svg><div class="brand"><b>场边打点</b><small class="ver" id="ver"></small></div><span id="sub"></span><button class="btn" id="bReload" type="button" hidden title="重新载入这一页（装到桌面的 App 里没有浏览器的刷新键）">↻</button><button class="btn" id="bHome" type="button" hidden>‹ 返回</button></header>
+<button class="updbar" id="updBar" type="button" hidden>有新版本了，点这里更新 ↻</button>
 
 <!-- 首页（试用者 2026-11-04 重做：像一个工具产品） -->
 <section class="home" id="home">
@@ -403,7 +408,7 @@ try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!
 
 <script>
 const $ = id => document.getElementById(id);
-const VERSION = "v1.6";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。v1.6 现场打点页改成单手不看屏幕也能按（斜分椭圆、撤销小椭圆、暗色）、视频和上次导出存本机、页面重新载入回到回看、打完一局提醒保存、首页标「未备份」、请浏览器别清数据（2026-11-10）。改了功能往上加，打点文件里记着是哪一版打的
+const VERSION = "v1.6.1";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。v1.6 现场打点页改成单手不看屏幕也能按（斜分椭圆、撤销小椭圆、暗色）、视频和上次导出存本机、页面重新载入回到回看、打完一局提醒保存、首页标「未备份」、请浏览器别清数据（2026-11-10）；v1.6.1 回合结束挪进打点区、有新版时提示更新、桌面 App 里加刷新键（同日）。改了功能往上加，打点文件里记着是哪一版打的
 const KEY = "courtside-taps-v1", PRE = 1.5, GAP = 1.0, LAST = 15;   // 回合 = 发球前 1.5 s 到下一分开始前 1 s；最后一分到发球后 15 s
 let cur = null, lock = null, view = "home", sel = -1, playEnd = null, videoStart = null, exporting = false;
 let vidFor = null;   // 视频载给了哪条记录；没载视频也能回看（试用者 2026-11-06 问「没有视频怎么回看」）：列表、比分、★、改名都能用，回放和剪视频要载入视频
@@ -523,8 +528,9 @@ function spans(s){
 }
 
 /* ===== 首页 ===== */
-function show(v){ view=v; document.documentElement.classList.toggle("quiet", v==="live"); document.querySelector(".page").classList.toggle("livemode", v==="live"); $("home").hidden=v!=="home"; $("live").hidden=v!=="live"; $("review").hidden=v!=="review"; $("bHome").hidden=v==="home"; render(); }
+function show(v){ view=v; document.documentElement.classList.toggle("quiet", v==="live"); document.querySelector(".page").classList.toggle("livemode", v==="live"); $("home").hidden=v!=="home"; $("live").hidden=v!=="live"; $("review").hidden=v!=="review"; $("bHome").hidden=v==="home"; if(typeof showUpdate==="function"){ $("bReload").hidden=!(standalone && v!=="live"); showUpdate(); if(v==="home") checkUpdate(false); } render(); }
 function render(){
+  if(typeof showUpdate==="function") showUpdate();   // 打完一局也要能看到新版提示
   if(view==="home"){ $("sub").textContent=""; renderList(); return; }
   if(!cur) return;
   const {score}=tapRallies(cur), n=cur.taps.length;
@@ -1318,11 +1324,27 @@ async function askPersist(){ try{ if(!navigator.storage || !navigator.storage.pe
   if(!persistOk) n.textContent="这个浏览器没答应长期保留这一页的数据，空间紧了或者很久没打开时可能会清掉。每打完一局点「保存这局」，或者用「备份全部」存一份；固定从同一个入口打开（最好加到手机桌面）。"; }
 askPersist();
 for(const id of ["bLive","bReplay"]) $(id).addEventListener("click",()=>{ if(!persistOk) askPersist(); });
+/* 新版提示（试用者 2026-11-10：posecap.com 已经更新，桌面 App 里还是旧页面——App 切回前台不会重新载入，场边打点页也没有刷新键）：
+   posecap.com 版的 BUILD 是 make_courtside 填的这一版指纹；回到前台、回到首页时去网站上取一下这一页（不走缓存），指纹不一样就在顶上提示「有新版本」。
+   正在现场打点、这局没打完时不提示，回到首页或打完再提示。claude.ai 版 BUILD 为空，不查（发布新版时 claude.ai 自己会重新载入） */
+const BUILD = "25cbdf9fec40";
+let newBuild="", lastCheck=0;
+function freshReload(tag){ location.replace(location.pathname+"?v="+encodeURIComponent(tag||Date.now())); }   // 换个地址参数，绕开手机缓存
+async function checkUpdate(force){ if(!BUILD || newBuild) return; const now=Date.now(); if(!force && now-lastCheck<60000) return; lastCheck=now;
+  try{ const r=await fetch(location.pathname+"?check="+now, {cache:"no-store"}); if(!r.ok) return; const m=(await r.text()).match(/const BUILD = "([0-9a-f]+)"/);
+    if(m && m[1]!==BUILD){ newBuild=m[1]; showUpdate(); } }catch(e){} }
+function showUpdate(){ const b=$("updBar"); if(b) b.hidden=!(newBuild && (view!=="live" || !cur || cur.ended)); }
+$("updBar").addEventListener("click",()=>freshReload(newBuild));
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") checkUpdate(false); });
+/* 刷新键：只在装到桌面的 App 里显示（浏览器里有自己的刷新），现场打点页不放 */
+const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone===true;
+$("bReload").addEventListener("click",()=>freshReload());
 /* 没打完的现场打点接着打（刷新、切出去再回来） */
 cur=sessions().find(s=>!s.ended && s.mode!=="replay")||null;
 let lv=null; try{ lv=JSON.parse(lget(LASTV,"")||"null"); }catch(e){}
 const lvRec=!cur && lv && Date.now()-lv.at<12*3600e3 && sessions().find(s=>s.id===lv.id);
 if(lvRec) openReview(lvRec); else { show(cur?"live":"home"); if(cur) wake(); }
+setTimeout(()=>checkUpdate(true), 3000);
 </script>
 <a id="xsBack" href="https://posecap.com/book/" hidden style="position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:5;background:#185943;color:#F2B01E;font:800 15px/1 'Noto Sans SC','PingFang SC',sans-serif;padding:10px 14px;border-radius:999px;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,.25)">← 返回</a>
 <style>body:has(#home[hidden]) #xsBack{display:none!important}body.xs-back .page{padding-bottom:64px}</style>
