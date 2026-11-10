@@ -38,6 +38,8 @@ button{font:inherit;cursor:pointer;touch-action:manipulation;color:inherit}
 .btn:disabled{opacity:.45;cursor:default}
 .go{font-weight:800;font-size:18px;padding:14px;border:0;border-radius:14px;background:#185943;color:#fff}
 .go.alt{background:#2F7FD9}
+.go:disabled{opacity:.4;cursor:default;filter:grayscale(.6)}   /* 点了「开始导出」后看着还能点（试用者 2026-11-10）：大按钮也要有灰掉的样子 */
+.review.busy #exp .row{pointer-events:none;opacity:.45}
 input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);width:7.5em}
 input[type=number]{width:3.6em}
 .row{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
@@ -139,6 +141,12 @@ input[type=number]{width:3.6em}
 .pad .zone.hit{filter:brightness(.6)}
 /* 拇指够得着的撤销（试用者 2026-11-10：按错了要马上撤销，单手、不看屏幕）：斜分时打点区空着的那个下角放一个小椭圆 */
 .pad #lU{background:#a03a3a}.pad #lU .lab{font-size:15px}
+/* 回合结束挪进打点区（试用者 2026-11-10 截图：在打点区下面、又窄，每次要低头看；还和页脚「由 PoseCap 出品」叠在一起）：
+   斜分开了「回合结束」时，打点区底部一整条宽椭圆是回合结束，A 往上挪到中间，撤销挪到右边中间（左手斜分镜像） */
+.pad #lF{background:#3a3f3c}.pad #lF .lab{font-size:20px}.pad #lF.done .lab{opacity:.55;font-size:15px}
+:root.quiet .pad #lF{background:#262a28}
+.pad #padHap4{position:absolute;left:0;top:0;margin:0;padding:0;border:0;width:51px;height:31px;opacity:.01;transform-origin:0 0;z-index:2}
+.page.livemode>footer{display:none}   /* posecap.com 版的页脚，现场打点页不放（会和底部的按钮叠在一起） */
 :root.quiet .pad #lU{background:#472626}
 .pad #padHap3{position:absolute;left:0;top:0;margin:0;padding:0;border:0;width:51px;height:31px;opacity:.01;transform-origin:0 0;z-index:2}
 /* 两个按钮改成椭圆（试用者 2026-11-10：用椭圆给出点击范围）：看到的椭圆就是能按的范围，椭圆外面不算；原来那条分界带不要了 */
@@ -240,13 +248,16 @@ input[type=number]{width:3.6em}
 .mark:disabled{background:var(--card);color:var(--muted);border-color:var(--line)}
 .adj{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
 .adj b{min-width:5.5em}
-.rscore{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:900;font-size:30px}
-.ename{font:inherit;font-size:24px;font-weight:800;width:5.5em;text-align:center;padding:2px 6px;border:1px dashed var(--line);border-radius:8px;background:transparent}
+/* 回看页名字框占满这一行（试用者 2026-11-10：名字显示不全，两边又空着）：比分居中，两边名字框各占剩下的一半 */
+.rscore{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;font-weight:900;font-size:30px}
+.ename{font:inherit;font-size:24px;font-weight:800;width:100%;min-width:0;box-sizing:border-box;text-align:center;padding:2px 6px;border:1px dashed var(--line);border-radius:8px;background:transparent}
 .rscore b{white-space:nowrap}   /* 比分别折成「3 :」「3」两行（同日手机上看到） */
-@media (max-width:520px){.ename{width:4.6em;font-size:20px}}
+@media (max-width:520px){.ename{font-size:18px;padding:2px 3px}.rscore{gap:6px;font-size:26px}}
 .ename:hover,.ename:focus{border-style:solid;border-color:var(--ok);background:var(--card)}
 .side{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
 .plist{border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:auto;max-height:52vh}
+/* 手机上列表矮一些（试用者 2026-11-10：手机上显示 9 行、把下面「按列表连着放」挤出屏幕）：大约 5–6 行，其余在列表里滚 */
+@media (max-width:860px){.plist{max-height:min(36vh,300px)}}
 .plist table{width:100%;border-collapse:collapse;font-size:14px}
 .plist th,.plist td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
 .plist th{position:sticky;top:0;background:var(--card);color:var(--muted);font-weight:600}
@@ -320,7 +331,7 @@ try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!
   <div class="score" id="score"></div>
   <div class="tip" id="tip"></div>
   <div class="pcard" id="pcard"></div>
-  <div class="pad" id="pad"><div class="zone bA" id="lA"></div><div class="zone bB" id="lB"></div><div class="zone" id="lU" hidden></div><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line id="padLine"/></svg><input type="checkbox" switch id="padHap" aria-hidden="true" tabindex="-1" hidden><input type="checkbox" switch id="padHap2" aria-hidden="true" tabindex="-1" hidden><input type="checkbox" switch id="padHap3" aria-hidden="true" tabindex="-1" hidden></div>
+  <div class="pad" id="pad"><div class="zone bA" id="lA"></div><div class="zone bB" id="lB"></div><div class="zone" id="lU" hidden></div><div class="zone" id="lF" hidden></div><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line id="padLine"/></svg><input type="checkbox" switch id="padHap" aria-hidden="true" tabindex="-1" hidden><input type="checkbox" switch id="padHap2" aria-hidden="true" tabindex="-1" hidden><input type="checkbox" switch id="padHap3" aria-hidden="true" tabindex="-1" hidden><input type="checkbox" switch id="padHap4" aria-hidden="true" tabindex="-1" hidden></div>
   <button class="fin" id="lFin" type="button" hidden>回合结束</button>
   <div class="flash" id="flash"></div><input type="checkbox" switch id="finHap" aria-hidden="true" tabindex="-1" hidden>
   
@@ -707,12 +718,15 @@ function tipText(s){ const {score}=tapRallies(s), last=s.taps[s.taps.length-1];
   return last?`${nm(s,last.p)} 现在 ${score[last.p]} 分，应在${score[last.p]%2?"左":"右"}区发球——对不上就是点错了，「撤销」重点`:"第一分发球前点发球的一方"; }
 function renderLive(score, n){
   const s=cur, last=s.taps[n-1];
-  document.querySelector(".page").classList.toggle("adv", advOn()); fitPad(); drawPad(); document.querySelector(".page").classList.toggle("over", !!s.ended);
-  const finOn=advOn(); $("lFin").hidden=!finOn; document.querySelector(".page").classList.toggle("adv", finOn); if(finOn) drawFin($("lFin"));
+  const finOn=advOn(), finOut=finOn && !finIn();
+  document.querySelector(".page").classList.toggle("adv", finOut); fitPad(); drawPad(); document.querySelector(".page").classList.toggle("over", !!s.ended);
+  $("lFin").hidden=!finOut; if(finOut) drawFin($("lFin"));
   const st=!n?"还没开始":s.ended?`已结束，共 ${n} 分（点错了就「撤销」）`:finOn&&last.end!=null?`第 ${n} 分已结束，等下一次发球`:`第 ${n} 分进行中（${esc(nm(s,last.p))} 发球）`;
   const st0=s.start.A||s.start.B ? ` · 开局 ${s.start.A}:${s.start.B}` : "";   // 开局不是 0:0 时写出来，免得看成算错了
   $("score").innerHTML=`${esc(nm(s,"A"))} ${score.A} : ${score.B} ${esc(nm(s,"B"))}<small>${st}${st0}</small>`;
   $("tip").textContent=s.ended?"":liveTip(s); $("lUndo").disabled=!n; $("lEnd").disabled=s.ended; drawCard(); drawFinHap();
+  // 打点区多高按点卡的下边量：上面的比分、提示刚填进去，点卡位置会变，再量一次（不然第一次进来打点区会盖住点卡，小屏幕上明显）
+  const h0=fitPad.h; fitPad(); if(fitPad.h!==h0){ drawPad(); drawFinHap(); }
 }
 for(const p of ["A","B"]) $("r"+p).addEventListener("click",e=>{ addTap(p); e.currentTarget.blur(); });   // 现场打点按打点区的落点记，在下面 v1.6 那一段
 $("rUndo").addEventListener("click",undo);
@@ -850,7 +864,7 @@ function renderReview(){
   $("tot").textContent=ready?`合计 ${listOrder.length} 分，回合视频共 ${dur(sum(listOrder))}`+(D?`（整段视频 ${dur(D)}，只留回合能省掉 ${Math.round((1-sum(all)/D)*100)}%）`:"")
     : `合计 ${listOrder.length} 分`+(known.length?`，按发球相隔算约 ${dur(gapSum)}（含分与分之间的空档${known.length<listOrder.length?"，最后一分不知道多长":""}）`:"")+(hasVid?"":"；没载入视频，回放和剪视频要先载入");
   $("nAll").textContent=`${n}${ready?`（${dur(sum(all))}）`:""}`; $("nList").textContent=`${listOrder.length}${ready?`（${dur(sum(listOrder))}）`:""}`; $("nStar").textContent=`${stars.length}${ready&&stars.length?`（${dur(sum(stars))}）`:""}`;
-  $("bExport").disabled=!ready||!n||exporting;
+  $("bExport").disabled=!ready||!n||exporting; $("bExport").textContent=exporting?"正在导出……":"开始导出";
   drawBar(); drawZoom(); drawAdj(); tick();
 }
 let sortK="no", sortDesc=false, listOrder=[];
@@ -1018,7 +1032,7 @@ $("bExport").addEventListener("click",async()=>{
   const idx=mode==="list" ? listOrder.slice().sort((a,b)=>a-b) : cur.taps.map((x,i)=>i).filter(i=>!only||cur.taps[i].star);
   if(!idx.length){ msg(only?"还没有 ★ 的分：在右边列表里点 ☆ 标几分。":"一分都没有。"); return; }
   const mime=pickMime(); if(!mime){ msg("这个浏览器不支持录制视频（MediaRecorder），换电脑上的 Chrome / Safari 试试。"); return; }
-  stopAll(); exporting=true; canceled=false; $("review").classList.add("busy"); $("expOv").hidden=false; $("bExport").disabled=true; const pg=$("prog"); pg.hidden=false; pg.value=0;
+  stopAll(); exporting=true; canceled=false; $("review").classList.add("busy"); $("expOv").hidden=false; $("bExport").disabled=true; $("bExport").textContent="正在导出……"; const pg=$("prog"); pg.hidden=false; pg.value=0;
   // 导出用另一个播放器（试用者 2026-11-10：导出、保存后回来，画面黑屏放不了）：原来是主播放器的声音被接进录制通路，接上就拆不掉，
   // 手机上保存时离开页面再回来，它就坏了。现在导出时临时叠一个播放器在画面上，录完就拆，主播放器不碰
   const ev=document.createElement("video"); ev.className="expvid"; ev.playsInline=true; ev.setAttribute("playsinline",""); ev.preload="auto"; ev.src=video.currentSrc; $("scr").appendChild(ev);
@@ -1180,31 +1194,42 @@ const FB={A:{v:[40],s:[[440,.1]],c:"var(--a)"}, B:{v:[40,70,40],s:[[880,.07],[88
 function feedback(k){ const f=FB[k]; try{ canVib&&hapOn()&&navigator.vibrate(f.v); }catch(e){} tone(f.s); hapPend=hapOn() && !(k==="A"||k==="B");   // 打点区的轻震交给垫在下面的真开关（padHap），别的按钮还是抬手时用脚本点一下开关
   if(k==="A"||k==="B"){ const z=$("l"+k); z.classList.add("hit"); setTimeout(()=>z.classList.remove("hit"),180); } }
 /* 落点是谁：d > 0 = 左 / 下 / 左下（默认是 A，「对调」后是 B）；离分界线不到 12px 不算 */
-function padSide(e){ const r=$("pad").getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top, w=r.width, h=r.height;
-  // 斜分的位置按试用者 2026-11-10 的落点截图调过：A 的落点集中在原椭圆偏右，所以 A 右移、两个都缩小一些（左手斜分照镜像改）
-  // 两个椭圆（中心、半径都按打点区宽高的比例，和 drawPad 里画的一样）：第一个 = 左下 / 左 / 下；边上放宽一点点
-  const E={diag:[[.37,.71,.21,.24],[.74,.30,.23,.26],[.84,.84,.13,.14]], diagL:[[.63,.71,.21,.24],[.26,.30,.23,.26],[.16,.84,.13,.14]], lr:[[.25,.5,.23,.46],[.75,.5,.23,.46]], ud:[[.5,.75,.46,.22],[.5,.25,.46,.22]]}[split], u=x/w, v=y/h;
-  const k=E.findIndex(([cx,cy,rx,ry])=>((u-cx)/rx)**2+((v-cy)/ry)**2<=1.05);
-  return k<0 ? "" : k===2 ? "U" : (k===0)!==flip ? "A" : "B"; }   // 第三个椭圆（只有斜分有）= 撤销
-function drawPad(){ const one=flip?"B":"A", two=flip?"A":"B";
-  const G={diag:{c1:"ellipse(21% 24% at 37% 71%)", c2:"ellipse(23% 26% at 74% 30%)", p1:[37,71], p2:[74,30], ln:[0,0,100,100]},
-           diagL:{c1:"ellipse(21% 24% at 63% 71%)", c2:"ellipse(23% 26% at 26% 30%)", p1:[63,71], p2:[26,30], ln:[0,0,0,0]},
-           lr:{c1:"ellipse(23% 46% at 25% 50%)", c2:"ellipse(23% 46% at 75% 50%)", p1:[25,50], p2:[75,50], ln:[50,0,50,100]},
-           ud:{c1:"ellipse(46% 22% at 50% 75%)", c2:"ellipse(46% 22% at 50% 25%)", p1:[50,75], p2:[50,25], ln:[0,50,100,50]}}[split];
+/* 打点区里的几个椭圆（中心 x、y，半径 x、y，按打点区宽高的比例）：one = 左下 / 左 / 下那一块（默认 A，「对调」后 B），two = 另一块，u = 撤销，f = 回合结束。
+   斜分的位置按试用者 2026-11-10 的落点截图调过：A 的落点集中在原椭圆偏右，所以 A 右移、两个都缩小一些；
+   同日第二张截图：开了「回合结束」时它在打点区下面又窄、要低头看，就挪进打点区底部做成一整条宽椭圆，A 上移到中间，撤销挪到右边中间。左手斜分照镜像 */
+function finIn(){ return advOn() && (split==="diag" || split==="diagL"); }
+function padGeo(){ let g;
+  if(split==="diag"||split==="diagL"){
+    g = finIn() ? {one:[.32,.47,.23,.21], two:[.70,.22,.25,.19], u:[.88,.58,.11,.12], f:[.45,.86,.40,.12]}
+                : {one:[.37,.71,.21,.24], two:[.74,.30,.23,.26], u:[.84,.84,.13,.14], f:null};
+    if(split==="diagL") for(const k of Object.keys(g)) if(g[k]) g[k]=[1-g[k][0], ...g[k].slice(1)];
+  } else g = split==="lr" ? {one:[.25,.5,.23,.46], two:[.75,.5,.23,.46], u:null, f:null} : {one:[.5,.75,.46,.22], two:[.5,.25,.46,.22], u:null, f:null};
+  return g; }
+const clipOf=e=>`ellipse(${e[2]*100}% ${e[3]*100}% at ${e[0]*100}% ${e[1]*100}%)`;
+function padSide(e){ const r=$("pad").getBoundingClientRect(), u=(e.clientX-r.left)/r.width, v=(e.clientY-r.top)/r.height, g=padGeo();
+  const inE=E=>E && ((u-E[0])/E[2])**2+((v-E[1])/E[3])**2<=1.05;   // 边上放宽一点点
+  return inE(g.one) ? (flip?"B":"A") : inE(g.two) ? (flip?"A":"B") : inE(g.u) ? "U" : inE(g.f) ? "F" : ""; }
+function drawPad(){ const one=flip?"B":"A", two=flip?"A":"B", g=padGeo();
+  const G={c1:clipOf(g.one), c2:clipOf(g.two), p1:[g.one[0]*100,g.one[1]*100], p2:[g.two[0]*100,g.two[1]*100],
+           ln:{diag:[0,0,100,100], diagL:[0,0,0,0], lr:[50,0,50,100], ud:[0,50,100,50]}[split]};
   for(const [p,c,pos] of [[one,G.c1,G.p1],[two,G.c2,G.p2]]){ const z=$("l"+p); z.style.webkitClipPath=c; z.style.clipPath=c;
     z.innerHTML=`<span class="lab" style="left:${pos[0]}%;top:${pos[1]}%">${esc(nm(cur,p))}<small>${cur.ended?"已结束":"发球"}</small></span>`; }
   const ln=$("padLine"); ["x1","y1","x2","y2"].forEach((a,i)=>ln.setAttribute(a,G.ln[i]));
   $("lSplit").textContent=SPLITS.find(x=>x[0]===split)[1];
   const hp=$("padHap"), pr=$("pad"); hp.hidden=!hapOn()||cur.ended; hp.style.webkitClipPath=G.c1; hp.style.clipPath=G.c1;
   const hp2=$("padHap2"); hp2.hidden=hp.hidden; hp2.style.webkitClipPath=G.c2; hp2.style.clipPath=G.c2;
-  const U={diag:"ellipse(13% 14% at 84% 84%)", diagL:"ellipse(13% 14% at 16% 84%)"}[split], zu=$("lU"), hp3=$("padHap3"); zu.hidden=!U; hp3.hidden=!U||hp.hidden;
-  if(U){ zu.style.webkitClipPath=U; zu.style.clipPath=U; zu.innerHTML=`<span class="lab" style="left:${split==="diag"?84:16}%;top:84%">撤销</span>`;
+  const U=g.u&&clipOf(g.u), zu=$("lU"), hp3=$("padHap3"); zu.hidden=!U; hp3.hidden=!U||hp.hidden;
+  if(U){ zu.style.webkitClipPath=U; zu.style.clipPath=U; zu.innerHTML=`<span class="lab" style="left:${g.u[0]*100}%;top:${g.u[1]*100}%">撤销</span>`;
     hp3.style.webkitClipPath=U; hp3.style.clipPath=U; hp3.style.transform=`scale(${(pr.clientWidth/51).toFixed(3)},${(pr.clientHeight/31).toFixed(3)})`; }
+  const Fc=g.f&&clipOf(g.f), zf=$("lF"), hp4=$("padHap4"); zf.hidden=!Fc; hp4.hidden=!Fc||hp.hidden;
+  if(Fc){ const {i,done}=finState(); zf.style.webkitClipPath=Fc; zf.style.clipPath=Fc; zf.classList.toggle("done", done);
+    zf.innerHTML=`<span class="lab" style="left:${g.f[0]*100}%;top:${g.f[1]*100}%">${done?`第 ${i+1} 分已结束 ✓`:"回合结束"}</span>`;
+    hp4.style.webkitClipPath=Fc; hp4.style.clipPath=Fc; hp4.style.transform=`scale(${(pr.clientWidth/51).toFixed(3)},${(pr.clientHeight/31).toFixed(3)})`; }
   if(!hp2.hidden) hp2.style.transform=`scale(${(pr.clientWidth/51).toFixed(3)},${(pr.clientHeight/31).toFixed(3)})`;
   if(!hp.hidden) hp.style.transform=`scale(${(pr.clientWidth/(hp.offsetWidth||51)).toFixed(3)},${(pr.clientHeight/(hp.offsetHeight||31)).toFixed(3)})`;
   let hl=$("padHits"); if(!cur.ended){ if(hl) hl.remove(); return; }
   if(!hl){ hl=document.createElement("div"); hl.id="padHits"; pr.appendChild(hl); }
-  const key=split+(flip?"f":""); hl.innerHTML=hits.filter(h=>h[3]===key).map(h=>`<i style="left:${h[0]*100}%;top:${h[1]*100}%"></i>`).join(""); }
+  const key=split+(flip?"f":"")+(finIn()?"+fin":""); hl.innerHTML=hits.filter(h=>h[3]===key).map(h=>`<i style="left:${h[0]*100}%;top:${h[1]*100}%"></i>`).join(""); }
 /* 回合结束上面盖的那个真开关：和按钮同一个位置、同样的椭圆；手指按在它上面，所以记点也由它来触发 */
 function drawFinHap(){ const f=$("lFin"), h=$("finHap"); h.hidden=!hapOn()||f.hidden||!cur||cur.ended; if(h.hidden) return;
   const r=f.getBoundingClientRect(); h.style.left=r.left+"px"; h.style.top=r.top+"px"; h.style.transform=`scale(${(r.width/51).toFixed(3)},${(r.height/31).toFixed(3)})`; }
@@ -1215,7 +1240,7 @@ addEventListener("resize",()=>{ if(view==="live") render(); });
    从得分点卡的下边往下留 54px（消息那一条 + 上下空隙），剩下的到打点区下边全给打点区；最少 170px，最多半屏。弹出「最后一分谁得的」时不重算 */
 function fitPad(){ const pg=document.querySelector(".page"), c=$("pcard"), p=$("pad"); if(view!=="live"||!$("askLive").hidden) return;
   const bot=parseFloat(getComputedStyle(p).bottom)||0, top=c.getBoundingClientRect().bottom+pg.scrollTop+54;
-  const h=Math.round(Math.max(170, Math.min(innerHeight*0.5, innerHeight-bot-top)));
+  const h=Math.round(Math.max(170, Math.min(innerHeight*(finIn()?0.62:0.5), innerHeight-bot-top)));   // 回合结束在打点区里时，打点区可以高一些（下面不用再给按钮留地方）
   if(Math.abs(h-(fitPad.h||0))>2){ fitPad.h=h; pg.style.setProperty("--ph", h+"px"); } }
 function liveTip(s){ const {score}=tapRallies(s), last=s.taps[s.taps.length-1];
   if(gameOverAt(score.A,score.B,s.to||21)) return `${score.A}:${score.B} 这局已打完：长按「本局结束」`;
@@ -1231,8 +1256,8 @@ $("pad").addEventListener("pointerdown",e=>{ if(e.target.tagName!=="INPUT") e.pr
     if(!undoArmed){ msg("小椭圆只撤销最近的一下，已经撤过了；还要往前撤，用顶部的「撤销」。"); return; }
     if(now-lt>20000){ msg("最近一下已经过了 20 秒，小椭圆不再撤销（防误碰）；要撤用顶部的「撤销」。"); return; }
     undoArmed=false; lastHit=0; undo(); feedback("undo"); return; }
-  if(now-lastHit<600) return; lastHit=now; addTap(p); undoArmed=true;
-  const r=$("pad").getBoundingClientRect(); hits.push([+((e.clientX-r.left)/r.width).toFixed(3), +((e.clientY-r.top)/r.height).toFixed(3), p, split+(flip?"f":"")]); hits=hits.slice(-400); lset(HITS, JSON.stringify(hits)); });
+  if(now-lastHit<600) return; lastHit=now; if(p==="F") addFin(); else addTap(p); undoArmed=true;
+  const r=$("pad").getBoundingClientRect(); hits.push([+((e.clientX-r.left)/r.width).toFixed(3), +((e.clientY-r.top)/r.height).toFixed(3), p, split+(flip?"f":"")+(finIn()?"+fin":"")]); hits=hits.slice(-400); lset(HITS, JSON.stringify(hits)); });
 $("pad").addEventListener("contextmenu",e=>e.preventDefault());
 $("lFin").addEventListener("pointerdown",e=>{ e.preventDefault(); addFin(); undoArmed=true; });
 $("lUndo").addEventListener("click",()=>{ const had=cur&&cur.taps.length; undo(); if(had) feedback("undo"); });
