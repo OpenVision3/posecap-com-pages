@@ -46,7 +46,7 @@ input[type=number]{width:3.6em}
 .hero{display:flex;gap:14px;align-items:center;padding:16px;border-radius:16px;background:linear-gradient(135deg,#185943,#2f8f68);color:#fff}
 .hero .appicon{width:64px;height:64px;border-radius:15px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
 .hero b{display:block;font-size:20px}.hero p{margin:2px 0 0;font-size:13.5px;opacity:.9;line-height:1.5}
-/* 首页介绍（试用者 2026-11-06 评论「改进一下产品介绍」）：一句话说打点怎么用，三种视频各说一句干什么用 */
+/* 首页介绍（试用者 2026-11-06 评论「改进一下产品介绍」）：一句话说打点怎么用，三种视频各说一句干什么用；「高光集锦」改「好球合集」（产品负责人 2026-11-09，和 Pose Coach 的 Highlight Reel 撞名） */
 .hero .uses{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px;font-size:13.5px;line-height:1.45}
 .hero .uses li{display:flex;gap:8px;align-items:baseline;opacity:.95}
 @media (max-width:520px){.hero .appicon{display:none}}   /* 手机上顶栏已经有图标，介绍文字占满宽 */
@@ -165,7 +165,7 @@ progress{width:100%}
 <!-- 首页（试用者 2026-11-04 重做：像一个工具产品） -->
 <section class="home" id="home">
   <div class="hero"><svg class="appicon" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="ig" cx=".3" cy=".2" r=".9"><stop offset="0" stop-color="#2f8f68"/><stop offset=".75" stop-color="#185943"/></radialGradient></defs><rect width="100" height="100" rx="22" fill="url(#ig)"/><rect x="14" y="12" width="72" height="44" rx="3" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6"/><text x="50" y="42" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="22" fill="#F2B01E">15:13</text><rect x="10" y="62" width="37" height="28" rx="8" fill="#F07A2A"/><rect x="53" y="62" width="37" height="28" rx="8" fill="#2F7FD9"/><text x="28.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">A</text><text x="71.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">B</text></svg><div><b>一分一点，比分自动算</b><p>比赛时，每分发球前点一下谁发球，谁得分、几比几都替你算好。赛后载入录像，一分一分回看，剪出印着比分的视频：</p>
-    <ul class="uses"><li><b>精简版</b>去掉捡球、休息的空档，只留打球的那几分钟</li><li><b>高光集锦</b>挑几分打 ★，发给家人朋友</li><li><b>丢分合集</b>私教课间给教练看，不另花钱也知道比赛丢在哪</li></ul></div></div>
+    <ul class="uses"><li><b>精简版</b>去掉捡球、休息的空档，只留打球的那几分钟</li><li><b>好球合集</b>挑几分打 ★ 或用「只看」自动挑，发给家人朋友</li><li><b>丢分合集</b>私教课间给教练看，不另花钱也知道比赛丢在哪</li></ul></div></div>
   <div class="panel">
     <h2>新的一局<button class="linkbtn" id="bSwap" type="button" title="A、B 两边的名字互换">⇄ 对调</button></h2>
     <div class="vs"><input class="pa" id="nA" maxlength="30" placeholder="A 的名字" list="names" autocomplete="off"><i>vs</i><input class="pb" id="nB" maxlength="30" placeholder="B 的名字" list="names" autocomplete="off"></div>
@@ -266,7 +266,7 @@ progress{width:100%}
 
 <script>
 const $ = id => document.getElementById(id);
-const VERSION = "v1.4.3";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）。改了功能往上加，打点文件里记着是哪一版打的
+const VERSION = "v1.5";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。改了功能往上加，打点文件里记着是哪一版打的
 const KEY = "courtside-taps-v1", PRE = 1.5, GAP = 1.0, LAST = 15;   // 回合 = 发球前 1.5 s 到下一分开始前 1 s；最后一分到发球后 15 s
 let cur = null, lock = null, view = "home", sel = -1, playEnd = null, videoStart = null, exporting = false;
 let vidFor = null;   // 视频载给了哪条记录；没载视频也能回看（试用者 2026-11-06 问「没有视频怎么回看」）：列表、比分、★、改名都能用，回放和剪视频要载入视频
@@ -289,6 +289,55 @@ function tapRallies(s){
 /* 只有一方得分能让这局打完，就是它；两方都能或都不能 → 定不了 */
 function tapLastWinner(s){ const sc=tapRallies({...s, last:""}).score, ok=p=>gameOverAt(sc.A+(p==="A"), sc.B+(p==="B"), s.to||21);
   return ok("A")&&!ok("B")?"A":ok("B")&&!ok("A")?"B":""; }
+
+/* ===== 自动挑片（R-121 改方向，试用者 2026-11-09：「打点的主要目的是记分，同时为录制的视频提供回合时间戳；记分 + 视频才能产生更多有用的东西」，
+   家长报告页撤掉，算关键分、回合长短、连丢连得的口径留下来给回看的「只看」挑分、导出好球合集 / 丢分合集）=====
+   口径在 config/courtside_picks.yaml（关键分、长短回合产品负责人 2026-11-09 定「乙」），python -m scripts.make_courtside 注入下面这一行 */
+const PICKS = {"key_points": {"game_point": true, "late_from": {"15": 13, "21": 18}, "max_diff": 1}, "rally_length": {"sources": ["button", "trimmed", "gap"], "gap_adjust": true, "min_known": 6, "max_seconds": 300.0}, "good_max": 6, "lose_run_min": 3, "card_seconds": 2.5};
+function med(a){ const v=[...a].sort((x,y)=>x-y), n=v.length; return n ? (n%2 ? v[(n-1)/2] : (v[n/2-1]+v[n/2])/2) : null; }
+/* 这一分开打前的比分是不是关键分：gpA / gpB = 那一方的局点，both = 两边都是（29 平），tie / close = 尾段平分 / 一分之差；不是返回 "" */
+function keyKind(a,b,to,R=PICKS){ const K=R.key_points, gA=gameOverAt(a+1,b,to), gB=gameOverAt(a,b+1,to);
+  if(K.game_point && (gA||gB)) return gA&&gB?"both":gA?"gpA":"gpB";
+  const lf=K.late_from[String(to)]; if(lf==null) return "";
+  return Math.min(a,b)>=lf && Math.abs(a-b)<=K.max_diff ? (a===b?"tie":"close") : ""; }
+/* 一条记录里每一分的几种时长（秒）：button = 发球到「回合结束」；trimmed = 回看里人调过的结束 − 发球（要对得上视频）；gap = 到下一次发球 */
+function rallyDurs(s,R=PICKS){ const T=s.taps, M=R.rally_length.max_seconds, out=[];
+  for(let i=0;i<T.length;i++){ const x=T[i], d={};
+    if(x.end!=null && x.t!=null) d.button=(x.end-x.t)/1000;
+    if(x.e!=null){ const sv=x.v!=null ? x.v : (s.align!=null && x.t!=null && T[0].t!=null ? s.align+(x.t-T[0].t)/1000 : null); if(sv!=null) d.trimmed=x.e-sv; }
+    if(i+1<T.length && x.t!=null && T[i+1].t!=null) d.gap=(T[i+1].t-x.t)/1000;
+    for(const k of Object.keys(d)) if(!(d[k]>0 && d[k]<=M)) delete d[k];
+    out.push(d); }
+  return out; }
+/* 每一分用哪个时长：按 sources 的顺序取第一个有的。发球间隔含捡球、比真打的长：有几分两样都有，就取「间隔 − 实际」的中位数当空档（dead），
+   从只有间隔的分里减掉；一分两样都有的都没有，没法换算，就只用多的那一种（drop = 不用的那种） */
+function pickDurs(list,R=PICKS){ const L=R.rally_length, first=d=>L.sources.find(k=>d[k]!=null);
+  const real=d=>{ const k=L.sources.find(k=>k!=="gap" && d[k]!=null); return k ? d[k] : null; };
+  const both=list.filter(d=>real(d)!=null && d.gap!=null).map(d=>d.gap-real(d));
+  const dead=L.gap_adjust && both.length ? Math.max(0, med(both)) : null;
+  const kinds=list.map(first), nGap=kinds.filter(k=>k==="gap").length, nReal=kinds.filter(k=>k && k!=="gap").length;
+  const drop=L.gap_adjust && dead==null && nGap && nReal ? (nGap>nReal ? "real" : "gap") : "";
+  const durs=list.map((d,i)=>{ const k=kinds[i]; if(!k || (drop==="gap" && k==="gap") || (drop==="real" && k!=="gap")) return {sec:null, src:""};
+    return {sec: k==="gap" && dead!=null ? Math.max(1, d.gap-dead) : d[k], src:k}; });
+  return {durs, dead, drop}; }
+/* 一条记录（一局或半局）按人挑的几组分（tapRallies 的下标，从前往后）：每人 good = 自己得分里赢下的关键分在前、再按回合从长到短，最多 good_max 分
+   （知道时长的分少于 min_known 就只挑关键分）；keyLost = 丢的关键分；runLost = 连丢 lose_run_min 分以上那几段（runOf 写连丢第几分）；
+   recvLost / srvLost = 对方发球 / 自己发球时丢的。谁得分不知道的分不算。secs = 每分时长（秒，不知道是 null），导出时写在比分栏下面 */
+function pickSets(s, R=PICKS){
+  const {rallies}=tapRallies(s), to=s.to||21, {durs}=pickDurs(rallyDurs(s,R), R), secs=durs.map(d=>d.sec);
+  const byLen=secs.filter((x,i)=>x!=null && rallies[i].winner).length>=R.rally_length.min_known;
+  const key=rallies.map(r=>keyKind(r.before.A, r.before.B, to, R));
+  const runs={A:[], B:[]}; let run=[];
+  const flush=()=>{ if(run.length) runs[rallies[run[0]].winner].push(run); run=[]; };
+  rallies.forEach((r,i)=>{ if(!r.winner){ flush(); return; } if(run.length && rallies[run[0]].winner!==r.winner) flush(); run.push(i); }); flush();
+  const out={key, secs};
+  for(const me of ["A","B"]){ const op=me==="A"?"B":"A", won=i=>rallies[i].winner===me, lost=i=>rallies[i].winner===op, all=rallies.map((r,i)=>i);
+    const loseRun=runs[op].filter(x=>x.length>=R.lose_run_min), rank=i=>(key[i]?1e6:0)+(byLen && secs[i]!=null ? secs[i] : 0);
+    const good=all.filter(i=>won(i) && (key[i] || (byLen && secs[i]!=null))).sort((x,y)=>rank(y)-rank(x) || x-y).slice(0, R.good_max).sort((x,y)=>x-y);
+    out[me]={ good, keyLost:all.filter(i=>lost(i) && key[i]),
+      runLost:loseRun.flat(), recvLost:all.filter(i=>lost(i) && rallies[i].server===op), srvLost:all.filter(i=>lost(i) && rallies[i].server===me),
+      runOf:Object.fromEntries(loseRun.flatMap(x=>x.map((i,k)=>[i, `连丢第 ${k+1}/${x.length} 分`]))) }; }
+  return out; }
 
 /* ===== 存取 ===== */
 function sessions(){ try{ const a=JSON.parse(localStorage.getItem(KEY)||"[]"); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
@@ -602,8 +651,8 @@ function renderReview(){
   else if(sortK==="srv"||sortK==="win"){ const v=i=>sortK==="srv"?rallies[i].server:(rallies[i].winner||"z"); order.sort((x,y)=>(v(x)<v(y)?-1:v(x)>v(y)?1:0)*(sortDesc?-1:1)||x-y); }
   else if(sortDesc) order.reverse();
   // 只看（试用者 2026-11-04：只想看自己丢的那些分）：谁得分 / 谁发球
-  const fv=$("filt").value; fillFilt(s);
-  const keep=i=>{ const r=rallies[i]; return !fv || (fv[0]==="w" ? r.winner===fv[1] : r.server===fv[1]); };
+  const P=pickSets(s); fillFilt(s, P); const fv=$("filt").value, pk=fv.split(":");
+  const keep=i=>{ const r=rallies[i]; return !fv || (pk[0]==="p" ? P[pk[1]][pk[2]].includes(i) : fv[0]==="w" ? r.winner===fv[1] : r.server===fv[1]); };
   listOrder=order.filter(keep);
   document.querySelectorAll(".plist th[data-k]").forEach(th=>{ const k=th.dataset.k, base={star:"★",no:"#",len:"长度",srv:"发球",win:"打完"}[k]; th.classList.toggle("on",k===sortK); th.textContent=base+(k===sortK&&k!=="star"?(sortDesc?" ↓":" ↑"):""); });
   listOrder.forEach(i=>{ const r=rallies[i]; const tr=document.createElement("tr"); if(i===sel) tr.className="on";
@@ -623,9 +672,16 @@ function renderReview(){
   drawBar(); drawZoom(); drawAdj(); tick();
 }
 let sortK="no", sortDesc=false, listOrder=[];
-function fillFilt(s){ const f=$("filt"), v=f.value, sig=nm(s,"A")+"|"+nm(s,"B"); if(f.dataset.sig===sig) return; f.dataset.sig=sig;
-  f.innerHTML=[["","全部"],["wA",`${nm(s,"A")} 得分`],["wB",`${nm(s,"B")} 得分（${nm(s,"A")} 丢分）`],["sA",`${nm(s,"A")} 发球`],["sB",`${nm(s,"B")} 发球`]]
-    .map(([k,l])=>`<option value="${k}">${esc(l)}</option>`).join(""); f.value=v; }
+/* 「只看」（试用者 2026-11-04：只想看自己丢的那些分）：按谁得分 / 谁发球，加上每人自动挑的几组（v1.5，pickSets）——
+   选好了「按列表连着放」或导出「列表里的」，就是好球合集 / 丢分合集；data-title 是导出片头卡和文件名用的 */
+const PICK_KINDS=[["good","好球","赢的关键分、最长的回合"],["keyLost","丢的关键分",""],["runLost","连丢段",""],["recvLost","接发丢的","对方发球时"],["srvLost","发球丢的","自己发球时"]];
+function fillFilt(s, P=pickSets(s)){ const f=$("filt"), v=f.value, sig=nm(s,"A")+"|"+nm(s,"B")+"|"+JSON.stringify(["A","B"].map(p=>PICK_KINDS.map(([k])=>P[p][k].length)));
+  if(f.dataset.sig===sig) return; f.dataset.sig=sig;
+  const o=(k,l,t)=>`<option value="${k}" data-title="${esc(t||l)}">${esc(l)}</option>`;
+  f.innerHTML=o("","全部")+`<optgroup label="谁得分 / 谁发球">`+[["wA",`${nm(s,"A")} 得分`],["wB",`${nm(s,"B")} 得分（${nm(s,"A")} 丢分）`],["sA",`${nm(s,"A")} 发球`],["sB",`${nm(s,"B")} 发球`]].map(([k,l])=>o(k,l)).join("")+"</optgroup>"
+    +["A","B"].map(p=>`<optgroup label="${esc(nm(s,p))}">`+PICK_KINDS.map(([k,l,d])=>{ const n=P[p][k].length;
+      return o(`p:${p}:${k}`, `${l}（${n} 分）${d?" · "+d:""}`, `${nm(s,p)} · ${k==="good"?"好球合集":l}`).replace("<option", n||v===`p:${p}:${k}`?"<option":"<option disabled"); }).join("")+"</optgroup>").join("");
+  f.value=v; if(f.value!==v) f.value=""; }
 $("filt").addEventListener("change",()=>{ renderReview(); });
 /* 按列表连着放（试用者 2026-11-04 问勾选框怎么用）：一键从列表第一行放起，等于勾上「自动接下一行」再点第一行 */
 $("bChain").addEventListener("click",()=>{ if(!canPlay()){ msg(cur&&vidFor===cur.id?"先对到视频上。":"连着放要先「载入比赛视频」。"); return; } if(!listOrder.length){ msg("列表里没有分。"); return; }
@@ -784,11 +840,21 @@ $("bExport").addEventListener("click",async()=>{
   const W0=video.videoWidth, H0=video.videoHeight, k=Math.min(1, 1280/Math.max(W0,H0)), W=Math.round(W0*k/2)*2, H=Math.round(H0*k/2)*2;
   const cv=document.createElement("canvas"); cv.width=W; cv.height=H; const g=cv.getContext("2d");
   const {rallies}=tapRallies(cur), total=idx.reduce((a,i)=>a+sp[i][1]-sp[i][0],0); let doneT=0, clip=null;
+  // 片头卡（v1.5）：这段视频是什么、谁对谁、第几局、几分；比分栏下面写这一分为什么被挑上（关键分、连丢第几分）
+  const P=pickSets(cur), fo=$("filt").selectedOptions[0], fk=$("filt").value.split(":");
+  const title=mode==="star" ? "好球合集" : mode==="list" && $("filt").value ? fo.dataset.title : "精简版";
+  let card={title, sub:`${full(cur,"A")} vs ${full(cur,"B")} · 第 ${cur.setNo} 局 · ${idx.length} 分`, date:new Date(cur.created).toLocaleDateString("zh-CN")};
+  const why=i=>[P.key[i]?"关键分":"", fk[0]==="p"&&fk[2]==="runLost" ? P[fk[1]].runOf[i] : "", fk[0]==="p"&&fk[2]==="good"&&!P.key[i]&&P.secs[i]!=null ? `回合 ${dur(P.secs[i])}` : ""].filter(Boolean).join(" · ");
   const fs=Math.round(Math.min(W,H)*0.06);
-  const draw=()=>{ if(!exporting) return; g.drawImage(video,0,0,W,H);
+  const draw=()=>{ if(!exporting) return;
+    if(card){ g.fillStyle="#185943"; g.fillRect(0,0,W,H); g.textAlign="center"; g.fillStyle="#fff";
+      g.font=`800 ${Math.round(fs*1.4)}px -apple-system,"PingFang SC","Noto Sans SC",sans-serif`; g.fillText(card.title, W/2, H/2-fs*0.3);
+      g.font=`500 ${Math.round(fs*0.7)}px -apple-system,"PingFang SC","Noto Sans SC",sans-serif`; g.fillStyle="#cfe5da"; g.fillText(card.sub, W/2, H/2+fs*0.9); g.fillText(card.date, W/2, H/2+fs*1.9);
+      g.textAlign="left"; requestAnimationFrame(draw); return; }
+    g.drawImage(video,0,0,W,H);
     if(clip!=null){ const r=rallies[clip], t=video.currentTime, after=t>sp[clip][1]-0.3 && r.after, sc=after?r.after:r.before;
       // 比分栏位置固定（和画面上的一样）：顶部居中，羽毛球位、两位数比分都留好宽度，比分变了、换发球都不晃
-      const srv=after?"":r.server, ic=fs*0.95, gap=fs*0.35, sub=`第 ${clip+1} 分 · ${nm(cur,r.server)} 发球`;
+      const srv=after?"":r.server, ic=fs*0.95, gap=fs*0.35, sub=`第 ${clip+1} 分 · ${nm(cur,r.server)} 发球`+(why(clip)?` · ${why(clip)}`:"");
       g.font=`800 ${fs}px -apple-system,"PingFang SC","Noto Sans SC",sans-serif`;
       const wa=g.measureText(nm(cur,"A")).width, wb=g.measureText(nm(cur,"B")).width, wd=g.measureText("88").width, wc=g.measureText(":").width;
       const w=ic+gap+wa+gap+wd+gap+wc+gap+wd+gap+wb+gap+ic, x0=(W-w)/2-fs*0.5, y0=fs*1.2,   /* 往下让开播放器的标题栏（试用者 2026-11-04：QuickTime 顶部会盖住比分栏）；按字号算，横屏竖屏留的空一样，竖屏不会空太多 */ base=y0+fs*1.05;
@@ -808,6 +874,8 @@ $("bExport").addEventListener("click",async()=>{
     const stream=new MediaStream([...cv.captureStream(30).getVideoTracks(), ...a.dest.stream.getAudioTracks()]);
     rec=new MediaRecorder(stream,{mimeType:mime, videoBitsPerSecond:4e6}); rec.ondataavailable=e=>{ if(e.data&&e.data.size) chunks.push(e.data); };
     video.playbackRate=1; $("vRate").textContent="1×";
+    if(PICKS.card_seconds>0){ draw(); rec.start(1000); await new Promise(r=>setTimeout(r, PICKS.card_seconds*1000)); rec.pause(); }
+    card=null;
     for(const i of idx){
       clip=i; video.currentTime=sp[i][0]; await waitEv(video,"seeked"); draw();
       if(rec.state==="inactive") rec.start(1000); else rec.resume();
@@ -822,7 +890,7 @@ $("bExport").addEventListener("click",async()=>{
     a.spk.gain.value=1;
     if(canceled){ msg("已取消导出。"); throw null; }
     const ext=mime.startsWith("video/mp4")?"mp4":"webm", blob=new Blob(chunks,{type:mime.split(";")[0]});
-    await saveBlob(`${fname(cur)}_${only?"高亮":"精简"}.${ext}`, blob);
+    await saveBlob(`${fname(cur)}_${title.replace(/\s*·\s*/g,"_").replace(/[\\/:*?"<>|\s]+/g,"")}.${ext}`, blob);
   }catch(err){ if(err) msg("导出没成功："+(err&&err.message||err)); try{ audio&&(audio.spk.gain.value=1); }catch(e){} }
   exporting=false; clip=null; pg.hidden=true; $("review").classList.remove("busy"); $("expOv").hidden=true; render();
 });
