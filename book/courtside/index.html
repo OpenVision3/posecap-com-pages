@@ -270,7 +270,8 @@ input[type=number]{width:3.6em}
 .plist tfoot td{position:sticky;bottom:0;background:var(--card);font-weight:700;border-top:2px solid var(--line);border-bottom:0;white-space:normal}
 .plist tr.on td{background:rgba(242,176,30,.18)}
 .plist tr{cursor:pointer}
-.plist .st{background:none;border:0;font-size:18px;padding:0 2px;color:#c58a00}
+.plist .st{background:none;border:0;font-size:20px;padding:0;min-width:44px;min-height:38px;color:#c58a00;cursor:pointer}   /* 手机上好按（试用者 2026-11-10「点击选不上」：原来 22×27，按偏了变成放这一分） */
+.plist td.stc{padding:0;text-align:center}
 .dotA{color:var(--a);font-weight:800}.dotB{color:var(--b);font-weight:800}
 .novid{border:2px dashed var(--line);border-radius:12px;background:var(--card);padding:22px 16px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
 .novid .hint{max-width:34em}
@@ -281,7 +282,8 @@ progress{width:100%}
 .expov{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(20,30,25,.85);color:#fff;border-radius:10px;padding:8px 12px;display:flex;gap:10px;align-items:center;font-size:14px;white-space:nowrap}
 /* 换视频叠在画面右下角（试用者 2026-11-10：放在播放按钮那一排，手机上单独占了一行） */
 .vswap{position:absolute;right:8px;bottom:8px;z-index:3;border:0;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:700;background:rgba(20,30,25,.6);color:#fff}
-.review.busy .vswap{display:none}
+.vmute{position:absolute;right:8px;top:8px;z-index:3;border:0;border-radius:999px;width:40px;height:40px;padding:0;font-size:20px;line-height:40px;background:rgba(20,30,25,.6);color:#fff}
+.review.busy .vswap,.review.busy .vmute{display:none}
 .expvid{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;z-index:1}
 .expov{z-index:2}.review.busy .sb{display:none}
 /* 播放那一排在手机上排一行（同日：「1×」掉到第二行）：按钮收窄、时间字小一号 */
@@ -350,7 +352,7 @@ try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!
     <div class="novid" id="noVid" hidden><b>没有载入视频</b>
       <p class="hint">右边照样能看每一分谁发球、谁得分、打完几比几，能筛「只看」、打 ★、改名字和开局比分。长度按这一分发球到下一分发球相隔多久算（含分与分之间的空档）。<br>要一分一分回放、调起止、剪带比分的视频，再载入这局的比赛录像。</p>
       <button class="go alt" id="bLoadVid" type="button" style="font-size:16px;padding:10px 16px">载入比赛视频</button></div>
-    <div class="screen" id="scr"><video id="video" playsinline preload="metadata"></video><div class="sb" id="sb" hidden></div><button class="vswap" id="vSwap" type="button" title="换一个视频（这一局的视频选错了）">换视频</button>
+    <div class="screen" id="scr"><video id="video" playsinline preload="metadata"></video><div class="sb" id="sb" hidden></div><button class="vswap" id="vSwap" type="button" title="换一个视频（这一局的视频选错了）">换视频</button><button class="vmute" id="vMute" type="button"></button>
       <div class="expov" id="expOv" hidden><b>正在导出</b><span id="expTxt"></span><button class="btn" id="bCancel" type="button">取消导出</button></div></div>
     <div class="transport" id="trans">
       <span class="clock" id="clock">00:00.0</span>
@@ -388,8 +390,7 @@ try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!
     <div class="row"><label class="hint">只看 <select id="filt" style="font:inherit;padding:4px 6px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg)"></select></label></div>
     <div class="row"><button class="btn" id="bChain" type="button" title="从列表第一行开始，一分接一分放（按列表现在的排序和「只看」）">▶ 按列表连着放</button>
       <label class="hint" title="勾上后：点列表里任一行，放完这一分会自动接着放列表的下一行"><input type="checkbox" id="chain" style="width:auto"> 点一行后自动接下一行</label>
-      <label class="hint">高亮最多 <input id="starMax" type="number" min="1" max="10" value="3"> 个</label>
-      <button class="btn" id="bTopStar" type="button" title="把最长的几分标成 ★（个数 = 高亮最多几个），原来的 ★ 先清掉">最长的几分打 ★</button></div>
+      <span class="hint" style="display:inline-flex;align-items:center;gap:6px">最长的 <input id="starMax" type="number" min="1" max="10" value="3"> 分 <button class="btn" id="bTopStar" type="button" title="把最长的几分标成 ★，原来的 ★ 先清掉；手点 ★ 不限个数">打 ★</button></span></div>
     <div class="exp" id="exp">
       <b>导出带比分的精简视频</b>
       <div class="row"><label><input type="radio" name="ex" value="all" checked style="width:auto"> 全部 <span id="nAll"></span> 分</label><label><input type="radio" name="ex" value="list" style="width:auto"> 列表里的 <span id="nList"></span> 分</label><label><input type="radio" name="ex" value="star" style="width:auto"> 只要 ★ <span id="nStar"></span> 分</label></div>
@@ -408,7 +409,7 @@ try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!
 
 <script>
 const $ = id => document.getElementById(id);
-const VERSION = "v1.6.1";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。v1.6 现场打点页改成单手不看屏幕也能按（斜分椭圆、撤销小椭圆、暗色）、视频和上次导出存本机、页面重新载入回到回看、打完一局提醒保存、首页标「未备份」、请浏览器别清数据（2026-11-10）；v1.6.1 回合结束挪进打点区、有新版时提示更新、桌面 App 里加刷新键（同日）。改了功能往上加，打点文件里记着是哪一版打的
+const VERSION = "v1.6.2";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。v1.6 现场打点页改成单手不看屏幕也能按（斜分椭圆、撤销小椭圆、暗色）、视频和上次导出存本机、页面重新载入回到回看、打完一局提醒保存、首页标「未备份」、请浏览器别清数据（2026-11-10）；v1.6.1 回合结束挪进打点区、有新版时提示更新、桌面 App 里加刷新键（同日）；v1.6.2 ★ 整格好按、手点 ★ 不限个数，「最长的 N 分打 ★」的 N 只管自动挑，「只看」下拉加「打了 ★ 的」、回看视频右上角静音键（默认静音、记住选择）（同日）。改了功能往上加，打点文件里记着是哪一版打的
 const KEY = "courtside-taps-v1", PRE = 1.5, GAP = 1.0, LAST = 15;   // 回合 = 发球前 1.5 s 到下一分开始前 1 s；最后一分到发球后 15 s
 let cur = null, lock = null, view = "home", sel = -1, playEnd = null, videoStart = null, exporting = false;
 let vidFor = null;   // 视频载给了哪条记录；没载视频也能回看（试用者 2026-11-06 问「没有视频怎么回看」）：列表、比分、★、改名都能用，回放和剪视频要载入视频
@@ -854,13 +855,13 @@ function renderReview(){
   else if(sortDesc) order.reverse();
   // 只看（试用者 2026-11-04：只想看自己丢的那些分）：谁得分 / 谁发球
   const P=pickSets(s); fillFilt(s, P); const fv=$("filt").value, pk=fv.split(":");
-  const keep=i=>{ const r=rallies[i]; return !fv || (pk[0]==="p" ? P[pk[1]][pk[2]].includes(i) : fv[0]==="w" ? r.winner===fv[1] : r.server===fv[1]); };
+  const keep=i=>{ const r=rallies[i]; return !fv || (fv==="star" ? !!s.taps[i].star : pk[0]==="p" ? P[pk[1]][pk[2]].includes(i) : fv[0]==="w" ? r.winner===fv[1] : r.server===fv[1]); };
   listOrder=order.filter(keep);
   document.querySelectorAll(".plist th[data-k]").forEach(th=>{ const k=th.dataset.k, base={star:"★",no:"#",len:"长度",srv:"发球",win:"打完"}[k]; th.classList.toggle("on",k===sortK); th.textContent=base+(k===sortK&&k!=="star"?(sortDesc?" ↓":" ↑"):""); });
   listOrder.forEach(i=>{ const r=rallies[i]; const tr=document.createElement("tr"); if(i===sel) tr.className="on";
     const x=s.taps[i], len=L[i];
-    tr.innerHTML=`<td><button class="st" type="button" title="高亮">${x.star?"★":"☆"}</button></td><td>${i+1}</td><td class="dot${r.server}" title="${esc(full(s,r.server))}">${esc(tn(s,r.server))}</td><td>${r.after?`${r.after.A}:${r.after.B}`:"—"}${r.winner?` <span class="dot${r.winner}" title="${esc(full(s,r.winner))}">${esc(tn(s,r.winner))}得分</span>`:""}</td><td>${len!=null?dur(len):"—"}</td>`;
-    tr.querySelector(".st").onclick=ev=>{ ev.stopPropagation(); toggleStar(i); };
+    tr.innerHTML=`<td class="stc"><button class="st" type="button" title="高亮">${x.star?"★":"☆"}</button></td><td>${i+1}</td><td class="dot${r.server}" title="${esc(full(s,r.server))}">${esc(tn(s,r.server))}</td><td>${r.after?`${r.after.A}:${r.after.B}`:"—"}${r.winner?` <span class="dot${r.winner}" title="${esc(full(s,r.winner))}">${esc(tn(s,r.winner))}得分</span>`:""}</td><td>${len!=null?dur(len):"—"}</td>`;
+    tr.querySelector(".stc").onclick=ev=>{ ev.stopPropagation(); toggleStar(i); };   // 整格都算点 ★
     tr.onclick=()=>{ if(ready) return playRally(i);
       sel=i; renderReview(); msg(`第 ${i+1} 分：${nm(s,r.server)} 发球，`+(r.after?`打完 ${r.after.A}:${r.after.B}，${nm(s,r.winner)}得分。`:"谁得分没记下。")+(hasVid?"先对到视频上才能回放。":"要看这一分的画面，点「载入比赛视频」。")); };
     tb.appendChild(tr); });
@@ -877,10 +878,11 @@ let sortK="no", sortDesc=false, listOrder=[];
 /* 「只看」（试用者 2026-11-04：只想看自己丢的那些分）：按谁得分 / 谁发球，加上每人自动挑的几组（v1.5，pickSets）——
    选好了「按列表连着放」或导出「列表里的」，就是好球合集 / 丢分合集；data-title 是导出片头卡和文件名用的 */
 const PICK_KINDS=[["good","好球","赢的关键分、最长的回合"],["keyLost","丢的关键分",""],["runLost","连丢段",""],["recvLost","接发丢的","对方发球时"],["srvLost","发球丢的","自己发球时"]];
-function fillFilt(s, P=pickSets(s)){ const f=$("filt"), v=f.value, sig=nm(s,"A")+"|"+nm(s,"B")+"|"+JSON.stringify(["A","B"].map(p=>PICK_KINDS.map(([k])=>P[p][k].length)));
+function fillFilt(s, P=pickSets(s)){ const f=$("filt"), v=f.value, nStar=s.taps.filter(x=>x.star).length, sig=nStar+"|"+nm(s,"A")+"|"+nm(s,"B")+"|"+JSON.stringify(["A","B"].map(p=>PICK_KINDS.map(([k])=>P[p][k].length)));
   if(f.dataset.sig===sig) return; f.dataset.sig=sig;
   const o=(k,l,t)=>`<option value="${k}" data-title="${esc(t||l)}">${esc(l)}</option>`;
-  f.innerHTML=o("","全部")+`<optgroup label="谁得分 / 谁发球">`+[["wA",`${nm(s,"A")} 得分`],["wB",`${nm(s,"B")} 得分（${nm(s,"A")} 丢分）`],["sA",`${nm(s,"A")} 发球`],["sB",`${nm(s,"B")} 发球`]].map(([k,l])=>o(k,l)).join("")+"</optgroup>"
+  // 「打了 ★ 的」（试用者 2026-11-10：下拉里也要能只看 ★ 的分）
+  f.innerHTML=o("","全部")+o("star",`打了 ★ 的（${nStar} 分）`,"好球合集").replace("<option", nStar||v==="star"?"<option":"<option disabled")+`<optgroup label="谁得分 / 谁发球">`+[["wA",`${nm(s,"A")} 得分`],["wB",`${nm(s,"B")} 得分（${nm(s,"A")} 丢分）`],["sA",`${nm(s,"A")} 发球`],["sB",`${nm(s,"B")} 发球`]].map(([k,l])=>o(k,l)).join("")+"</optgroup>"
     +["A","B"].map(p=>`<optgroup label="${esc(nm(s,p))}">`+PICK_KINDS.map(([k,l,d])=>{ const n=P[p][k].length;
       return o(`p:${p}:${k}`, `${l}（${n} 分）${d?" · "+d:""}`, `${nm(s,p)} · ${k==="good"?"好球合集":l}`).replace("<option", n||v===`p:${p}:${k}`?"<option":"<option disabled"); }).join("")+"</optgroup>").join("");
   f.value=v; if(f.value!==v) f.value=""; }
@@ -901,8 +903,8 @@ for(const p of ["A","B"]){ const el=$("e"+p);
 for(const p of ["A","B"]) $("rs"+p).addEventListener("change",e=>{ if(!cur) return; const v=Math.max(0,Math.min(29,parseInt(e.target.value,10)||0));
   cur.start={...cur.start, [p]:v}; persist(); const sc=tapRallies(cur).score; msg(`开局比分改成 ${cur.start.A}:${cur.start.B}，现在 ${sc.A}:${sc.B}。`); render(); });
 $("rPts").addEventListener("change",e=>{ if(!cur) return; cur.to=parseInt(e.target.value,10); persist(); msg(`改成每局 ${cur.to} 分。`); render(); });
-function toggleStar(i){ const x=cur.taps[i], max=Math.max(1,parseInt($("starMax").value,10)||3);
-  if(!x.star && cur.taps.filter(y=>y.star).length>=max){ msg(`高亮最多 ${max} 个：先取消一个，或者把上限改大。`); return; }
+/* 手点 ★ 不限个数（试用者 2026-11-10：「3 个不是指最长的几分打 ★ 吗？」——那个数只管自动挑最长的几分） */
+function toggleStar(i){ const x=cur.taps[i];
   x.star=!x.star; if(!x.star) delete x.star; persist(); msg(""); render(); }
 function playRally(i){ const sp=spans(cur)[i]; sel=i; video.currentTime=sp[0]; playEnd=sp[1]; video.play(); renderReview(); }
 function guess(){ if(videoStart==null||!cur||!cur.taps.length) return null; const g=(cur.taps[0].t-videoStart)/1000; return g>=0&&g<=(video.duration||Infinity)?g:null; }
@@ -1173,6 +1175,11 @@ let split=lget(SPLIT,"diag"), flip=lget(FLIP,"0")==="1", fx=null, hapEl=null, la
 if(!SPLITS.some(x=>x[0]===split)) split="diag";
 function sndOn(){ return lget(SND,"0")==="1"; }   // 提示音默认关（试用者 2026-11-10：吵到旁边的人）；iPhone 改成默认开轻震   // 没有震动的机型（iPhone）默认开提示音
 function hapOn(){ return true; }   // 震动一直开（试用者 2026-11-10：默认都要震动，只留提示音开关）   // 震动默认开（安卓、iPhone 都是），由首页的「按键反馈」选
+/* 回看视频静音（试用者 2026-11-10）：右上角按钮，默认静音，记住上次的选择；只管回放，导出的视频照样带声音 */
+const MUTE="courtside-mute";
+function setMute(m){ video.muted=m; lset(MUTE, m?"1":"0"); const b=$("vMute"); b.textContent=m?"🔇":"🔊"; b.title=m?"现在静音：点一下开声音":"现在有声音：点一下静音"; b.setAttribute("aria-label", b.title); }
+setMute(lget(MUTE,"1")==="1");
+$("vMute").addEventListener("click",e=>{ e.stopPropagation(); setMute(!video.muted); });
 $("sndLive").checked=sndOn(); $("sndLive").addEventListener("change",e=>lset(SND, e.target.checked?"1":"0"));
 $("hapLive").checked=hapOn(); 
    
@@ -1327,7 +1334,7 @@ for(const id of ["bLive","bReplay"]) $(id).addEventListener("click",()=>{ if(!pe
 /* 新版提示（试用者 2026-11-10：posecap.com 已经更新，桌面 App 里还是旧页面——App 切回前台不会重新载入，场边打点页也没有刷新键）：
    posecap.com 版的 BUILD 是 make_courtside 填的这一版指纹；回到前台、回到首页时去网站上取一下这一页（不走缓存），指纹不一样就在顶上提示「有新版本」。
    正在现场打点、这局没打完时不提示，回到首页或打完再提示。claude.ai 版 BUILD 为空，不查（发布新版时 claude.ai 自己会重新载入） */
-const BUILD = "25cbdf9fec40";
+const BUILD = "d474ff63e97b";
 let newBuild="", lastCheck=0;
 function freshReload(tag){ location.replace(location.pathname+"?v="+encodeURIComponent(tag||Date.now())); }   // 换个地址参数，绕开手机缓存
 async function checkUpdate(force){ if(!BUILD || newBuild) return; const now=Date.now(); if(!force && now-lastCheck<60000) return; lastCheck=now;
