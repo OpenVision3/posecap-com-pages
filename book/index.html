@@ -5,12 +5,12 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 </head><body>
 <style>
-/* 由 scripts/make_intro.py 生成：main 里的卡片占位换成 config/intro.yaml 的工具卡片，截图内嵌；脚本里的申请占位换成收申请的邮箱；左上二维码 = 这一页的地址（宽屏才显示）。
-   版式：电脑一屏——左边球场绿竖栏（名字、目的、四步），右边 3×2 工具卡；申请表是浮层。窄屏改成上下滚动 */
+/* 由 scripts/make_intro.py 生成：main 里的卡片占位换成 config/intro.yaml 的工具卡片，截图内嵌；左上二维码 = 这一页的地址（宽屏才显示）。
+   版式：电脑一屏——左边球场绿竖栏（名字、目的、四步），右边工具卡。窄屏改成上下滚动 */
 :root{
   --bg:#f3f6f4;--panel:#ffffff;--court:#1f6b52;--court-2:#185943;
   --fg:#16241e;--muted:#56665f;--rule:#d6e0db;--shuttle:#f2b705;
-  --chip:#e6eeea;--link:#1f6b52;--shadow:0 1px 2px #16241e14,0 6px 16px #16241e14;--shadow-up:0 2px 4px #16241e1a,0 14px 28px #16241e24;--ok:#1f7a4d;--warn:#a35d00;--scrim:#0c1a1499;
+  --chip:#e6eeea;--link:#1f6b52;--shadow:0 1px 2px #16241e14,0 6px 16px #16241e14;--shadow-up:0 2px 4px #16241e1a,0 14px 28px #16241e24;
   --display:"ZCOOL QingKe HuangYou","Noto Sans SC","PingFang SC",sans-serif;
   --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -18,11 +18,11 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0f1714;--panel:#16211c;--court:#1d5c47;--court-2:#174a3a;
   --fg:#e7efeb;--muted:#9fb1a8;--rule:#2a3a33;--shuttle:#f5c533;
-  --chip:#203029;--link:#f5c533;--ok:#6fd19c;--warn:#f0b35a;--scrim:#000000aa;--shadow:0 1px 2px #0006,0 6px 16px #0005;--shadow-up:0 2px 4px #0007,0 14px 28px #0008;color-scheme:dark}}
+  --chip:#203029;--link:#f5c533;--shadow:0 1px 2px #0006,0 6px 16px #0005;--shadow-up:0 2px 4px #0007,0 14px 28px #0008;color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0f1714;--panel:#16211c;--court:#1d5c47;--court-2:#174a3a;
   --fg:#e7efeb;--muted:#9fb1a8;--rule:#2a3a33;--shuttle:#f5c533;
-  --chip:#203029;--link:#f5c533;--ok:#6fd19c;--warn:#f0b35a;--scrim:#000000aa;--shadow:0 1px 2px #0006,0 6px 16px #0005;--shadow-up:0 2px 4px #0007,0 14px 28px #0008;color-scheme:dark}
+  --chip:#203029;--link:#f5c533;--shadow:0 1px 2px #0006,0 6px 16px #0005;--shadow-up:0 2px 4px #0007,0 14px 28px #0008;color-scheme:dark}
 
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 var(--body)}
@@ -67,9 +67,6 @@ h1,h2{text-wrap:balance;margin:0}
 /* 图标按图片区的高度整个缩进去（object-fit:contain），电脑上卡片排三行、图片区很矮时也不裁（试用者 2026-11-06） */
 .iconshot{position:relative;background:radial-gradient(circle at 50% 42%,var(--panel),var(--chip) 75%)}
 .shot.iconshot img{position:absolute;left:0;top:12%;width:100%;height:76%;max-height:none;object-fit:contain;object-position:center;filter:drop-shadow(0 4px 10px #16241e30)}
-.pdfshot{display:grid;place-items:center;background:var(--court);color:#fff}
-.pdfshot div{font:400 30px/1.2 var(--display);text-align:center}
-.pdfshot small{display:block;font:500 12px var(--mono);color:#cfe5da;letter-spacing:.08em;margin-top:6px}
 .tool .body{display:flex;flex-direction:column;gap:4px;padding:12px 14px 14px}
 .tag{font:500 11.5px/1 var(--mono);letter-spacing:.08em;color:var(--muted)}
 .name{font-weight:700;font-size:17px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
@@ -97,41 +94,6 @@ h1,h2{text-wrap:balance;margin:0}
 }
 @media (max-width:560px){.tools{grid-template-columns:1fr}}
 
-/* 申请浮层 */
-.sheet{position:fixed;inset:0;z-index:20;background:var(--scrim);display:grid;place-items:center;
-  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.card{background:var(--panel);border-radius:16px;width:min(560px,100%);max-height:100%;overflow:auto;padding:24px;display:grid;gap:14px;box-shadow:0 20px 50px #0004}
-.card header{display:flex;justify-content:space-between;align-items:start;gap:12px}
-.card h2{font:400 26px/1.2 var(--display)}
-.card .lead{margin:4px 0 0;color:var(--muted);font-size:14px}
-.x{border:0;background:var(--chip);color:var(--fg);width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;flex:none}
-form{display:grid;gap:12px;min-width:0}
-label{display:grid;gap:3px;font-weight:500;font-size:14.5px}
-label small{font-weight:400;color:var(--muted)}
-input[type=text],input[type=email],select{font:inherit;padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--bg);color:var(--fg);min-width:0}
-fieldset{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:6px 18px}
-legend{font-weight:500;font-size:14.5px;margin-bottom:2px;padding:0}
-legend small{font-weight:400;color:var(--muted)}
-.radio,.check{display:flex;gap:8px;align-items:center;font-weight:400}
-.check{align-items:flex-start;font-size:13.5px;color:var(--muted)}
-.check input{margin-top:5px}
-.go{font:700 15px var(--body);padding:10px 18px;border-radius:10px;border:0;background:var(--court);color:#fff;cursor:pointer;justify-self:start}
-.go:disabled{opacity:.5;cursor:default}
-.send{display:grid;gap:12px}
-.send dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:start}
-.send dt{font-weight:500;font-size:14px;color:var(--muted);padding-top:3px}
-.send dd{margin:0;min-width:0;font-size:14px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
-.send dd span{word-break:break-all}
-.send pre{margin:0;white-space:pre-wrap;word-break:break-all;font:13px/1.6 var(--body);background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;width:100%;box-sizing:border-box}
-.cp,.ghost{font:500 13px var(--body);padding:4px 10px;border-radius:8px;border:1px solid var(--rule);background:var(--panel);color:var(--fg);cursor:pointer}
-.send .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-a.go,a.ghost{text-decoration:none;display:inline-block}
-.go.alt{background:var(--court-2)}
-.hint{margin:0;font-size:12.5px;color:var(--muted)}
-.ghost{padding:9px 14px;font-size:14px}
-.status{padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--bg);font-size:14px}
-.status.ok{border-color:var(--ok)}.status.wait{border-color:var(--warn)}
-.status b{font-weight:700}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -224,105 +186,9 @@ a.go,a.ghost{text-decoration:none;display:inline-block}
         <p>每分点一下，比分自动算；赛后剪出精简版、好球合集，丢分合集给教练看。</p>
         <div class="chips"><span>家长</span><span>手机上用</span><span>视频带比分</span></div></div>
     </a>
-    <button class="tool" type="button" id="open-pdf" aria-haspopup="dialog">
-      <div class="shot pdfshot"><div>编号版 PDF<small>YQ-2026-○○○○</small></div></div>
-      <div class="body"><span class="tag">打印</span>
-        <div class="name">申请打印版 <em>申请 →</em></div>
-        <p>每份印上唯一编号和你的称呼；发邮件申请，PDF 作为附件回给你。</p>
-        <div class="chips"><span>第 1 / 2 版</span><span>A4</span></div></div>
-    </button>
   </main>
 </div>
 
-<div class="sheet" id="pdf" role="dialog" aria-modal="true" aria-labelledby="pdf-h" hidden>
-  <div class="card">
-    <header>
-      <div><h2 id="pdf-h">申请编号版 PDF</h2>
-        <p class="lead">打印版每份都有唯一编号，所以不放公开下载。填好后用邮件发给我们，生成你的那一份后，PDF 作为附件回到你发信的邮箱。</p>
-        <p class="lead"><b>回信会有延迟</b>：两个工作日内请不用重复申请。</p></div>
-      <button class="x" type="button" id="close-pdf" aria-label="关闭">×</button>
-    </header>
-    <form id="req" novalidate>
-      <label for="f-name">称呼 <small>印在版权页「专供」后面，比如「小林家长」「XX 羽毛球队」</small>
-        <input id="f-name" type="text" maxlength="30" required autocomplete="off"></label>
-      <fieldset><legend>要哪一版</legend>
-        <label class="radio"><input type="radio" name="ed" id="ed2" value="2" checked> 第 2 版（推荐）</label>
-        <label class="radio"><input type="radio" name="ed" id="ed1" value="1"> 第 1 版</label>
-      </fieldset>
-      <label for="f-use">主要给谁用
-        <select id="f-use"><option>孩子自己读</option><option>家长陪练</option><option>教练教学</option></select></label>
-      <label class="check"><input type="checkbox" id="f-ok"> 我知道这份 PDF 印有我的编号；可以非商业分享，请保留编号和署名（CC BY-NC 4.0）。</label>
-      <button type="submit" class="go" id="f-go" disabled>生成申请邮件</button>
-      <div id="msg" class="status" hidden></div>
-    </form>
-    <div id="send" class="send" hidden>
-      <p class="lead">把下面这封邮件发出去就行。用 Gmail 或 Outlook 的，点下面对应的按钮，会在新页面打开写好的邮件；其他邮箱（QQ、163 等）请复制收件人、标题和正文，自己发一封。</p>
-      <dl>
-        <dt>收件人</dt><dd><span id="s-to"></span> <button type="button" class="cp" data-cp="s-to">复制</button></dd>
-        <dt>标题</dt><dd><span id="s-sub"></span> <button type="button" class="cp" data-cp="s-sub">复制</button></dd>
-        <dt>正文</dt><dd><pre id="s-body"></pre><button type="button" class="cp" data-cp="s-body">复制</button></dd>
-      </dl>
-      <div class="row"><a class="go" id="s-gmail" href="#" target="_blank" rel="noopener">用 Gmail 发</a><a class="go alt" id="s-outlook" href="#" target="_blank" rel="noopener">用 Outlook 发</a><a class="ghost" id="s-mail" href="#" target="_blank" rel="noopener">用邮件应用发</a><button type="button" class="ghost" id="s-back">改一下</button></div>
-      <p class="hint">点了没反应：手机上长按按钮，在弹出的菜单里选「发送邮件」或「打开」；还不行就用上面的复制。</p>
-      <p class="hint">发出后回信会有延迟，两个工作日内请不用重复申请；没收到请先看看垃圾邮件箱。</p>
-    </div>
-  </div>
-</div>
-
-<script>
-const REQ = {"email": "hlliu211@gmail.com", "name": "Luke Liu", "subject": "【想三拍 PDF 申请】"};   // 收申请的邮箱、名字、标题前缀（config/intro.yaml）
-(() => {
-  const $ = (id) => document.getElementById(id);
-  const sheet = $("pdf"), opener = $("open-pdf");
-  if (sheet && opener) {   // 介绍页里是浮层；独立申请页（make_intro 另出的 request.html）没有浮层，表单直接摆在页面上
-    const open = () => { sheet.hidden = false; $("f-name").focus(); };
-    const close = () => { sheet.hidden = true; opener.focus(); };
-    opener.addEventListener("click", open);
-    $("close-pdf").addEventListener("click", close);
-    sheet.addEventListener("click", (e) => { if (e.target === sheet) close(); });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !sheet.hidden) close(); });
-    if (location.hash === "#pdf") open();
-  }
-
-  const form = $("req"), send = $("send"), msg = $("msg");
-  // 地区按这台设备的时区算（试用者 2026-11-02 定：不查 IP、不联网）；2026-11-03 起页面上不再让人选，只写进申请邮件的「地区：」行
-  const CN_TZ = ["Asia/Shanghai", "Asia/Chongqing", "Asia/Chungking", "Asia/Harbin", "Asia/Urumqi", "Asia/Kashgar", "PRC"];
-  let tz = ""; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
-  // 美洲时区（America/…，南美也算进来，他们打开 claude.ai 也没问题）算北美，中国时区算大陆，其余算其他
-  const rg = CN_TZ.includes(tz) ? "大陆" : tz.startsWith("America/") ? "北美" : "其他";
-  // 勾了「我知道这份 PDF……」才能生成申请邮件（试用者 2026-11-03）
-  $("f-ok").addEventListener("change", () => { $("f-go").disabled = !$("f-ok").checked; });
-  $("f-go").disabled = !$("f-ok").checked;
-  const warn = (t) => { msg.hidden = false; msg.className = "status wait"; msg.textContent = t; };
-  form.addEventListener("submit", (ev) => {
-    ev.preventDefault();
-    const name = $("f-name").value.trim().replace(/[\r\n]+/g, " ");
-    if (!name) return warn("请填称呼，它会印在版权页上。");
-    if (!$("f-ok").checked) return warn("请先勾选「我知道这份 PDF 印有我的编号」。");
-    const ed = document.querySelector("input[name=ed]:checked").value;
-    const subject = `${REQ.subject}第 ${ed} 版`;
-    const body = [`称呼：${name}`, `版本：第 ${ed} 版`, `地区：${rg}`, `主要给谁用：${$("f-use").value}`,
-                  "我知道这份 PDF 印有我的编号；可以非商业分享，请保留编号和署名（CC BY-NC 4.0）。", "",
-                  "（这封邮件由「羽毛球球路：想三拍」页面生成，请不要改上面几行的格式。）"].join("\n");
-    $("s-to").textContent = `${REQ.name} <${REQ.email}>`;
-    $("s-sub").textContent = subject;
-    $("s-body").textContent = body;
-    const su = encodeURIComponent(subject), bo = encodeURIComponent(body), to = encodeURIComponent(REQ.email);
-    // 页面里的 mailto: 常被浏览器拦下，网页邮箱的写信地址是普通 https 链接，新标签页能打开
-    $("s-gmail").href = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${su}&body=${bo}`;
-    $("s-outlook").href = `https://outlook.live.com/mail/0/deeplink/compose?to=${to}&subject=${su}&body=${bo}`;
-    $("s-mail").href = `mailto:${REQ.email}?subject=${su}&body=${bo}`;
-    msg.hidden = true; form.hidden = true; send.hidden = false;
-  });
-  $("s-back").addEventListener("click", () => { send.hidden = true; form.hidden = false; });
-  document.querySelectorAll(".cp").forEach((b) => b.addEventListener("click", async () => {
-    const el = $(b.dataset.cp), text = b.dataset.cp === "s-to" ? REQ.email : el.textContent;
-    try { await navigator.clipboard.writeText(text); b.textContent = "已复制"; }
-    catch (e) { const r = document.createRange(); r.selectNodeContents(el); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = "已选中，按复制"; }
-    setTimeout(() => { b.textContent = "复制"; }, 1800);
-  }));
-})();
-</script>
 <!-- 「放到手机桌面」说明（试用者 2026-11-03 定：用户每次要去微信聊天里找链接）。介绍页、小手册网页版、球路闯关共用这一段：
      页面里放一个 data-ath 的按钮，点了弹出说明；按设备分四种：微信里（先换浏览器）、iPhone / iPad、安卓（浏览器支持就直接「放到桌面」）、电脑。
      已经从桌面图标打开（standalone）就不显示按钮。网址 ?ath=wx|ios|android|pc 可强制看某一种（样张、自测用）。 -->
