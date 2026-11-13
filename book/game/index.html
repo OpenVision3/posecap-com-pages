@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>球路闯关 v78</title>
+<title>球路闯关 v79</title>
 </head><body>
 <style>
 /* 一屏游戏：上 = 比分条，中 = 球场（2D 俯视 / 3D 转播，SVG 自己投影），下 = 优势条 + 字幕 + 按钮。球馆深色一种外观，不跟系统深浅色。 */
@@ -154,6 +154,11 @@ body:has(#thumbPad:not([hidden])) #backZones{display:none}
 .pdesc{grid-column:1/-1;font-size:12px;color:var(--muted);margin-top:-2px;display:flex;flex-direction:column;gap:1px;padding-left:6px;border-left:2px solid var(--line)}
 .pdesc .cur{color:var(--fg);font-weight:700}
 .adv{grid-template-columns:auto repeat(5,1fr)!important}
+/* 体能条（试用者 2026-11-11）：放在「我」「对手」两个状态框里，一直打会掉，分与分之间补回来；低了跑慢、失误多、变红 */
+.handchip .sb{display:flex;align-items:center;gap:4px;margin-top:3px;font-size:10px;font-weight:700;color:var(--muted)}
+.handchip .sb i{display:block;flex:1;min-width:44px;height:6px;border-radius:3px;background:rgba(255,255,255,.15);overflow:hidden}
+.handchip .sb u{display:block;height:100%;width:100%;transition:width .3s;background:var(--me)}
+#handChipOp .sb u{background:var(--op)} .handchip .sb.low u{background:var(--bad)}
 .adv b{font-size:11px;color:var(--gold);align-self:center;padding:0 4px}
 @media (prefers-reduced-motion:reduce){.hero .shuttle,#btnGo{animation:none}}
 /* iPad / 大屏（试用者 2026-11-08：两边空白太多）：竖屏把画面放宽、字放大；横屏改成左边球场、右边控制区 */
@@ -287,7 +292,7 @@ svg text{font-family:var(--font)}
   <section class="screen" id="home">
     <div class="hero">
       <svg class="shuttle" viewBox="-16 -14 32 32" aria-hidden="true"><g style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))"><polygon points="0,10 -9,-8 9,-8" fill="#fff" stroke="#555" stroke-width="1.5"/><line x1="-3" y1="-8" x2="-1" y2="9" stroke="#bbb" stroke-width="1"/><line x1="3" y1="-8" x2="1" y2="9" stroke="#bbb" stroke-width="1"/><circle cx="0" cy="11" r="4.5" fill="#F7F7F7" stroke="#555" stroke-width="1.5"/></g></svg>
-      <h1>球路闯关<span class="ver">v78</span></h1>
+      <h1>球路闯关<span class="ver">v79</span></h1>
       <p class="tag">羽毛球战术闯关 · 9 级对手 · 35 页球路</p>
       <button class="plbtn" id="btnPlayer">👤 <span id="plName"></span> ▾</button>
       <div class="hstats" id="hStats"></div>
@@ -452,6 +457,25 @@ function makeEngine(DATA, rng) {
   /* 对手的反手后场：他面朝 +y，右手 = -x，反手 = +x；左手反过来 */
   function onOpBackhand(m, p) { return !!(m.opBhOn && rowOf(p.y) === "Back" && p.x * (m.opHand === "L" ? -1 : 1) > G.backhand.side_m); }
   function bhTech(m, t) { const B = G.backhand, a = m.me.bhAdj || { ok: 1, good: 1 }; return { ok: Math.min(0.99, t.ok * B.ok * a.ok), good: Math.min(0.99, t.good * B.good * a.good) }; }
+  /* 体能（config stamina，试用者 2026-11-11：一直打就消耗体能，速度慢、失误多；分与分之间休息补回来）：
+     m.sta.me / m.sta.op 从 1 开始，每打一拍扣 drain_shot、每跑 1 米扣 drain_m，每分开打前补 rest；
+     低于 low 以后按差多少（0–1）加失误、加打不到位、跑得慢。两边同一套 */
+  const ST = G.stamina;
+  const tired = (m, who) => ST && m.sta ? Math.max(0, (ST.low - m.sta[who]) / ST.low) : 0;
+  const tiredErr = (d) => d * (ST ? ST.err_max : 0), tiredWeak = (d) => d * (ST ? ST.weak_max : 0);
+  const spd = (m, who) => 1 - tired(m, who) * (ST ? 1 - ST.speed_min : 0);
+  const tiredWord = (d) => ST && d >= ST.tired_at ? "累了，" : "";
+  const staProf = (id) => (ST && ST.profiles.find((p) => p.id === id)) || { drain_x: 1, rest_x: 1 };
+  /* 一拍的消耗 = 出手（drain_shot × 这种球的 shot_x：杀最累，挡网最省）+ 跑动（drain_m × 米数 × 跑得多急）。
+     跑得多急 = 要的速度 ÷ 自己的最快速度（0–1）：抽球来回距离短但几乎没时间，算满；高远对拉时间长、慢慢挪过去，算得少；
+     前后拉吊又远又急，最累（试用者 2026-11-12） */
+  const runCost = (run, dt, vmax) => ST ? ST.drain_m * run * Math.min(1, run / Math.max(dt, 0.1) / vmax) : 0;
+  const shotCost = (shot) => ST ? ST.drain_shot * ((ST.shot_x || {})[shot] || 1) : 0;
+  /* 累积疲劳（试用者 2026-11-12：一分打完下一分又满血不对）：每扣一点体能，其中 carry 那一份这一局补不回来——
+     m.cap 是这一局还能补到的上限，只降不升；分与分之间只补到 cap，不管停了多久 */
+  function effort(m, who, x) { if (!(ST && m.sta)) return; const d = x * m.staK[who].drain_x;
+    m.cap[who] = Math.max(ST.cap_min || 0, m.cap[who] - d * (ST.carry || 0)); m.sta[who] = Math.max(0, Math.min(m.cap[who], m.sta[who] - d)); }
+  const meSpd = (m) => m.me.speed_mps * spd(m, "me"), opSpd = (m) => m.level.speed_mps * spd(m, "op");
   function incomingOf(f) { return f.weak ? "weak" : ATTACK.includes(f.shot) ? "attack" : "normal"; }
 
   /* 落点：side = 接球方；weak 的球落在 weak_lands 那一行、横向往中间收 */
@@ -538,7 +562,7 @@ function makeEngine(DATA, rng) {
   }
 
   /* ---------- 一场比赛 ---------- */
-  function newMatch(levelN, tierId, mode, planPage, adj, hand) {   // hand = 握拍手 "R" / "L"（玩家资料）
+  function newMatch(levelN, tierId, mode, planPage, adj, hand, sta) {   // hand = 握拍手 "R" / "L"；sta = {me, op} 体能档（玩家资料，op 空 = 按级别）
     const level = G.levels[levelN - 1], tier = G.tiers.find((t) => t.id === tierId);
     const plan = mode === "active" ? DATA.active.find((a) => a.page === planPage) : null;
     const me = adjusted(G.players[tier.player], adj);
@@ -551,6 +575,8 @@ function makeEngine(DATA, rng) {
       opBhOn: !!B && (level.backhand || 0) > 0,   // 4 级起打对手反手后场有用（5–7 岁也算：他们不用分左右，但打到那一角照样占便宜）   // 反手那一边的物理 x 符号：右手 = 自己左边 = -x
       level, tier, mode, plan, me, score: { me: 0, op: 0 }, server: "me", points: [], ctrl,
       weak: level.weak_fixed || pick(Object.keys(G.weak_pool || { back: 1 })), wk: { hits: 0, pts: 0, cur: 0, found: false, list: [] }, scout: {},   // 对手弱点 + 球探本
+      sta: { me: 1, op: 1 }, cap: { me: 1, op: 1 },   // 体能；cap = 这一局还能补到多少
+      staK: { me: staProf((sta && sta.me) || "mid"), op: staProf((sta && sta.op) || level.op_sta || "mid") },
       autoRec: ctrl === "auto", autoSplit: ctrl !== "full",   // 只看级别、不看年龄（试用者 2026-11-08）：1–3 级自动回中；1–6 级自动启动；可在选关页手动开关
       log: { choices: [], pos: [], plans: [], idle: 0, split: 0, opShots: 0, rec: [], spl: [], bh: { press: 0, n: 0, err: 0, weak: 0 }, obh: { n: 0, hurt: 0 } }, T: 0,
     };
@@ -560,6 +586,7 @@ function makeEngine(DATA, rng) {
   function startPoint(m) {
     const even = (m.server === "me" ? m.score.me : m.score.op) % 2 === 0;
     const sx = even ? 0.6 : -0.6;   // 发球方站右区（偶数分）或左区
+    if (ST && m.sta) for (const k of ["me", "op"]) m.sta[k] = Math.min(m.cap[k], m.sta[k] + (m.points.length ? ST.rest * m.staK[k].rest_x : 0));   // 分与分之间歇一下，补体能
     m.T = 0; m.rally = []; m.adv = 1; m.prevMine = null; m.pt = { rec: [], spl: [] }; m.myHitT = null; m.recDone = true; m.lastMine = null; m.planK = 0; m.planDone = null; m.feedLeft = m.plan && m.plan.feed ? 1 : 0;
     if (m.plan && !m.plan.first_stroke) {   // 主动模式：对手先喂一球（不算球路的一部分），每分都这样开
       m.opMv = still({ x: 0, y: -BASE }, 0); m.meMv = still({ x: 0, y: BASE }, 0);
@@ -576,7 +603,9 @@ function makeEngine(DATA, rng) {
     }
     m.opMv = still({ x: even ? -0.6 : 0.6, y: -2.4 }, 0);
     m.meMv = still({ x: -m.opMv.from.x, y: 2.8 }, 0);
-    return opHit(m, rng() < 0.7 ? "serve_long" : "serve_short", false, false);
+    const sv = rng() < 0.7 ? "serve_long" : "serve_short";
+    effort(m, "op", shotCost(sv));   // 他发球也扣体能（同上）
+    return opHit(m, sv, false, false);
   }
 
   /* 对手击球：生成飞行；我方要在落地前选 */
@@ -608,7 +637,7 @@ function makeEngine(DATA, rng) {
     // 我这拍的情境（判选项好坏用）
     const opNow = posAt(m.opMv, m.T + sh.flight_s * 0.6);
     const need = Math.max(0, dist(meNow, to) - REACH);
-    const late = m.me.reaction_s + m.me.start_s + need / m.me.speed_mps > sh.flight_s;
+    const late = m.me.reaction_s + m.me.start_s + need / meSpd(m) > sh.flight_s;
     const ctx = { row: rowOf(to.y), incoming: incomingOf(f), opp_row: rowOf(opNow.y), late, opp: opNow,
                   repeat: m.level.repeat_read > 0 && m.lastMine ? m.lastMine.shot : null };   // 5 级起：上一拍打的什么，再打同一种他会猜
     f.ctx = ctx;
@@ -645,7 +674,7 @@ function makeEngine(DATA, rng) {
   /* 抢位：我方打完后点一格 */
   function moveTo(m, zone, tReal) {   // 点了格子马上跑过去等
     const pre = m.meMv, t0 = tReal + m.me.start_s;
-    m.meMv = { pre, from: posAt(pre, t0), to: { x: zone.cx, y: zone.cy }, t0, speed: m.me.speed_mps };
+    m.meMv = { pre, from: posAt(pre, t0), to: { x: zone.cx, y: zone.cy }, t0, speed: meSpd(m) };
     m.posTap = { x: zone.cx, y: zone.cy, t: tReal };
     if (!m.recDone && m.myHitT != null) { m.recDone = true; timing(m, "rec", tReal - m.myHitT); }   // 回中时间：我击球到按回位
   }
@@ -663,7 +692,7 @@ function makeEngine(DATA, rng) {
     const tStart = f.reveal + m.me.start_s + DEC_K * Math.max(0, after - 0.2);
     const boosted = !!f.boost;
     m.meMv = { pre: m.preMv, from: posAt(m.preMv, Math.min(tStart, land)), to: { ...f.to }, t0: tStart,
-               speed: m.me.speed_mps * (boosted ? BOOST.speed_x : 1) };
+               speed: meSpd(m) * (boosted ? BOOST.speed_x : 1) };
   }
   /* 启动（空格 / 按钮）：对手击球那一下按，这一趟跑动倍速。早了晚了都不算 */
   function split(m, tReal) {
@@ -689,6 +718,7 @@ function makeEngine(DATA, rng) {
       m.log.pos.push({ d: dist(m.posTap, f.to), ok: dist(m.posTap, f.to) <= G.stars.pos_ok_m, page: m.lastMine ? m.lastMine.page : null });   // 抢位算在上一拍依据的那页（学习路线）
       m.posTap = null;
     }
+    if (f.kill) { const kr = m.killRec; m.killRec = null; m.T = land; return endPoint(m, "op", `${G.shots[f.shot].name}死了：你上一拍选错，他抓住机会`, kr); }   // 训练营：选错被一拍打死
     if (lateS > MISS_S) {
       if (f.idle) return endPoint(m, "op", "没赶到：上一拍打完站着看球，没抢位", { grade: "bad", why: "打完马上点一格抢位，一般先回到中间", page: null });
       return endPoint(m, "op", opt ? "没赶到，球落地了" : "没来得及选，球落地了", opt);
@@ -699,9 +729,11 @@ function makeEngine(DATA, rng) {
     m.log.choices.push({ grade: rec.grade, page: rec.page, why: rec.why, frac: opt ? decRel / f.flight : 1, shot, rushed, late: lateS > 0 });
     planStep(m, "me", shot, rec.grade);
     // 执行：先看失误，再看到不到位
-    const onBh = onBackhand(m, f.to), tk = onBh ? bhTech(m, tech(m.me, shot)) : tech(m.me, shot);   // 反手后场：失误多、打不到位
+    const onBh = onBackhand(m, f.to), tk0 = onBh ? bhTech(m, tech(m.me, shot)) : tech(m.me, shot);   // 反手后场：失误多、打不到位
+    effort(m, "me", runCost(dist(m.meMv.from, at), land - m.meMv.t0, m.me.speed_mps) + shotCost(shot));   // 这一拍跑过来、打出去：扣体能
+    const nT = tired(m, "me"), tk = { ok: tk0.ok * (1 - tiredErr(nT)), good: tk0.good * (1 - tiredWeak(nT)) };   // 体能低：失误多、打不到位
     if (onBh) { m.log.bh.n++; m.log.choices[m.log.choices.length - 1].bh = true; }
-    if (rng() > tk.ok) { if (onBh) m.log.bh.err++; m.meMv = still(at, land); const ev = errShot(m, "me", shot, f.to, rec.land, land, rec, onBh ? "反手" : ""); m.flight.bh = onBh; return ev; }
+    if (rng() > tk.ok) { if (onBh) m.log.bh.err++; m.meMv = still(at, land); const ev = errShot(m, "me", shot, f.to, rec.land, land, rec, tiredWord(nT) + (onBh ? "反手" : "")); m.flight.bh = onBh; return ev; }
     let goodP = tk.good * (rushed ? 0.6 : 1) * (lateS > 0 ? 0.4 : 1);
     const weak = rng() > goodP;
     if (onBh && weak) m.log.bh.weak++;
@@ -711,13 +743,13 @@ function makeEngine(DATA, rng) {
     const mf = { by: "me", shot, weak, from: { ...f.to }, to, t0: land, flight: sh.flight_s, grade: rec, bh: onBh };
     m.flight = mf; m.rally.push({ by: "me", shot, weak, grade: rec.grade });
     m.lastMine = rec; m.myHitT = land; m.recDone = false;
-    if (m.autoRec) m.meMv = { from: hit, to: { x: 0, y: BASE }, t0: land + 0.2, speed: m.me.recover_mps };
+    if (m.autoRec) m.meMv = { from: hit, to: { x: 0, y: BASE }, t0: land + 0.2, speed: m.me.recover_mps * spd(m, "me") };
     else m.meMv = still(hit, land);
     // 对手跑向落点（会预判的提前起动）
     const op0 = posAt(m.opMv, land); mf.opY = op0.y;   // 我出手时他站在哪（判「前后调动」用）
     const read = f.ctx.repeat === shot && rng() < m.level.repeat_read;   // 又打同一种：他提前猜到，一出手就动
     mf.read = read;
-    m.opMv = { from: op0, to: { ...to }, t0: land + (m.level.reaction_s + m.level.start_s) * (read ? 0 : 1 - m.level.anticipate), speed: m.level.speed_mps };
+    m.opMv = { from: op0, to: { ...to }, t0: land + (m.level.reaction_s + m.level.start_s) * (read ? 0 : 1 - m.level.anticipate), speed: opSpd(m) };
     planSave(m, mf);
     return { type: "my_shot", flight: mf, rec, weak };
   }
@@ -746,14 +778,17 @@ function makeEngine(DATA, rng) {
     m.log.choices.push({ grade: opt.grade, page: opt.page, why: opt.why, frac: 0, shot, rushed: false, late: false, serve: true });
     planStep(m, "me", shot, opt.grade);
     const tk = tech(m.me, shot);
+    effort(m, "me", shotCost(shot));   // 发球也扣体能（按 shot_x 的发球倍数；产品负责人 2026-11-13 选「甲」）
     if (rng() > tk.ok) return errShot(m, "me", shot, from, opt.land, 0, opt, "发球失误：");
     const weak = rng() > tk.good;
     const to = { x: opt.land.x + (rng() - 0.5) * 0.3, y: weak ? -(shot === "serve_long" ? 4.2 : 2.6) : opt.land.y + (rng() - 0.5) * 0.3 };
     const mf = { by: "me", shot, weak, from, to, t0: 0, flight: G.shots[shot].flight_s, grade: opt };
     m.flight = mf; m.rally.push({ by: "me", shot, weak, grade: opt.grade });
-    m.lastMine = opt; m.meMv = still(from, 0); m.myHitT = 0; m.recDone = false;
+    m.lastMine = opt; m.myHitT = 0; m.recDone = false;
+    // 发完球也回中（产品负责人 2026-11-13 v78 验收：1–3 级发完球人不动）：自动回中的级别和别的拍一样，出手 0.2 秒后走回中间；4 级起照旧自己点格子
+    m.meMv = m.autoRec ? { from: { ...from }, to: { x: 0, y: BASE }, t0: 0.2, speed: m.me.recover_mps * spd(m, "me") } : still(from, 0);
     const op0 = posAt(m.opMv, 0); mf.opY = op0.y;
-    m.opMv = { from: op0, to: { ...to }, t0: m.level.reaction_s * 0.5, speed: m.level.speed_mps };
+    m.opMv = { from: op0, to: { ...to }, t0: m.level.reaction_s * 0.5, speed: opSpd(m) };
     return { type: "my_shot", flight: mf, rec: opt, weak };
   }
 
@@ -796,7 +831,7 @@ function makeEngine(DATA, rng) {
   function resolveMine(m) {
     const f = m.flight, land = f.t0 + f.flight; m.T = land;
     const at = posAt(m.opMv, land);
-    const lateS = f.save ? MISS_S + 1 : Math.max(0, dist(at, f.to) - REACH) / m.level.speed_mps;
+    const lateS = f.save ? MISS_S + 1 : Math.max(0, dist(at, f.to) - REACH) / opSpd(m);
     const obh = onOpBackhand(m, f.to);   // 打到他反手后场：他更容易失误、回弱球
     if (obh) { m.log.obh.n++; f.opBh = true; }
     const wk = G.weak_pool ? weakHit(m, f) : null, W = wk ? G.weak_pool[wk] : null;   // 打到他的弱点
@@ -812,12 +847,15 @@ function makeEngine(DATA, rng) {
       }
       return endPoint(m, "me", f.weak ? "他没接到" : "打到空当，他没接到");
     }
+    const mv0 = m.opMv;   // 先算他这一趟跑了多远、多急，再让他站定（以前反过来，他的跑动一直算成 0：2026-11-12 修）
+    effort(m, "op", runCost(dist(mv0.from, at), land - mv0.t0, m.level.speed_mps) + shotCost(null));
     m.opMv = still(at, land); m.hitPt = { ...f.to };   // 人在他跑到的地方，球从落点打回来
-    if (rng() < m.level.error + (obh ? G.backhand.opp_error_add : 0) + (W ? W.err : 0)) {   // 他失误：也把这一球画出来（下网或出界）
+    const nT = tired(m, "op");
+    if (rng() < m.level.error + tiredErr(nT) + (obh ? G.backhand.opp_error_add : 0) + (W ? W.err : 0)) {   // 他失误：也把这一球画出来（下网或出界）
       scoutAdd(m, f, true);
       if (obh) m.log.obh.hurt++;
       const fr0 = G.from_row[rowOf(f.to.y)], s0 = pick(fr0.shots);
-      m.hitPt = null; return errShot(m, "op", s0, f.to, { x: LAT[Math.floor(rng() * 3)], y: DEPTH[G.shots[s0].lands] }, land, null, "他失误了：");
+      m.hitPt = null; return errShot(m, "op", s0, f.to, { x: LAT[Math.floor(rng() * 3)], y: DEPTH[G.shots[s0].lands] }, land, null, tiredWord(nT) ? "他累了，失误了：" : "他失误了：");
     }
     // 他怎么回：主动模式下有一定概率照书上回；打坏了的球他会抓
     const hisRow = rowOf(f.to.y);
@@ -827,9 +865,14 @@ function makeEngine(DATA, rng) {
     const book = planFollowShot(m);
     if (book && can.has(book) && rng() < m.level.follow_book) shot = book;
     const punish = f.grade && f.grade.grade === "bad" && rng() < m.level.punish;
+    /* 训练营（1–3 级自动回中、启动，人总能赶到）：选错的那拍被他抓住，有 kill 的概率他直接一拍打死（杀 / 扑），这一分丢；
+       不然乱点也能赢（试用者 2026-11-11）。4 级起不用：那时没回中、没启动自己就会接不到 */
+    const killer = f.grade && f.grade.grade === "bad" && m.level.kill && !shot ? [...fr.shots, ...(fr.high || [])].find((s) => ATTACK.includes(s)) : null;   // 选错送了机会：网前、中场也能扑 / 杀
+    if (killer && rng() < m.level.kill) { const kev = opHit(m, killer, false, false); kev.flight.kill = true; m.killRec = f.grade; return kev; }
     const set = R.replies[f.shot][f.weak || punish ? "weak" : "good"].filter((r) => can.has(r.shot));
     if (!shot) shot = set.length ? weighted(set).shot : pick([...can]);
-    const weak = lateS > 0 || rng() < m.level.weak_reply * (punish ? 0.3 : 1) + (obh ? G.backhand.opp_weak_add : 0) + (W ? W.weak : 0);
+    effort(m, "op", shotCost(shot) - shotCost(null));   // 出手的消耗按他打的这种球补齐
+    const weak = lateS > 0 || rng() < m.level.weak_reply * (punish ? 0.3 : 1) + tiredWeak(nT) + (obh ? G.backhand.opp_weak_add : 0) + (W ? W.weak : 0);
     scoutAdd(m, f, weak && !ATTACK.includes(shot));
     const oev = opHit(m, shot, weak && !ATTACK.includes(shot), false);
     if (obh && oev.flight.weak) m.log.obh.hurt++;
@@ -882,11 +925,11 @@ function makeEngine(DATA, rng) {
 if (typeof module !== "undefined") module.exports = { makeEngine };
 </script>
 <script>
-const DATA = {"game":{"tiers":[{"id":"t8","name":"8–10 岁","enabled":true,"options":3,"zones":9,"auto_recover":false,"slow":1.7,"min_window_s":1.6,"rushed_share":0.2,"win_counts":true,"view":"3d","voice":false,"plan_hint":false,"same_shot":false,"player":"kid_t8"},{"id":"t5","name":"5–7 岁","enabled":true,"options":2,"zones":3,"auto_recover":true,"slow":2.6,"min_window_s":3.0,"rushed_share":0.15,"win_counts":false,"view":"2d","voice":true,"plan_hint":true,"same_shot":false,"player":"kid_t5"},{"id":"t11","name":"11–12 岁","enabled":true,"options":3,"zones":9,"auto_recover":false,"slow":1.15,"min_window_s":1.0,"rushed_share":0.25,"win_counts":true,"view":"player","voice":false,"plan_hint":false,"same_shot":true,"player":"kid_t11"},{"id":"adult","name":"其他 · 家长/成人","enabled":true,"options":3,"zones":9,"auto_recover":false,"slow":1.0,"min_window_s":0.9,"rushed_share":0.25,"win_counts":true,"view":"3d","voice":false,"plan_hint":false,"same_shot":true,"player":"adult"}],"shots":{"serve_long":{"name":"高远发球","flight_s":1.7,"apex":5.5,"hit_z":1.0,"style":"dash","lands":"Back","plain":"发得又高又远，落到后场"},"serve_short":{"name":"网前发球","flight_s":0.9,"apex":1.7,"hit_z":1.0,"style":"arc","lands":"Front","plain":"轻轻发过网，落在网前"},"clear":{"name":"高远","flight_s":1.6,"apex":6.0,"hit_z":2.5,"style":"dash","lands":"Back","plain":"从后场打到对方后场，又高又远"},"drop":{"name":"吊","flight_s":1.2,"apex":2.9,"hit_z":2.5,"style":"arc","lands":"Front","plain":"从后场轻轻打下来，落到网前"},"smash":{"name":"杀","flight_s":0.8,"apex":2.6,"hit_z":2.6,"style":"bold","lands":"Mid","plain":"在高处用力往下扣"},"net":{"name":"放网","flight_s":0.9,"apex":1.7,"hit_z":1.0,"style":"arc","lands":"Front","plain":"在网前轻轻过网，贴着网落"},"lift":{"name":"挑","flight_s":1.5,"apex":5.0,"hit_z":0.8,"style":"dash","lands":"Back","plain":"从网前往上挑，打到对方后场"},"push":{"name":"推","flight_s":1.0,"apex":2.2,"hit_z":1.4,"style":"line","lands":"Back","plain":"在网前平着推到对方后场"},"drive":{"name":"抽","flight_s":0.6,"apex":1.8,"hit_z":1.4,"style":"line","lands":"Mid","plain":"平着快抽，过网不高"},"block":{"name":"挡网","flight_s":0.8,"apex":1.6,"hit_z":0.8,"style":"arc","lands":"Front","plain":"接杀时挡一下，落到网前"},"net_kill":{"name":"扑","flight_s":0.35,"apex":1.6,"hit_z":1.7,"style":"bold","lands":"Mid","plain":"网前球一冒高就往下扑"}},"from_row":{"Back":{"shots":["clear","drop","smash"],"high":[]},"Mid":{"shots":["drive","push","lift","block"],"high":["smash"]},"Front":{"shots":["net","push","lift"],"high":["net_kill"]}},"players":{"kid_t8":{"reaction_s":0.35,"start_s":0.25,"speed_mps":3.0,"recover_mps":2.2,"tech":{"default":{"ok":0.9,"good":0.55},"serve_long":{"ok":0.97,"good":0.7},"serve_short":{"ok":0.95,"good":0.6},"smash":{"ok":0.88,"good":0.45},"net":{"ok":0.85,"good":0.5},"net_kill":{"ok":0.8,"good":0.6}}},"kid_t5":{"reaction_s":0.45,"start_s":0.3,"speed_mps":2.5,"recover_mps":1.9,"tech":{"default":{"ok":0.85,"good":0.45},"serve_long":{"ok":0.93,"good":0.55},"serve_short":{"ok":0.9,"good":0.5},"smash":{"ok":0.8,"good":0.35},"net":{"ok":0.8,"good":0.4},"net_kill":{"ok":0.7,"good":0.5}}},"kid_t11":{"reaction_s":0.3,"start_s":0.2,"speed_mps":3.4,"recover_mps":2.6,"tech":{"default":{"ok":0.93,"good":0.62},"serve_long":{"ok":0.98,"good":0.75},"serve_short":{"ok":0.96,"good":0.68},"smash":{"ok":0.9,"good":0.55},"net":{"ok":0.88,"good":0.58},"net_kill":{"ok":0.85,"good":0.65}}},"adult":{"reaction_s":0.28,"start_s":0.2,"speed_mps":3.6,"recover_mps":2.8,"tech":{"default":{"ok":0.93,"good":0.62},"serve_long":{"ok":0.98,"good":0.75},"serve_short":{"ok":0.96,"good":0.68},"smash":{"ok":0.9,"good":0.58},"net":{"ok":0.88,"good":0.58},"net_kill":{"ok":0.86,"good":0.66}}}},"parent":{"groups":[{"id":"back","name":"后场高远","shots":["clear","serve_long","lift"],"footwork":false,"backhand":false,"desc":{"weak":"高远球、挑球常打不过对方中场","mid":"多数能打到对方后场，偶尔打到底线","strong":"连着 10 拍都能打到对方底线附近（底线前一米内）"}},{"id":"attack","name":"杀球","shots":["smash"],"footwork":false,"backhand":false,"desc":{"weak":"杀球常下网、出界，或者压不下去","mid":"能往下杀，力量一般，十拍失误两三拍","strong":"杀得又快又低，十拍有七八拍压在对方中场里"}},{"id":"drop","name":"吊球","shots":["drop"],"footwork":false,"backhand":false,"desc":{"weak":"吊球常下网，或者吊得太远、过了前发球线","mid":"多数能过网，落在前发球线附近","strong":"贴网过、落在前发球线以内，十拍有七八拍"}},{"id":"net","name":"网前小球","shots":["net","net_kill","block","serve_short","push","drive"],"footwork":false,"backhand":false,"desc":{"weak":"放网、挡网常下网或冒高被扑","mid":"能放过网，高度有时偏高","strong":"放网贴着网走，能和人连续对放好几拍"}},{"id":"backhand","name":"反手后场","shots":[],"footwork":false,"backhand":true,"desc":{"weak":"反手后场的球常打不过网或打不远，多半要绕到正手","mid":"反手能把球回过去，但打不到对方后场","strong":"反手高远、反手吊都能打到位"}},{"id":"feet","name":"步法","shots":[],"footwork":true,"backhand":false,"desc":{"weak":"打完常站着不动，够不到场地四个角","mid":"四个角都能跑到，回中慢一点","strong":"打完马上回中，到四个角都能站稳再打"}}],"levels":[{"id":"weak","name":"不会","ok":0.88,"good":0.6,"speed":0.85,"time":1.25},{"id":"mid","name":"一般","ok":1.0,"good":1.0,"speed":1.0,"time":1.0},{"id":"strong","name":"好","ok":1.05,"good":1.3,"speed":1.12,"time":0.85}],"default":"mid"},"levels":[{"n":1,"name":"训练营·入门","foe":"小毛球","style":"失误多，常常回出机会球","weak":"球到网前他常常来不及，只能挑高","hint_page":1,"points":5,"error":0.1,"weak_reply":0.45,"follow_book":0.8,"punish":0.3,"anticipate":0.0,"reaction_s":0.45,"start_s":0.3,"speed_mps":2.9,"recover_mps":2.2,"defend":0.0,"repeat_read":0.0,"backhand":0.0,"ctrl":"auto","assist":{"ok":0.98,"good":1.3},"weak_fixed":"net","weak_mode":"fixed","op_left":0.0},{"n":2,"name":"训练营·进阶","foe":"拉拉","style":"能和你对拉，偶尔回弱球","weak":"一拍后场一拍网前，他就跟不上","hint_page":10,"points":5,"error":0.1,"weak_reply":0.33,"follow_book":0.65,"punish":0.45,"anticipate":0.15,"reaction_s":0.35,"start_s":0.25,"speed_mps":3.0,"recover_mps":2.3,"defend":0.0,"repeat_read":0.0,"backhand":0.0,"ctrl":"auto","assist":{"ok":0.97,"good":1.2},"weak_fixed":"move","weak_mode":"fixed","op_left":0.0},{"n":3,"name":"训练营·结业","foe":"网前小快手","style":"会挡网前、会放网","weak":"被拉到底线，回球常常短","hint_page":6,"points":5,"error":0.08,"weak_reply":0.27,"follow_book":0.5,"punish":0.55,"anticipate":0.3,"reaction_s":0.3,"start_s":0.2,"speed_mps":3.2,"recover_mps":2.5,"defend":0.0,"repeat_read":0.0,"backhand":0.0,"ctrl":"auto","assist":{"ok":0.96,"good":1.12},"weak_fixed":"back","weak_mode":"fixed","op_left":0.0},{"n":4,"name":"区级赛","foe":"防守墙","style":"防守稳，一拍杀不死","weak":"每场不一样，打几分自己找出来","hint_page":13,"points":7,"error":0.06,"weak_reply":0.24,"follow_book":0.45,"punish":0.6,"anticipate":0.3,"reaction_s":0.3,"start_s":0.2,"speed_mps":3.3,"recover_mps":2.6,"defend":0.65,"repeat_read":0.0,"backhand":0.25,"ctrl":"recover","assist":null,"weak_fixed":null,"weak_mode":"random","op_left":0.0},{"n":5,"name":"市级赛","foe":"小算盘","style":"专抓你老打同一种球","weak":"每场不一样，打几分自己找出来","hint_page":19,"points":7,"error":0.06,"weak_reply":0.22,"follow_book":0.4,"punish":0.65,"anticipate":0.35,"reaction_s":0.28,"start_s":0.2,"speed_mps":3.4,"recover_mps":2.7,"defend":0.55,"repeat_read":0.7,"backhand":0.3,"ctrl":"recover","assist":null,"weak_fixed":null,"weak_mode":"random","op_left":0.0},{"n":6,"name":"省级赛","foe":"飞毛腿","style":"移动快，会预判你往哪打","weak":"每场不一样，打几分自己找出来","hint_page":15,"points":7,"error":0.05,"weak_reply":0.2,"follow_book":0.35,"punish":0.7,"anticipate":0.5,"reaction_s":0.25,"start_s":0.18,"speed_mps":3.6,"recover_mps":2.9,"defend":0.6,"repeat_read":0.7,"backhand":0.35,"ctrl":"recover","assist":null,"weak_fixed":null,"weak_mode":"random","op_left":1.0},{"n":7,"name":"全国赛","foe":"快枪手","style":"出手快，平抽、挡网压着你打","weak":"每场不一样，被你用多了他还会补上、换一个","hint_page":21,"points":7,"error":0.05,"weak_reply":0.18,"follow_book":0.3,"punish":0.65,"anticipate":0.35,"reaction_s":0.28,"start_s":0.2,"speed_mps":3.4,"recover_mps":2.7,"defend":0.55,"repeat_read":0.7,"backhand":0.45,"ctrl":"full","assist":null,"weak_fixed":null,"weak_mode":"shift","op_left":0.34},{"n":8,"name":"亚青赛","foe":"铁壁","style":"什么球都能救起来","weak":"每场不一样，被你用多了他还会补上、换一个","hint_page":16,"points":7,"error":0.04,"weak_reply":0.16,"follow_book":0.28,"punish":0.7,"anticipate":0.45,"reaction_s":0.26,"start_s":0.18,"speed_mps":3.5,"recover_mps":2.8,"defend":0.62,"repeat_read":0.75,"backhand":0.5,"ctrl":"full","assist":null,"weak_fixed":null,"weak_mode":"shift","op_left":0.34},{"n":9,"name":"世青赛","foe":"小冠军","style":"样样都会，专抓你的空当","weak":"每场不一样，被你用多了他还会补上、换一个","hint_page":27,"points":7,"error":0.04,"weak_reply":0.15,"follow_book":0.25,"punish":0.75,"anticipate":0.55,"reaction_s":0.25,"start_s":0.18,"speed_mps":3.6,"recover_mps":2.9,"defend":0.68,"repeat_read":0.8,"backhand":0.55,"ctrl":"full","assist":null,"weak_fixed":null,"weak_mode":"shift","op_left":0.34}],"active_patterns":[{"page":1,"feed":null,"level":1,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":6,"feed":"clear","level":1,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":7,"feed":"net","level":1,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":10,"feed":"clear","level":1,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":11,"feed":"clear","level":2,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":12,"feed":"clear","level":3,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":13,"feed":"clear","level":4,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":14,"feed":"clear","level":4,"feed_weak":true,"name":null,"seq":null,"first_stroke":null},{"page":16,"feed":"clear","level":4,"feed_weak":true,"name":null,"seq":null,"first_stroke":null},{"page":19,"feed":"clear","level":5,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":20,"feed":"net","level":5,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":17,"feed":"clear","level":6,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":29,"feed":null,"level":6,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":3,"feed":"smash","level":1,"feed_weak":false,"name":"被杀了别慌，挑高球","seq":[["lift"],[],["lift","clear"]],"first_stroke":false},{"page":4,"feed":"smash","level":1,"feed_weak":false,"name":"挡一下，再挑高","seq":[["block"],["net","lift"],["lift"]],"first_stroke":false},{"page":5,"feed":"drop","level":1,"feed_weak":false,"name":"被动时，挑回平手","seq":[["lift"],[],["clear","lift"]],"first_stroke":false},{"page":2,"feed":null,"level":2,"feed_weak":false,"name":"短发球，等他挑","seq":[["serve_short"],["lift"],["drop","clear"]],"first_stroke":true},{"page":8,"feed":null,"level":2,"feed_weak":false,"name":"短发球，他推我抽","seq":[["serve_short"],["push"],["drive"]],"first_stroke":true},{"page":9,"feed":"drive","level":2,"feed_weak":false,"name":"平抽快打，比手快","seq":[["drive"],["drive"],["drive"]],"first_stroke":false},{"page":15,"feed":"smash","level":3,"feed_weak":false,"name":"挡网放网，逼他挑再杀","seq":[["block","net"],["lift"],["smash"]],"first_stroke":false},{"page":18,"feed":"net","level":3,"feed_weak":false,"name":"对放时，一冒高就扑","seq":[["net"],["net"],["net_kill"]],"first_stroke":false},{"page":23,"feed":"drive","level":3,"feed_weak":false,"name":"平抽时推后场，等弱球杀","seq":[["push"],["clear","drive","lift"],["smash"]],"first_stroke":false},{"page":28,"feed":"net","level":3,"feed_weak":false,"name":"他放网，我挑到底线","seq":[["lift"],["clear","drop"],["clear","drop","lift"]],"first_stroke":false},{"page":30,"feed":null,"level":4,"feed_weak":false,"name":"高发球被杀，先挡网","seq":[["serve_long"],["smash"],["block"]],"first_stroke":true},{"page":31,"feed":"serve_short","level":4,"feed_weak":false,"name":"接短发，抢网前","seq":[["net","push"],["lift","net"],[]],"first_stroke":false},{"page":33,"feed":null,"level":4,"feed_weak":false,"name":"高发被吊，上网放网","seq":[["serve_long"],["drop"],["net"]],"first_stroke":true},{"page":35,"feed":"push","level":4,"feed_weak":false,"name":"被推到后场，打被动高远","seq":[["clear"],[],["clear","drop"]],"first_stroke":false}],"stars":{"two_star_good_share":0.7,"two_star_bad_share":0.2,"three_star_fast_share":0.6,"three_star_pos_share":0.6,"pos_ok_m":1.6,"no_win_best_share":0.75,"unlock_stars":2},"route":{"know_n":1,"choose_n":3,"choose_share":0.7,"fast_share":0.6,"pos_n":2,"pos_share":0.6,"complete_n":1},"reach":{"reach_m":0.9,"miss_s":0.15,"decision_k":0.4},"boost":{"speed_x":2.0,"early_s":0.15,"late_s":0.25},"open_space_m":1.5,"replay_rate":0.4,"anim_url":"https://claude.ai/artifact/DJKgwsbFGsiAmjEEyk7tFD","backhand":{"note":"握拍手（试用者 2026-11-08 定做 1+2+3）：对手 4 级起压反手后场；孩子在反手后场击球按 tech 打折；5–7 岁（3 格）不分左右","side_m":0.6,"ok":0.93,"good":0.7,"min_zones":9,"opp_weak_add":0.15,"opp_error_add":0.03},"weak_pool":{"back":{"name":"后场弱","desc":"被拉到底线，回球常常短","err":0.1,"weak":0.35,"pages":[6,10,12],"zone":"他的后场"},"net":{"name":"网前慢","desc":"球到网前他常常来不及，只能挑高","err":0.1,"weak":0.35,"pages":[7,17,11],"zone":"他的网前"},"backhand":{"name":"反手后场弱","desc":"反手那一角的后场球回不好","err":0.12,"weak":0.4,"pages":[19,20,6],"zone":"他的反手后场"},"move":{"name":"前后调动慢","desc":"一拍后场一拍网前，他就跟不上","err":0.1,"weak":0.4,"pages":[10,11,19],"zone":"前后调动"},"press":{"name":"连压顶不住","desc":"连着下压两拍，他就只能回弱球","err":0.08,"weak":0.45,"pages":[14,16,13],"zone":"连续下压"},"corner":{"name":"四角跑动慢","desc":"打到四个角，他跑不过来","err":0.1,"weak":0.35,"pages":[19,20,10],"zone":"四个角"}}},"replies":{"replies":{"serve_long":{"good":[{"shot":"clear","w":6.0},{"shot":"drop","w":3.0},{"shot":"smash","w":1.0}],"weak":[{"shot":"smash","w":6.0},{"shot":"drop","w":2.0},{"shot":"clear","w":2.0}],"weak_lands":"Mid"},"serve_short":{"good":[{"shot":"lift","w":7.0},{"shot":"net","w":3.0}],"weak":[{"shot":"push","w":5.0},{"shot":"net_kill","w":5.0}],"weak_lands":"Front"},"clear":{"good":[{"shot":"clear","w":55.0},{"shot":"drop","w":35.0},{"shot":"smash","w":10.0}],"weak":[{"shot":"smash","w":60.0},{"shot":"drop","w":25.0},{"shot":"clear","w":15.0}],"weak_lands":"Mid"},"drop":{"good":[{"shot":"lift","w":6.0},{"shot":"net","w":4.0}],"weak":[{"shot":"net_kill","w":4.0},{"shot":"push","w":35.0},{"shot":"net","w":25.0}],"weak_lands":"Front"},"smash":{"good":[{"shot":"lift","w":45.0},{"shot":"block","w":45.0},{"shot":"drive","w":10.0}],"weak":[{"shot":"drive","w":4.0},{"shot":"push","w":3.0},{"shot":"lift","w":3.0}],"weak_lands":"Mid"},"net":{"good":[{"shot":"lift","w":65.0},{"shot":"net","w":35.0}],"weak":[{"shot":"net_kill","w":55.0},{"shot":"push","w":45.0}],"weak_lands":"Front"},"lift":{"good":[{"shot":"clear","w":4.0},{"shot":"drop","w":3.0},{"shot":"smash","w":3.0}],"weak":[{"shot":"smash","w":8.0},{"shot":"drop","w":2.0}],"weak_lands":"Mid"},"push":{"good":[{"shot":"lift","w":4.0},{"shot":"clear","w":3.0},{"shot":"drive","w":3.0}],"weak":[{"shot":"smash","w":5.0},{"shot":"drive","w":5.0}],"weak_lands":"Mid"},"drive":{"good":[{"shot":"drive","w":5.0},{"shot":"block","w":3.0},{"shot":"lift","w":2.0}],"weak":[{"shot":"smash","w":5.0},{"shot":"drive","w":5.0}],"weak_lands":"Mid"},"block":{"good":[{"shot":"lift","w":6.0},{"shot":"net","w":4.0}],"weak":[{"shot":"net_kill","w":6.0},{"shot":"push","w":4.0}],"weak_lands":"Front"},"net_kill":{"good":[{"shot":"block","w":1.0}],"weak":[{"shot":"lift","w":6.0},{"shot":"block","w":4.0}],"weak_lands":"Mid"}},"grades":[{"shot":"serve_long","when":{"row":null,"incoming":null,"opp_row":null,"late":null},"grade":"best","why":"高远发球发到底线，先站稳","page":1},{"shot":"serve_short","when":{"row":null,"incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"短发也行，但他会抢网，要准备好","page":2},{"shot":"smash","when":{"row":null,"incoming":"weak","opp_row":null,"late":false},"grade":"best","why":"球又高又慢，就是杀的机会","page":13},{"shot":"net_kill","when":{"row":null,"incoming":"weak","opp_row":null,"late":false},"grade":"best","why":"球在网上面，抢上去扑","page":16},{"shot":"clear","when":{"row":"Back","incoming":"weak","opp_row":null,"late":null},"grade":"ok","why":"机会球只拉高远，把机会让掉了","page":13},{"shot":"smash","when":{"row":null,"incoming":null,"opp_row":null,"late":true},"grade":"bad","why":"没到位还杀，杀不下去还送机会","page":35},{"shot":"clear","when":{"row":"Back","incoming":null,"opp_row":null,"late":true},"grade":"best","why":"没到位就打又高又深的球，给自己时间回中","page":35},{"shot":"lift","when":{"row":null,"incoming":null,"opp_row":null,"late":true},"grade":"best","why":"来不及就挑高，先活下来","page":5},{"shot":"net","when":{"row":null,"incoming":null,"opp_row":null,"late":true},"grade":"bad","why":"没到位放网容易放高，他会扑","page":7},{"shot":"drop","when":{"row":"Back","incoming":null,"opp_row":"Front","late":null},"grade":"bad","why":"他已经站在网前，别吊，他会扑","page":13},{"shot":"drop","when":{"row":"Back","incoming":null,"opp_row":"Back","late":null},"grade":"best","why":"他在后场，吊到网前让他前后跑","page":10},{"shot":"clear","when":{"row":"Back","incoming":null,"opp_row":"Front","late":null},"grade":"best","why":"他在网前，拉到底线让他退","page":6},{"shot":"clear","when":{"row":"Back","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"对拉比耐心，等他回短","page":6},{"shot":"smash","when":{"row":"Back","incoming":"normal","opp_row":null,"late":null},"grade":"bad","why":"球不高也不慢，杀不死，还容易被挡网","page":14},{"shot":"lift","when":{"row":null,"incoming":"attack","opp_row":null,"late":null},"grade":"best","why":"被杀了别慌，挑高到底线","page":3},{"shot":"block","when":{"row":null,"incoming":"attack","opp_row":null,"late":null},"grade":"best","why":"挡一下到网前，让他来不及","page":4},{"shot":"drive","when":{"row":null,"incoming":"attack","opp_row":null,"late":null},"grade":"ok","why":"抽回去也行，但容易被再压","page":4},{"shot":"net","when":{"row":"Front","incoming":"normal","opp_row":null,"late":null},"grade":"best","why":"网前对放，谁先挑谁吃亏","page":7},{"shot":"lift","when":{"row":"Front","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"挑高到底线也安全，但把进攻让给了他","page":5},{"shot":"push","when":{"row":"Front","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"推后场要快要平，不然被他杀","page":8},{"shot":"drive","when":{"row":"Mid","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"平抽快打，比手快","page":9},{"shot":"push","when":{"row":"Mid","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"推到后场，让他退","page":23},{"shot":"lift","when":{"row":"Mid","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"挑高也行，就是给了他杀的机会","page":5},{"shot":"block","when":{"row":"Mid","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"挡到网前，让他上网","page":4}]},"zones":{"court":{"width_m":5.18,"depth_m":6.7,"short_service_m":1.98,"doubles_width_m":6.1,"doubles_long_service_m":5.94},"rows_m":[1.98,4.5],"cols_m":[1.2,2.78,1.2]},"active":[{"page":1,"name":"高发球，先站稳","seq":[["serve_long"],["clear"],["clear","drop"]],"target":1,"feed":null,"first_stroke":true,"level":1,"feed_weak":false},{"page":3,"name":"被杀了别慌，挑高球","seq":[["lift"],[],["lift","clear"]],"target":3,"feed":"smash","first_stroke":false,"level":1,"feed_weak":false},{"page":4,"name":"挡一下，再挑高","seq":[["block"],["net","lift"],["lift"]],"target":3,"feed":"smash","first_stroke":false,"level":1,"feed_weak":false},{"page":5,"name":"被动时，挑回平手","seq":[["lift"],[],["clear","lift"]],"target":3,"feed":"drop","first_stroke":false,"level":1,"feed_weak":false},{"page":6,"name":"后场对拉，比耐心","seq":[["clear"],["clear"],["clear"]],"target":1,"feed":"clear","first_stroke":false,"level":1,"feed_weak":false},{"page":7,"name":"网前对放，逼他挑","seq":[["net"],["net"],["net"]],"target":1,"feed":"net","first_stroke":false,"level":1,"feed_weak":false},{"page":10,"name":"拉一拍，吊一拍","seq":[["clear"],["clear"],["drop"]],"target":2,"feed":"clear","first_stroke":false,"level":1,"feed_weak":false},{"page":2,"name":"短发球，等他挑","seq":[["serve_short"],["lift"],["drop","clear"]],"target":3,"feed":null,"first_stroke":true,"level":2,"feed_weak":false},{"page":8,"name":"短发球，他推我抽","seq":[["serve_short"],["push"],["drive"]],"target":3,"feed":null,"first_stroke":true,"level":2,"feed_weak":false},{"page":9,"name":"平抽快打，比手快","seq":[["drive"],["drive"],["drive"]],"target":3,"feed":"drive","first_stroke":false,"level":2,"feed_weak":false},{"page":11,"name":"吊一拍，挑到底线","seq":[["drop"],["net"],["lift"]],"target":2,"feed":"clear","first_stroke":false,"level":2,"feed_weak":false},{"page":12,"name":"连拉三拍，再吊","seq":[["clear"],["clear"],["clear"],["clear"],["drop"]],"target":3,"feed":"clear","first_stroke":false,"level":3,"feed_weak":false},{"page":15,"name":"挡网放网，逼他挑再杀","seq":[["block","net"],["lift"],["smash"]],"target":3,"feed":"smash","first_stroke":false,"level":3,"feed_weak":false},{"page":18,"name":"对放时，一冒高就扑","seq":[["net"],["net"],["net_kill"]],"target":3,"feed":"net","first_stroke":false,"level":3,"feed_weak":false},{"page":23,"name":"平抽时推后场，等弱球杀","seq":[["push"],["clear","drive","lift"],["smash"]],"target":3,"feed":"drive","first_stroke":false,"level":3,"feed_weak":false},{"page":28,"name":"他放网，我挑到底线","seq":[["lift"],["clear","drop"],["clear","drop","lift"]],"target":3,"feed":"net","first_stroke":false,"level":3,"feed_weak":false},{"page":13,"name":"小吊球，大杀球","seq":[["drop"],["lift"],["smash"]],"target":3,"feed":"clear","first_stroke":false,"level":4,"feed_weak":false},{"page":14,"name":"杀一拍不够，再杀一拍","seq":[["smash"],["lift"],["smash"]],"target":3,"feed":"clear","first_stroke":false,"level":4,"feed_weak":true},{"page":16,"name":"杀完上网，扑！","seq":[["smash"],["block"],["net_kill"]],"target":4,"feed":"clear","first_stroke":false,"level":4,"feed_weak":true},{"page":30,"name":"高发球被杀，先挡网","seq":[["serve_long"],["smash"],["block"]],"target":3,"feed":null,"first_stroke":true,"level":4,"feed_weak":false},{"page":31,"name":"接短发，抢网前","seq":[["net","push"],["lift","net"],[]],"target":3,"feed":"serve_short","first_stroke":false,"level":4,"feed_weak":false},{"page":33,"name":"高发被吊，上网放网","seq":[["serve_long"],["drop"],["net"]],"target":3,"feed":null,"first_stroke":true,"level":4,"feed_weak":false},{"page":35,"name":"被推到后场，打被动高远","seq":[["clear"],[],["clear","drop"]],"target":3,"feed":"push","first_stroke":false,"level":4,"feed_weak":false},{"page":19,"name":"四方球，赶着他跑","seq":[["clear"],[],["clear"],[],["drop","net"]],"target":3,"feed":"clear","first_stroke":false,"level":5,"feed_weak":false},{"page":20,"name":"同一个角，再来一次","seq":[["drop","net"],["net","drop"],["drop","net"]],"target":3,"feed":"net","first_stroke":false,"level":5,"feed_weak":false},{"page":17,"name":"吊完上网，扑！","seq":[["drop"],["net"],["net_kill"]],"target":4,"feed":"clear","first_stroke":false,"level":6,"feed_weak":false},{"page":29,"name":"发球抢攻：他挑后场，我先下压","seq":[["serve_short"],["lift"],["smash","drop"]],"target":2,"feed":null,"first_stroke":true,"level":6,"feed_weak":false}]};
+const DATA = {"game":{"tiers":[{"id":"t8","name":"8–10 岁","enabled":true,"options":3,"zones":9,"auto_recover":false,"slow":1.7,"min_window_s":1.6,"rushed_share":0.2,"win_counts":true,"view":"3d","voice":false,"plan_hint":false,"same_shot":false,"player":"kid_t8"},{"id":"t5","name":"5–7 岁","enabled":true,"options":2,"zones":3,"auto_recover":true,"slow":2.6,"min_window_s":3.0,"rushed_share":0.15,"win_counts":false,"view":"2d","voice":true,"plan_hint":true,"same_shot":false,"player":"kid_t5"},{"id":"t11","name":"11–12 岁","enabled":true,"options":3,"zones":9,"auto_recover":false,"slow":1.15,"min_window_s":1.0,"rushed_share":0.25,"win_counts":true,"view":"player","voice":false,"plan_hint":false,"same_shot":true,"player":"kid_t11"},{"id":"adult","name":"其他 · 家长/成人","enabled":true,"options":3,"zones":9,"auto_recover":false,"slow":1.0,"min_window_s":0.9,"rushed_share":0.25,"win_counts":true,"view":"3d","voice":false,"plan_hint":false,"same_shot":true,"player":"adult"}],"shots":{"serve_long":{"name":"高远发球","flight_s":1.7,"apex":5.5,"hit_z":1.0,"style":"dash","lands":"Back","plain":"发得又高又远，落到后场"},"serve_short":{"name":"网前发球","flight_s":0.9,"apex":1.7,"hit_z":1.0,"style":"arc","lands":"Front","plain":"轻轻发过网，落在网前"},"clear":{"name":"高远","flight_s":1.6,"apex":6.0,"hit_z":2.5,"style":"dash","lands":"Back","plain":"从后场打到对方后场，又高又远"},"drop":{"name":"吊","flight_s":1.2,"apex":2.9,"hit_z":2.5,"style":"arc","lands":"Front","plain":"从后场轻轻打下来，落到网前"},"smash":{"name":"杀","flight_s":0.8,"apex":2.6,"hit_z":2.6,"style":"bold","lands":"Mid","plain":"在高处用力往下扣"},"net":{"name":"放网","flight_s":0.9,"apex":1.7,"hit_z":1.0,"style":"arc","lands":"Front","plain":"在网前轻轻过网，贴着网落"},"lift":{"name":"挑","flight_s":1.5,"apex":5.0,"hit_z":0.8,"style":"dash","lands":"Back","plain":"从网前往上挑，打到对方后场"},"push":{"name":"推","flight_s":1.0,"apex":2.2,"hit_z":1.4,"style":"line","lands":"Back","plain":"在网前平着推到对方后场"},"drive":{"name":"抽","flight_s":0.6,"apex":1.8,"hit_z":1.4,"style":"line","lands":"Mid","plain":"平着快抽，过网不高"},"block":{"name":"挡网","flight_s":0.8,"apex":1.6,"hit_z":0.8,"style":"arc","lands":"Front","plain":"接杀时挡一下，落到网前"},"net_kill":{"name":"扑","flight_s":0.35,"apex":1.6,"hit_z":1.7,"style":"bold","lands":"Mid","plain":"网前球一冒高就往下扑"}},"from_row":{"Back":{"shots":["clear","drop","smash"],"high":[]},"Mid":{"shots":["drive","push","lift","block"],"high":["smash"]},"Front":{"shots":["net","push","lift"],"high":["net_kill"]}},"players":{"kid_t8":{"reaction_s":0.35,"start_s":0.25,"speed_mps":3.0,"recover_mps":2.2,"tech":{"default":{"ok":0.9,"good":0.55},"serve_long":{"ok":0.97,"good":0.7},"serve_short":{"ok":0.95,"good":0.6},"smash":{"ok":0.88,"good":0.45},"net":{"ok":0.85,"good":0.5},"net_kill":{"ok":0.8,"good":0.6}}},"kid_t5":{"reaction_s":0.45,"start_s":0.3,"speed_mps":2.5,"recover_mps":1.9,"tech":{"default":{"ok":0.85,"good":0.45},"serve_long":{"ok":0.93,"good":0.55},"serve_short":{"ok":0.9,"good":0.5},"smash":{"ok":0.8,"good":0.35},"net":{"ok":0.8,"good":0.4},"net_kill":{"ok":0.7,"good":0.5}}},"kid_t11":{"reaction_s":0.3,"start_s":0.2,"speed_mps":3.4,"recover_mps":2.6,"tech":{"default":{"ok":0.93,"good":0.62},"serve_long":{"ok":0.98,"good":0.75},"serve_short":{"ok":0.96,"good":0.68},"smash":{"ok":0.9,"good":0.55},"net":{"ok":0.88,"good":0.58},"net_kill":{"ok":0.85,"good":0.65}}},"adult":{"reaction_s":0.28,"start_s":0.2,"speed_mps":3.6,"recover_mps":2.8,"tech":{"default":{"ok":0.93,"good":0.62},"serve_long":{"ok":0.98,"good":0.75},"serve_short":{"ok":0.96,"good":0.68},"smash":{"ok":0.9,"good":0.58},"net":{"ok":0.88,"good":0.58},"net_kill":{"ok":0.86,"good":0.66}}}},"parent":{"groups":[{"id":"back","name":"后场高远","shots":["clear","serve_long","lift"],"footwork":false,"backhand":false,"desc":{"weak":"高远球、挑球常打不过对方中场","mid":"多数能打到对方后场，偶尔打到底线","strong":"连着 10 拍都能打到对方底线附近（底线前一米内）"}},{"id":"attack","name":"杀球","shots":["smash"],"footwork":false,"backhand":false,"desc":{"weak":"杀球常下网、出界，或者压不下去","mid":"能往下杀，力量一般，十拍失误两三拍","strong":"杀得又快又低，十拍有七八拍压在对方中场里"}},{"id":"drop","name":"吊球","shots":["drop"],"footwork":false,"backhand":false,"desc":{"weak":"吊球常下网，或者吊得太远、过了前发球线","mid":"多数能过网，落在前发球线附近","strong":"贴网过、落在前发球线以内，十拍有七八拍"}},{"id":"net","name":"网前小球","shots":["net","net_kill","block","serve_short","push","drive"],"footwork":false,"backhand":false,"desc":{"weak":"放网、挡网常下网或冒高被扑","mid":"能放过网，高度有时偏高","strong":"放网贴着网走，能和人连续对放好几拍"}},{"id":"backhand","name":"反手后场","shots":[],"footwork":false,"backhand":true,"desc":{"weak":"反手后场的球常打不过网或打不远，多半要绕到正手","mid":"反手能把球回过去，但打不到对方后场","strong":"反手高远、反手吊都能打到位"}},{"id":"feet","name":"步法","shots":[],"footwork":true,"backhand":false,"desc":{"weak":"打完常站着不动，够不到场地四个角","mid":"四个角都能跑到，回中慢一点","strong":"打完马上回中，到四个角都能站稳再打"}}],"levels":[{"id":"weak","name":"不会","ok":0.88,"good":0.6,"speed":0.85,"time":1.25},{"id":"mid","name":"一般","ok":1.0,"good":1.0,"speed":1.0,"time":1.0},{"id":"strong","name":"好","ok":1.05,"good":1.3,"speed":1.12,"time":0.85}],"default":"mid"},"levels":[{"n":1,"name":"训练营·入门","foe":"小毛球","style":"失误多，常常回出机会球","weak":"球到网前他常常来不及，只能挑高","hint_page":1,"points":5,"error":0.1,"weak_reply":0.45,"follow_book":0.8,"punish":0.3,"op_sta":"mid","kill":1.0,"anticipate":0.0,"reaction_s":0.4,"start_s":0.25,"speed_mps":3.2,"recover_mps":2.2,"defend":0.0,"repeat_read":0.0,"backhand":0.0,"ctrl":"auto","assist":{"ok":0.98,"good":1.3},"weak_fixed":"net","weak_mode":"fixed","op_left":0.0},{"n":2,"name":"训练营·进阶","foe":"拉拉","style":"能和你对拉，偶尔回弱球","weak":"一拍后场一拍网前，他就跟不上","hint_page":10,"points":5,"error":0.1,"weak_reply":0.33,"follow_book":0.65,"punish":0.45,"op_sta":"mid","kill":0.8,"anticipate":0.15,"reaction_s":0.35,"start_s":0.25,"speed_mps":3.0,"recover_mps":2.3,"defend":0.0,"repeat_read":0.0,"backhand":0.0,"ctrl":"auto","assist":{"ok":0.97,"good":1.2},"weak_fixed":"move","weak_mode":"fixed","op_left":0.0},{"n":3,"name":"训练营·结业","foe":"网前小快手","style":"会挡网前、会放网","weak":"被拉到底线，回球常常短","hint_page":6,"points":5,"error":0.08,"weak_reply":0.27,"follow_book":0.5,"punish":0.55,"op_sta":"mid","kill":0.6,"anticipate":0.3,"reaction_s":0.3,"start_s":0.2,"speed_mps":3.2,"recover_mps":2.5,"defend":0.0,"repeat_read":0.0,"backhand":0.0,"ctrl":"auto","assist":{"ok":0.96,"good":1.12},"weak_fixed":"back","weak_mode":"fixed","op_left":0.0},{"n":4,"name":"区级赛","foe":"防守墙","style":"防守稳，一拍杀不死","weak":"每场不一样，打几分自己找出来","hint_page":13,"points":7,"error":0.06,"weak_reply":0.24,"follow_book":0.45,"punish":0.6,"op_sta":"mid","kill":0,"anticipate":0.3,"reaction_s":0.3,"start_s":0.2,"speed_mps":3.3,"recover_mps":2.6,"defend":0.65,"repeat_read":0.0,"backhand":0.25,"ctrl":"recover","assist":null,"weak_fixed":null,"weak_mode":"random","op_left":0.0},{"n":5,"name":"市级赛","foe":"小算盘","style":"专抓你老打同一种球","weak":"每场不一样，打几分自己找出来","hint_page":19,"points":7,"error":0.06,"weak_reply":0.22,"follow_book":0.4,"punish":0.65,"op_sta":"mid","kill":0,"anticipate":0.35,"reaction_s":0.28,"start_s":0.2,"speed_mps":3.4,"recover_mps":2.7,"defend":0.55,"repeat_read":0.7,"backhand":0.3,"ctrl":"recover","assist":null,"weak_fixed":null,"weak_mode":"random","op_left":0.0},{"n":6,"name":"省级赛","foe":"飞毛腿","style":"移动快，会预判你往哪打","weak":"每场不一样，打几分自己找出来","hint_page":15,"points":7,"error":0.05,"weak_reply":0.2,"follow_book":0.35,"punish":0.7,"op_sta":"mid","kill":0,"anticipate":0.5,"reaction_s":0.25,"start_s":0.18,"speed_mps":3.6,"recover_mps":2.9,"defend":0.6,"repeat_read":0.7,"backhand":0.35,"ctrl":"recover","assist":null,"weak_fixed":null,"weak_mode":"random","op_left":1.0},{"n":7,"name":"全国赛","foe":"快枪手","style":"出手快，平抽、挡网压着你打","weak":"每场不一样，被你用多了他还会补上、换一个","hint_page":21,"points":7,"error":0.05,"weak_reply":0.18,"follow_book":0.3,"punish":0.65,"op_sta":"mid","kill":0,"anticipate":0.35,"reaction_s":0.28,"start_s":0.2,"speed_mps":3.4,"recover_mps":2.7,"defend":0.55,"repeat_read":0.7,"backhand":0.45,"ctrl":"full","assist":null,"weak_fixed":null,"weak_mode":"shift","op_left":0.34},{"n":8,"name":"亚青赛","foe":"铁壁","style":"什么球都能救起来","weak":"每场不一样，被你用多了他还会补上、换一个","hint_page":16,"points":7,"error":0.04,"weak_reply":0.16,"follow_book":0.28,"punish":0.7,"op_sta":"mid","kill":0,"anticipate":0.45,"reaction_s":0.26,"start_s":0.18,"speed_mps":3.5,"recover_mps":2.8,"defend":0.62,"repeat_read":0.75,"backhand":0.5,"ctrl":"full","assist":null,"weak_fixed":null,"weak_mode":"shift","op_left":0.34},{"n":9,"name":"世青赛","foe":"小冠军","style":"样样都会，专抓你的空当","weak":"每场不一样，被你用多了他还会补上、换一个","hint_page":27,"points":7,"error":0.04,"weak_reply":0.15,"follow_book":0.25,"punish":0.75,"op_sta":"mid","kill":0,"anticipate":0.55,"reaction_s":0.25,"start_s":0.18,"speed_mps":3.6,"recover_mps":2.9,"defend":0.68,"repeat_read":0.8,"backhand":0.55,"ctrl":"full","assist":null,"weak_fixed":null,"weak_mode":"shift","op_left":0.34}],"active_patterns":[{"page":1,"feed":null,"level":1,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":6,"feed":"clear","level":1,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":7,"feed":"net","level":1,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":10,"feed":"clear","level":1,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":11,"feed":"clear","level":2,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":12,"feed":"clear","level":3,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":13,"feed":"clear","level":4,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":14,"feed":"clear","level":4,"feed_weak":true,"name":null,"seq":null,"first_stroke":null},{"page":16,"feed":"clear","level":4,"feed_weak":true,"name":null,"seq":null,"first_stroke":null},{"page":19,"feed":"clear","level":5,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":20,"feed":"net","level":5,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":17,"feed":"clear","level":6,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":29,"feed":null,"level":6,"feed_weak":false,"name":null,"seq":null,"first_stroke":null},{"page":3,"feed":"smash","level":1,"feed_weak":false,"name":"被杀了别慌，挑高球","seq":[["lift"],[],["lift","clear"]],"first_stroke":false},{"page":4,"feed":"smash","level":1,"feed_weak":false,"name":"挡一下，再挑高","seq":[["block"],["net","lift"],["lift"]],"first_stroke":false},{"page":5,"feed":"drop","level":1,"feed_weak":false,"name":"被动时，挑回平手","seq":[["lift"],[],["clear","lift"]],"first_stroke":false},{"page":2,"feed":null,"level":2,"feed_weak":false,"name":"短发球，等他挑","seq":[["serve_short"],["lift"],["drop","clear"]],"first_stroke":true},{"page":8,"feed":null,"level":2,"feed_weak":false,"name":"短发球，他推我抽","seq":[["serve_short"],["push"],["drive"]],"first_stroke":true},{"page":9,"feed":"drive","level":2,"feed_weak":false,"name":"平抽快打，比手快","seq":[["drive"],["drive"],["drive"]],"first_stroke":false},{"page":15,"feed":"smash","level":3,"feed_weak":false,"name":"挡网放网，逼他挑再杀","seq":[["block","net"],["lift"],["smash"]],"first_stroke":false},{"page":18,"feed":"net","level":3,"feed_weak":false,"name":"对放时，一冒高就扑","seq":[["net"],["net"],["net_kill"]],"first_stroke":false},{"page":23,"feed":"drive","level":3,"feed_weak":false,"name":"平抽时推后场，等弱球杀","seq":[["push"],["clear","drive","lift"],["smash"]],"first_stroke":false},{"page":28,"feed":"net","level":3,"feed_weak":false,"name":"他放网，我挑到底线","seq":[["lift"],["clear","drop"],["clear","drop","lift"]],"first_stroke":false},{"page":30,"feed":null,"level":4,"feed_weak":false,"name":"高发球被杀，先挡网","seq":[["serve_long"],["smash"],["block"]],"first_stroke":true},{"page":31,"feed":"serve_short","level":4,"feed_weak":false,"name":"接短发，抢网前","seq":[["net","push"],["lift","net"],[]],"first_stroke":false},{"page":33,"feed":null,"level":4,"feed_weak":false,"name":"高发被吊，上网放网","seq":[["serve_long"],["drop"],["net"]],"first_stroke":true},{"page":35,"feed":"push","level":4,"feed_weak":false,"name":"被推到后场，打被动高远","seq":[["clear"],[],["clear","drop"]],"first_stroke":false}],"stars":{"two_star_good_share":0.7,"two_star_bad_share":0.2,"three_star_fast_share":0.6,"three_star_pos_share":0.6,"pos_ok_m":1.6,"no_win_best_share":0.75,"unlock_stars":2},"route":{"know_n":1,"choose_n":3,"choose_share":0.7,"fast_share":0.6,"pos_n":2,"pos_share":0.6,"complete_n":1},"reach":{"reach_m":0.9,"miss_s":0.15,"decision_k":0.4},"boost":{"speed_x":2.0,"early_s":0.15,"late_s":0.25},"open_space_m":1.5,"replay_rate":0.4,"anim_url":"https://claude.ai/artifact/DJKgwsbFGsiAmjEEyk7tFD","backhand":{"note":"握拍手（试用者 2026-11-08 定做 1+2+3）：对手 4 级起压反手后场；孩子在反手后场击球按 tech 打折；5–7 岁（3 格）不分左右","side_m":0.6,"ok":0.93,"good":0.7,"min_zones":9,"opp_weak_add":0.15,"opp_error_add":0.03},"stamina":{"note":"体能（试用者 2026-11-11：一个回合 40–50 拍不合理，一直打消耗体能、速度慢失误多，分与分之间休息补回来）。两边各一条 0–1，开局满；每拍扣 drain_shot × shot_x（这种球出手多累）+ drain_m × 跑的米数 × 跑得多急（0–1），每分开打前补 rest；低于 low 后按差多少加失误、加打不到位、跑慢","drain_shot":0.025,"drain_m":0.01,"rest":0.3,"low":0.7,"err_max":0.3,"weak_max":0.6,"speed_min":0.75,"tired_at":0.4,"carry":0.15,"cap_min":0.4,"shot_x":{"smash":1.6,"net_kill":1.2,"drive":1.2,"clear":1.1,"block":0.7,"net":0.7,"serve_short":0.5,"serve_long":0.8},"profiles":[{"id":"low","name":"弱","drain_x":1.4,"rest_x":0.8},{"id":"mid","name":"一般","drain_x":1.0,"rest_x":1.0},{"id":"high","name":"好","drain_x":0.7,"rest_x":1.25}]},"weak_pool":{"back":{"name":"后场弱","desc":"被拉到底线，回球常常短","err":0.1,"weak":0.35,"pages":[6,10,12],"zone":"他的后场"},"net":{"name":"网前慢","desc":"球到网前他常常来不及，只能挑高","err":0.1,"weak":0.35,"pages":[7,17,11],"zone":"他的网前"},"backhand":{"name":"反手后场弱","desc":"反手那一角的后场球回不好","err":0.12,"weak":0.4,"pages":[19,20,6],"zone":"他的反手后场"},"move":{"name":"前后调动慢","desc":"一拍后场一拍网前，他就跟不上","err":0.1,"weak":0.4,"pages":[10,11,19],"zone":"前后调动"},"press":{"name":"连压顶不住","desc":"连着下压两拍，他就只能回弱球","err":0.08,"weak":0.45,"pages":[14,16,13],"zone":"连续下压"},"corner":{"name":"四角跑动慢","desc":"打到四个角，他跑不过来","err":0.1,"weak":0.35,"pages":[19,20,10],"zone":"四个角"}}},"replies":{"replies":{"serve_long":{"good":[{"shot":"clear","w":6.0},{"shot":"drop","w":3.0},{"shot":"smash","w":1.0}],"weak":[{"shot":"smash","w":6.0},{"shot":"drop","w":2.0},{"shot":"clear","w":2.0}],"weak_lands":"Mid"},"serve_short":{"good":[{"shot":"lift","w":7.0},{"shot":"net","w":3.0}],"weak":[{"shot":"push","w":5.0},{"shot":"net_kill","w":5.0}],"weak_lands":"Front"},"clear":{"good":[{"shot":"clear","w":55.0},{"shot":"drop","w":35.0},{"shot":"smash","w":10.0}],"weak":[{"shot":"smash","w":60.0},{"shot":"drop","w":25.0},{"shot":"clear","w":15.0}],"weak_lands":"Mid"},"drop":{"good":[{"shot":"lift","w":6.0},{"shot":"net","w":4.0}],"weak":[{"shot":"net_kill","w":4.0},{"shot":"push","w":35.0},{"shot":"net","w":25.0}],"weak_lands":"Front"},"smash":{"good":[{"shot":"lift","w":45.0},{"shot":"block","w":45.0},{"shot":"drive","w":10.0}],"weak":[{"shot":"drive","w":4.0},{"shot":"push","w":3.0},{"shot":"lift","w":3.0}],"weak_lands":"Mid"},"net":{"good":[{"shot":"lift","w":65.0},{"shot":"net","w":35.0}],"weak":[{"shot":"net_kill","w":55.0},{"shot":"push","w":45.0}],"weak_lands":"Front"},"lift":{"good":[{"shot":"clear","w":4.0},{"shot":"drop","w":3.0},{"shot":"smash","w":3.0}],"weak":[{"shot":"smash","w":8.0},{"shot":"drop","w":2.0}],"weak_lands":"Mid"},"push":{"good":[{"shot":"lift","w":4.0},{"shot":"clear","w":3.0},{"shot":"drive","w":3.0}],"weak":[{"shot":"smash","w":5.0},{"shot":"drive","w":5.0}],"weak_lands":"Mid"},"drive":{"good":[{"shot":"drive","w":5.0},{"shot":"block","w":3.0},{"shot":"lift","w":2.0}],"weak":[{"shot":"smash","w":5.0},{"shot":"drive","w":5.0}],"weak_lands":"Mid"},"block":{"good":[{"shot":"lift","w":6.0},{"shot":"net","w":4.0}],"weak":[{"shot":"net_kill","w":6.0},{"shot":"push","w":4.0}],"weak_lands":"Front"},"net_kill":{"good":[{"shot":"block","w":1.0}],"weak":[{"shot":"lift","w":6.0},{"shot":"block","w":4.0}],"weak_lands":"Mid"}},"grades":[{"shot":"serve_long","when":{"row":null,"incoming":null,"opp_row":null,"late":null},"grade":"best","why":"高远发球发到底线，先站稳","page":1},{"shot":"serve_short","when":{"row":null,"incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"短发也行，但他会抢网，要准备好","page":2},{"shot":"smash","when":{"row":null,"incoming":"weak","opp_row":null,"late":false},"grade":"best","why":"球又高又慢，就是杀的机会","page":13},{"shot":"net_kill","when":{"row":null,"incoming":"weak","opp_row":null,"late":false},"grade":"best","why":"球在网上面，抢上去扑","page":16},{"shot":"clear","when":{"row":"Back","incoming":"weak","opp_row":null,"late":null},"grade":"ok","why":"机会球只拉高远，把机会让掉了","page":13},{"shot":"smash","when":{"row":null,"incoming":null,"opp_row":null,"late":true},"grade":"bad","why":"没到位还杀，杀不下去还送机会","page":35},{"shot":"clear","when":{"row":"Back","incoming":null,"opp_row":null,"late":true},"grade":"best","why":"没到位就打又高又深的球，给自己时间回中","page":35},{"shot":"lift","when":{"row":null,"incoming":null,"opp_row":null,"late":true},"grade":"best","why":"来不及就挑高，先活下来","page":5},{"shot":"net","when":{"row":null,"incoming":null,"opp_row":null,"late":true},"grade":"bad","why":"没到位放网容易放高，他会扑","page":7},{"shot":"drop","when":{"row":"Back","incoming":null,"opp_row":"Front","late":null},"grade":"bad","why":"他已经站在网前，别吊，他会扑","page":13},{"shot":"drop","when":{"row":"Back","incoming":null,"opp_row":"Back","late":null},"grade":"best","why":"他在后场，吊到网前让他前后跑","page":10},{"shot":"clear","when":{"row":"Back","incoming":null,"opp_row":"Front","late":null},"grade":"best","why":"他在网前，拉到底线让他退","page":6},{"shot":"clear","when":{"row":"Back","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"对拉比耐心，等他回短","page":6},{"shot":"smash","when":{"row":"Back","incoming":"normal","opp_row":null,"late":null},"grade":"bad","why":"球不高也不慢，杀不死，还容易被挡网","page":14},{"shot":"lift","when":{"row":null,"incoming":"attack","opp_row":null,"late":null},"grade":"best","why":"被杀了别慌，挑高到底线","page":3},{"shot":"block","when":{"row":null,"incoming":"attack","opp_row":null,"late":null},"grade":"best","why":"挡一下到网前，让他来不及","page":4},{"shot":"drive","when":{"row":null,"incoming":"attack","opp_row":null,"late":null},"grade":"ok","why":"抽回去也行，但容易被再压","page":4},{"shot":"net","when":{"row":"Front","incoming":"normal","opp_row":null,"late":null},"grade":"best","why":"网前对放，谁先挑谁吃亏","page":7},{"shot":"lift","when":{"row":"Front","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"挑高到底线也安全，但把进攻让给了他","page":5},{"shot":"push","when":{"row":"Front","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"推后场要快要平，不然被他杀","page":8},{"shot":"drive","when":{"row":"Mid","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"平抽快打，比手快","page":9},{"shot":"push","when":{"row":"Mid","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"推到后场，让他退","page":23},{"shot":"lift","when":{"row":"Mid","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"挑高也行，就是给了他杀的机会","page":5},{"shot":"block","when":{"row":"Mid","incoming":null,"opp_row":null,"late":null},"grade":"ok","why":"挡到网前，让他上网","page":4}]},"zones":{"court":{"width_m":5.18,"depth_m":6.7,"short_service_m":1.98,"doubles_width_m":6.1,"doubles_long_service_m":5.94},"rows_m":[1.98,4.5],"cols_m":[1.2,2.78,1.2]},"active":[{"page":1,"name":"高发球，先站稳","seq":[["serve_long"],["clear"],["clear","drop"]],"target":1,"feed":null,"first_stroke":true,"level":1,"feed_weak":false},{"page":3,"name":"被杀了别慌，挑高球","seq":[["lift"],[],["lift","clear"]],"target":3,"feed":"smash","first_stroke":false,"level":1,"feed_weak":false},{"page":4,"name":"挡一下，再挑高","seq":[["block"],["net","lift"],["lift"]],"target":3,"feed":"smash","first_stroke":false,"level":1,"feed_weak":false},{"page":5,"name":"被动时，挑回平手","seq":[["lift"],[],["clear","lift"]],"target":3,"feed":"drop","first_stroke":false,"level":1,"feed_weak":false},{"page":6,"name":"后场对拉，比耐心","seq":[["clear"],["clear"],["clear"]],"target":1,"feed":"clear","first_stroke":false,"level":1,"feed_weak":false},{"page":7,"name":"网前对放，逼他挑","seq":[["net"],["net"],["net"]],"target":1,"feed":"net","first_stroke":false,"level":1,"feed_weak":false},{"page":10,"name":"拉一拍，吊一拍","seq":[["clear"],["clear"],["drop"]],"target":2,"feed":"clear","first_stroke":false,"level":1,"feed_weak":false},{"page":2,"name":"短发球，等他挑","seq":[["serve_short"],["lift"],["drop","clear"]],"target":3,"feed":null,"first_stroke":true,"level":2,"feed_weak":false},{"page":8,"name":"短发球，他推我抽","seq":[["serve_short"],["push"],["drive"]],"target":3,"feed":null,"first_stroke":true,"level":2,"feed_weak":false},{"page":9,"name":"平抽快打，比手快","seq":[["drive"],["drive"],["drive"]],"target":3,"feed":"drive","first_stroke":false,"level":2,"feed_weak":false},{"page":11,"name":"吊一拍，挑到底线","seq":[["drop"],["net"],["lift"]],"target":2,"feed":"clear","first_stroke":false,"level":2,"feed_weak":false},{"page":12,"name":"连拉三拍，再吊","seq":[["clear"],["clear"],["clear"],["clear"],["drop"]],"target":3,"feed":"clear","first_stroke":false,"level":3,"feed_weak":false},{"page":15,"name":"挡网放网，逼他挑再杀","seq":[["block","net"],["lift"],["smash"]],"target":3,"feed":"smash","first_stroke":false,"level":3,"feed_weak":false},{"page":18,"name":"对放时，一冒高就扑","seq":[["net"],["net"],["net_kill"]],"target":3,"feed":"net","first_stroke":false,"level":3,"feed_weak":false},{"page":23,"name":"平抽时推后场，等弱球杀","seq":[["push"],["clear","drive","lift"],["smash"]],"target":3,"feed":"drive","first_stroke":false,"level":3,"feed_weak":false},{"page":28,"name":"他放网，我挑到底线","seq":[["lift"],["clear","drop"],["clear","drop","lift"]],"target":3,"feed":"net","first_stroke":false,"level":3,"feed_weak":false},{"page":13,"name":"小吊球，大杀球","seq":[["drop"],["lift"],["smash"]],"target":3,"feed":"clear","first_stroke":false,"level":4,"feed_weak":false},{"page":14,"name":"杀一拍不够，再杀一拍","seq":[["smash"],["lift"],["smash"]],"target":3,"feed":"clear","first_stroke":false,"level":4,"feed_weak":true},{"page":16,"name":"杀完上网，扑！","seq":[["smash"],["block"],["net_kill"]],"target":4,"feed":"clear","first_stroke":false,"level":4,"feed_weak":true},{"page":30,"name":"高发球被杀，先挡网","seq":[["serve_long"],["smash"],["block"]],"target":3,"feed":null,"first_stroke":true,"level":4,"feed_weak":false},{"page":31,"name":"接短发，抢网前","seq":[["net","push"],["lift","net"],[]],"target":3,"feed":"serve_short","first_stroke":false,"level":4,"feed_weak":false},{"page":33,"name":"高发被吊，上网放网","seq":[["serve_long"],["drop"],["net"]],"target":3,"feed":null,"first_stroke":true,"level":4,"feed_weak":false},{"page":35,"name":"被推到后场，打被动高远","seq":[["clear"],[],["clear","drop"]],"target":3,"feed":"push","first_stroke":false,"level":4,"feed_weak":false},{"page":19,"name":"四方球，赶着他跑","seq":[["clear"],[],["clear"],[],["drop","net"]],"target":3,"feed":"clear","first_stroke":false,"level":5,"feed_weak":false},{"page":20,"name":"同一个角，再来一次","seq":[["drop","net"],["net","drop"],["drop","net"]],"target":3,"feed":"net","first_stroke":false,"level":5,"feed_weak":false},{"page":17,"name":"吊完上网，扑！","seq":[["drop"],["net"],["net_kill"]],"target":4,"feed":"clear","first_stroke":false,"level":6,"feed_weak":false},{"page":29,"name":"发球抢攻：他挑后场，我先下压","seq":[["serve_short"],["lift"],["smash","drop"]],"target":2,"feed":null,"first_stroke":true,"level":6,"feed_weak":false}]};
 /* ---------- v18 补丁（2026-11-06 试用者意见）：9 级分三段、成人档、家长能力说明 ----------
    1–3 级：只管选球路（自动回中、自动启动），自己这边很少失误；4–6 级：自己回中（方向键一下挪一格），自动启动；
    7–9 级：自己回中、自己启动，开放玩家视角。 */
-const VERSION = "v78";
+const VERSION = "v79";
 /* 7–9 级、对手弱点、补的 14 条主动模式球路、家长 / 成人档、家长分组说明：v59 以前写在这里（patchData），2026-11-09 收回 config/game.yaml */
 const G = DATA.game;
 const $ = (id) => document.getElementById(id);
@@ -1101,11 +1144,12 @@ function refreshView() {
 /* 分开放（试用者 2026-11-08）：「对手 右手」在球场上方（他那边），「我 右手」在下方（我这边） */
 function handChip(me, op, lv) {   // lv = 对手那一级：牌子上写级别、握拍手、启动（看到球到起跑）和跑速
   const c = $("handChip"), o = $("handChipOp"); if (!me && !op) { c.hidden = o.hidden = true; return; }
-  c.innerHTML = `<b>我 ${me === "L" ? "左手" : "右手"}</b>`; c.hidden = false;
+  const sb = `<span class="sb" style="visibility:hidden">体能<i><u></u></i></span>`;   // 体能条：比赛里 drawSta 填，回放 / 复盘藏起来
+  c.innerHTML = `<b>我 ${me === "L" ? "左手" : "右手"}</b>${sb}`; c.hidden = false;
   const hand = `<i class="${op === "L" ? "lefty" : ""}">${op === "L" ? "左手" : "右手"}</i>`;
   // 竖着一项一行（试用者 2026-11-08：横着太宽，挡球场）：对手 / 第几级 / 握拍 / 启动 / 跑速
-  o.innerHTML = lv ? `<span class="t">对手</span><span>${lv.n} 级</span><span>${hand}</span><small>启动 ${(lv.reaction_s + lv.start_s).toFixed(2)}s</small><small>跑 ${lv.speed_mps}m/s</small>` : `<i class="${op === "L" ? "lefty" : ""}">对手 ${op === "L" ? "左手" : "右手"}</i>`;
-  o.hidden = false;
+  o.innerHTML = lv ? `<span class="t">对手</span><span>${lv.n} 级</span><span>${hand}</span><small>启动 ${(lv.reaction_s + lv.start_s).toFixed(2)}s</small><small>跑 ${lv.speed_mps}m/s</small>${sb}` : `<i class="${op === "L" ? "lefty" : ""}">对手 ${op === "L" ? "左手" : "右手"}</i>${sb}`;
+  o.hidden = false; drawSta();
 }
 function person(p, color, label, scale) {
   const g = el("g", {}, layers.actors);
@@ -1343,7 +1387,16 @@ function shotChip(x, y, n, by, op) {   // 球场上：击球点旁边的拍序�
 }
 function lastMineOpBh() { const fl = trace.flights; const p = fl[fl.length - 2]; return !!(p && p.by === "me" && p.opBh); }
 function setActs(btns) { const a = $("acts"); a.innerHTML = ""; for (const [txt, fn, pri] of btns) { const b = document.createElement("button"); b.textContent = txt; if (pri) b.className = "pri"; b.addEventListener("click", fn); a.appendChild(b); } }
+function drawSta() {   // 体能条在「我」「对手」状态框里：比赛里显示，回放 / 复盘不显示（那时的体能没记）；只藏不收，框不变大小
+  let on = false; try { on = !!(M && M.sta && G.stamina && !replay && !review); } catch (e) {}   // 页面刚载入时 review 还没声明
+  for (const [id, k] of [["handChip", "me"], ["handChipOp", "op"]]) { const sb = $(id).querySelector(".sb"); if (!sb) continue;
+    sb.style.visibility = on ? "" : "hidden"; if (!on) continue;
+    sb.querySelector("u").style.width = Math.round(M.sta[k] * 100) + "%";
+    const cp = Math.round((M.cap ? M.cap[k] : 1) * 100); sb.querySelector("i").style.background = `linear-gradient(90deg,rgba(255,255,255,.32) ${cp}%,transparent ${cp}%),repeating-linear-gradient(135deg,rgba(0,0,0,.65) 0 2px,rgba(255,255,255,.14) 2px 4px)`;
+    sb.classList.toggle("low", M.sta[k] < G.stamina.low); }   // 体能条暗的那段 = 这一局补不回来的
+}
 function drawAdv(v, lost) {
+  drawSta();
   const a = $("adv"); a.innerHTML = "";
   const cap = document.createElement("b"); cap.textContent = "局面"; cap.title = "这一分现在的局面，每一拍实时变"; a.appendChild(cap);
   TARGET_NAMES.forEach((n, i) => { const d = document.createElement("div"); d.textContent = n; if (lost && i === 0) d.className = "on lose"; else if (v === 4 && i === 4) d.className = "win"; else if (!lost && i <= v && v < 4) d.className = "on"; else if (v === 4) d.className = "on"; a.appendChild(d); });
@@ -1422,7 +1475,7 @@ function startMatch() {   // 比赛里的缩放记住（save.zoom），复盘里
   const seed = (Date.now() ^ (Math.random() * 1e9)) >>> 0; let a = seed;
   const rng = () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   E = makeEngine(DATA, rng);
-  M = E.newMatch(pick.level, TIER.id, pick.mode, pick.plan, save.adj, curPlayer().hand);
+  M = E.newMatch(pick.level, TIER.id, pick.mode, pick.plan, save.adj, curPlayer().hand, { me: curPlayer().sta || "mid", op: curPlayer().opSta || null });
   { const a = assistNow(); M.autoRec = a.rec; M.autoSplit = a.split; M.assistExtra = (a.rec && !a.d.rec) || (a.split && !a.d.split); M.assistLess = (!a.rec && a.d.rec) || (!a.split && a.d.split);
     M.ctrl = !a.rec ? (a.split ? "recover" : "full") : "auto"; }   // 回中 / 启动时间牌子跟着实际的辅助走
   if (pick.placement) { M.placement = true; pick.placement = false; M.level = { ...M.level, points: 5, name: "定级赛" }; }
@@ -1533,7 +1586,7 @@ function handle(e) {
     if (M.ctrl === "full" && e.timing) {   // 7–9 级：每一分打完，旁边写回中 / 启动时间
       const avg = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
       const r = avg(e.timing.rec), sp = avg(e.timing.spl);
-      hud(`这一分\n回中 ${r == null ? "—" : r.toFixed(2) + " 秒"}\n启动 ${sp == null ? "没按" : (sp >= 0 ? "+" : "") + sp.toFixed(2) + " 秒"}`, 0);
+      hud(`这一分\n回中 ${r == null ? "—" : r.toFixed(2) + " 秒（目标 ≤ " + REC_GOOD + "）"}\n启动 ${sp == null ? "没按" : (sp >= 0 ? "+" : "") + sp.toFixed(2) + " 秒"}`, 0);
     }
     drawScout(); scoutHint();
     if (e.found) { const w = WK(e.exploit); setTimeout(() => padToast(`找到他的弱点了：${w.name}！${weakSuggest(e.exploit)}`), 400); }
@@ -1606,6 +1659,7 @@ function showOptions(opts, f, quiet) {
   });
 }
 document.addEventListener("keydown", (k) => {
+  if (k.code === "Space" && $("btnRvPause") && replay && replay.review) { k.preventDefault(); rvPause(); return; }   // 复盘：空格 = 暂停 / 继续
   if (k.code === "Space" && $("home").hidden && $("end").hidden && $("warm").hidden && $("route").hidden && $("padHelp").hidden && $("progress").hidden && $("players").hidden) { k.preventDefault(); doSplit(); return; }
   if (!ev || !["1", "2", "3"].includes(k.key)) return;
   if (ev.type !== "serve" && !(waiting && waiting.revealed)) return;
@@ -1631,7 +1685,7 @@ function onZone(z, zp) {
   for (const x of layers.zones.children) x.classList.remove("nudge"); $("backZones").classList.remove("nudge");
   for (const x of $("backZones").children) x.classList.remove("pick");
   const first = !M.recDone; E.moveTo(M, z, simT());
-  if (first && M.ctrl === "recover" && M.log.rec.length) hud(`回中 ${M.log.rec[M.log.rec.length - 1].toFixed(2)} 秒`, 1600);   // 4–6 级：显示回中时间
+  if (first && M.ctrl === "recover" && M.log.rec.length) hud(`回中 ${M.log.rec[M.log.rec.length - 1].toFixed(2)} 秒（目标 ≤ ${REC_GOOD}）`, 1600);   // 4–6 级：显示回中时间
   waiting.cell = cellOf({ x: z.cx, y: z.cy });
   evt({ kind: "zone", z: { x0: z.x0, x1: z.x1, y0: z.y0, y1: z.y1, cx: z.cx, cy: z.cy } });
 }
@@ -1639,6 +1693,7 @@ function onZone(z, zp) {
 /* 每一帧：推进时间、到落地就结算 */
 function frame(now) {
   pollPad(); headTick(now); thumbTick();
+  { const k = M && M.sta ? `${M.sta.me.toFixed(2)}|${M.sta.op.toFixed(2)}|${M.cap ? M.cap.me.toFixed(2) + M.cap.op.toFixed(2) : ""}|${!!replay}|${!!review}` : ""; if (k !== frame.sta) { frame.sta = k; drawSta(); } }   // 体能一变就画（每拍扣、每分补）
   if (!!replay !== frame.rp) { frame.rp = !!replay; $("say").classList.toggle("rp", frame.rp); $("btnScout").hidden = frame.rp; }   // 球探只在自己打的时候记：回放 / 复盘 / 看录像时按钮点了没反应，先收起来（试用者 2026-11-11）
   { const rv = !!(replay && replay.review); if (rv !== frame.rv) { frame.rv = rv; $("acts").classList.toggle("rv", rv); } }
   if (replay) { stepReplay(now); requestAnimationFrame(frame); return; }
@@ -1715,12 +1770,14 @@ function sampleAt(t) {
 function stepReplay(now) {
   const r = replay, prevT = r.sndT != null ? r.sndT : Math.min(r.t0, trace.flights.length ? trace.flights[r.review ? 0 : Math.max(0, trace.flights.length - 3)].t0 : r.t0) - 0.001;
   const aiOpen = r.review && !$("aiBox").hidden;   // 试用者 2026-11-12：大白话 / AI 框开着时回放先不走，点「关闭」再开始
-  if (r.last != null && !aiOpen && !(r.holdUntil && now < r.holdUntil) && !(r.talkUntil && now < r.talkUntil)) r.t = Math.min(r.t1, r.t + ((now - r.last) / 1000) * r.rate); r.last = now;   // 选错的那一拍停一会儿
-  if (!aiOpen) for (const f of trace.flights) if (f.t0 > prevT && f.t0 <= r.t) {   // 框开着时第 1 拍也先不响、不念（它正好在起点上）
+  const held = aiOpen || !!(r.review && review && review.paused);   // 复盘暂停（产品负责人 2026-11-13）：和框开着是两个独立的原因，有一个就不走
+  rvPauseBtn(aiOpen);
+  if (r.last != null && !held && !(r.holdUntil && now < r.holdUntil) && !(r.talkUntil && now < r.talkUntil)) r.t = Math.min(r.t1, r.t + ((now - r.last) / 1000) * r.rate); r.last = now;   // 选错的那一拍停一会儿
+  if (!held) for (const f of trace.flights) if (f.t0 > prevT && f.t0 <= r.t) {   // 框开着时第 1 拍也先不响、不念（它正好在起点上）
     hitSound(f.shot);   // 回放也有击球音（试用者 2026-11-07）：球出手那一刻响
     if (narrIsOn() && f.t0 >= r.t0 - 0.05) { r.marks = r.marks || replayMarks(r); r.t = f.t0 + 0.001; const ln = shotLine(f, r); r.line = ln; r.cap = ""; setSay(ln, ""); narrate(ln, true, true); break; }   // 解说：停在出手这一刻念这一拍
   }
-  if (!aiOpen) r.sndT = r.t;
+  if (!held) r.sndT = r.t;
   clearLayer("paths"); clearLayer("actors");
   /* 只留最近三拍（试用者 2026-11-07：回合长了线太多）：最新一拍最亮，往前两拍渐淡，再往前的在 0.8 秒里慢慢消失；我跑过的路也只画最近三拍 */
   const S = trace.flights.filter((f) => f.t0 <= r.t && f.t0 + f.flight >= r.t0), nS = S.length;
@@ -2083,7 +2140,7 @@ function finish() {
   const pct = (x) => Math.round(x * 100) + "%";
   const rows = [["比分", `${M.score.me} : ${M.score.op}`], ["选得好或也行", pct(s.good)], ["打坏了", pct(s.bad)], ["反应快（一半时间内选好）", pct(s.fast)], ["抢位点对", M.autoRec ? "自动回中" : M.log.pos.length ? pct(s.pos) : "没抢位"], ["打完站着看球", M.autoRec ? "自动回中" : `${M.log.idle} 次`], ["启动踩准", M.autoSplit ? "自动启动" : `${M.log.split} / ${M.log.opShots} 次`]];
   const avg = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, ar = avg(M.log.rec), as = avg(M.log.spl);
-  if (!M.autoRec) rows.push(["平均回中时间", ar == null ? "没回中" : ar.toFixed(2) + " 秒"]);
+  if (!M.autoRec) rows.push(["平均回中时间（目标 ≤ " + REC_GOOD + " 秒）", ar == null ? "没回中" : ar.toFixed(2) + " 秒"]);
   if (!M.autoSplit) rows.push(["平均启动时间（对他击球）", as == null ? "没按" : (as >= 0 ? "+" : "") + as.toFixed(2) + " 秒"]);
   if (M.opBhOn) rows.push([`打他反手后场（他${M.opHand === "L" ? "左手" : "右手"}）`, M.log.obh.n ? `${M.log.obh.n} 拍，他失误或回弱 ${M.log.obh.hurt} 拍` : "一拍都没打到"]);
   if (M.bhOn && (M.log.bh.press || M.log.bh.n)) { const b = M.log.bh; rows.push([`反手后场（${M.hand === "L" ? "左手" : "右手"}）`, `被压 ${b.press} 次，打了 ${b.n} 拍：失误 ${b.err}、回弱 ${b.weak}`]); }
@@ -2548,7 +2605,7 @@ function plainTalk(log) {
     const rs = mine.map((s) => s.recover_s).filter((x) => x !== undefined), miss = rs.filter((x) => x == null).length, ok = rs.filter((x) => x != null);
     const avg = ok.length ? ok.reduce((a, b) => a + b, 0) / ok.length : null;
     if (miss >= Math.max(2, rs.length * 0.3)) out.push(`打完球有 ${miss} 次没回中，站着看球。打完马上按一下方向键回中。`);
-    else if (avg != null) out.push(avg <= 0.4 ? `回中很快，平均 ${avg.toFixed(2)} 秒。` : `回中平均 ${avg.toFixed(2)} 秒，有点慢：球一出手就回，争取 0.4 秒以内。`);
+    else if (avg != null) out.push(avg <= REC_GOOD ? `回中很快，平均 ${avg.toFixed(2)} 秒（目标 ${REC_GOOD} 秒以内）。` : `回中平均 ${avg.toFixed(2)} 秒，有点慢：球一出手就回，争取 ${REC_GOOD} 秒以内。`);
   }
   if (!log.flags.autoSplit && ops.length) {
     const hit = ops.filter((s) => s.split === "ok").length, share = hit / ops.length;
@@ -2600,7 +2657,7 @@ function compareLines(cur, prev) {
   const avg = (k) => { const v = prev.map((h) => h[k]).filter((x) => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
   const out = [], n = prev.length, pct = (x) => Math.round(x * 100) + "%";
   const g = avg("good"); if (g != null && cur.good != null) out.push(cur.good > g + 0.05 ? `球路选对 ${pct(cur.good)}，比前 ${n} 局平均（${pct(g)}）好了 ↑` : cur.good < g - 0.05 ? `球路选对 ${pct(cur.good)}，比前 ${n} 局平均（${pct(g)}）差了 ↓` : `球路选对 ${pct(cur.good)}，和前 ${n} 局差不多`);
-  const rc = avg("rec"); if (rc != null && cur.rec != null) out.push(cur.rec < rc - 0.05 ? `回中快了：${cur.rec} 秒（之前平均 ${rc.toFixed(2)} 秒）↑` : cur.rec > rc + 0.05 ? `回中慢了：${cur.rec} 秒（之前平均 ${rc.toFixed(2)} 秒）↓` : `回中速度和之前差不多（${cur.rec} 秒）`);
+  const rc = avg("rec"); if (rc != null && cur.rec != null) out.push((cur.rec < rc - 0.05 ? `回中快了：${cur.rec} 秒（之前平均 ${rc.toFixed(2)} 秒）↑` : cur.rec > rc + 0.05 ? `回中慢了：${cur.rec} 秒（之前平均 ${rc.toFixed(2)} 秒）↓` : `回中速度和之前差不多（${cur.rec} 秒）`) + `，目标 ${REC_GOOD} 秒以内`);
   const sp = avg("split"); if (sp != null && cur.split != null) out.push(cur.split > sp + 0.05 ? `启动踩准 ${pct(cur.split)}，进步了（之前 ${pct(sp)}）↑` : cur.split < sp - 0.05 ? `启动踩准 ${pct(cur.split)}，退步了（之前 ${pct(sp)}）↓` : `启动踩准 ${pct(cur.split)}，和之前差不多`);
   const wp = avg("wkPts"); if (wp != null && cur.wkPts != null && cur.wkMode && cur.wkMode !== "fixed") out.push(cur.wkPts > wp + 0.5 ? `靠弱点得 ${cur.wkPts} 分，比之前（平均 ${wp.toFixed(1)}）会找弱点了 ↑` : cur.wkPts < wp - 0.5 ? `靠弱点只得 ${cur.wkPts} 分（之前平均 ${wp.toFixed(1)}）：前 5 分先试探 ↓` : `靠弱点得 ${cur.wkPts} 分，和之前差不多`);
   const e = avg("errs"); if (e != null && cur.errs > e + 1) out.push(`这局自己下网出界 ${cur.errs} 分，比平时多`);
@@ -2635,7 +2692,7 @@ function drawProgress() {
 async function aiProgress() {
   const h = loadHist().slice(-15), out = $("pgAi"); out.hidden = false;
   const rows = h.map((x) => `${x.created.slice(0, 16).replace("T", " ")} 第${x.level}级(${x.foe}) ${x.mode === "active" ? "主动" : "应对"} 比分${x.me}:${x.op} ${x.stars}星 选对${x.good == null ? "-" : Math.round(x.good * 100) + "%"} 回中${x.rec == null ? "自动" : x.rec + "s"} 没回中${x.idle == null ? "-" : x.idle}次 启动踩准${x.split == null ? "自动" : Math.round(x.split * 100) + "%"} 自己失误${x.errs}分 没赶到${x.late}分 平均每分${x.rally}拍 最常选错第${x.worst || "-"}页`).join("\n");
-  const prompt = `你是一位很会跟孩子和家长讲话的羽毛球教练。下面是一个孩子在「球路闯关」羽毛球战术游戏里最近几局的成绩，从早到晚排列。说明：1–3 级只练选球路（回中、启动自动），4–6 级要自己回中，7–9 级还要自己启动；「选对」= 球路选得好或也行的比例；「回中」= 打完到按回位的平均秒数；「启动踩准」= 他击球时按准启动的比例；页码是想三拍小手册的页。
+  const prompt = `你是一位很会跟孩子和家长讲话的羽毛球教练。下面是一个孩子在「球路闯关」羽毛球战术游戏里最近几局的成绩，从早到晚排列。说明：1–3 级只练选球路（回中、启动自动），4–6 级要自己回中，7–9 级还要自己启动；「选对」= 球路选得好或也行的比例；「回中」= 打完到按回位的平均秒数（游戏自己的目标线：${REC_GOOD} 秒以内算快，不是职业数据；提到回中秒数时带上这条线）；「启动踩准」= 他击球时按准启动的比例；页码是想三拍小手册的页。
 
 请只根据这些数据，用大白话写一段跨局对比，给孩子和家长看：
 1. 一句话：最近整体是进步、持平还是退步。
@@ -2649,11 +2706,20 @@ ${rows}`;
   if (!ok) out.textContent = "这里叫不到 AI，看上面的对比就行。";
 }
 function logJSON(log) { return JSON.stringify(log, (k, v) => k === "_trace" ? undefined : v); }
-// 下载走平台的 downloads 能力（页面自己不能直接下载）；拿不到就改成复制
+/* 存文件：claude.ai 里走平台的 downloads 能力（页面自己不能直接下载）；不在 claude.ai 里（posecap.com）用浏览器自带的下载
+   （产品负责人 2026-11-13：线上点「下载回合文件」只复制到剪贴板，要真正存成文件）；都不行才改成复制 */
+function saveFile(name, text) {
+  try {
+    const url = URL.createObjectURL(new Blob([text], { type: "application/json" })), a = document.createElement("a");
+    a.href = url; a.download = name; a.rel = "noopener"; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000); return true;
+  } catch (e) { return false; }
+}
 async function download(log) {
   const name = `qiulu_rally_${log.created.slice(0, 16).replace(/[-:T]/g, "")}_L${log.level}.json`;
   let DL = null; try { if (window.claude && claude.use) DL = await claude.use("downloads"); } catch (e) {}
-  if (!DL) { padToast("这里存不了文件，已改成复制"); return copyLog(log); }
+  // claude.ai 里浏览器下载会被拦（不报错），只在 posecap.com 上用
+  if (!DL) { if (!(window.claude && claude.use) && saveFile(name, logJSON(log))) return padToast("已保存：" + name); padToast("这里存不了文件，已改成复制"); return copyLog(log); }
   DL.save({ filename: name, data: logJSON(log) }).then(() => padToast("已保存：" + name), (e) => { if (e && e.code === "declined") return; if (e && e.code === "rate_limited") return padToast("稍等一下再点"); padToast("这里存不了文件，改用「复制」"); $("btnDl").hidden = true; });
 }
 function copyLog(log) {
@@ -2692,7 +2758,25 @@ function playReview() {
     setActs([["跳过录像，直接猜", () => tapeQuiz(log), false], ["退出", exitReview, false]]); return;
   }
   setSay(`复盘第 ${i + 1} / ${log.points.length} 分：${p.winner === "me" ? "得分" : "丢分"}`, p.why);
-  setActs([["📋 大白话", () => showTalk(log), false], ["🤖 AI 讲这一局", () => aiAnalyze(log), false], ["退出", exitReview, false]]);
+  review.paused = false;
+  setActs([["⏸ 暂停", rvPause, false], ["📋 大白话", () => showTalk(log), false], ["🤖 AI 讲这一局", () => aiAnalyze(log), false], ["退出", exitReview, false]]);
+  $("acts").firstChild.id = "btnRvPause";
+}
+/* 复盘暂停 / 继续（产品负责人 2026-11-13 v78 验收「复盘回看时，回合播放中，不能暂停/继续」）：只做在复盘里，丢分后的慢动作回放不加。
+   暂停时回放时间不走、击球音和解说一起停；继续时正在念的那一句从头再念（iPhone 上朗读暂停后接着念不可靠，不用系统的暂停 / 恢复）。
+   大白话 / AI 框开着时回放本来就不走（v78），这时按钮显示「▶ 继续」但点不了；先按了暂停再开关框，关了框仍是暂停 */
+function rvPause() {
+  if (!review || !replay || !replay.review || !$("aiBox").hidden) return;
+  const r = replay;
+  if (!review.paused) { review.paused = true; review.resay = r.talkUntil > performance.now() ? r.line : null; narrStop(); }
+  else { review.paused = false; r.last = null; if (review.resay) narrate(review.resay, true, true); review.resay = null; }
+  rvPauseBtn(false);
+}
+function rvPauseBtn(aiOpen) {
+  const b = $("btnRvPause"); if (!b) return;
+  const lbl = review && (review.paused || aiOpen) ? "▶ 继续" : "⏸ 暂停";
+  if (b.textContent !== lbl) b.textContent = lbl;
+  if (b.disabled !== !!aiOpen) b.disabled = !!aiOpen;
 }
 function reviewDone() {
   const { log, i } = review, p = log.points[i];
@@ -2763,6 +2847,9 @@ function importLog(l) {
    把回合文件压成几十行文字交给 Claude（平台的 sample 能力，用看的人自己的 Claude 额度，第一次会问允许），
    要它照数据说大白话：总评、做得好的、最要改的两件事、下次练什么（带第几页）。拿不到 Claude 时按钮不出现，只用游戏自己的大白话。 */
 let aiCtl = null, aiCache = new Map();
+function winOf(shots, s) {   // 这一拍可用的时间 = 他那一拍从出手到落地（选拍用时从他击球算起）
+  const k = shots.indexOf(s), o = k > 0 ? shots[k - 1] : null; return o && o.by === "op" && o.flight_s ? o.flight_s : null;
+}
 function logDigest(log) {
   const L = [`级别：第 ${log.level} 级 ${log.level_name}，对手「${log.foe}」；年龄档：${log.tier_name}；玩法：${log.mode === "active" ? "主动模式" + (log.plan ? "（球路：" + log.plan.name + "，第 " + log.plan.page + " 页）" : "") : "应对模式"}；`
     + `${log.flags.autoRec ? "自动回中" : "自己回中"}、${log.flags.autoSplit ? "自动启动" : "自己启动"}。`];
@@ -2771,9 +2858,9 @@ function logDigest(log) {
   const plD = planOf(log); if (plD) L.push(`这一场练的球路（主动模式）：「${plD.name}」，计划 ${plD.seq.map((w, i) => (i % 2 ? "他" : "我") + wantTxt(w)).join(" → ")}。请重点讲球路执行：几分打完整、断在哪一拍、是他没照书回还是孩子走偏。`);
   for (const p of log.points) {
     const sh = p.shots.map((s) => {
-      if (s.by === "op") return `他${s.feed ? "喂" : ""}${s.name}${s.weak ? "(弱)" : ""}${s.err ? "(" + (s.err === "net" ? "下网" : "出界") + ")" : ""}${s.incoming === "attack" ? "[进攻]" : s.incoming === "weak" ? "[机会球]" : ""}${s.late ? "[我来不及]" : ""}${!log.flags.autoSplit ? (s.split === "ok" ? `[启动${s.split_s != null ? (s.split_s >= 0 ? "+" : "") + s.split_s + "s" : "准"}]` : "[没启动]") : ""}`;
+      if (s.by === "op") return `他${s.feed ? "喂" : ""}${s.name}${s.weak ? "(弱)" : ""}${s.err ? "(" + (s.err === "net" ? "下网" : "出界") + ")" : ""}${s.incoming === "attack" ? "[进攻]" : s.incoming === "weak" ? "[机会球]" : ""}${s.late ? "[我来不及]" : ""}${!log.flags.autoSplit ? (s.split === "ok" ? `[启动${s.split_s != null ? (s.split_s >= 0 ? "+" : "") + s.split_s + "s " : ""}踩准]` : "[没启动或没踩准]") : ""}`;
       const g = s.grade ? { best: "好", ok: "行", bad: "错" }[s.grade] : "";
-      return `我${s.name}${s.wk ? "[打弱点]" : ""}${g ? "(" + g + (s.grade === "bad" && s.why ? "：" + s.why : "") + (s.page ? "，第" + s.page + "页" : "") + ")" : ""}${s.err ? "(" + (s.err === "net" ? "下网" : "出界") + ")" : ""}${s.pick_s != null ? `[选${s.pick_s}s]` : ""}${s.recover_s !== undefined ? (s.recover_s == null ? "[没回中]" : `[回中${s.recover_s}s]`) : ""}`;
+      return `我${s.name}${s.wk ? "[打弱点]" : ""}${g ? "(" + g + (s.grade === "bad" && s.why ? "：" + s.why : "") + (s.page ? "，第" + s.page + "页" : "") + ")" : ""}${s.err ? "(" + (s.err === "net" ? "下网" : "出界") + ")" : ""}${s.pick_s != null ? `[选${s.pick_s}s${winOf(p.shots, s) ? "/可用" + winOf(p.shots, s) + "s" : ""}]` : ""}${s.recover_s !== undefined ? (s.recover_s == null ? "[没回中]" : `[回中${s.recover_s}s]`) : ""}`;
     }).join(" → ");
     L.push(`第${p.no}分 ${p.winner === "me" ? "得分" : "丢分"}（${p.why}）：${sh}${plD ? "；球路：" + planLines(plD, p).res : ""}`);
   }
@@ -2814,7 +2901,11 @@ async function aiRun(out, prompt, done, onStop) {
   } finally { aiCtl = null; if (onStop) onStop(false); }
   return true;
 }
-const AI_LEGEND = `记号：「我」是孩子，「他」是电脑对手；我的球后面括号里：好 = 选得好，行 = 也可以，错 = 选错了（冒号后是原因），第几页 = 想三拍小手册里讲这个情况的页码；[回中0.4s] = 打完多久按了回位，[没回中] = 打完站着看球；[启动+0.05s] = 他击球后多久按了启动，[没启动] = 没按；[进攻] / [机会球] = 他打过来的球是进攻还是又高又慢的机会球；[我来不及] = 离落点太远；(弱) = 这拍没打到位。`;
+/* 秒数的参考线（产品负责人 2026-11-13：AI 说「回中平均 0.47 秒」没有直观感受，带上参考值）：只用游戏自己现成的线，不说成职业数据。
+   回中 = 单局大白话一直用的 0.4 秒；启动只说踩没踩准（游戏按自己的规则判），不给秒数设目标；选拍用时对照这一拍可用的时间，一半以内算快（同「选得快」） */
+const REC_GOOD = 0.4;
+const AI_REF = `参考线（都是这个游戏自己的线，不是职业运动员的数据，不要说成职业标准）：回中 ${REC_GOOD} 秒以内算快；启动后面写了「踩准」的就是按准了，没写的是早了或晚了，讲启动只说踩准几次，不给秒数定目标；[选0.8s/可用1.6s] = 用了多久选好、这一拍一共有多久，一半以内选好算快。提到回中或选拍的秒数时，后面带上参考线，比如「回中平均 0.47 秒（目标 ${REC_GOOD} 秒以内）」「选拍 0.9 秒（这一拍可用 1.6 秒，一半以内算快）」。`;
+const AI_LEGEND = `记号：「我」是孩子，「他」是电脑对手；我的球后面括号里：好 = 选得好，行 = 也可以，错 = 选错了（冒号后是原因），第几页 = 想三拍小手册里讲这个情况的页码；[回中0.4s] = 打完多久按了回位，[没回中] = 打完站着看球；[启动+0.05s] = 他击球后多久按了启动，[没启动或没踩准] = 没按，或按早了 / 按晚了；[进攻] / [机会球] = 他打过来的球是进攻还是又高又慢的机会球；[我来不及] = 离落点太远；(弱) = 这拍没打到位。\n${AI_REF}`;
 /* 回合级（一分）AI：讲这一分怎么一步步变好或变坏、关键是哪一拍、那一拍换成什么更好（试用者 2026-11-07 同意：按需点、存进回合文件） */
 async function aiPoint(log, i) {
   const p = log.points[i], box = $("aiBox"), out = $("aiText"); box.hidden = false; $("aiTitle").textContent = `🤖 AI 讲第 ${i + 1} 分`;
@@ -2838,7 +2929,8 @@ async function aiAnalyze(log) {
   let sample = null; try { sample = window.claude && claude.use ? await claude.use("sample") : null; } catch (e) {}
   if (!sample) { out.textContent = "这里叫不到 AI，先看游戏自己的大白话：\n" + (log.feedback || plainTalk(log)).map((t) => "· " + t).join("\n"); return; }
   const prompt = `你是一位很会跟孩子和家长讲话的羽毛球教练。下面是一个孩子在「球路闯关」羽毛球战术游戏里打的一局，按分逐拍记录。
-记号：「我」是孩子，「他」是电脑对手；我的球后面括号里：好 = 选得好，行 = 也可以，错 = 选错了（冒号后是原因），第几页 = 想三拍小手册里讲这个情况的页码；[回中0.4s] = 打完多久按了回位，[没回中] = 打完站着看球；[启动+0.05s] = 他击球后多久按了启动，[没启动] = 没按；[进攻] / [机会球] = 他打过来的球是进攻还是又高又慢的机会球；[我来不及] = 离落点太远。
+记号：「我」是孩子，「他」是电脑对手；我的球后面括号里：好 = 选得好，行 = 也可以，错 = 选错了（冒号后是原因），第几页 = 想三拍小手册里讲这个情况的页码；[回中0.4s] = 打完多久按了回位，[没回中] = 打完站着看球；[启动+0.05s] = 他击球后多久按了启动，[没启动或没踩准] = 没按，或按早了 / 按晚了；[进攻] / [机会球] = 他打过来的球是进攻还是又高又慢的机会球；[我来不及] = 离落点太远。
+${AI_REF}
 
 请只根据这些数据，用大白话写一段分析，给孩子和家长看：
 1. 一句话总评这一局（赢没赢、整体怎么样）。
@@ -2879,13 +2971,18 @@ function switchPlayer(id) {
 }
 function newPid() { let i = 2; while (PL.list.some((p) => p.id === "p" + i)) i++; return "p" + i; }
 let delArm = null;
+const STA_IDS = ["low", "mid", "high"];
+const staName = (id) => ((G.stamina && G.stamina.profiles.find((p) => p.id === id)) || { name: "一般" }).name;
 function drawPlayers() {
   const box = $("plList"); box.innerHTML = "";
   for (const p of PL.list) {
     const sv = p.id === PL.cur ? save : readKey(SAVE_KEY, p.id) || {}, st = Object.values(sv.stars || {}).reduce((a, b) => a + b, 0), hist = readKey(HIST_KEY, p.id) || [];
     const row = document.createElement("div"); row.className = "plrow" + (p.id === PL.cur ? " cur" : "");
-    const nm = document.createElement("div"); nm.innerHTML = `<b></b><small>★ ${st} · 打过 ${hist.length} 场 · <button class="hd" aria-label="改握拍手">${p.hand === "L" ? "左手" : "右手"}握拍 ⇄</button></small>`;
-    nm.querySelector(".hd").addEventListener("click", () => { p.hand = p.hand === "L" ? "R" : "L"; savePlayers(); drawPlayers(); }); nm.querySelector("b").textContent = (p.id === PL.cur ? "✓ " : "") + p.name; row.appendChild(nm);
+    const nm = document.createElement("div"); nm.innerHTML = `<b></b><small>★ ${st} · 打过 ${hist.length} 场 · <button class="hd" aria-label="改握拍手">${p.hand === "L" ? "左手" : "右手"}握拍 ⇄</button><button class="st" aria-label="改自己的体能">体能 ${staName(p.sta || "mid")} ⇄</button><button class="ost" aria-label="改对手的体能">对手体能 ${p.opSta ? staName(p.opSta) : "按级别"} ⇄</button></small>`;
+    nm.querySelector(".hd").addEventListener("click", () => { p.hand = p.hand === "L" ? "R" : "L"; savePlayers(); drawPlayers(); });
+    /* 体能（试用者 2026-11-11）：自己 弱 / 一般 / 好；对手 按级别 / 弱 / 一般 / 好。一直打会累（跑慢、失误多），分与分之间歇一下补回来 */
+    nm.querySelector(".st").addEventListener("click", () => { p.sta = STA_IDS[(STA_IDS.indexOf(p.sta || "mid") + 1) % 3]; savePlayers(); drawPlayers(); });
+    nm.querySelector(".ost").addEventListener("click", () => { const c = [null, ...STA_IDS]; p.opSta = c[(c.indexOf(p.opSta || null) + 1) % 4]; savePlayers(); drawPlayers(); }); nm.querySelector("b").textContent = (p.id === PL.cur ? "✓ " : "") + p.name; row.appendChild(nm);
     const bt = (t, fn) => { const b = document.createElement("button"); b.className = "sm"; b.textContent = t; b.addEventListener("click", fn); row.appendChild(b); };
     if (p.id !== PL.cur) bt("切换", () => { switchPlayer(p.id); drawPlayers(); });
     bt("改名", () => {   // 不用弹窗（嵌在网页里的页面可能不让弹）：名字那里直接变成输入框
@@ -2900,13 +2997,14 @@ function drawPlayers() {
   }
 }
 function backupAll() {
-  const players = PL.list.map((p) => { const data = {}; for (const k of PDATA) data[k] = readKey(k, p.id); return { id: p.id, name: p.name, hand: p.hand || "R", data }; });
+  const players = PL.list.map((p) => { const data = {}; for (const k of PDATA) data[k] = readKey(k, p.id); return { id: p.id, name: p.name, hand: p.hand || "R", sta: p.sta || "mid", opSta: p.opSta || null, data }; });
   return { format: "qiulu-backup/1", game_version: VERSION, created: new Date().toISOString(), cur: PL.cur, players };
 }
 async function doBackup() {
   const b = backupAll(), name = `qiulu_backup_${b.created.slice(0, 10).replace(/-/g, "")}.json`, text = JSON.stringify(b);
   let DL = null; try { if (window.claude && claude.use) DL = await claude.use("downloads"); } catch (e) {}
   if (DL) return DL.save({ filename: name, data: text }).then(() => padToast("进度已备份：" + name), (e) => { if (e && e.code !== "declined") padToast("存不了文件，改用「复制备份」"); });
+  if (!(window.claude && claude.use) && saveFile(name, text)) return padToast("进度已备份：" + name);   // posecap.com：浏览器自带下载
   copyText(text, "备份已复制，粘到备忘录或发给自己保存");
 }
 function copyText(t, ok) {
@@ -2919,7 +3017,8 @@ function restoreAll(b) {
   let n = 0, full = false;
   for (const p of b.players) {
     if (!p || !p.id || !p.data) continue;
-    const ex = PL.list.find((x) => x.id === p.id); const hd = p.hand === "L" ? "L" : "R"; if (ex) { ex.name = p.name || ex.name; ex.hand = hd; } else PL.list.push({ id: p.id, name: p.name || p.id, hand: hd });
+    const ex = PL.list.find((x) => x.id === p.id); const hd = p.hand === "L" ? "L" : "R"; const sta = STA_IDS.includes(p.sta) ? p.sta : "mid", opSta = STA_IDS.includes(p.opSta) ? p.opSta : null;
+    if (ex) { ex.name = p.name || ex.name; ex.hand = hd; ex.sta = sta; ex.opSta = opSta; } else PL.list.push({ id: p.id, name: p.name || p.id, hand: hd, sta, opSta });
     for (const k of PDATA) if (!writeKey(k, p.id, p.data[k] ?? null)) full = true;
     n++;
   }
