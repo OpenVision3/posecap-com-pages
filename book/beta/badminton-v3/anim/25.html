@@ -1,0 +1,532 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>截杀：不等球落，抢高点</title><link rel="stylesheet" href="../fonts/fonts.css"><style>
+/* 字体、颜色和书一致（产品负责人 11-17 第 2 稿意见 1、2）：只用 Noto Sans SC；米白底、深灰字；主按钮蓝、次要按钮浅蓝；局面格照书上的颜色 */
+:root{--bg:#FFFDF7;--ink:#2B2B2B;--card:#FFFFFF;--blue:#2F7FD9;--sec:#E7EEF8;--gold:#F2B01E;--red:#E0301E;--line:#DDD;--court:#EAF6EE;
+  --u:1px;--pad:14px;--gap:10px;--r:14px;--btn:52px;--fs:17px;--say:18px;--side:96px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Noto Sans SC",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+body{overflow:hidden}
+#app{height:100vh;height:100dvh;padding:var(--pad);padding-left:max(var(--pad),env(safe-area-inset-left));padding-right:max(var(--pad),env(safe-area-inset-right));
+  padding-bottom:max(var(--pad),env(safe-area-inset-bottom));display:grid;gap:var(--gap);min-height:0}
+button{font-family:inherit;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.b{display:inline-flex;align-items:center;justify-content:center;gap:.35em;height:var(--btn);padding:0 .9em;border:0;border-radius:var(--r);
+  background:var(--sec);color:var(--blue);font-size:var(--fs);font-weight:700;box-shadow:0 2px 0 rgba(0,0,0,.15);transition:transform .08s,filter .08s,background .2s;white-space:nowrap}
+.b:active:not(:disabled){transform:translateY(2px) scale(.96);filter:brightness(.88);box-shadow:none}
+.b:disabled{opacity:.45;box-shadow:none;cursor:default;transform:none}
+.b svg{font-size:1.15em;flex:none}
+.chip{display:inline-flex;align-items:center;gap:.3em;height:calc(var(--btn)*.72);padding:0 .9em;border:0;border-radius:999px;background:var(--sec);color:var(--blue);
+  font-size:calc(var(--fs)*.82);font-weight:700;white-space:nowrap;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.chip:active{transform:translateY(2px);box-shadow:none} #view{background:var(--blue);color:#fff}   /* 换视图和书上「3D」按钮一样是蓝底白字 */
+span.chip{background:rgba(255,255,255,.9);color:#555;box-shadow:none}   /* 拖一拖提示不是按钮，白底灰字 */
+/* 顶栏：返回、页码、标题、换视图（转一转只在立体时、平板上放这里） */
+#top{grid-area:top;display:flex;align-items:center;gap:calc(var(--gap)*1.2);min-width:0}
+#back{width:var(--btn);height:var(--btn);padding:0;border-radius:50%;flex:none}
+#no{flex:none;height:calc(var(--btn)*.8);display:flex;align-items:center;padding:0 .55em;border-radius:10px;background:var(--blue);color:#fff;
+  font-size:calc(var(--fs)*1.1);font-weight:700}   /* 页码：书上动画页标题前的蓝色小牌子 */
+h1{margin:0;flex:1;min-width:0;font-size:calc(var(--fs)*1.45);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#spin{display:none} html.is3d.pad #spin{display:inline-flex}
+/* 球场：只等比缩放、居中；横屏左右摆、竖屏上下摆 */
+#court{grid-area:court;position:relative;min-height:0;min-width:0}
+#court>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+#court{background:var(--court);border-radius:var(--r)}   /* 球场底：书上球场图的浅绿底 */
+#v3{display:none;touch-action:none;cursor:grab;background:var(--court);border-radius:var(--r)}
+#c2{transition:opacity .2s}
+#chips{position:absolute;left:10px;right:10px;top:10px;display:none;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none;z-index:2}
+html.is3d #chips{display:flex} #chips>*{pointer-events:auto} #chips .r{display:flex;gap:6px;margin-left:auto}
+#hint{position:absolute;left:10px;top:10px;z-index:2;display:none;font-weight:700} html.is3d #hint{display:inline-flex} html.is3d #hint[hidden]{display:none}
+html.phone #hint{top:auto;bottom:10px}   /* 手机上右上角放转一转、回到正面，提示挪到下面 */
+#spin2{display:none} html.is3d.phone #spin2{display:inline-flex}
+.badge{position:absolute;top:10px;left:50%;transform:translateX(-50%) scale(.9);opacity:0;transition:all .3s;background:var(--red);color:#fff;font-weight:900;
+  font-size:var(--fs);padding:4px 14px;border-radius:999px;box-shadow:0 3px 10px rgba(0,0,0,.2);z-index:3;pointer-events:none;white-space:nowrap}
+.badge.on{opacity:1;transform:translateX(-50%) scale(1)} html.is3d .badge{top:auto;bottom:10px}
+/* 局面：小标签，颜色照书（灰 = 没到，浅绿 = 走过的，金 = 目标格），放完一拍点亮 */
+#lv{grid-area:lv;display:flex;align-items:center;gap:6px;min-width:0}
+#lv .h{font-size:calc(var(--fs)*.72);font-weight:900;flex:none}
+#lv .t{display:flex;gap:6px;min-width:0} .tag{padding:3px 10px;border-radius:999px;background:#EEE;color:#999;font-size:calc(var(--fs)*.76);font-weight:700;white-space:nowrap;text-align:center;
+  transition:all .3s}
+.tag.on{background:#CFE8D8;color:#1E6B45} .tag.goal{background:#F2B01E;color:#5A3D00}   /* 书（v2.py .pill）同一套 */
+/* 讲解：小标题、拍数圆点（当前这拍黄）、右上角小喇叭 */
+#talk{grid-area:talk;position:relative;background:var(--card);border:2px solid var(--line);border-radius:calc(var(--r)*1.15);padding:10px 14px 12px;min-width:0;align-self:start}
+#talk .hd{display:flex;align-items:center;gap:6px;height:calc(var(--btn)*.62);padding-right:calc(var(--btn)*.75)}
+#tl{font-size:calc(var(--fs)*.78);font-weight:700;color:#B07800;margin-right:4px;white-space:nowrap} #tl.warn{color:var(--red)} #tl.end{color:#1E6B45}
+.dot{width:calc(var(--fs)*1.45);height:calc(var(--fs)*1.45);border-radius:50%;display:grid;place-items:center;font-size:calc(var(--fs)*.78);
+  font-weight:700;background:#EEE;color:#999;flex:none;transition:background .2s}
+.dot.done{background:var(--sec);color:var(--blue)} .dot.cur{background:var(--gold);color:#5A3D00}
+#say{margin:4px 0 0;font-size:var(--say);line-height:1.45;font-weight:700;overflow:hidden}
+#say b{color:#F07A2A}
+#spk{position:absolute;right:10px;top:8px;width:calc(var(--btn)*.72);height:calc(var(--btn)*.72);border-radius:50%;border:0;background:var(--sec);color:var(--blue);
+  display:grid;place-items:center;font-size:calc(var(--fs)*1.05);padding:0;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+#vpop{position:absolute;right:8px;top:calc(var(--btn)*.72 + 14px);z-index:5;width:max-content;min-width:230px;background:var(--card);border:2px solid var(--line);
+  border-radius:var(--r);box-shadow:0 3px 10px rgba(0,0,0,.15);padding:10px 14px;display:grid;gap:10px;font-size:var(--fs);font-weight:700}
+#vpop[hidden]{display:none} html.pl #vpop,html.hl #vpop{top:auto;bottom:calc(100% - 4px)}   /* 讲解条在下面时往上开，不被屏幕底边切掉 */ #vpop .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#vpop small{display:block;font-size:.72em;color:#777;font-weight:700}
+#voice{width:56px;height:32px;border-radius:999px;border:0;background:#DDD;position:relative;padding:0;flex:none}
+#voice::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .15s}
+#voice[aria-checked=true]{background:var(--blue)} #voice[aria-checked=true]::after{left:27px}
+#vnext{height:34px;font-size:calc(var(--fs)*.8)} #vnote{font-size:12px;font-weight:700;color:#777} #vnote:empty{display:none}
+/* 播放那一组：播放最大、蓝底白字；下一拍 / 重来 / 看打错的浅蓝底（书上动画页的主 / 次按钮） */
+#ctrl{grid-area:ctrl;display:flex;gap:calc(var(--gap)*1.1);align-items:stretch}
+#play{background:var(--blue);color:#fff;font-size:calc(var(--fs)*1.35);font-weight:900;height:auto;min-height:calc(var(--btn)*1.5)}
+#wbtn .rd{width:.62em;height:.62em;border-radius:50%;background:var(--red);flex:none}
+#wbtn[hidden]{display:none}
+#side{grid-area:side;display:contents}
+/* ---- 平板横屏：球场一整行，下面局面一行、讲解 + 播放组 ---- */
+html.pl #app{grid-template:"top top" auto "court court" minmax(0,1fr) "lv lv" auto "talk ctrl" auto / minmax(0,1fr) auto}
+html.pl #ctrl{align-items:center} html.pl #ctrl .b:not(#play){height:calc(var(--btn)*1.2)} html.pl #play{min-width:calc(var(--btn)*4);min-height:calc(var(--btn)*1.8)}
+html.pl #talk{align-self:stretch}
+/* ---- 竖屏（平板 / 手机）：讲解在上，球场左边，右栏上面局面、下面播放组（播放在最下） ---- */
+html.pp #app,html.hp #app{grid-template:"top top" auto "talk talk" auto "court side" minmax(0,1fr) / minmax(0,1fr) var(--side)}
+html.pp #side,html.hp #side{display:flex;flex-direction:column;justify-content:space-between;gap:var(--gap);min-height:0}
+html.pp #lv,html.hp #lv{flex-direction:column;align-items:stretch} html.pp #lv .t,html.hp #lv .t{flex-direction:column-reverse}
+html.pp #lv .h,html.hp #lv .h{text-align:center}
+html.pp #ctrl,html.hp #ctrl{flex-direction:column} html.pp #ctrl .b,html.hp #ctrl .b{width:100%;padding:0 .3em}
+html.pp #next,html.hp #next{order:1} html.pp #reset,html.hp #reset{order:2} html.pp #wbtn,html.hp #wbtn{order:0} html.pp #play,html.hp #play{order:3;flex-direction:column;gap:2px}
+html.hp #ctrl .b:not(#play){flex-direction:column;gap:0;height:auto;min-height:var(--btn);padding:4px 2px;font-size:calc(var(--fs)*.82);white-space:normal;line-height:1.15}
+/* ---- 手机竖屏 · 底部一排（hb，产品负责人 11-17「按建议」）：讲解在上，球场用满剩下的高度，局面放进球场顶上的 1 米留边，
+   按钮在最下面排一排：看打错的、重来、下一拍、播放（最宽、在右手拇指的位置）。和右栏摆法（hp）哪种球场大用哪种，见 layout() ---- */
+html.hb #app{grid-template:"top" auto "talk" auto "court" minmax(0,1fr) "ctrl" auto / minmax(0,1fr)}
+html.hb #side{display:contents}
+html.hb #lv{grid-area:court;align-self:start;justify-self:center;position:relative;z-index:2;pointer-events:none;margin-top:var(--lvtop,8px)}
+html.hb #lv .h{display:none} html.hb #lv .t{gap:4px} html.hb .tag{font-size:var(--tagfs,11px);padding:2px 7px}
+html.hb #ctrl{flex-direction:row;gap:8px}
+html.hb #ctrl .b:not(#play){flex:1 1 0;min-width:0;flex-direction:column;gap:1px;height:auto;min-height:calc(var(--btn)*1.2);padding:4px 2px;font-size:calc(var(--fs)*.8);line-height:1.15}
+html.hb #wbtn{order:0} html.hb #reset{order:1} html.hb #next{order:2} html.hb #play{order:3;flex:1.9 1 0;min-width:0;min-height:calc(var(--btn)*1.2);font-size:calc(var(--fs)*1.2);gap:.3em;padding:0 .5em}
+html.hb .badge{top:auto;bottom:10px}
+html.hb.is3d #chips{top:auto;bottom:10px}   /* 立体：局面浮在画框上沿（镜头会转，留边跟着动，放不稳），转一转、回到正面挪到下面 */
+/* ---- 手机横屏：左边顶栏 + 球场，右栏局面、讲解（四行）、播放、三个小钮 ---- */
+html.hl #app{grid-template:"top lv" auto "court talk" minmax(0,1fr) "court ctrl" auto / minmax(0,1fr) var(--side)}
+html.hl #lv .h{display:none} html.hl #lv .t{width:100%;gap:4px} html.hl .tag{flex:1 1 auto;padding:3px 4px;font-size:10.5px}   /* 格和格之间留空，不挤成一格（trishot 11-16） */
+html.hl #talk{align-self:stretch}
+html.hl #ctrl{display:grid;grid-template-columns:repeat(3,1fr);gap:6px} html.hl #play{grid-column:1/-1;order:-1;min-height:calc(var(--btn)*1.15)}
+html.hl #ctrl .b:not(#play){font-size:calc(var(--fs)*.8);padding:0 2px;height:var(--btn)}
+/* 尺寸：平板大、手机小 */
+html.pl,html.pp{--pad:20px;--gap:12px;--btn:54px;--fs:19px;--say:21px;--side:120px}
+html.pp{--side:124px}
+html.hp{--pad:12px;--gap:8px;--btn:44px;--fs:15px;--say:16px;--side:74px;--r:12px}
+html.hb{--pad:12px;--gap:8px;--btn:44px;--fs:15px;--say:16px;--r:12px}
+html.hl{--pad:10px;--gap:8px;--btn:40px;--fs:14px;--say:15px;--side:230px;--r:12px}
+html.hp #lv .h{font-size:11px} html.hp .tag{font-size:11px;padding:3px 0}
+html.hp h1,html.hb h1{font-size:calc(var(--fs)*1.25)} html.hp #no,html.hb #no{font-size:calc(var(--fs)*1.15)}
+html.hl h1{font-size:calc(var(--fs)*1.3)}
+#mz{position:absolute;visibility:hidden;left:-9999px;top:0}
+</style></head><body><script>window.BOOKCODE_CONFIG={"storage_key": "xsp_bookcode_v1", "verify_url": "", "test_codes": [], "buy_url": "", "buy_text": "没有？到 posecap.com 购买。", "term_text": "", "pro_text": "", "device_limit": 5, "support_email": "privacy@posecap.com", "have_text": "已有书码？在这里输入。", "provinces": [{"code": "AB", "name": "艾伯塔"}, {"code": "BC", "name": "不列颠哥伦比亚"}, {"code": "MB", "name": "曼尼托巴"}, {"code": "NB", "name": "新不伦瑞克"}, {"code": "NL", "name": "纽芬兰与拉布拉多"}, {"code": "NS", "name": "新斯科舍"}, {"code": "NT", "name": "西北地区"}, {"code": "NU", "name": "努纳武特"}, {"code": "ON", "name": "安大略"}, {"code": "PE", "name": "爱德华王子岛"}, {"code": "QC", "name": "魁北克"}, {"code": "SK", "name": "萨斯喀彻温"}, {"code": "YT", "name": "育空"}, {"code": "OUTSIDE", "name": "加拿大以外"}], "free_pages": [1, 2, 3, 4, 5, 6, 7], "front_matter_free": true, "texts": {"title": "输入书码", "lead": "输一次，这台设备上的翻页版、动画和闯关都能用。", "placeholder": "例如 ABCD-EFGH-JKLM", "go": "解锁", "cancel": "取消", "ok": "已解锁，到 {date} 为止。", "invalid": "这个书码不对，请再核对一下。", "expired": "这个书码已在 {date} 到期。纸质书照样能看。", "device_limit": "这个书码已经用在 5 台设备上了，不能再加新的设备。", "devices": "一个书码最多用在 5 台设备上。按浏览器算：同一台手机上的两个浏览器算两台；清掉网站数据后再输入，会多占一台。", "reset": "设备用满了，写信给我们，可以帮你重置：privacy@posecap.com", "not_open": "输入书码的地方还没开放，开放以后就在这里输入。", "network": "连不上验码服务，请检查网络后再试。", "province_title": "选你所在的省份", "province_prompt": "第一次用这个书码要选一次省份，以后换设备不用再选。", "region_not_available": "这个书码目前只能在加拿大使用（魁北克除外）。纸质书照样能看。", "revoked": "这个书码已停用。", "rate_limited": "试错太多次了，请过一会儿再试。", "badge": "已解锁 · 到 {date}", "pro": ""}};</script><script>/* 书码软锁：共用的解锁小模块（R-120，产品负责人 2026-11-14「锁还没派人做：三句话定了才能开工；按建议」：先做软锁）。
+   构建时内联进入口页、球路闯关（tactics-anim）、第 3 版网页动画、翻页版（tactics-book）；各页只调 window.BookCode。
+   ⚠ 软锁：只在页面上拦，内容照样在页面里（不是硬锁）。
+
+   配置：页面在内联本文件之前放 window.BOOKCODE_CONFIG（tactics-book 的叫法；BOOKCODE_CFG 也认），值来自 config/access.yaml：
+     storage_key, verify_url, test_codes, buy_url, have_text, buy_text, term_text, pro_text, device_limit, support_email, texts（输码框文字，tactics-book 出稿，键见下面 TX），
+     free_pages（页码表）, front_matter_free, free_levels {first, last}（闯关、入口页用；动画 / 翻页版可以不给）。
+   公开包 test_codes 必须是空数组（pack_posecap 查；scripts/bookcode.py 也查）。
+
+   环境（第 11 版，产品负责人 11-17「v3.0 走测试目录」，Coordinator 定口径，R-120）：出错落在测试那一侧——
+     prod = 在 posecap.com 上、路径不在 /book/beta/ 下：用配置里的正式 verify_url / buy_url / storage_key；配置里就算混进测试码也不认。
+     beta = posecap.com/book/beta/ 下：测试后台地址不进页面，读 /book/beta/_env.json {verify_url, buy_url}（posecap-web 管、放行时不随页面搬）；
+            读不到就不连任何后台：锁保持锁住，购买显示「即将开放」。读到了再问一次 <verify_url 的源>/book/status，回的 env 是正式就当没开。
+     test = 其余（claude.ai 审查稿、本地预览）：不连任何后台，只认审查稿本来就带的测试码。
+     beta、test 的存储键名一律加 _beta 后缀（BookCode.key(k) 给闯关存档用同一条判定）。
+   存储：localStorage 键 storage_key（默认 xsp_bookcode_v1；不在正式一侧加 _beta）。posecap.com/book/ 下各页同一个源，输一次全都认；
+   claude.ai 审查稿每页是单独的源，要各自输。读写都包 try/catch，读不到就当没解锁。
+
+   验码：pose-platform 契约 v0.4（pose_platform docs/features/book_code_api.md）：
+     POST <verify_url>（想三拍后端的 /book/verify；verify_url 给到 /book/verify 为止，只给域名时自动补上）
+       {code, device_id[, province]} → 200 {ok, credential: "bc1.<payload>.<sig>", scope, expires_at, devices: {used, max}}
+     首次激活要省份：400 province_required → 输码框里出省份选择，带 province 重发；QC 或加拿大以外 → 403 region_not_available。
+     其余错误：401 invalid_code、403 code_revoked / code_expired、409 device_limit（带 devices）、429 rate_limited、503 disabled / not_configured（保持锁住）。
+     device_id = 第一次需要时生成的随机 UUID v4（不许用设备指纹），存本机一直用。
+     「已解锁」= 本机有 bc1. 凭据、payload 能解码、s == "book3"、exp 未过（离线可判；软锁不验签）。
+   verify_url 为空（后端还没上线）：配置里有 test_codes 就认测试码（只有审查稿、本机的构建才带），存一个同格式的本机凭据；否则 not_open。
+
+   接口（window.BookCode）：
+     unlocked() → bool；info() → {expires_at, code_tail} | null；open({reason}) 弹输码框；onChange(fn) 解锁后调（有人订阅就不刷新页面）；
+     pageOpen(页码 | null=前置页)、levelOpen(级)、isFreePage、isFreeLevel；version；env（prod / beta / test）、key(k)（测试一侧加 _beta）。 */
+(function () {
+  const BOOKCODE_VERSION = "11";   // 两边打包时核对是不是同一版：改了接口或行为就加一
+  const TX = {   // 文案兜底（以配置 texts 为准；键名同 tactics-book docs/book/v3.0/bookcode_copy.md 第 5 节）
+    title: "输入书码", lead: "", placeholder: "", go: "解锁", cancel: "取消", ok: "已解锁，到 {date} 为止。", ok_nodate: "已解锁。",
+    invalid: "这个书码不对，请再核对一下。", revoked: "这个书码已停用。", rate_limited: "输错太多次了，请稍后再试。", unavailable: "现在验不了书码，请稍后再试。",
+    region_not_available: "目前只在加拿大魁北克以外地区提供。", province_title: "", province_prompt: "第一次激活，请选你所在的省份 / 地区：",   // 键名同 tactics-book 拟稿（交 tactics-ai 放进 texts） devices_left: "这个书码还能用在 {left} 台设备上。", expired: "这个书码已在 {date} 到期。", device_limit: "这个书码已经用在 3 台设备上了，不能再加新的设备。",
+    not_open: "输入书码的地方还没开放，开放以后就在这里输入。", network: "连不上验码服务，请检查网络后再试。", badge: "已解锁 · 到 {date}", empty: "先输入书码",
+    checking: "正在核对……", term_draft: "", buy_soon: "购买即将开放。",
+  };
+  const ENV = (() => { try { const h = location.hostname.replace(/^www\./, ""), beta = /^\/book\/beta(\/|$)/.test(location.pathname);
+    return h === "posecap.com" ? (beta ? "beta" : "prod") : "test"; } catch (e) { return "test"; } })();   // 出错落在测试那一侧
+  const envKey = (k) => (ENV === "prod" ? k : k + "_beta");
+  const RAW = window.BOOKCODE_CONFIG || window.BOOKCODE_CFG || {};
+  const C = Object.assign({ storage_key: "xsp_bookcode_v1", verify_url: "", test_codes: [], buy_url: "", have_text: "", buy_text: "", term_text: "", pro_text: "", device_limit: 5, support_email: "",
+    free_pages: [1, 2, 3, 4, 5, 6, 7], front_matter_free: true, free_levels: { first: 1, last: 3 } }, RAW);
+  C.storage_key = envKey(C.storage_key);
+  if (ENV === "prod") C.test_codes = [];                       // 正式一侧不认测试码（公开包本来就不带）
+  else { C.verify_url = ""; C.buy_url = ""; }                 // 测试一侧：页面里不带测试后台地址，正式地址也不用
+  if (ENV === "beta") C.test_codes = [];                       // beta 只认测试后台发的码（丙：任何公开包都不带测试码）
+  let envReady = ENV !== "beta" ? Promise.resolve() : fetch("/book/beta/_env.json", { cache: "no-store" }).then((r) => r.ok ? r.json() : {}).then(async (e) => {
+    const v = String((e && e.verify_url) || ""), b = String((e && e.buy_url) || ""); if (!v) return;
+    try { const st = await fetch(new URL(v).origin + "/book/status", { cache: "no-store" }).then((r) => r.json());   // 后台说自己是正式的：当没开（Coordinator 11-17）
+      if (st && /^prod/i.test(String(st.env || ""))) return; } catch (x) { /* 问不到 status 不拦：验码时后台自己会拒 */ }
+    C.verify_url = v; C.buy_url = b;
+  }).catch(() => {});
+  const texts = Object.assign({}, TX, RAW.texts || RAW.text || {});
+  const T = (k, date) => String(texts[k] || "").replace("{date}", date || "").replace("{n}", C.device_limit).replace("{email}", C.support_email);
+  const subs = [];
+  function read() { try { return JSON.parse(localStorage.getItem(C.storage_key) || "null"); } catch (e) { return null; } }
+  function write(v) { try { localStorage.setItem(C.storage_key, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  function uuid4() {
+    try { if (crypto.randomUUID) return crypto.randomUUID(); const b = crypto.getRandomValues(new Uint8Array(16)); b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+      const h = [...b].map((x) => x.toString(16).padStart(2, "0")).join(""); return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`; }
+    catch (e) { return "00000000-0000-4000-8000-" + Date.now().toString(16).padStart(12, "0").slice(-12); }
+  }
+  function deviceId() { const s = read() || {}; if (s.device_id) return s.device_id; s.device_id = uuid4(); write(s); return s.device_id; }   // 契约 §2：随机 UUID v4，不用指纹
+  function payload(cred) {   // bc1.<base64url JSON>.<sig> → {v, s, exp, iat} | null
+    try { const p = String(cred).split("."); if (p[0] !== "bc1" || p.length !== 3) return null;
+      const b = p[1].replace(/-/g, "+").replace(/_/g, "/"); return JSON.parse(decodeURIComponent(escape(atob(b + "===".slice((b.length + 3) % 4))))); } catch (e) { return null; }
+  }
+  function unlocked() {
+    const s = read(); if (!s || !s.credential) return false;
+    const pl = payload(s.credential); return !!(pl && pl.s === "book3" && pl.exp * 1000 > Date.now());
+  }
+  function info() { if (!unlocked()) return null; const s = read(), pl = payload(s.credential); return { expires_at: new Date(pl.exp * 1000).toISOString(), code_tail: String(s.code_tail || "") }; }
+  const norm = (c) => String(c || "").trim().toUpperCase().replace(/\s+/g, "");
+  const day = (iso) => (iso ? String(iso).slice(0, 10) : "");
+  const ERR = { invalid_code: "invalid", code_revoked: "revoked", code_expired: "expired", device_limit: "device_limit", rate_limited: "rate_limited",
+    province_required: "province", region_not_available: "region_not_available", disabled: "unavailable", not_configured: "unavailable", bad_request: "invalid" };
+  const endpoint = () => /\/book\/verify\/?$/.test(C.verify_url) ? C.verify_url : C.verify_url.replace(/\/+$/, "") + "/book/verify";
+  function b64url(o) { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+  async function verify(code, province) {
+    await envReady;
+    if (C.verify_url) {
+      let r, j = {};
+      try { r = await fetch(endpoint(), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(province ? { code, device_id: deviceId(), province } : { code, device_id: deviceId() }) }); j = await r.json().catch(() => ({})); }
+      catch (e) { return { ok: false, reason: "network" }; }
+      if (r.ok && j.ok && j.credential) return { ok: true, credential: j.credential, expires_at: j.expires_at || null, devices: j.devices || null };
+      if (j.devices && j.devices.max) C.device_limit = j.devices.max;   // 文字里的 {n} 按服务端给的上限
+      return { ok: false, reason: ERR[j.error] || (r.status >= 500 ? "unavailable" : "invalid"), devices: j.devices || null };   // 503 等一律保持锁住
+    }
+    if ((C.test_codes || []).length) {   // 审查稿 / 本机：测试码 → 同格式的本机凭据（不验签）；首次激活和上线版一样先要省份（Coordinator 11-14：审查稿要和上线内容一致）
+      if (!(C.test_codes || []).map(norm).includes(code)) return { ok: false, reason: "invalid" };
+      const s0 = read() || {};
+      if (!province && !s0.test_activated) return { ok: false, reason: "province" };   // 模拟 400 province_required（同一台设备激活过就不再问，和上线版「已激活的码绑新设备不用选」相仿）
+      if (province === "QC") return { ok: false, reason: "region_not_available" };    // 模拟 403 region_not_available
+      if (province) { s0.test_activated = true; write(s0); }
+      const now = Math.floor(Date.now() / 1000);
+      return { ok: true, credential: `bc1.${b64url({ v: 1, s: "book3", exp: now + 30 * 86400, iat: now })}.test`, expires_at: null, test: true };
+    }
+    return { ok: false, reason: "not_open" };
+  }
+  async function submit(raw, province) {
+    const code = norm(raw); if (!code) return { ok: false, reason: "empty" };
+    const res = await verify(code, province);
+    if (res.ok) { const s = read() || {}; Object.assign(s, { credential: res.credential, code_tail: code.slice(-4), verified_at: new Date().toISOString() }); delete s.code; write(s); }   // 只存凭据和尾号，不存书码明文
+    return res;
+  }
+  const isFreePage = (p) => p == null ? !!C.front_matter_free : (C.free_pages || []).map(Number).includes(Number(p));   // p 空 = 前置页
+  const pageOpen = (p) => isFreePage(p) || unlocked();
+  const isFreeLevel = (n) => n >= C.free_levels.first && n <= C.free_levels.last;
+  const levelOpen = (n) => isFreeLevel(n) || unlocked();
+
+  // 省份 / 地区（ISO 子码；QC 与加拿大以外由服务端回 region_not_available）
+  const PROV = [["AB", "阿尔伯塔"], ["BC", "不列颠哥伦比亚"], ["MB", "马尼托巴"], ["NB", "新不伦瑞克"], ["NL", "纽芬兰与拉布拉多"], ["NS", "新斯科舍"], ["NT", "西北地区"],
+    ["NU", "努纳武特"], ["ON", "安大略"], ["PE", "爱德华王子岛"], ["QC", "魁北克"], ["SK", "萨斯喀彻温"], ["YT", "育空"], ["OUTSIDE", "加拿大以外"]];   // 兜底，配置 provinces 为准
+  /* 输码框：自带样式（不依赖页面的 CSS） */
+  let box = null;
+  const q = (k) => box.querySelector(`[data-${k}]`);
+  function build() {
+    box = document.createElement("div");
+    box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true");
+    box.style.cssText = "position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);font:15px/1.6 'PingFang SC','Noto Sans SC',system-ui,sans-serif";
+    box.innerHTML = '<div style="background:#fffdf7;color:#1d1d1d;border-radius:16px;max-width:min(92vw,400px);width:100%;padding:18px 18px 14px;box-shadow:0 12px 40px rgba(0,0,0,.4)">'
+      + '<b data-h style="font-size:18px"></b><p data-why style="margin:6px 0 0;color:#1d1d1d;font-weight:700"></p><p data-have style="margin:6px 0 0;color:#1d1d1d"></p>'
+      + '<input data-i autocomplete="off" autocapitalize="characters" spellcheck="false" style="margin-top:10px;width:100%;box-sizing:border-box;font:inherit;font-size:18px;letter-spacing:1px;padding:10px 12px;border:2px solid #d8cfbc;border-radius:10px;background:#fff;color:#1d1d1d">'
+      + '<div data-prov style="display:none;margin-top:8px"><b data-pt style="display:block;font-size:14px"></b><p data-pq style="margin:2px 0 6px;font-size:13px;color:#5b5446"></p><select data-ps style="font:inherit;padding:6px 8px;border-radius:8px;border:2px solid #d8cfbc;background:#fff;color:#1d1d1d;width:100%"></select></div>'
+      + '<p data-m style="margin:8px 0 0;min-height:1.6em"></p><p data-r style="margin:2px 0 0;font-size:13px;color:#5b5446"></p><p data-dev style="margin:2px 0 0;font-size:12px;color:#8a8170"></p>'
+      + '<p data-b style="margin:4px 0 0;font-size:13px;color:#5b5446"></p><p data-t style="margin:2px 0 0;font-size:12px;color:#8a8170"></p>'
+      + '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button data-x type="button" style="font:inherit;border:0;border-radius:10px;padding:8px 14px;background:#ece5d6;color:#1d1d1d;cursor:pointer"></button>'
+      + '<button data-ok type="button" style="font:inherit;font-weight:800;border:0;border-radius:10px;padding:8px 16px;background:#f07a2a;color:#fff;cursor:pointer"></button></div></div>';
+    document.body.appendChild(box);
+    const close = () => { box.style.display = "none"; };
+    q("x").addEventListener("click", close);
+    box.addEventListener("click", (e) => { if (e.target === box) close(); });
+    box.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); if (e.key === "Enter") q("ok").click(); });
+    q("ok").addEventListener("click", async () => {
+      const m = q("m"); m.style.color = "#5b5446"; m.textContent = T("checking");
+      const pv = q("prov").style.display !== "none" ? q("ps").value : "";
+      if (q("prov").style.display !== "none" && !pv) { m.style.color = "#b4462b"; m.textContent = T("province_prompt"); return; }
+      if (pv === "OUTSIDE" || pv === "XX") { m.style.color = "#b4462b"; m.textContent = T("region_not_available"); return; }   // 加拿大以外：不发请求
+      const r = await submit(q("i").value, pv);
+      if (!r.ok && r.reason === "province") { m.textContent = ""; q("pt").textContent = T("province_title"); q("pq").textContent = T("province_prompt"); /* 标题、说明分两行（tactics-book 11-14：挤在一行没标点） */ q("prov").style.display = "block"; return; }   // 首次激活：选省份后再点一次
+      if (r.ok) {
+        const left = r.devices && r.devices.max ? r.devices.max - r.devices.used : null;
+        m.style.color = "#2d7a4f"; m.textContent = T("ok_nodate") + (left != null ? " " + T("devices_left").replace("{left}", left) : "");   // 契约：对外先不写期限（不显示到期日）
+        setTimeout(() => { close(); if (subs.length) subs.forEach((f) => { try { f(true); } catch (e) {} }); else location.reload(); }, 900);   // 有人订阅就不刷新（翻页版要停在原处）
+      } else { m.style.color = "#b4462b"; m.textContent = (T(r.reason, day(r.expires_at)) || T("invalid")) + (r.reason === "device_limit" && T("reset") ? " " + T("reset") : ""); }
+    });
+  }
+  function open(opt) {
+    opt = opt || {};
+    if (!box) build();
+    box.setAttribute("aria-label", T("title"));
+    q("h").textContent = "🔑 " + T("title"); q("i").placeholder = T("placeholder"); q("x").textContent = T("cancel"); q("ok").textContent = T("go");
+    const inf = info();
+    q("why").textContent = inf ? T("badge", day(inf.expires_at)).replace(/ · 到 $/, "") : (opt.reason || "");
+    q("have").textContent = inf ? "" : C.have_text; q("r").textContent = T("lead"); q("dev").textContent = T("devices");
+    q("m").textContent = ""; q("i").value = ""; q("prov").style.display = "none";
+    q("ps").innerHTML = '<option value="">—</option>' + ((C.provinces && C.provinces.length) ? C.provinces.map((x) => [x.code, x.name]) : PROV).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");   // 省份表以配置为准
+    const b = q("b"); b.textContent = "";
+    if (C.buy_url) {   // 只把句子里的网址那几个字做成链接（产品负责人 11-16「这个能加上链接吗」）；新窗口打开，闯关里点了不丢进度。句子里找不到网址就整句做链接
+      let host = ""; try { host = new URL(C.buy_url).hostname.replace(/^www\./, ""); } catch (e) {}
+      const k = host ? C.buy_text.indexOf(host) : -1, lk = k >= 0 ? host : C.buy_text, at = k >= 0 ? k : 0;
+      const a = document.createElement("a"); a.href = C.buy_url; a.target = "_blank"; a.rel = "noopener"; a.textContent = lk; a.style.color = "#c25a12"; a.style.textDecoration = "underline";
+      b.append(C.buy_text.slice(0, at), a, C.buy_text.slice(at + lk.length));
+    }
+    else if (ENV === "beta") b.textContent = T("buy_soon");   // beta 读不到测试支付地址：购买「即将开放」
+    else if (C.buy_text) b.textContent = C.buy_text;   // 未定事项不写在锁页卡上，只写审查说明区（产品负责人 11-15）
+    q("t").textContent = [C.pro_text, C.term_text].filter(Boolean).join("　");   // Pro 那句、期限句：配置给了才出（现在都不带）   // 期限句：config 里有就用；空着时只在审查稿出草稿
+    box.style.display = "flex"; setTimeout(() => q("i").focus(), 30);
+  }
+  window.BookCode = { version: BOOKCODE_VERSION, unlocked, info, open, onChange: (f) => subs.push(f), submit,
+    pageOpen, levelOpen, isFreePage, isFreeLevel, cfg: C, env: ENV, key: envKey };   // env / key(k)：闯关存档等按同一条判定分开正式和测试（第 11 版）
+})();
+</script><script>if(!(window.BookCode&&BookCode.unlocked())){document.documentElement.style.visibility="hidden";if(top===self) location.replace("../index.html#p25");}</script>
+<div id="app">
+<div id="top"><button class="b" id="back" aria-label="回到书页"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div id="no">第 25 页</div><h1>截杀：不等球落，抢高点</h1>
+<button class="chip" id="spin" type="button"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4.5h-4.5"/></svg>转一转</button></div>
+<div id="court"><svg id="c2" viewBox="0 220 440 320" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><defs><marker id="amF07A2A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#F07A2A"/></marker><marker id="am2F7FD9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#2F7FD9"/></marker></defs><rect x="20" y="480" width="400" height="14" rx="4" fill="#52B788"/><line x1="220" y1="372" x2="220" y2="480" stroke="#2B2B2B" stroke-width="4"/><rect x="212" y="372" width="16" height="6" fill="#2B2B2B"/><text x="232" y="366" text-anchor="start" font-size="12" fill="#555">球网（侧面看）</text><text x="30" y="515" font-size="13" fill="#555">对手这边</text><text x="410" y="515" text-anchor="end" font-size="13" fill="#555">我这边</text><g id="right"><mask id="m0" maskUnits="userSpaceOnUse" x="-20" y="-20" width="480" height="660"><path d="M95 350 C 190 270, 330 235, 405 465" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/></mask><path id="s0" d="M95 350 C 190 270, 330 235, 405 465" fill="none" stroke="#2F7FD9" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 7" style="visibility:hidden"/><mask id="m1" maskUnits="userSpaceOnUse" x="-20" y="-20" width="480" height="660"><path d="M290 301 L 140 470" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round"/></mask><path id="s1" d="M290 301 L 140 470" fill="none" stroke="#F07A2A" stroke-width="7" stroke-linecap="round" style="visibility:hidden"/></g><g>
+      <circle cx="80" cy="364" r="15" fill="#FFE2C4" stroke="#333" stroke-width="2"/>
+      <circle cx="75" cy="361" r="2" fill="#333"/><circle cx="85" cy="361" r="2" fill="#333"/>
+      <rect x="67" y="380" width="26" height="40" rx="8" fill="#2F7FD9"/>
+      <line x1="72" y1="420" x2="66" y2="450" stroke="#333" stroke-width="3"/><line x1="88" y1="420" x2="94" y2="450" stroke="#333" stroke-width="3"/>
+      <line x1="92" y1="400" x2="114" y2="420" stroke="#333" stroke-width="3"/><ellipse cx="120" cy="426" rx="9" ry="13" transform="rotate(-40 120 426)" fill="none" stroke="#333" stroke-width="3"/>
+      <text x="80" y="470" text-anchor="middle" font-size="14" font-weight="700" fill="#444">对手</text></g><g>
+      <circle cx="249" cy="340" r="15" fill="#FFE2C4" stroke="#333" stroke-width="2"/>
+      <circle cx="244" cy="337" r="2" fill="#333"/><circle cx="254" cy="337" r="2" fill="#333"/>
+      <rect x="236" y="356" width="26" height="40" rx="8" fill="#F07A2A"/>
+      <line x1="241" y1="396" x2="235" y2="426" stroke="#333" stroke-width="3"/><line x1="257" y1="396" x2="263" y2="426" stroke="#333" stroke-width="3"/>
+      <line x1="259" y1="356" x2="283" y2="308" stroke="#333" stroke-width="3"/><ellipse cx="287" cy="300" rx="9" ry="13" transform="rotate(30 287 300)" fill="none" stroke="#333" stroke-width="3"/>
+      <text x="249" y="446" text-anchor="middle" font-size="14" font-weight="700" fill="#444">我：截杀</text></g><g opacity=".35">
+      <circle cx="385" cy="362" r="15" fill="#FFE2C4" stroke="#333" stroke-width="2"/>
+      <circle cx="380" cy="359" r="2" fill="#333"/><circle cx="390" cy="359" r="2" fill="#333"/>
+      <rect x="372" y="378" width="26" height="40" rx="8" fill="#F07A2A"/>
+      <line x1="377" y1="418" x2="371" y2="448" stroke="#333" stroke-width="3"/><line x1="393" y1="418" x2="399" y2="448" stroke="#333" stroke-width="3"/>
+      <line x1="397" y1="398" x2="419" y2="418" stroke="#333" stroke-width="3"/><ellipse cx="425" cy="424" rx="9" ry="13" transform="rotate(-40 425 424)" fill="none" stroke="#333" stroke-width="3"/>
+      <text x="385" y="468" text-anchor="middle" font-size="14" font-weight="700" fill="#444">等球落下再打</text></g><g id="pt0" style="opacity:0;transition:opacity .3s"><circle cx="290" cy="301" r="16" fill="none" stroke="#F07A2A" stroke-width="4"/><circle cx="290" cy="301" r="5" fill="#F07A2A"/></g><g id="pt1" style="opacity:0;transition:opacity .3s"><circle cx="381" cy="404" r="16" fill="none" stroke="#999" stroke-width="4"/><circle cx="381" cy="404" r="5" fill="#999"/></g><text id="lb0" x="295" y="262" text-anchor="middle" font-size="15" font-weight="700" fill="#F07A2A" style="opacity:0;transition:opacity .3s">① 在这里打！球还高</text><text id="lb1" x="300" y="440" text-anchor="start" font-size="15" font-weight="700" fill="#999" style="opacity:0;transition:opacity .3s">晚了</text><text id="lb2" x="120" y="300" text-anchor="middle" font-size="15" font-weight="700" fill="#2F7FD9" style="opacity:0;transition:opacity .3s">他的平高球</text><defs><marker id="amF07A2A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#F07A2A"/></marker><marker id="am2F7FD9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#2F7FD9"/></marker><marker id="amE0301E" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#E0301E"/></marker></defs><rect id="fog" x="0" y="220" width="440" height="320" fill="#EAF6EE" style="opacity:0;transition:opacity .4s"/><g id="wrongG"><mask id="m2" maskUnits="userSpaceOnUse" x="-20" y="-20" width="480" height="660"><path d="M95 350 C 190 228, 330 200, 412 470" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/></mask><path id="s2" d="M95 350 C 190 228, 330 200, 412 470" fill="none" stroke="#2F7FD9" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 7" style="visibility:hidden"/><mask id="m3" maskUnits="userSpaceOnUse" x="-20" y="-20" width="480" height="660"><path d="M95 350 C 160 182, 360 182, 405 465" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/></mask><path id="s3" d="M95 350 C 160 182, 360 182, 405 465" fill="none" stroke="#2F7FD9" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 7" style="visibility:hidden"/><g id="wl0" style="opacity:0;transition:opacity .3s"><text x="330" y="236" text-anchor="start" font-size="15" font-weight="800" fill="#2F7FD9" stroke="#EAF6EE" stroke-width="4" paint-order="stroke">球从头上飞过去</text><path d="M279 290 l22 22 M301 290 l-22 22" stroke="#E0301E" stroke-width="6" stroke-linecap="round"/><text x="290" y="288" text-anchor="middle" font-size="17" font-weight="900" fill="#E0301E" stroke="#fff" stroke-width="4" paint-order="stroke">跳空了</text></g><g id="wl1" style="opacity:0;transition:opacity .3s"><g>
+      <circle cx="385" cy="362" r="15" fill="#FFE2C4" stroke="#333" stroke-width="2"/>
+      <circle cx="380" cy="359" r="2" fill="#333"/><circle cx="390" cy="359" r="2" fill="#333"/>
+      <rect x="372" y="378" width="26" height="40" rx="8" fill="#F07A2A"/>
+      <line x1="377" y1="418" x2="371" y2="448" stroke="#333" stroke-width="3"/><line x1="393" y1="418" x2="399" y2="448" stroke="#333" stroke-width="3"/>
+      <line x1="397" y1="398" x2="419" y2="418" stroke="#333" stroke-width="3"/><ellipse cx="425" cy="424" rx="9" ry="13" transform="rotate(-40 425 424)" fill="none" stroke="#333" stroke-width="3"/>
+      <text x="385" y="468" text-anchor="middle" font-size="14" font-weight="700" fill="#444">退后再打</text></g><text x="150" y="248" text-anchor="middle" font-size="15" font-weight="800" fill="#E0301E" stroke="#EAF6EE" stroke-width="4" paint-order="stroke">太高太深</text><path d="M279 290 l22 22 M301 290 l-22 22" stroke="#E0301E" stroke-width="6" stroke-linecap="round"/><text x="270" y="288" text-anchor="middle" font-size="17" font-weight="900" fill="#E0301E" stroke="#fff" stroke-width="4" paint-order="stroke">够不着</text></g></g><g id="ball" style="opacity:0"><g transform="scale(.95)"><polygon points="0,10 -9,-8 9,-8" fill="#fff" stroke="#555" stroke-width="1.5"/><line x1="-3" y1="-8" x2="-1" y2="9" stroke="#bbb" stroke-width="1"/><line x1="3" y1="-8" x2="1" y2="9" stroke="#bbb" stroke-width="1"/><circle cx="0" cy="11" r="4.5" fill="#F7F7F7" stroke="#555" stroke-width="1.5"/></g></g></svg>
+<span class="chip" id="hint">拖一拖，换个角度看</span><div id="chips"><span class="r"><button class="chip" id="spin2" type="button"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4.5h-4.5"/></svg>转一转</button><button class="chip" id="home" type="button"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4.5v4h4"/></svg>回到正面</button></span></div>
+<div class="badge" id="badge">✕ 错误打法</div></div>
+<div id="talk"><div class="hd"><span id="tl">讲解</span><span class="dot" data-i="0">1</span><span class="dot" data-i="1">2</span><span class="dot" data-i="2">3</span></div><p id="say">点「播放」，一拍一拍看。</p>
+<button id="spk" type="button" aria-label="声音" aria-expanded="false" aria-controls="vpop"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
+<div id="vpop" hidden><div class="row"><span>念讲解</span><button id="voice" type="button" role="switch" aria-checked="true" aria-label="念讲解"></button></div>
+<div class="row" id="vrow"><span>换个声音<small id="vname"></small></span><button class="chip" id="vnext" type="button">换一个</button></div><div id="vnote"></div></div></div>
+<div id="side"><div id="lv"><span class="h">局面</span><div class="t"><span class="tag" data-i="0">没丢分</span><span class="tag" data-i="1">打平手</span><span class="tag" data-i="2">我占上风</span><span class="tag" data-i="3">他回弱球</span><span class="tag" data-i="4">得分</span></div></div>
+<div id="ctrl"><button class="b" id="wbtn" type="button"><span class="rd"></span><span class="tx">看打错的</span></button><button class="b" id="reset" type="button"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4.5v4h4"/></svg><span>重来</span></button>
+<button class="b" id="next" type="button"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l8 6-8 6z" fill="currentColor"/><path d="M18 6v12"/></svg><span>下一拍</span></button><button class="b" id="play" type="button"></button></div></div>
+</div><div id="mz"></div>
+<script>
+const SIDE=true, BEATS=[{"say": "对手打来平高球，想从我头顶飞过去。", "voice": "第一拍。对手打来一个平高球，想从我头顶上飞过去。", "lines": [0], "show": ["lb2"]}, {"say": "我不退、不等球落，往前一步跳起来，在最高点截住。", "voice": "第二拍。我不往后退，也不等球落下来。往前一步跳起来，就在这里，球还高，截住它！", "lines": [], "show": ["pt0", "lb0"]}, {"say": "直接杀下去！他以为球去后场，还没准备好。", "voice": "第三拍。直接杀下去！他以为球会飞到后场，根本没准备好。要是等球落下来再打，就晚了。", "lines": [1], "show": ["pt1", "lb1"]}], GOAL=3, START={"me": [0, 0], "op": [0, 0]}, FINAL={}, NO=25;
+const WRONG=[{"say": "判断错了跳空，球从头上飞过去，我就全被动了。", "voice": "小心第一条。判断错了，跳早了。球比我想的高，从拍子上面飞过去，我落地的时候，球已经到后场了，我全被动了。", "lines": [2], "clear": false}, {"say": "太高太深的球，别硬截，老实退后再打。", "voice": "小心第二条。这个球又高又深，跳起来也够不着。别硬截，老实退到后场，等它落下来再打。", "lines": [3], "clear": true}], CARES=["判断错了跳空，球从头上飞过去，我就全被动了。", "只截刚过头顶、够得着的球；太高太深的，老实退后再打。"], N_OK=2, N_LINES=4, DUR=[900, 900, 1300, 1400], ARROW={"0": false, "1": true, "2": false, "3": false};
+const KOUJUE="球还在高处，我就跳起来，早一步打，他来不及。", END_VOICE="这就是截杀：不等球落，抢高点。截杀抢的是时间。记住口诀：球还在高处，我就跳起来，早一步打，他来不及。", ICON={"back": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 5l-7 7 7 7\"/></svg>", "play": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 4.5v15l12.5-7.5z\" fill=\"currentColor\" stroke-width=\"2\"/></svg>", "pause": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 5v14M16 5v14\" stroke-width=\"3.6\"/></svg>", "again": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4.5 12a7.5 7.5 0 1 0 2.2-5.3\"/><path d=\"M4.5 4.5v4h4\"/></svg>", "next": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 6l8 6-8 6z\" fill=\"currentColor\"/><path d=\"M18 6v12\"/></svg>", "reset": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4.5 12a7.5 7.5 0 1 0 2.2-5.3\"/><path d=\"M4.5 4.5v4h4\"/></svg>", "sound": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 9.5h3.5L12 5.5v13l-4.5-4H4z\" fill=\"currentColor\"/><path d=\"M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11\"/></svg>", "mute": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 9.5h3.5L12 5.5v13l-4.5-4H4z\" fill=\"currentColor\"/><path d=\"M16 9.5l5 5M21 9.5l-5 5\"/></svg>", "spin": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 12a8 8 0 1 1-2.3-5.6\"/><path d=\"M20 4v4.5h-4.5\"/></svg>"}, INIT="点「播放」，一拍一拍看。";
+const V3=null, PXM_X=57.915057915057915, PXM_Y=40.4040404040404, NET_Y=311, MID_X=220; let CUR=null;
+const $=id=>document.getElementById(id); let wbusy=false, pendingWrong=false, pendingNext=false, pendingPlay=false, k=0, busy=false, auto=false, halt=false, timer=null, pendingReset=false, done=false;
+const POS={};
+/* ---------- 布局：横竖 × 平板 / 手机，四种；球场坐标：页面数据（纵向压扁）→ 真实比例的屏幕坐标 ---------- */
+const KY=PXM_X/PXM_Y; let LAND=false, LAY=""; document.documentElement.classList.toggle("side",SIDE);
+function T(x,y){ if(SIDE) return [x,y]; const u=x-MID_X, v=(y-NET_Y)*KY; return LAND?[-v,u]:[u,v]; }
+function INV(sx,sy){ if(SIDE) return [sx,sy]; const [u,v]=LAND?[sy,-sx]:[sx,sy]; return [u+MID_X, v/KY+NET_Y]; }
+function tpath(d){ const out=[], buf=[]; for(const t of d.match(/[A-Za-z]|-?\d*\.?\d+(?:e-?\d+)?/g)){ if(/[A-Za-z]/.test(t)){ out.push(t); continue; }
+  buf.push(+t); if(buf.length===2){ const [a,b]=T(buf[0],buf[1]); out.push(a.toFixed(1)+" "+b.toFixed(1)); buf.length=0; } } return out.join(" "); }
+const c2=$("c2"), M=PXM_X, CD={W:2.59,DW:3.05,D:6.7,SS:1.98,LS:5.94,Z:4.5,R:1};   // R = 场外留边 1 米（产品负责人 11-17：球场四周 2 米内不得有障碍物、两块场之间至少 2 米，所以至少留 1 米）
+function S(a,b){ return LAND?[-b*M,a*M]:[a*M,b*M]; }   // 球场米数（a 横、b 纵，我方 b > 0）→ 屏幕
+function drawField(){ const g=$("field"); if(!g) return; const {W,DW,D,SS,LS,Z,R}=CD, o=[], n=v=>v.toFixed(1);
+  const rect=(a0,b0,a1,b1,attr)=>{ const p=S(a0,b0), q=S(a1,b1); o.push(`<rect x="${n(Math.min(p[0],q[0]))}" y="${n(Math.min(p[1],q[1]))}" width="${n(Math.abs(q[0]-p[0]))}" height="${n(Math.abs(q[1]-p[1]))}" ${attr}/>`); };
+  const ln=(a0,b0,a1,b1,w,ex)=>{ const p=S(a0,b0), q=S(a1,b1); o.push(`<line x1="${n(p[0])}" y1="${n(p[1])}" x2="${n(q[0])}" y2="${n(q[1])}" stroke="#fff" stroke-width="${w}" ${ex||""}/>`); };
+  rect(-DW-R,-D-R,DW+R,D+R,'rx="8" fill="#3F9A70"');   // 颜色照书：场外缓冲深绿、场内绿
+  rect(-DW,-D,DW,D,'fill="#52B788"'); for(const s of [-1,1]) rect(-W,s*SS,W,s*Z,'fill="#fff" opacity=".10"');
+  // 线照书的口径「粗白线是单打线，细线是双打线」（产品负责人 11-17 第 2 稿意见 3）：
+  // 粗 = 单打边线、单打宽度内的底线和前发球线、中线；细 = 双打边线、底线和前发球线伸进双打边道的两端、双打后发球线（整条只属于双打）
+  const TK=4, TN=1.5, thin='opacity=".7"';
+  for(const s of [-1,1]){ ln(-W+1.2,0,-W+1.2,s*D,1.6,'stroke-dasharray="6 9" opacity=".5"'); ln(W-1.2,0,W-1.2,s*D,1.6,'stroke-dasharray="6 9" opacity=".5"'); ln(-W,s*Z,W,s*Z,1.6,'stroke-dasharray="6 9" opacity=".5"');
+    for(const e of [-1,1]){ ln(e*W,s*D,e*DW,s*D,TN,thin); ln(e*W,s*SS,e*DW,s*SS,TN,thin); }
+    ln(-DW,s*LS,DW,s*LS,TN,thin); ln(s*DW,-D,s*DW,D,TN,thin); }
+  for(const s of [-1,1]){ ln(-W,s*D,W,s*D,TK); ln(-W,s*SS,W,s*SS,TK); ln(0,s*SS,0,s*D,TK); ln(s*W,-D,s*W,D,TK); }
+  { const p=S(-DW-.2,0), q=S(DW+.2,0); o.push(`<line x1="${n(p[0])}" y1="${n(p[1])}" x2="${n(q[0])}" y2="${n(q[1])}" stroke="#2B2B2B" stroke-width="9" stroke-linecap="round"/>`); }   // 球网：网柱立在双打边线上，只画到边线外一点
+  // 场区名写在球场线外的 1 米留边里（产品负责人 11-17「“前场/中场/后场”标签还是放到球场线外好」，和第 3 版书一样）：
+  // 对手那半边在左边双打边线外（横屏在上沿外），我这半边在右边（横屏在下沿外）；竖屏两个字竖着排，横屏横着排
+  const lab=(a,b,t)=>{ const p=S(a,b); o.push(LAND ? `<text x="${n(p[0])}" y="${n(p[1])}" text-anchor="middle" dominant-baseline="central">${t}</text>`
+    : `<text text-anchor="middle" dominant-baseline="central">${[...t].map((c,i)=>`<tspan x="${n(p[0])}" y="${n(p[1])}" dy="${(i-(t.length-1)/2)*1.08}em">${c}</tspan>`).join("")}</text>`); };
+  const ax=DW+R/2; o.push('<g id="zlab" font-weight="700" fill="#fff" opacity=".95">'); for(const [b,t] of [[(Z+D)/2,"后场"],[(SS+Z)/2,"中场"],[SS/2,"前场"]]){ lab(-ax,-b,t); lab(ax,b,t); } o.push("</g>");
+  // 产品名「想三拍」（产品负责人 11-17「加产品名」）：像印在地上的字，白色、很淡，只放在两条底线外的 1 米留边里，不进场地线以内；
+  // 手机竖屏底部一排的摆法里，对手那一端的留边放局面格，产品名只留我这一端
+  o.push('<g id="brand" fill="#fff" opacity=".3" font-weight="900">');
+  for(const s of (LAY==="hb"?[1]:[-1,1])){ const p=S(0,s*(D+R/2));
+    o.push(LAND ? `<text text-anchor="middle" dominant-baseline="central">${[..."想三拍"].map((c,i)=>`<tspan x="${n(p[0])}" y="${n(p[1])}" dy="${(i-1)*1.1}em">${c}</tspan>`).join("")}</text>`
+      : `<text x="${n(p[0])}" y="${n(p[1])}" text-anchor="middle" dominant-baseline="central" letter-spacing=".3em">想三拍</text>`); }
+  o.push("</g>");
+  g.innerHTML=o.join(""); }
+function sizeLabels(){ const z=$("zlab"), vb=c2.viewBox.baseVal; if(!z||!vb||!vb.width) return;   // 场区名在屏幕上固定大小（手机 11、平板 14 像素），不跟着球场缩小到看不清
+  const s=Math.min(c2.clientWidth/vb.width,c2.clientHeight/vb.height)||1, alley=CD.R*M*(LAND?.55:.7);   // 字不超过留边宽：竖排占七成、横排字高占五成半，不压线
+  z.setAttribute("font-size",Math.min((LAY==="pl"||LAY==="pp"?14:11)/s, alley).toFixed(1));
+  const br=$("brand"); if(br){ const f=CD.R*M*.45; br.setAttribute("font-size",f.toFixed(1)); br.style.display=f*s<10?"none":""; }   // 字高约 0.45 米；屏幕上不到 10 像素就不放
+  placeLv(s); }
+/* 底部一排的摆法：局面格放进对手那一端底线外的留边（平面）；立体浮在画框上沿 */
+function placeLv(s){ const lv=$("lv"), H=document.documentElement; if(LAY!=="hb"){ lv.style.removeProperty("--lvtop"); lv.style.removeProperty("--tagfs"); return; }
+  const fr=$("field")&&$("field").querySelector("rect"), ct=$("court").getBoundingClientRect(); if(!fr) return;
+  const r=fr.getBoundingClientRect(), band=CD.R*M*s, wmax=r.width*.96;
+  let f=11; lv.style.setProperty("--tagfs",f+"px"); while(lv.scrollWidth>wmax&&f>8){ f-=.5; lv.style.setProperty("--tagfs",f+"px"); }
+  const top=H.classList.contains("is3d")?8:r.top-ct.top+(band-lv.offsetHeight)/2; lv.style.setProperty("--lvtop",Math.max(4,top).toFixed(1)+"px"); }
+const RIGID=[], LINES=()=>[...c2.querySelectorAll('path[id^="s"]')].filter(p=>/^s\d+$/.test(p.id));   // 人、对白、红叉：整个平移到新位置，不变形
+function relayout(){ if(SIDE) return;
+  for(const p of LINES()){ if(!p.dataset.d0) p.dataset.d0=p.getAttribute("d"); p.setAttribute("d",tpath(p.dataset.d0)); }
+  for(const mk of c2.querySelectorAll("mask")){ mk.setAttribute("x",-3000); mk.setAttribute("y",-3000); mk.setAttribute("width",6000); mk.setAttribute("height",6000);
+    const p=mk.firstChild; if(!p.dataset.d0) p.dataset.d0=p.getAttribute("d"); p.setAttribute("d",tpath(p.dataset.d0)); }
+  if(!RIGID.length) for(const g of c2.querySelectorAll(".bub,[id^=wb],g[id^=x]")){ if(g.id&&!/^(b|wb|x)\d+$/.test(g.id)) continue; const b=g.getBBox(); RIGID.push([g,b.x+b.width/2,b.y+b.height/2,b]); }
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; const grow=(a,b,c,d)=>{ x0=Math.min(x0,a); y0=Math.min(y0,b); x1=Math.max(x1,c); y1=Math.max(y1,d); };
+  for(const [g,cx,cy,b] of RIGID){ const [tx,ty]=T(cx,cy); g.setAttribute("transform",`translate(${(tx-cx).toFixed(1)} ${(ty-cy).toFixed(1)})`); grow(tx-b.width/2,ty-b.height/2,tx+b.width/2,ty+b.height/2); }
+  for(const w of ["me","op"]) if(POS[w]) place(w,...POS[w]);
+  drawField(); const {DW,D,R}=CD, a=S(-DW-R,-D-R), b=S(DW+R,D+R); grow(Math.min(a[0],b[0]),Math.min(a[1],b[1]),Math.max(a[0],b[0]),Math.max(a[1],b[1]));
+  for(const p of LINES()){ const bb=p.getBBox(); grow(bb.x,bb.y,bb.x+bb.width,bb.y+bb.height); }
+  for(const w of ["me","op"]) for(const q of [START[w],FINAL[w]]) if(q){ const [x,y]=T(...q); grow(x-20,y-42,x+20,y+32); }
+  const m=6; c2.setAttribute("viewBox",`${(x0-m).toFixed(1)} ${(y0-m).toFixed(1)} ${(x1-x0+2*m).toFixed(1)} ${(y1-y0+2*m).toFixed(1)}`); }
+/* 手机竖屏有两种摆法：右栏（hp）和底部一排（hb）。各摆一次、量球场能放多大，哪种大用哪种（产品负责人 11-17「按建议」）：
+   高屏、加到主屏幕后多半是底部一排；带地址栏的矮屏多半是右栏。差不到 3% 时不换，免得在临界值附近来回跳 */
+function pickPortrait(){ const H=document.documentElement, ct=$("court"), A=(CD.DW+CD.R)/(CD.D+CD.R), sc={};
+  for(const c of ["hp","hb"]){ H.classList.remove("pl","pp","hp","hl","hb"); H.classList.add(c); const w=ct.clientWidth, h=ct.clientHeight; sc[c]=Math.min(w,h*A); }
+  const cur=LAY==="hp"||LAY==="hb"?LAY:null, oth=c=>c==="hp"?"hb":"hp", best=sc.hb>=sc.hp?"hb":"hp";
+  window.__pick=sc; return cur&&sc[cur]*1.03>=sc[oth(cur)]?cur:best; }
+function layout(){ const w=innerWidth, h=innerHeight, land=w>h, small=Math.min(w,h)<520||(land?h<520:w<600);
+  const H=document.documentElement; const lay=land?(small?"hl":"pl"):(small?pickPortrait():"pp");
+  H.classList.remove("pl","pp","hp","hl","hb"); H.classList.add(lay); H.classList.toggle("phone",small); H.classList.toggle("pad",!small);
+  const changed=LAND!==land||LAY!==lay; LAND=land; LAY=lay; if(changed||!c2.getAttribute("data-ok")){ relayout(); c2.setAttribute("data-ok",1); }
+  sizeLabels(); fitTalk(); if(typeof fitBtns==="function") fitBtns(); window.dispatchEvent(new Event("layout")); }
+/* 讲解区：按这一页最长的一句留够高度，播放时不跳；平板两行、手机竖屏最多三行（按内容）、手机横屏四行 */
+function fitTalk(){ const say=$("say"), mz=$("mz"), cs=getComputedStyle(say), lh=parseFloat(cs.lineHeight);
+  mz.style.cssText=`position:absolute;visibility:hidden;left:-9999px;width:${say.clientWidth}px;font:${cs.font};line-height:${cs.lineHeight};font-weight:${cs.fontWeight}`;
+  let need=1; for(const t of [INIT,KOUJUE,...BEATS.map(b=>b.say),...WRONG.map(w=>w.say),...CARES]){ mz.innerHTML=t; need=Math.max(need,Math.round(mz.scrollHeight/lh)); }
+  const [lo,hi]={pl:[2,3],pp:[2,3],hp:[1,3],hb:[1,3],hl:[4,5]}[LAY]||[2,3]; say.style.height=(Math.min(hi,Math.max(lo,need))*lh)+"px"; }
+/* ---------- 动画（照第 2 版）：人换表情、走位，线用遮罩一点点露出来，球沿线飞 ---------- */
+function setMood(who,m){ const el=$(who); if(!el) return; for(const g of el.querySelectorAll(".mood")) g.style.display=g.dataset.mood===m?"inline":"none"; }
+function place(who,x,y){ POS[who]=[x,y]; const [a,b]=T(x,y); $(who).setAttribute("transform",`translate(${a} ${b})`); }
+function along(d,ms,fn){ const p=document.createElementNS("http://www.w3.org/2000/svg","path"); p.setAttribute("d",d); const L=p.getTotalLength(), t0=performance.now();
+  return new Promise(ok=>{ const step=t=>{ const f=halt?1:Math.min(1,(t-t0)/ms), e=f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2, q=p.getPointAtLength(L*e); fn(q,e);
+    f<1?requestAnimationFrame(step):ok(); }; requestAnimationFrame(step); }); }
+function moveTo(who,x,y,ms){ const [x0,y0]=POS[who]; if(Math.abs(x-x0)+Math.abs(y-y0)<1) return Promise.resolve(); return along(`M${x0} ${y0} L ${x} ${y}`,ms,q=>place(who,q.x,q.y)); }
+function runAll(m){ return Promise.all(Object.entries(m||{}).map(([w,[x,y]])=>moveTo(w,x,y,650))); }
+async function shot(i){ const s=$("s"+i), m=$("m"+i).firstChild, L=m.getTotalLength(), ball=$("ball");
+  m.style.strokeDasharray=`${L} ${L}`; m.style.strokeDashoffset=L; s.setAttribute("mask",`url(#m${i})`); s.style.visibility="visible"; ball.style.opacity=1;
+  const SL=s.getTotalLength(); CUR={i,e:0};
+  await along(s.getAttribute("d"), DUR[i], (q,e)=>{ m.style.strokeDashoffset=L*(1-e); CUR.e=e;
+    const a=s.getPointAtLength(Math.max(0,SL*e-2)), b=s.getPointAtLength(Math.min(SL,SL*e+2)), deg=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI-90;
+    ball.setAttribute("transform",`translate(${q.x} ${q.y}) rotate(${deg})`); });
+  s.removeAttribute("mask"); if(ARROW[i]) s.setAttribute("marker-end",`url(#am${s.getAttribute("stroke").slice(1)})`); ball.style.opacity=0; CUR=null; }
+function hideLine(i){ const s=$("s"+i); s.style.visibility="hidden"; s.removeAttribute("mask"); s.removeAttribute("marker-end"); }
+/* ---------- 讲解条 ---------- */
+function setSay(label,html,cls){ $("tl").textContent=label; $("tl").className=cls||""; $("say").innerHTML=html; }
+function dots(cur){ for(const d of document.querySelectorAll(".dot")){ const i=+d.dataset.i; d.classList.toggle("cur",i===cur); d.classList.toggle("done",i<k||done); } }
+/* ---------- 朗读（设备自带）：一拍的动画和讲解都放完才进下一拍 ---------- */
+const TTS=window.speechSynthesis||null;
+let voiceOn=true; try{ voiceOn=localStorage.getItem("book_voice")!=="off"; }catch(e){}
+const PREFER=[/Xiaoxiao/i,/Xiaoyi/i,/Google.*普通话|Google.*Mandarin/i,/Tingting|婷婷/i,/Lili|莉莉/i,/Shanshan|姗姗/i,/Yaoyao|Huihui/i];
+let pick=""; try{ pick=localStorage.getItem("book_voice_name")||""; }catch(e){}
+function rank(v){ const i=PREFER.findIndex(r=>r.test(v.name)); return (/^zh[-_]CN/i.test(v.lang)?0:100)+(i<0?50:i); }
+const QUAL=v=>/Premium|高级/i.test(v.name)?0:/Enhanced|增强/i.test(v.name)?1:2;
+function zhVoices(){ const all=(TTS?TTS.getVoices():[]).filter(v=>/^zh|^cmn/i.test(v.lang)).sort((a,b)=>rank(a)-rank(b)||QUAL(a)-QUAL(b)), seen=new Set();
+  // 同一个人的几种音质（如 Tingting、Tingting (Enhanced)）名字一样，以前都算一个声音，「换一个」按下去名字不变、听着也一样（产品负责人 11-17「换一个按钮按下没有换」）：每个名字只留音质最好的那个
+  return all.filter(v=>{ const k=vshort(v); if(seen.has(k)) return false; seen.add(k); return true; }); }
+const vid=v=>v.voiceURI||v.name;
+function zhVoice(){ const vs=zhVoices(); return vs.find(v=>vid(v)===pick||v.name===pick)||vs[0]||null; }
+function speak(text){ return new Promise(ok=>{ if(!TTS||!voiceOn||!text||halt) return ok();
+  const u=new SpeechSynthesisUtterance(text), v=zhVoice(); u.lang=v?v.lang:"zh-CN"; if(v) u.voice=v; u.rate=1.15; u.pitch=1.05;
+  const t=setTimeout(ok, 2000+text.length*330); u.onend=u.onerror=()=>{ clearTimeout(t); ok(); }; TTS.speak(u); }); }
+const VNAME={Tingting:"婷婷",Lili:"莉莉",Shanshan:"姗姗",Meijia:"美佳",Sinji:"善怡",Xiaoxiao:"晓晓",Xiaoyi:"晓伊",Yaoyao:"瑶瑶",Huihui:"慧慧",Kangkang:"康康",Yunxi:"云希"};
+function vshort(v){ const m=Object.keys(VNAME).find(n=>v.name.includes(n)); return m?VNAME[m]:/Google/i.test(v.name)?"谷歌":v.name.replace(/^Microsoft |^Google /,"").slice(0,4); }
+function showVoice(){ $("spk").innerHTML=ICON[voiceOn?"sound":"mute"]; $("voice").setAttribute("aria-checked",voiceOn);
+  const vs=zhVoices(), cur=zhVoice(); $("vrow").hidden=vs.length<1; $("vnext").hidden=vs.length<2; $("vname").textContent=cur?"现在是"+vshort(cur):"";
+  $("vnote").textContent=!TTS?"这个浏览器不会朗读，只看字。":(TTS.getVoices().length&&!vs.length?"这台设备没有中文声音，只看字。":""); }
+if(TTS) TTS.onvoiceschanged=showVoice; showVoice();
+$("voice").onclick=()=>{ voiceOn=!voiceOn; try{ localStorage.setItem("book_voice",voiceOn?"on":"off"); }catch(e){} if(!voiceOn&&TTS) TTS.cancel(); showVoice(); };
+$("vnext").onclick=()=>{ const vs=zhVoices(); if(!vs.length) return; const i=vs.indexOf(zhVoice()); pick=vid(vs[(i+1)%vs.length]);
+  try{ localStorage.setItem("book_voice_name",pick); }catch(e){} showVoice(); if(TTS&&!busy){ TTS.cancel(); const h=halt; halt=false; speak("你好，我来给你讲这条球路。"); halt=h; } };
+$("spk").onclick=e=>{ e.stopPropagation(); const p=$("vpop"); p.hidden=!p.hidden; $("spk").setAttribute("aria-expanded",!p.hidden); };
+$("vpop").onclick=e=>e.stopPropagation(); document.addEventListener("click",()=>{ $("vpop").hidden=true; $("spk").setAttribute("aria-expanded",false); });
+/* ---------- 按钮状态：播放 → 暂停（正在播）→ 再看一遍（整页播完）；最后一拍「下一拍」变灰 ---------- */
+/* 按钮上的字放不下就缩小字号（11-17「“再看一遍”文字出框了」：手机竖屏右栏只有 74 像素宽），每换一次字、每换一次布局都量 */
+function fitBtns(){ for(const b of document.querySelectorAll("#ctrl .b,#top .chip,#chips .chip")){ b.style.fontSize=""; if(b.offsetParent===null) continue;
+  let f=parseFloat(getComputedStyle(b).fontSize); while(b.scrollWidth>b.clientWidth+1&&f>9){ f-=.5; b.style.fontSize=f+"px"; } } }
+function ui(){ const playing=!wbusy&&(busy||(auto&&timer!==null)), p=$("play");
+  const [ic,tx]=playing?["pause","暂停"]:(done&&!busy)?["again","再看一遍"]:["play","播放"]; p.innerHTML=`${ICON[ic]}<span>${tx}</span>`;
+  $("next").disabled=k>=BEATS.length||(busy&&k===BEATS.length-1);   // 最后一拍（正在放或放完）点不了
+  $("wbtn").hidden=!(WRONG.length||CARES.length); $("wbtn").querySelector(".tx").textContent=wbusy?"停下":"看打错的";
+  dots(!wbusy&&!done&&k<BEATS.length?k:-1); fitBtns(); }
+function stop(){ auto=false; if(timer!==null){ clearTimeout(timer); timer=null; } if(busy){ halt=true; if(TTS) TTS.cancel(); } ui(); }
+async function beat(){ timer=null; if(busy||k>=BEATS.length) return; busy=true; ui(); const b=BEATS[k];
+  setSay("讲解",b.say);
+  let anim;
+  if(SIDE){ for(const id of b.show) { const el=$(id); if(el) el.style.opacity=1; } anim=b.lines.reduce((p,i)=>p.then(()=>shot(i)),Promise.resolve()); }
+  else{ for(const [w,m] of Object.entries(b.mood)) setMood(w,m);
+    for(const g of document.querySelectorAll(".bub")) g.style.opacity=0; if(b.bubble) $("b"+k).style.opacity=1;
+    anim=runAll(b.before).then(()=>shot(b.shot)).then(()=>{ if(b.hide) $("b"+k).style.opacity=0; return runAll(b.after); }); }
+  await Promise.all([anim, speak(b.voice)]);
+  k++; if(k===BEATS.length){ for(const p of document.querySelectorAll(".tag")){ const i=+p.dataset.i; p.classList.toggle("on",i<GOAL); p.classList.toggle("goal",i===GOAL); }
+    ui(); await showWrong();
+    setSay("记住口诀",KOUJUE,"end"); await speak(END_VOICE); done=true; }
+  busy=false; halt=false; if(pendingReset){ pendingReset=false; reset(); return; }
+  if(pendingNext){ pendingNext=false; if(k<BEATS.length){ beat(); return; } }
+  if(pendingWrong){ pendingWrong=false; playWrong(); return; }
+  if(auto&&k<BEATS.length) timer=setTimeout(beat,500); else auto=false; ui(); }
+/* 小心：对的球路淡下去、标「错误打法」，人走到出错时的位置，一句讲解配一个动作；演完换回对的球路。没写错误打法的页，只读「小心」 */
+function clearWrong(){ for(let i=N_OK;i<N_LINES;i++) hideLine(i); WRONG.forEach((w,j)=>{ if($("x"+j)) $("x"+j).style.opacity=0; if($("wb"+j)) $("wb"+j).style.opacity=0; }); }
+async function showWrong(){
+  if(!WRONG.length){ $("badge").textContent="⚠ 小心"; $("badge").classList.add("on");
+    for(const c of CARES){ setSay("小心",c,"warn"); await speak("小心！"+c); if(!halt) await new Promise(r=>setTimeout(r,400)); }
+    $("badge").classList.remove("on"); return; }
+  const keep={op:[...POS.op], me:[...POS.me]}, moods={};
+  for(const w of ["op","me"]){ const g=[...$(w).querySelectorAll(".mood")].find(g=>g.style.display!=="none"); moods[w]=g?g.dataset.mood:"smile"; }
+  const bubs=[...document.querySelectorAll(".bub")].map(g=>[g,g.style.opacity]);
+  $("badge").textContent="✕ 错误打法"; $("right").style.opacity=.15; for(const [g] of bubs) g.style.opacity=0; $("badge").classList.add("on");
+  for(const [j,w] of WRONG.entries()){
+    setSay("小心",w.say,"warn");
+    if(w.clear) clearWrong();
+    if(w.players) await runAll(w.players);
+    for(const [who,m] of Object.entries(w.moods||{})) setMood(who,m);
+    if(w.bubble) $("wb"+j).style.opacity=1;
+    const ln=w.line==null?Promise.resolve():shot(w.line);
+    await Promise.all([ln.then(()=>{ if(w.x) $("x"+j).style.opacity=1; }), speak(w.voice)]);
+    if(!halt) await new Promise(r=>setTimeout(r,250));
+  }
+  clearWrong(); $("badge").classList.remove("on"); $("right").style.opacity=1;
+  for(const w of ["op","me"]){ place(w,...keep[w]); setMood(w,moods[w]); } for(const [g,o] of bubs) g.style.opacity=o;
+}
+function reset(){ if(busy){ pendingReset=true; stop(); return; } stop(); if(TTS) TTS.cancel(); clearWrong(); $("badge").classList.remove("on"); if($("right")) $("right").style.opacity=1; k=0; auto=false; done=false;
+  for(let i=0;i<N_OK;i++) hideLine(i);
+  if(SIDE) for(const el of document.querySelectorAll("[id^=lb],[id^=pt]")) el.style.opacity=0;
+  else{ for(const w of ["me","op"]){ setMood(w,"smile"); place(w,...START[w]); } for(const g of document.querySelectorAll(".bub")) g.style.opacity=0; }
+  for(const p of document.querySelectorAll(".tag")) p.className="tag"; setSay("讲解",INIT); ui(); }
+$("play").onclick=()=>{ if(wbusy){ pendingPlay=true; stop(); return; } if(auto||busy){ stop(); return; } if(done||k>=BEATS.length) reset(); auto=true; beat(); };
+// 下一拍：正在放一拍时，这一拍立刻放完（线画完、人走到位、讲解停），马上放下一拍；自动播放开着就接着自动放（11-17「播放中按下一拍没反应」：以前只是把自动播放关了，要等这一拍放完才停，看着没反应）
+$("next").onclick=()=>{ if(timer!==null){ clearTimeout(timer); timer=null; } if(busy&&!wbusy){ pendingNext=true; halt=true; if(TTS) TTS.cancel(); ui(); return; } beat(); }; $("reset").onclick=reset;
+async function playWrong(){ if(busy) return; busy=true; wbusy=true; ui(); clearWrong(); await showWrong(); if(!halt) setSay("记住口诀",KOUJUE,"end"); busy=false; wbusy=false; halt=false; ui();
+  if(pendingPlay){ pendingPlay=false; if(done||k>=BEATS.length) reset(); auto=true; beat(); } }   // 演错误打法时按播放：停下演示、从头放
+$("wbtn").onclick=()=>{ if(wbusy){ stop(); return; } if(busy){ pendingWrong=true; stop(); return; } playWrong(); };
+/* 返回：在网页版里（弹出来的框）关掉这个框；单独打开时回到网页版那一页 */
+$("back").onclick=()=>{ if(TTS) TTS.cancel(); if(top!==self){ try{ parent.postMessage({anim:"close"},"*"); return; }catch(e){} } location.href="../index.html#p"+NO; };
+document.addEventListener("touchstart",()=>{},{passive:true});
+if(!SIDE) for(const w of ["me","op"]) POS[w]=[...START[w]];
+layout(); if(document.fonts) document.fonts.ready.then(()=>{ fitTalk(); fitBtns(); }); addEventListener("resize",()=>{ clearTimeout(layout.t); layout.t=setTimeout(layout,120); }); ui(); setSay("讲解",INIT);
+
+
+/* 侧视图的错误打法：对的球路罩一层淡色，一步一步画错的球、露出人和字，演完撤掉 */
+function clearWrong(){ for(let i=N_OK;i<N_LINES;i++) hideLine(i); WRONG.forEach((w,j)=>{ const g=$("wl"+j); if(g) g.style.opacity=0; }); }
+async function showWrong(){
+  $("badge").textContent="✕ 错误打法"; $("badge").classList.add("on"); $("fog").style.opacity=.82;
+  for(const [j,w] of WRONG.entries()){
+    setSay("小心",w.say,"warn");
+    if(w.clear) clearWrong();
+    $("wl"+j).style.opacity=1;
+    await Promise.all([w.lines.reduce((p,i)=>p.then(()=>shot(i)),Promise.resolve()), speak(w.voice)]);
+    if(!halt) await new Promise(r=>setTimeout(r,300));
+  }
+  clearWrong(); $("badge").classList.remove("on"); $("fog").style.opacity=0;
+}
+</script><script></script></body></html>
