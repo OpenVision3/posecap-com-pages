@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>球路闯关 v94</title>
+<title>球路闯关 v95</title>
 </head><body>
 <style>
 /* 一屏游戏：上 = 比分条，中 = 球场（2D 俯视 / 3D 转播，SVG 自己投影），下 = 优势条 + 字幕 + 按钮。球馆深色一种外观，不跟系统深浅色。 */
@@ -74,6 +74,12 @@ button.sm{padding:6px 10px;font-size:13px;border-radius:10px}
 /* v18 游戏化外观（试用者 2026-11-06：更像一个游戏产品） */
 #home{background:radial-gradient(120% 60% at 50% -10%,#2c5a43 0%,var(--hall) 60%),var(--hall)}
 .screen>*{flex-shrink:0}
+/* v95「← 返回主页」回想三拍入口页（产品负责人 11-18「从入口页进球路闯关后，无法返回到入口页」）：叫法、样子同网页动画 / 翻页版那颗（pack_posecap.HOME_BTN）；
+   只放首页（选关页）顶上，对局中、结算页不放（对局里「选关」先回首页）。相对地址 ../v3/，正式 /book/game/ → /book/v3/、测试 /book/beta/game/ → /book/beta/v3/ 都对；
+   不在 posecap.com 上（审查稿、本机）没有入口页可回：显示成不能点的灰色 */
+.entryrow{display:flex}
+.entrybtn{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;background:#185943;color:#F2B01E;font:800 15px/1 'Noto Sans SC','PingFang SC',sans-serif;padding:10px 16px;border-radius:999px;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,.25);border:1px solid #2f5e47}
+.entrybtn.off{opacity:.45;pointer-events:none;cursor:default}
 .hero{position:relative;text-align:center;padding:18px 8px 14px;border-radius:20px;background:linear-gradient(160deg,#1f4a36,#132119 70%);border:2px solid #2f5e47;box-shadow:inset 0 0 0 4px rgba(255,255,255,.03),0 8px 24px rgba(0,0,0,.35);overflow:hidden}
 .hero::before{content:"";position:absolute;inset:auto -20% -40% -20%;height:70%;background:repeating-linear-gradient(90deg,transparent 0 46px,rgba(255,255,255,.07) 46px 48px),linear-gradient(transparent,rgba(82,183,136,.25));transform:perspective(300px) rotateX(55deg);pointer-events:none}
 .hero .shuttle{width:54px;height:54px;transform:rotate(-24deg);filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));animation:bob 2.4s ease-in-out infinite}
@@ -306,9 +312,10 @@ svg text{font-family:var(--font)}
   </div>
 
   <section class="screen" id="home">
+    <div class="entryrow"><a id="btnEntry" class="entrybtn" href="../v3/">← 返回主页</a></div>
     <div class="hero">
       <svg class="shuttle" viewBox="-16 -14 32 32" aria-hidden="true"><g style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))"><polygon points="0,10 -9,-8 9,-8" fill="#fff" stroke="#555" stroke-width="1.5"/><line x1="-3" y1="-8" x2="-1" y2="9" stroke="#bbb" stroke-width="1"/><line x1="3" y1="-8" x2="1" y2="9" stroke="#bbb" stroke-width="1"/><circle cx="0" cy="11" r="4.5" fill="#F7F7F7" stroke="#555" stroke-width="1.5"/></g></svg>
-      <h1>球路闯关<span class="ver">v94</span></h1>
+      <h1>球路闯关<span class="ver">v95</span></h1>
       <p class="tag">羽毛球战术闯关 · 9 级对手 · 35 页球路</p>
       <button class="plbtn" id="btnPlayer">👤 <span id="plName"></span> ▾</button> <button class="plbtn" id="btnCode" data-bookcode-btn>🔑 输入书码</button>
       <div class="hstats" id="hStats"></div>
@@ -1237,7 +1244,9 @@ const DATA = {"game":{"tiers":[{"id":"t8","name":"进阶","enabled":true,"option
 /* ---------- v18 补丁（2026-11-06 试用者意见）：9 级分三段、成人档、家长能力说明 ----------
    1–3 级：只管选球路（自动回中、自动启动），自己这边很少失误；4–6 级：自己回中（方向键一下挪一格），自动启动；
    7–9 级：自己回中、自己启动，开放玩家视角。 */
-const VERSION = "v94";
+const VERSION = "v95";
+{ const a = document.getElementById("btnEntry"); let on = false; try { on = location.hostname.replace(/^www\./, "") === "posecap.com"; } catch (e) {}
+  if (!on) { a.classList.add("off"); a.removeAttribute("href"); a.setAttribute("aria-disabled", "true"); a.title = "上线后回想三拍入口页（审查稿里没有入口页可回）"; } }
 /* 7–9 级、对手弱点、补的 14 条主动模式球路、家长 / 成人档、家长分组说明：v59 以前写在这里（patchData），2026-11-09 收回 config/game.yaml */
 const G = DATA.game;
 const $ = (id) => document.getElementById(id);
