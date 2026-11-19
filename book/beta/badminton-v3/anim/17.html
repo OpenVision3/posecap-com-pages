@@ -476,8 +476,11 @@ $("spk").onclick=e=>{ e.stopPropagation(); const p=$("vpop"); p.hidden=!p.hidden
 $("vpop").onclick=e=>e.stopPropagation(); document.addEventListener("click",()=>{ $("vpop").hidden=true; $("spk").setAttribute("aria-expanded",false); });
 /* ---------- 按钮状态：播放 → 暂停（正在播）→ 再看一遍（整页播完）；最后一拍「下一拍」变灰 ---------- */
 /* 按钮上的字放不下就缩小字号（11-17「“再看一遍”文字出框了」：手机竖屏右栏只有 74 像素宽），每换一次字、每换一次布局都量 */
+/* 量的时候先把内容靠左（11-18 真机「“再看一遍”显示不下」）：按钮里的字是居中的，宽出来的一半跑到左边，scrollWidth 只算右边那一半，原来量不出来 */
 function fitBtns(){ for(const b of document.querySelectorAll("#ctrl .b,#top .chip,#chips .chip")){ b.style.fontSize=""; if(b.offsetParent===null) continue;
-  let f=parseFloat(getComputedStyle(b).fontSize); while(b.scrollWidth>b.clientWidth+1&&f>9){ f-=.5; b.style.fontSize=f+"px"; } } }
+  b.style.justifyContent=b.style.alignItems="flex-start";
+  let f=parseFloat(getComputedStyle(b).fontSize); while(b.scrollWidth>b.clientWidth+1&&f>9){ f-=.5; b.style.fontSize=f+"px"; }
+  b.style.justifyContent=b.style.alignItems=""; } }
 function ui(){ const playing=!wbusy&&(busy||(auto&&timer!==null)), p=$("play");
   const [ic,tx]=playing?["pause","暂停"]:(done&&!busy)?["again","再看一遍"]:["play","播放"]; p.innerHTML=`${ICON[ic]}<span>${tx}</span>`;
   $("next").disabled=k>=BEATS.length||(busy&&k===BEATS.length-1);   // 最后一拍（正在放或放完）点不了
@@ -547,7 +550,8 @@ const NS="http://www.w3.org/2000/svg", W=2.59, DW=3.05, D=6.7, SS=1.98, LS=5.94,
 const m=(x,y)=>[(x-MID_X)/PXM_X,(y-NET_Y)/PXM_Y];   // 2D 像素 → 米（我方 y > 0）
 const svg=$("v3");
 let on=false, yaw=0, pitch=0.6, dist=15, raf=0;
-try{ on=localStorage.getItem("book_3d")==="on"; }catch(e){}
+const VIEW_KEY="xsp_view3";
+on=true; try{ on=localStorage.getItem(VIEW_KEY)!=="2d"; }catch(e){}
 const samples={};   // 每条线沿 2D 路径取 40 个点（米）
 // 一拍 = 一条球路（试用者 2026-11-07：彩线和灰线应该是同一条线从击球点开始的不同画法）：没有风和旋转时，球在一个竖直平面里飞，
 // 俯视是从击球点出发的一条直线（过 2D 线的起点和终点 = 下一拍的击球点或画的落点）；高度只由出手速度、角度、重力和空气阻力决定
@@ -738,13 +742,13 @@ function fit(){ const r=svg.getBoundingClientRect(), W=Math.max(50,r.width), H=M
   const x0=Math.min(...g.map(p=>p.x)), x1=Math.max(...g.map(p=>p.x)), y0=Math.min(...g.map(p=>p.y)), y1=Math.max(...g.map(p=>p.y)), pad=Math.min(W,H)*.04;
   const k=Math.min((W-2*pad)/(x1-x0),(H-2*pad)/(y1-y0)); FIT={k, ox:W/2-(x0+x1)/2*k, oy:H/2-(y0+y1)/2*k}; }
 function home(){ yaw=yaw0(); pitch=.6; dist=15; fit(); }
-function show(v){ on=v; try{ localStorage.setItem("book_3d",on?"on":"off"); }catch(e){}
+function show(v,save){ on=v; if(save) try{ localStorage.setItem(VIEW_KEY,on?"3d":"2d"); }catch(e){}   // 只记读者自己点的（进页面时那一次不记）
   document.documentElement.classList.toggle("is3d",on); svg.style.display=on?"block":"none"; $("c2").style.opacity=on?0:1; sizeLabels();
   $("view").textContent=on?"看平面":"看立体"; spinning=0; cancelAnimationFrame(raf); if(on){ home(); draw(); } }
 let hinted=false; try{ hinted=localStorage.getItem("book_3d_hint")==="done"; }catch(e){}
 function dragged(){ if(hinted) return; hinted=true; try{ localStorage.setItem("book_3d_hint","done"); }catch(e){} $("hint").hidden=true; }
 $("hint").hidden=hinted;
-$("view").onclick=()=>show(!on); $("home").onclick=()=>{ spinning=0; home(); };
+$("view").onclick=()=>show(!on,true); $("home").onclick=()=>{ spinning=0; home(); };
 for(const id of ["spin","spin2"]) $(id).onclick=()=>{ const t0=performance.now(), y0=yaw; spinning=t0;   // 转一转：慢慢转一整圈，回到原来的角度
   const step=t=>{ if(spinning!==t0) return; const f=Math.min(1,(t-t0)/4500); yaw=y0+2*Math.PI*(f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2); if(f<1) requestAnimationFrame(step); else spinning=0; };
   requestAnimationFrame(step); };
