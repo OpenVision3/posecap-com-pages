@@ -9,7 +9,7 @@
 body{background:var(--bg);color:var(--fg);font:15px/1.7 var(--font);margin:0}
 .review{max-width:1180px;margin:16px auto 0;padding:10px 14px;display:flex;flex-direction:column;gap:6px;border:2px dashed var(--accent);border-radius:10px;font-size:.88rem;background:var(--paper)}
 .wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px;display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:28px;align-items:start}
-aside{position:sticky;top:16px;display:flex;flex-direction:column;gap:16px;max-height:calc(100vh - 32px);overflow:auto;min-width:0}
+aside{position:sticky;top:calc(16px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:16px;max-height:calc(100vh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));overflow:auto;min-width:0}
 h1{font-size:1.6rem;font-weight:900;margin:0;line-height:1.3} h2{font-size:1rem;font-weight:900;margin:0} p{margin:0}
 .eyebrow{font-size:.78rem;font-weight:700;color:var(--accent);letter-spacing:.1em}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -19,7 +19,7 @@ h1{font-size:1.6rem;font-weight:900;margin:0;line-height:1.3} h2{font-size:1rem;
 .nav a.lk{opacity:.45;border-style:dashed}
 .lede{font-size:.95rem;font-weight:700;margin:6px 0 4px;line-height:1.6} .review ul{margin:0;padding-left:1.3em} .meta{font-size:.82rem;color:var(--muted)} .meta a{color:var(--green);font-weight:700}
 main{display:flex;flex-direction:column;gap:28px;min-width:0}
-figure{margin:0;display:flex;flex-direction:column;gap:8px;scroll-margin-top:16px}
+figure{margin:0;display:flex;flex-direction:column;gap:8px;scroll-margin-top:calc(16px + env(safe-area-inset-top,0px))}
 figcaption{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.9rem}
 .no{font-weight:900;font-variant-numeric:tabular-nums}
 .anim{margin-left:auto;font-size:.8rem;font-weight:800;color:#fff;background:#2F7FD9;border-radius:99px;padding:2px 12px;text-decoration:none}
@@ -30,6 +30,8 @@ figcaption{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size
 figure[data-lock].locked{display:none} .xl-unlocked figure[data-lockrun]{display:none}
 figure[data-lockrun] .xlock{max-width:none}
 @media (max-width:820px){.wrap{grid-template-columns:minmax(0,1fr)} aside{position:static;max-height:none}}
+/* 从桌面图标全屏打开（iPhone，R-120 11-18「回到首页按钮没法按」）：页面会画到状态栏底下，顶上让出状态栏那一截、再盖一条底色，滚动时字不从状态栏里穿过；横屏时左右让开灵动岛那一侧；浏览器里 inset 是 0，不变 */
+body{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px)} body::before{content:"";position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
 </style></head><body>
 <script>/* 锁住时，跳到某一页（导航、#pN）就跳到它所在那一段的合并卡 */
 function xlGo(h){ const f=h&&document.querySelector(h); if(f&&f.classList.contains("locked")){ const r=document.getElementById(f.dataset.run); if(r){ r.scrollIntoView(); return true; } } return false; }

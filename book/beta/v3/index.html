@@ -32,9 +32,9 @@ h1,h2{text-wrap:balance;margin:0}
 
 .app{display:grid;grid-template-columns:minmax(300px,30%) 1fr}
 
-/* 左栏：名字、目的、四步 */
+/* 左栏：名字、目的、四步。装成 App 全屏时顶上让出状态栏、卡片区底下让出横条（R-120，11-18 闯关「回到首页按钮没法按。」同一类） */
 .side{background:var(--court);color:#fff;display:flex;flex-direction:column;gap:18px;
-  padding-block:32px 24px;padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:28px}
+  padding-top:max(32px,env(safe-area-inset-top,0px));padding-bottom:24px;padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:28px}
 .kicker{font:700 15px/1 var(--body);letter-spacing:.3em;color:#cfe5da}
 .brand{font:400 clamp(52px,4.4vw,72px)/1 var(--display);letter-spacing:.04em;color:#f5c533;display:flex;align-items:center;gap:.22em;margin-top:8px}
 .head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
@@ -57,7 +57,7 @@ h1,h2{text-wrap:balance;margin:0}
 .side .note{margin-top:auto;font-size:12.5px;color:#a9cbbd}
 
 /* 右边：全部工具 */
-.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:24px max(24px,env(safe-area-inset-right,0px)) 24px 24px;min-width:0}
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:max(24px,env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) 24px;min-width:0}
 .tool{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--rule);border-radius:14px;overflow:hidden;text-decoration:none;min-width:0;min-height:0;box-shadow:var(--shadow);transition:border-color .15s,transform .15s,box-shadow .15s;cursor:pointer;text-align:left;font:inherit;color:inherit;padding:0}
 .tool:hover{border-color:var(--court);transform:translateY(-3px);box-shadow:var(--shadow-up)}
 /* 卡片是 button 时，老内核（微信电脑版浏览器等）不把子元素拉满宽，写明宽度 */
@@ -93,7 +93,7 @@ h1,h2{text-wrap:balance;margin:0}
   .wide{display:none}.narrow{display:inline}
   .app{grid-template-columns:1fr}
   .side{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-  .tools{grid-template-columns:repeat(2,minmax(0,1fr));padding:20px max(16px,env(safe-area-inset-right,0px)) 32px max(16px,env(safe-area-inset-left,0px))}
+  .tools{grid-template-columns:repeat(2,minmax(0,1fr));padding:20px max(16px,env(safe-area-inset-right,0px)) max(32px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
   .side .note{margin-top:0}
 }
 @media (max-width:560px){.tools{grid-template-columns:1fr}}

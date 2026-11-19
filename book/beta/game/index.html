@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>球路闯关 v95</title>
+<title>球路闯关 v96</title>
 </head><body>
 <style>
 /* 一屏游戏：上 = 比分条，中 = 球场（2D 俯视 / 3D 转播，SVG 自己投影），下 = 优势条 + 字幕 + 按钮。球馆深色一种外观，不跟系统深浅色。 */
@@ -14,7 +14,7 @@
 [hidden]{display:none!important}
 html,body{height:100%}
 body{background:var(--hall);color:var(--fg);font:15px/1.5 var(--font);margin:0;overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none}
-.app{height:100%;display:flex;flex-direction:column;padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px));padding-block:8px;gap:6px;max-width:560px;margin:0 auto}
+.app{height:100%;display:flex;flex-direction:column;padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px));padding-top:max(8px,env(safe-area-inset-top,0px));padding-bottom:max(8px,env(safe-area-inset-bottom,0px));gap:6px;max-width:560px;margin:0 auto}
 .top{display:flex;align-items:center;gap:8px;min-height:40px}
 .badge{font-size:12px;font-weight:800;padding:3px 9px;border-radius:99px;background:var(--panel);color:var(--gold);white-space:nowrap}
 .badge.active{background:#2a2018;color:var(--me);border:1px solid var(--me)}   /* 主动模式：橙色牌子 */
@@ -69,7 +69,9 @@ button.sm{padding:6px 10px;font-size:13px;border-radius:10px}
 .backz.nudge button{animation:nudgeBtn .5s ease-in-out infinite alternate}
 .backz button.pick{background:rgba(240,122,42,.45);border-color:var(--me)}
 @keyframes nudgeBtn{from{background:var(--panel)}to{background:rgba(242,176,30,.35)}}
-.screen{position:absolute;inset:0;background:var(--hall);display:flex;flex-direction:column;gap:14px;padding:18px max(16px,env(safe-area-inset-left,0px)) 18px max(16px,env(safe-area-inset-right,0px));overflow:auto;z-index:5;max-width:560px;margin:0 auto}
+.screen{position:absolute;inset:0;background:var(--hall);display:flex;flex-direction:column;gap:14px;padding:max(18px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-left,0px)) max(18px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px));overflow:auto;z-index:5;max-width:560px;margin:0 auto}
+/* v96（产品负责人 11-18「回到首页按钮没法按。」：iPhone 从桌面图标全屏打开，页面顶到状态栏、底到横条）：.app、.screen 上下也让出 env(safe-area-inset-top/bottom)，
+   大屏的左右留白也和 inset 取大的（横屏刘海那边）；不在全屏时 inset = 0，和原来一样 */
 .screen h1{font-size:30px;font-weight:900;margin:0;text-wrap:balance}
 /* v18 游戏化外观（试用者 2026-11-06：更像一个游戏产品） */
 #home{background:radial-gradient(120% 60% at 50% -10%,#2c5a43 0%,var(--hall) 60%),var(--hall)}
@@ -183,7 +185,7 @@ body:has(#thumbPad:not([hidden])) #backZones{display:none}
 @media (min-width:700px){
   body{font-size:17px}
   .app{max-width:min(100%,900px)}
-  .screen{max-width:none;padding-left:max(16px,calc((100% - 900px) / 2));padding-right:max(16px,calc((100% - 900px) / 2))}   /* 选关等页面铺满整屏，内容居中 */
+  .screen{max-width:none;padding-left:max(16px,env(safe-area-inset-left,0px),calc((100% - 900px) / 2));padding-right:max(16px,env(safe-area-inset-right,0px),calc((100% - 900px) / 2))}   /* 选关等页面铺满整屏，内容居中 */
   .screen h1{font-size:34px}
   .levels{display:grid!important;grid-template-columns:1fr 1fr 1fr!important}   /* 每段三个对手正好一行 */
   .levels .lvgrp,.levels h2{grid-column:1/-1}
@@ -208,7 +210,7 @@ body:has(#thumbPad:not([hidden])) #backZones{display:none}
   .adv{grid-template-columns:1fr!important}
   .adv b{text-align:left;padding:0 2px}
   .acts{flex-direction:column;align-items:stretch}
-  .screen{padding-left:max(16px,calc((100% - 1100px) / 2));padding-right:max(16px,calc((100% - 1100px) / 2))}
+  .screen{padding-left:max(16px,env(safe-area-inset-left,0px),calc((100% - 1100px) / 2));padding-right:max(16px,env(safe-area-inset-right,0px),calc((100% - 1100px) / 2))}
   .levels{grid-template-columns:1fr 1fr 1fr!important}
 }
 @media (min-width:900px) and (min-aspect-ratio:5/4) and (max-height:760px){ .adv{grid-template-columns:auto repeat(5,1fr)!important} .foot{gap:8px} }   /* v93：矮窗口局面五条改回横排，给字幕和按钮让高度 */
@@ -224,7 +226,7 @@ body:has(#thumbPad:not([hidden])) #backZones{display:none}
 .padtest b{min-width:44px;padding:6px 8px;border-radius:8px;background:var(--panel);border:2px solid var(--line);text-align:center;font-size:13px}
 .padtest b.on{background:var(--gold);color:#1d1d1d;border-color:var(--gold)}
 .simrow{display:flex;gap:8px;align-items:center;font-weight:700}
-.padtoast{position:fixed;left:50%;top:10px;transform:translateX(-50%);background:var(--gold);color:#1d1d1d;font-weight:800;padding:6px 14px;border-radius:999px;z-index:20;pointer-events:none}
+.padtoast{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--gold);color:#1d1d1d;font-weight:800;padding:6px 14px;border-radius:999px;z-index:20;pointer-events:none}
 .rmap{background:#fffdf7;border-radius:12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .rmap svg{width:100%;min-width:640px;height:auto;display:block}
 .rmap [data-no]{cursor:pointer}
@@ -315,7 +317,7 @@ svg text{font-family:var(--font)}
     <div class="entryrow"><a id="btnEntry" class="entrybtn" href="../v3/">← 返回主页</a></div>
     <div class="hero">
       <svg class="shuttle" viewBox="-16 -14 32 32" aria-hidden="true"><g style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))"><polygon points="0,10 -9,-8 9,-8" fill="#fff" stroke="#555" stroke-width="1.5"/><line x1="-3" y1="-8" x2="-1" y2="9" stroke="#bbb" stroke-width="1"/><line x1="3" y1="-8" x2="1" y2="9" stroke="#bbb" stroke-width="1"/><circle cx="0" cy="11" r="4.5" fill="#F7F7F7" stroke="#555" stroke-width="1.5"/></g></svg>
-      <h1>球路闯关<span class="ver">v95</span></h1>
+      <h1>球路闯关<span class="ver">v96</span></h1>
       <p class="tag">羽毛球战术闯关 · 9 级对手 · 35 页球路</p>
       <button class="plbtn" id="btnPlayer">👤 <span id="plName"></span> ▾</button> <button class="plbtn" id="btnCode" data-bookcode-btn>🔑 输入书码</button>
       <div class="hstats" id="hStats"></div>
@@ -1244,7 +1246,7 @@ const DATA = {"game":{"tiers":[{"id":"t8","name":"进阶","enabled":true,"option
 /* ---------- v18 补丁（2026-11-06 试用者意见）：9 级分三段、成人档、家长能力说明 ----------
    1–3 级：只管选球路（自动回中、自动启动），自己这边很少失误；4–6 级：自己回中（方向键一下挪一格），自动启动；
    7–9 级：自己回中、自己启动，开放玩家视角。 */
-const VERSION = "v95";
+const VERSION = "v96";
 { const a = document.getElementById("btnEntry"); let on = false; try { on = location.hostname.replace(/^www\./, "") === "posecap.com"; } catch (e) {}
   if (!on) { a.classList.add("off"); a.removeAttribute("href"); a.setAttribute("aria-disabled", "true"); a.title = "上线后回想三拍入口页（审查稿里没有入口页可回）"; } }
 /* 7–9 级、对手弱点、补的 14 条主动模式球路、家长 / 成人档、家长分组说明：v59 以前写在这里（patchData），2026-11-09 收回 config/game.yaml */
@@ -1292,13 +1294,13 @@ try { const s = JSON.parse(LS.getItem(PK(SAVE_KEY)) || "null"); if (s) save = { 
   document.addEventListener("touchmove", (e) => { if (e.touches.length > 1) stop(e); }, { passive: false });
   const vv = window.visualViewport; if (!vv) return;
   const btn = document.createElement("button"); btn.id = "unzoom"; btn.hidden = true; btn.textContent = "↺ 复原大小";
-  btn.style.cssText = "position:fixed;z-index:99;left:8px;top:8px;font:inherit;font-weight:800;padding:8px 12px;border-radius:12px;border:2px solid var(--gold);background:var(--panel,#123);color:var(--gold)";
+  btn.style.cssText = "position:fixed;z-index:99;left:8px;top:max(8px,env(safe-area-inset-top,0px));font:inherit;font-weight:800;padding:8px 12px;border-radius:12px;border:2px solid var(--gold);background:var(--panel,#123);color:var(--gold)";
   btn.addEventListener("click", () => {
     const m = document.querySelector('meta[name="viewport"]');
     if (window.top === window && m) { const c = m.content; m.content = c + ",maximum-scale=1"; setTimeout(() => { m.content = c; }, 300); }
     else btn.textContent = "双指往里捏，缩回原来大小";
   });
-  const chk = () => { const z = vv.scale > 1.05; btn.hidden = !z; if (z) { btn.style.left = vv.offsetLeft + 8 + "px"; btn.style.top = vv.offsetTop + 8 + "px"; } else btn.textContent = "↺ 复原大小"; };
+  const chk = () => { const z = vv.scale > 1.05; btn.hidden = !z; if (z) { btn.style.left = vv.offsetLeft + 8 + "px"; btn.style.top = "max(" + (vv.offsetTop + 8) + "px, env(safe-area-inset-top,0px))"; } else btn.textContent = "↺ 复原大小"; };
   vv.addEventListener("resize", chk); vv.addEventListener("scroll", chk);
   document.addEventListener("DOMContentLoaded", () => document.body.appendChild(btn)); if (document.body) document.body.appendChild(btn);
 })();

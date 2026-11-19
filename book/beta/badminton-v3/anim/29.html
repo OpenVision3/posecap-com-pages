@@ -6,7 +6,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Noto Sans SC",system-ui,sans-serif;-webkit-text-size-adjust:100%}
 body{overflow:hidden}
-#app{height:100vh;height:100dvh;padding:var(--pad);padding-left:max(var(--pad),env(safe-area-inset-left));padding-right:max(var(--pad),env(safe-area-inset-right));
+#app{height:100vh;height:100dvh;padding:var(--pad);padding-top:max(var(--pad),env(safe-area-inset-top));padding-left:max(var(--pad),env(safe-area-inset-left));padding-right:max(var(--pad),env(safe-area-inset-right));
   padding-bottom:max(var(--pad),env(safe-area-inset-bottom));display:grid;gap:var(--gap);min-height:0}
 button{font-family:inherit;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
@@ -110,6 +110,8 @@ html.hp #lv .h{font-size:11px} html.hp .tag{font-size:11px;padding:3px 0}
 html.hp h1,html.hb h1{font-size:calc(var(--fs)*1.25)} html.hp #no,html.hb #no{font-size:calc(var(--fs)*1.15)}
 html.hl h1{font-size:calc(var(--fs)*1.3)}
 #mz{position:absolute;visibility:hidden;left:-9999px;top:0}
+/* 全屏打开时让开状态栏、底部横条（R-120 11-18）：单独打开这页时自己让；放在网页版弹框（iframe）里时由外框四边让，这里不再让，免得有的浏览器把 inset 也给 iframe、让两遍 */
+html.framed #app{padding:var(--pad)}
 </style></head><body><script>window.BOOKCODE_CONFIG={"storage_key": "xsp_bookcode_v1", "verify_url": "", "test_codes": [], "buy_url": "", "buy_text": "没有？到 posecap.com 购买。", "term_text": "", "pro_text": "", "device_limit": 5, "support_email": "privacy@posecap.com", "have_text": "已有书码？在这里输入。", "provinces": [{"code": "AB", "name": "艾伯塔"}, {"code": "BC", "name": "不列颠哥伦比亚"}, {"code": "MB", "name": "曼尼托巴"}, {"code": "NB", "name": "新不伦瑞克"}, {"code": "NL", "name": "纽芬兰与拉布拉多"}, {"code": "NS", "name": "新斯科舍"}, {"code": "NT", "name": "西北地区"}, {"code": "NU", "name": "努纳武特"}, {"code": "ON", "name": "安大略"}, {"code": "PE", "name": "爱德华王子岛"}, {"code": "QC", "name": "魁北克"}, {"code": "SK", "name": "萨斯喀彻温"}, {"code": "YT", "name": "育空"}, {"code": "OUTSIDE", "name": "加拿大以外"}], "free_pages": [1, 2, 3, 4, 5, 6, 7], "front_matter_free": true, "texts": {"title": "输入书码", "lead": "输一次，这台设备上的翻页版、动画和闯关都能用。", "placeholder": "例如 ABCD-EFGH-JKLM", "go": "解锁", "cancel": "取消", "ok": "已解锁。", "invalid": "这个书码不对，请再核对一下。", "expired": "这个书码已在 {date} 到期。纸质书照样能看。", "device_limit": "这个书码已经用在 5 台设备上了，不能再加新的设备。", "devices": "一个书码最多用在 5 台设备上。按浏览器算：同一台手机上的两个浏览器算两台；清掉网站数据后再输入，会多占一台。", "reset": "设备用满了，写信给我们，可以帮你重置：privacy@posecap.com", "not_open": "输入书码的地方还没开放，开放以后就在这里输入。", "network": "连不上验码服务，请检查网络后再试。", "province_title": "选你所在的省份", "province_prompt": "第一次用这个书码要选一次省份，以后换设备不用再选。", "region_not_available": "这个书码目前只能在加拿大使用（魁北克除外）。纸质书照样能看。", "revoked": "这个书码已停用。", "rate_limited": "试错太多次了，请过一会儿再试。", "badge": "已解锁", "pro": ""}};</script><script>/* 书码软锁：共用的解锁小模块（R-120，产品负责人 2026-11-14「锁还没派人做：三句话定了才能开工；按建议」：先做软锁）。
    构建时内联进入口页、球路闯关（tactics-anim）、第 3 版网页动画、翻页版（tactics-book）；各页只调 window.BookCode。
    ⚠ 软锁：只在页面上拦，内容照样在页面里（不是硬锁）。
@@ -353,6 +355,7 @@ const V3={"lines": [{"t": "serve_short", "kind": "net", "z0": 1.0, "H": 0, "ua":
 const $=id=>document.getElementById(id); let wbusy=false, pendingWrong=false, pendingNext=false, pendingPlay=false, k=0, busy=false, auto=false, halt=false, timer=null, pendingReset=false, done=false;
 const POS={};
 /* ---------- 布局：横竖 × 平板 / 手机，四种；球场坐标：页面数据（纵向压扁）→ 真实比例的屏幕坐标 ---------- */
+if(window.top!==window) document.documentElement.classList.add("framed");
 const KY=PXM_X/PXM_Y; let LAND=false, LAY=""; document.documentElement.classList.toggle("side",SIDE);
 function T(x,y){ if(SIDE) return [x,y]; const u=x-MID_X, v=(y-NET_Y)*KY; return LAND?[-v,u]:[u,v]; }
 function INV(sx,sy){ if(SIDE) return [sx,sy]; const [u,v]=LAND?[sy,-sx]:[sx,sy]; return [u+MID_X, v/KY+NET_Y]; }

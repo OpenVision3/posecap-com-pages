@@ -6,7 +6,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Noto Sans SC",system-ui,sans-serif;-webkit-text-size-adjust:100%}
 body{overflow:hidden}
-#app{height:100vh;height:100dvh;padding:var(--pad);padding-left:max(var(--pad),env(safe-area-inset-left));padding-right:max(var(--pad),env(safe-area-inset-right));
+#app{height:100vh;height:100dvh;padding:var(--pad);padding-top:max(var(--pad),env(safe-area-inset-top));padding-left:max(var(--pad),env(safe-area-inset-left));padding-right:max(var(--pad),env(safe-area-inset-right));
   padding-bottom:max(var(--pad),env(safe-area-inset-bottom));display:grid;gap:var(--gap);min-height:0}
 button{font-family:inherit;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
@@ -110,6 +110,8 @@ html.hp #lv .h{font-size:11px} html.hp .tag{font-size:11px;padding:3px 0}
 html.hp h1,html.hb h1{font-size:calc(var(--fs)*1.25)} html.hp #no,html.hb #no{font-size:calc(var(--fs)*1.15)}
 html.hl h1{font-size:calc(var(--fs)*1.3)}
 #mz{position:absolute;visibility:hidden;left:-9999px;top:0}
+/* 全屏打开时让开状态栏、底部横条（R-120 11-18）：单独打开这页时自己让；放在网页版弹框（iframe）里时由外框四边让，这里不再让，免得有的浏览器把 inset 也给 iframe、让两遍 */
+html.framed #app{padding:var(--pad)}
 </style></head><body>
 <div id="app">
 <div id="top"><button class="b" id="back" aria-label="回到书页"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div id="no">第 3 页</div><h1>被杀了别慌，挑高球</h1>
@@ -169,6 +171,7 @@ const V3={"lines": [{"t": "smash", "kind": "down", "z0": 2.8, "H": 0, "ua": 0.5,
 const $=id=>document.getElementById(id); let wbusy=false, pendingWrong=false, pendingNext=false, pendingPlay=false, k=0, busy=false, auto=false, halt=false, timer=null, pendingReset=false, done=false;
 const POS={};
 /* ---------- 布局：横竖 × 平板 / 手机，四种；球场坐标：页面数据（纵向压扁）→ 真实比例的屏幕坐标 ---------- */
+if(window.top!==window) document.documentElement.classList.add("framed");
 const KY=PXM_X/PXM_Y; let LAND=false, LAY=""; document.documentElement.classList.toggle("side",SIDE);
 function T(x,y){ if(SIDE) return [x,y]; const u=x-MID_X, v=(y-NET_Y)*KY; return LAND?[-v,u]:[u,v]; }
 function INV(sx,sy){ if(SIDE) return [sx,sy]; const [u,v]=LAND?[sy,-sx]:[sx,sy]; return [u+MID_X, v/KY+NET_Y]; }
