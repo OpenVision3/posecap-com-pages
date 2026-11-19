@@ -101,6 +101,12 @@ input[type=number]{width:3.6em}
 .bkwarn button{margin-left:6px}
 .it .acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .it .acts .btn{padding:6px 10px;font-size:14px}
+/* 一局分几段（v1.6.4）：卡片里一段一行——第 n 段｜起止比分 · 几分｜回看｜更多；单段的操作收在「更多」 */
+.it .segs{grid-column:1/-1;display:grid;gap:0}
+.it .sg{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:6px;align-items:center;padding:5px 0;border-top:1px dashed var(--line);font-size:13.5px}
+.it .sg b{font-weight:700;white-space:nowrap}.it .sg .si{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--fg)}.it .sg .si .nb{font-style:normal;color:#c0392b;margin-right:3px;font-size:10px;vertical-align:1px}
+.it .sg .btn{padding:6px 7px;font-size:13.5px;white-space:nowrap}
+.it .sg .sm{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;padding-top:2px}.it .sg .sm .btn{font-size:13.5px}
 .linkbtn{background:none;border:0;color:var(--ok);font-weight:700;font-size:14px;padding:0}
 .foot{text-align:center;color:var(--muted);font-size:12px}
 
@@ -255,11 +261,36 @@ input[type=number]{width:3.6em}
 .marks{display:flex;justify-content:center;gap:12px;margin-top:6px}
 .mark{background:#185943;color:#fff;border-color:#185943;min-width:9em}
 .mark:disabled{background:var(--card);color:var(--muted);border-color:var(--line)}
-.adj{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
-.adj b{min-width:5.5em}
-.chk{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
-.chk p{margin:0;flex-basis:100%}
+/* 编辑栏、查错框、补一分（v1.6.4 重排）：每行一个网格，同一行按钮等宽；按钮高度 ≥ 44px 好按；宽屏上不拉得太宽 */
+.adj{display:grid;gap:6px;font-size:14px;max-width:560px}
+.adj .er{display:grid;gap:6px;align-items:center}
+.adj .btn{min-height:44px;padding:4px 6px;font-size:14px;line-height:1.2;min-width:0;word-break:keep-all}
+.adj .btn.red{color:#c0392b}.adj .btn.on{background:var(--line)}
+.adj .lab{font-size:13px;line-height:1.25;white-space:pre;color:var(--fg)}
+.adj b.lab{font-size:15px}
+.adj .fold{display:grid;gap:6px;border-top:1px dashed var(--line);padding-top:6px}
+.adj .fold .hint{margin:0}
+.adj select.sel{min-height:44px;min-width:0}
+.chk{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 8px}
+.chk .q{margin:0;font-size:14px;line-height:1.35}
+.chk .q.sub{font-size:12.5px;opacity:.8}
+.rbar .rng{position:absolute;top:1px;bottom:1px;border:2px dashed var(--fg);border-radius:6px;z-index:1;pointer-events:none}
+/* 查一查的状态色：绿 = 看过对得上，浅绿 = 推得出没错，红 = 对不上，灰斜纹 = 看不清跳过，紫 = 正在问，浅灰 = 还没看 */
+.rbar .seg.ck-no,.ckleg i.ck-no{background:#dedede}
+.rbar .seg.ck-ok,.ckleg i.ck-ok{background:#2f9e5b}
+.rbar .seg.ck-inf,.ckleg i.ck-inf{background:#a9dcb8}
+.rbar .seg.ck-bad,.ckleg i.ck-bad{background:#c0392b}
+.rbar .seg.ck-skip,.ckleg i.ck-skip{background:repeating-linear-gradient(135deg,#8c8c8c 0 3px,#dedede 3px 6px)}
+.rbar .seg.ck-ask,.ckleg i.ck-ask{background:#7b4fc4}
+.rbar .seg.ck-ask{top:1px;bottom:1px;min-width:6px;box-shadow:0 0 0 2px #7b4fc4;z-index:2}
+.ckleg{display:flex;flex-wrap:nowrap;gap:8px;font-size:11.5px;line-height:1;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden}
+.ckleg span{display:inline-flex;align-items:center;gap:3px}.ckleg i{display:inline-block;width:10px;height:10px;border-radius:2px}
+.ckleg i.ck-rng{border:1.5px dashed var(--fg);width:8px;height:8px}
+/* 查站位提问时锁住无关操作（产品负责人 2026-11-19「查一查功能开始时，下面的第几分操作和补分功能是否可以用？会否导致混乱」）：编辑栏、补分已收起；回合条、列表、只看 / 导出不能点；播放键照常（没停准要往后放一点） */
+.review.asking .rbar,.review.asking .plist,.review.asking .side>.row,.review.asking .side>.small-row,.review.asking #exp{pointer-events:none}
+.review.asking .plist,.review.asking .side>.row,.review.asking .side>.small-row,.review.asking #exp{opacity:.45}
 .sd{opacity:.7;font-size:11px;margin-left:2px}
+.plist td.lasthint{font-size:12.5px;line-height:1.35;color:var(--warn);background:var(--warnbg);text-align:left;white-space:normal}
 .warn{color:#c0392b}
 /* 回看页名字框占满这一行（试用者 2026-11-10：名字显示不全，两边又空着）：比分居中，两边名字框各占剩下的一半 */
 .rscore{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;font-weight:900;font-size:30px}
@@ -373,8 +404,12 @@ try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!
       <!-- 选中一分编辑时才有；暂停时才能按（试用者 2026-11-04） -->
       <div class="marks"><button class="btn mark" id="mS" type="button" title="暂停后，把这一分的开始设在视频现在的位置（键盘 [ 或 I）">⇤ 设为开始</button><button class="btn mark" id="mE" type="button" title="暂停后，把这一分的结束设在视频现在的位置（键盘 ] 或 O）">设为结束 ⇥</button></div></div>
     <div class="rbar" id="rbar" title="回合条：点一段选中那一分，拖两端调起止"></div>
+    <!-- 查一查时回合条换成查的状态（不用 A、B 得分的橙、蓝），图例一行 -->
+    <div class="ckleg" id="ckLeg" hidden><span><i class="ck-ok"></i>对得上</span><span><i class="ck-inf"></i>推得出没错</span><span><i class="ck-bad"></i>对不上</span><span><i class="ck-skip"></i>看不清</span><span><i class="ck-ask"></i>在问</span><span><i class="ck-rng"></i>怀疑</span></div>
     <!-- 查错（R-121，产品负责人 2026-11-18）：比分不像打完的一局时问要不要查；查的时候一步一步问发球站在哪个区 -->
     <div class="adj chk" id="chk" hidden></div>
+    <!-- 查完 / 不用查之后才问要不要保存（产品负责人 2026-11-19：保存提示挪到比分符合要求之后） -->
+    <div class="ask" id="askRev" hidden></div>
     <div class="adj" id="adj" hidden></div>
     <!-- 补漏掉的一分（产品负责人 2026-11-18，R-121）：对齐了视频就有，现场打的、打完的记录也能补；看录像正在打点时用上面的发球按钮 -->
     <div class="adj" id="addPt" hidden></div>
@@ -422,15 +457,23 @@ try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!
 
 <script>
 const $ = id => document.getElementById(id);
-const VERSION = "v1.6.3";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。v1.6 现场打点页改成单手不看屏幕也能按（斜分椭圆、撤销小椭圆、暗色）、视频和上次导出存本机、页面重新载入回到回看、打完一局提醒保存、首页标「未备份」、请浏览器别清数据（2026-11-10）；v1.6.1 回合结束挪进打点区、有新版时提示更新、桌面 App 里加刷新键（同日）；v1.6.2 ★ 整格好按、手点 ★ 不限个数，「最长的 N 分打 ★」的 N 只管自动挑，「只看」下拉加「打了 ★ 的」、回看视频右上角静音键（默认静音、记住选择）、首页介绍打开 3 次后收起（同日）；v1.6.3 回看编辑栏能改这一分的发球方、能补漏掉的一分；比分和站位对不上时带着查出错的那一分，能「从这一分起比分是 X:Y」或标「只是这一分站错了」，列表写应在左 / 右区（2026-11-18，R-121）。改了功能往上加，打点文件里记着是哪一版打的
+const VERSION = "v1.6.4";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。v1.6 现场打点页改成单手不看屏幕也能按（斜分椭圆、撤销小椭圆、暗色）、视频和上次导出存本机、页面重新载入回到回看、打完一局提醒保存、首页标「未备份」、请浏览器别清数据（2026-11-10）；v1.6.1 回合结束挪进打点区、有新版时提示更新、桌面 App 里加刷新键（同日）；v1.6.2 ★ 整格好按、手点 ★ 不限个数，「最长的 N 分打 ★」的 N 只管自动挑，「只看」下拉加「打了 ★ 的」、回看视频右上角静音键（默认静音、记住选择）、首页介绍打开 3 次后收起（同日）；v1.6.3 回看编辑栏能改这一分的发球方、能补漏掉的一分；比分和站位对不上时带着查出错的那一分，能「从这一分起比分是 X:Y」或标「只是这一分站错了」，列表写应在左 / 右区（2026-11-18，R-121）；v1.6.4 回看编辑栏重排：常用的两行、不常用的收进「改错」，查错提示压成一行，按钮等宽、高 44px；查一查时锁住无关操作、问题里写第几问和这时的比分、回合条按查到哪一步上色、问到的那一分不是这个人发球时能当场改发球方或补一分、查过再查说清上次的结论并能重新查一遍；一局分几段录时「本局结束」先问是不是这段录像结束、「接着打下一段」不限段数（2026-11-19，R-121）。改了功能往上加，打点文件里记着是哪一版打的
 const KEY = "courtside-taps-v1", PRE = 1.5, GAP = 1.0, LAST = 15;   // 回合 = 发球前 1.5 s 到下一分开始前 1 s；最后一分到发球后 15 s
 let cur = null, lock = null, view = "home", sel = -1, playEnd = null, videoStart = null, exporting = false;
 let vidFor = null;   // 视频载给了哪条记录；没载视频也能回看（试用者 2026-11-06 问「没有视频怎么回看」）：列表、比分、★、改名都能用，回放和剪视频要载入视频
 const video = $("video");
 function canPlay(){ return !!cur && vidFor===cur.id && onVideo(cur); }
-/* 每一分多长：载了视频按回合起止；没视频按这一分发球到下一分发球相隔多久（两台手机 / 看录像记的时刻都行），最后一分不知道 */
-function lens(s){ if(canPlay()) return spans(s).map(([a,e])=>e-a);
-  return s.taps.map((x,i)=>i+1<s.taps.length && x.t!=null && s.taps[i+1].t!=null ? Math.max(0,(s.taps[i+1].t-x.t)/1000) : null); }
+/* 每一分多长：载了视频按回合起止；没视频按这一分发球到下一分发球相隔多久（两台手机 / 看录像记的时刻都行）。
+   最后一分没有下一次发球（产品负责人 2026-11-19「为什么最后一分没有时长？」）：按过「回合结束」就用它（发球 → 回合结束，是真的回合长度，进统计）；
+   其余各分照旧用发球相隔，和合计那行「按发球相隔算」一个口径（「回合结束」已经在挑片的时长里优先用了） */
+function lens(s){ if(canPlay()) return spans(s).map(([a,e])=>e-a); const n=s.taps.length;
+  return s.taps.map((x,i)=>i+1<n ? (x.t!=null && s.taps[i+1].t!=null ? Math.max(0,(s.taps[i+1].t-x.t)/1000) : null)
+    : x.end!=null && x.t!=null ? Math.max(0,(x.end-x.t)/1000) : null); }
+/* 最后一分没按「回合结束」：拿点「本局结束」/「这段录像结束」的时刻（endT，记法同 x.end）估一个，只在列表里写「约」，不进「最长的 n 分」、合计这些统计；
+   本局结束常是打完过一阵才长按，超过 END_APPROX 秒就不估了，照旧「—」 */
+const END_APPROX=40;
+function lastApprox(s){ const n=s.taps.length, x=s.taps[n-1]; if(!n || canPlay() || x.end!=null || s.endT==null || x.t==null) return null;
+  const d=(s.endT-x.t)/1000; return d>0 && d<=END_APPROX ? d : null; }
 function esc(v){ return String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 /* 一局打完了没有：21 分制 = 先到 21 且领先 2 分、最多到 30；15 分制（试用者 2026-11-05：现在也打 15 分）= 先到 15 且领先 2 分、最多到 21 */
 function gameOverAt(a,b,to=21){ const hi=Math.max(a,b), lo=Math.min(a,b), cap=to>=21?30:21; return hi>=cap || (hi>=to && hi-lo>=2); }
@@ -462,20 +505,35 @@ const SIDE={R:"右", L:"左"};
 function sideAt(rs,i){ const r=rs[i]; return r.before[r.server]%2 ? "L" : "R"; }
 /* 已经看出站位和比分对不上、还没处理（没改比分、也没标「只是这一分站错了」）的分 */
 function posIssues(s, rs=scored(s).rallies){ return s.taps.map((x,i)=>i).filter(i=>{ const x=s.taps[i]; return x.side && !x.wrong && x.side!==sideAt(rs,i); }); }
-/* 终局比分像不像打完：打完一局，或停在半场（一方正好到半场分、另一方没到）都算像；不像就可能漏记了一分或有人站错了 */
-function oddEnd(s){ if(!s.ended || !s.taps.length) return false; const sc=scored(s).score, to=s.to||21, mid=Math.ceil(to/2);
+/* 终局比分像不像打完（「这段录像结束」的 part 记录不算：本来就没打完）：打完一局，或停在半场（一方正好到半场分、另一方没到）都算像；不像就可能漏记了一分或有人站错了 */
+function oddEnd(s){ if(!s.ended || s.part || !s.taps.length) return false; const sc=scored(s).score, to=s.to||21, mid=Math.ceil(to/2);
   return !gameOverAt(sc.A, sc.B, to) && !["A","B"].some(p=>sc[p]===mid && sc[p==="A"?"B":"A"]<mid); }
-/* 带着查（产品负责人认可的做法：先看每人最后一次发球站位对不对，对不上再对半找）：每次算下一步问哪一分。
+/* 带着查（产品负责人 11-18 认可的做法：先看每人最后一次发球站位对不对，对不上再对半找）：每次算下一步问哪一分。
    看过的站位存在 side 里，所以每一步都从头算、走同一条路；skip = 这次查里「看不清」的分。
-   返回 {ask:i} 问第 i 分 / {bad:{p,k,j}} p 的第 k 分起对不上、上一次对得上的是第 j 分（-1 = 前面没有）/ {ok:true} 两人都对得上 */
-function chkPlan(s, skip=[]){ const rs=scored(s).rallies, all=s.taps.map((x,i)=>i);
-  const st=i=>s.taps[i].side ? s.taps[i].side===sideAt(rs,i) : null, found=[];
+   返回 {ask:i, from, to, left}：问第 i 分，现在怀疑错在第 from–to 分（下标），连这一问最多还要问 left 次；
+   {bad:{p,k,j}}：p 的第 k 分起对不上、上一次对得上的是第 j 分（-1 = 前面没有）；{ok:true}：两人都对得上。
+   页面文字只用 from / to / left，不写死「对半」这个顺序（产品负责人可能改问法，R-121 11-19） */
+function chkPlan(s, skip=[]){ const rs=scored(s).rallies, all=s.taps.map((x,i)=>i), n=s.taps.length, lg=x=>Math.ceil(Math.log2(Math.max(1,x)));
+  const st=i=>s.taps[i].side ? s.taps[i].side===sideAt(rs,i) : null, found=[]; let ask=null, from=0, to=n-1, left=0;
   for(const p of ["A","B"]){ const L=all.filter(i=>s.taps[i].p===p && !s.taps[i].wrong && !skip.includes(i)); if(!L.length) continue;
-    const v=st(L[L.length-1]); if(v==null) return {ask:L[L.length-1]}; if(v) continue;
-    let lo=-1, hi=L.length-1;
-    while(hi-lo>1){ const m=(lo+hi)>>1, w=st(L[m]); if(w==null) return {ask:L[m]}; if(w) lo=m; else hi=m; }
+    const v=st(L[L.length-1]);
+    if(v==null){ left+=1+lg(L.length); if(ask==null){ ask=L[L.length-1]; if(found.length){ from=found[0].j+1; to=found[0].k; } } continue; }
+    if(v) continue;
+    let lo=-1, hi=L.length-1, a=null;
+    while(hi-lo>1){ const m=(lo+hi)>>1, w=st(L[m]); if(w==null){ a=L[m]; break; } if(w) lo=m; else hi=m; }
+    if(a!=null){ left+=lg(hi-lo); if(ask==null){ ask=a; from=lo>=0 ? L[lo]+1 : 0; to=L[hi]; } continue; }
     found.push({p, k:L[hi], j:lo>=0 ? L[lo] : -1}); }
+  if(ask!=null) return {ask, from, to, left};
   return found.length ? {bad:found.sort((a,b)=>a.k-b.k)[0]} : {ok:true}; }
+/* 查到哪一步了（产品负责人 2026-11-19「最好显示已经确认部分的状态（时间线上）」）：每一分一个状态，回合条按它上色。
+   ok = 看过、站位和比分对得上；inf = 怀疑范围以前、推得出没问题；bad = 看过、对不上；skip = 点了「看不清」；ask = 正在问；"" = 还没看、也推不出 */
+function chkMarks(s, plan, skip=[]){ const rs=scored(s).rallies, n=s.taps.length, m=Array(n).fill("");
+  const lo=plan.ask!=null ? plan.from : plan.bad ? plan.bad.j+1 : n;
+  for(let i=0;i<lo;i++) m[i]="inf";
+  s.taps.forEach((x,i)=>{ if(x.side && !x.wrong) m[i]=x.side===sideAt(rs,i) ? "ok" : "bad"; });
+  skip.forEach(i=>{ if(m[i]==="" || m[i]==="inf") m[i]="skip"; });
+  if(plan.ask!=null) m[plan.ask]="ask";
+  return m; }
 function missTxt(s,m){ return ["A","B"].filter(p=>m[p]).map(p=>`${nm(s,p)} ${m[p]>0?"+":""}${m[p]}`).join("、"); }
 /* 改了「从这一分起比分是 X:Y」之后：当场核发球方该站的区，看过视频的对一下 */
 function resetMsg(s,i){ const {rallies}=scored(s), r=rallies[i], x=s.taps[i], want=sideAt(rallies,i), mt=r.miss ? missTxt(s,r.miss) : "";
@@ -578,7 +636,8 @@ function spans(s){
 }
 
 /* ===== 首页 ===== */
-function show(v){ view=v; document.documentElement.classList.toggle("quiet", v==="live"); document.querySelector(".page").classList.toggle("livemode", v==="live"); $("home").hidden=v!=="home"; $("live").hidden=v!=="live"; $("review").hidden=v!=="review"; $("bHome").hidden=v==="home"; $("heroMore").hidden=v!=="home"; document.documentElement.classList.toggle("home-v", v==="home"); if(typeof showUpdate==="function"){ $("bReload").hidden=!(standalone && v!=="live"); showUpdate(); if(v==="home") checkUpdate(false); } render(); }
+/* 回首页就收起上一局没点掉的询问 / 保存框（产品负责人 2026-11-19：「保存这局」在最后一分记分之前就出现了——上一局的保存框没点「稍后」就回首页，下一局打点页上还挂着） */
+function show(v){ view=v; if(v==="home") for(const id of ["askLive","askReplay","askRev"]){ const e=$(id); if(e) e.hidden=true; } document.documentElement.classList.toggle("quiet", v==="live"); document.querySelector(".page").classList.toggle("livemode", v==="live"); $("home").hidden=v!=="home"; $("live").hidden=v!=="live"; $("review").hidden=v!=="review"; $("bHome").hidden=v==="home"; $("heroMore").hidden=v!=="home"; document.documentElement.classList.toggle("home-v", v==="home"); if(typeof showUpdate==="function"){ $("bReload").hidden=!(standalone && v!=="live"); showUpdate(); if(v==="home") checkUpdate(false); } render(); }
 function render(){
   if(typeof showUpdate==="function") showUpdate();   // 打完一局也要能看到新版提示
   if(view==="home"){ $("sub").textContent=""; renderList(); return; }
@@ -620,7 +679,7 @@ function prevHalf(s, all){ if(!(s.start.A||s.start.B)) return null;
     && (s.mode!=="replay" || (p.videoName && p.videoName===s.videoName)) && p.taps.length
     && (()=>{ const sc=scored(p).score; return sc.A===s.start.A && sc.B===s.start.B; })()).sort((x,y)=>y.created-x.created)[0]||null; }
 function mergeHalves(p, s){
-  const m=JSON.parse(JSON.stringify(p)); m.taps=[...m.taps, ...JSON.parse(JSON.stringify(s.taps))]; m.last=s.last; m.ended=s.ended; delete m.lastEnd;
+  const m=JSON.parse(JSON.stringify(p)); m.taps=[...m.taps, ...JSON.parse(JSON.stringify(s.taps))]; m.last=s.last; m.ended=s.ended; if(s.part) m.part=true; else delete m.part; if(s.endT!=null) m.endT=s.endT; else delete m.endT; delete m.lastEnd;
   if(m.mode!=="replay" && m.align==null && s.align!=null) m.align=Math.round((s.align-(s.taps[0].t-p.taps[0].t)/1000)*100)/100;   // 只有下半段对齐过：换算到上半段第 1 分
   if(m.mode==="replay") m.taps.sort((x,y)=>x.v-y.v);
   const l=sessions().filter(x=>x.id!==p.id && x.id!==s.id); l.unshift(m); store(l);
@@ -629,11 +688,13 @@ $("bSwap").addEventListener("click",()=>{ const a=$("nA").value; $("nA").value=$
 function renderList(){ renderNames();
   const box=$("list"); box.innerHTML=""; const all=sessions();
   const nb=all.filter(s=>!isBacked(s)).length, w=$("bkWarn"); w.hidden=!nb;
-  if(nb){ w.textContent=`有 ${nb} 局还没备份：打点只存在这个浏览器里，清了数据或换个入口打开就看不到了。`; const b=document.createElement("button"); b.className="btn"; b.type="button"; b.textContent="全部备份"; b.style.padding="4px 10px"; b.onclick=()=>$("bBackAll").click(); w.appendChild(b); }
+  if(nb){ w.textContent=`有 ${nb} 条记录还没备份（一局分几段录的，每段算一条）：打点只存在这个浏览器里，清了数据或换个入口打开就看不到了。`; const b=document.createElement("button"); b.className="btn"; b.type="button"; b.textContent="全部备份"; b.style.padding="4px 10px"; b.onclick=()=>$("bBackAll").click(); w.appendChild(b); }
   if(!all.length){ const p=document.createElement("p"); p.className="hint"; p.textContent="还没有记录。开一局打点，或者载入别的手机上下载的打点文件。"; box.appendChild(p); return; }
-  for(const s of all){ const {score}=scored(s), d=document.createElement("div"), stars=(s.taps||[]).filter(x=>x.star).length; d.className="it";
+  for(const g of segGroups(all)){ if(g.length>1){ cardGroup(g, all, box); continue; } const s=g[0];
+    const {score}=scored(s), d=document.createElement("div"), stars=(s.taps||[]).filter(x=>x.star).length; d.className="it";
     const ic=document.createElement("div"); ic.className="ic "+(s.mode==="replay"?"replay":"live"); ic.textContent=s.mode==="replay"?"▶":"●"; ic.title=s.mode==="replay"?"看录像打的":"现场打的"; d.appendChild(ic);
-    const t=document.createElement("div"); t.className="t"; t.textContent=`${nm(s,"A")} ${score.A} : ${score.B} ${nm(s,"B")}${s.ended?"":" · 没打完"}`;
+    const t=document.createElement("div"); t.className="t"; const sn=segNo(s,all);   /* 接着上一段打的都写第几段，不管打没打完（产品负责人 2026-11-19「最后一段为啥标题没有加“第三段”」）；一段就打完的不写 */
+    t.textContent=`${nm(s,"A")} ${score.A} : ${score.B} ${nm(s,"B")}${!s.ended||s.part?` · 没打完${s.part||sn>1?` · 第 ${sn} 段`:""}`:sn>1?` · 第 ${sn} 段 · 打完`:""}`;
     if(!isBacked(s)){ const nb=document.createElement("span"); nb.className="nobk"; nb.textContent="未备份"; nb.title="这一局（或改过的内容）还没存成文件"; t.appendChild(nb); } d.appendChild(t);
     const m=document.createElement("div"); m.className="m"; const dt=new Date(s.created);
     m.textContent=`第 ${s.setNo} 局${s.start.A||s.start.B?`（接着 ${s.start.A}:${s.start.B} 打的一段）`:""} · ${s.taps.length} 分${stars?` · ★${stars}`:""} · ${dt.getMonth()+1}月${dt.getDate()}日 ${String(dt.getHours()).padStart(2,"0")}:${String(dt.getMinutes()).padStart(2,"0")} · ${s.mode==="replay"?"看录像":"现场"}`; d.appendChild(m);
@@ -643,15 +704,49 @@ function renderList(){ renderNames();
     if(!s.ended && s.mode==="replay") b("接着看录像打点",()=>{ cur=s; pickVideo(); });
     b("回看 / 剪视频",()=>openReview(s));   // 先进回看（没视频也能看列表），要回放再在里面载入视频
     b("下载",()=>download(s));
-    // 接着打下半段（试用者 2026-11-05：一局分两段录 / 打了一半换视频）：名字、局数照旧，开局比分 = 这条记录打完的比分
-    b("接着打下半段",()=>{ const sc=scored(s).score; $("nA").value=full(s,"A"); $("nB").value=full(s,"B"); $("setNo").value=s.setNo; $("sA").value=sc.A; $("sB").value=sc.B; $("pts").value=String(s.to||21); window.scrollTo(0,0);
-      msg(`名字、第 ${s.setNo} 局照上一段填好了，开局比分带过来 ${sc.A}:${sc.B}${s.ended?"":"（上一段没点「本局结束」，最后一分谁得的没算进去，不对就改一下）"}。选「现场打点」或「看录像打点」开始。`); });
-    if(s.ended) b("没打完，接着打",()=>{ reopen(s); if(s.mode==="replay") pickVideo(); else show("live"); });   // 误点了「本局结束」（试用者 2026-11-07）
-    if(s.ended) b("打下一局",()=>{ $("nA").value=full(s,"A"); $("nB").value=full(s,"B"); $("setNo").value=Math.min(3,s.setNo+1); $("sA").value=0; $("sB").value=0; window.scrollTo(0,0); msg("名字照上一局填好了，选「现场打点」或「看录像打点」开始。"); });
-    const pv=prevHalf(s, all); if(pv){ const mg=b(`和上半段合并（${scored(pv).score.A}:${scored(pv).score.B} 那条）`,()=>{ if(!mg.dataset.sure){ mg.dataset.sure="1"; mg.textContent="再点一次确认合并"; return; } mergeHalves(pv, s); }); }
+    // 接着打下一段（试用者 2026-11-05：一局分两段录 / 打了一半换视频；产品负责人 2026-11-19 三段也要接）：名字、局数照旧，开局比分 = 这条记录打完的比分
+    if(canNext(s)) b("接着打下一段",()=>contNext(s, all));
+    if(s.ended) b("回到这一段接着点",()=>{ reopen(s); if(s.mode==="replay") pickVideo(); else show("live"); });   // 误点了「本局结束」（试用者 2026-11-07）
+    if(s.ended && !s.part) b("打下一局",()=>nextGame(s));
+    const pv=prevHalf(s, all); if(pv){ const mg=b(`和上一段合并（${scored(pv).score.A}:${scored(pv).score.B} 那条）`,()=>{ if(!mg.dataset.sure){ mg.dataset.sure="1"; mg.textContent="再点一次确认合并"; return; } mergeHalves(pv, s); }); }
     const del=b("删除",()=>{ if(d.dataset.sure){ store(sessions().filter(x=>x.id!==s.id)); render(); msg(""); } else { d.dataset.sure="1"; del.textContent="再点一次删除"; } }); del.style.color="#c0392b";
     box.appendChild(d); }
 }
+/* 首页按钮做的事：单条和整局卡片共用 */
+function contNext(s, all){ const sc=scored(s).score; $("nA").value=full(s,"A"); $("nB").value=full(s,"B"); $("setNo").value=s.setNo; $("sA").value=sc.A; $("sB").value=sc.B; $("pts").value=String(s.to||21); window.scrollTo(0,0);
+  msg(`名字、第 ${s.setNo} 局照上一段填好了，开局比分带过来 ${sc.A}:${sc.B}${s.ended&&s.last?"":"（上一段最后一分谁得的没定，没算进去，不对就改一下）"}，这是第 ${segNo(s,all)+1} 段。选「现场打点」或「看录像打点」开始。`); }
+function nextGame(s){ $("nA").value=full(s,"A"); $("nB").value=full(s,"B"); $("setNo").value=Math.min(3,s.setNo+1); $("sA").value=0; $("sB").value=0; window.scrollTo(0,0); msg("名字照上一局填好了，选「现场打点」或「看录像打点」开始。"); }
+const canNext=s=>{ const sc=scored(s).score; return !s.ended || s.part || !gameOverAt(sc.A, sc.B, s.to||21); };
+function goTap(s){ if(s.ended){ reopen(s); if(s.mode==="replay") pickVideo(); else show("live"); } else if(s.mode==="replay"){ cur=s; pickVideo(); } else { cur=s; msg(""); show("live"); wake(); } }
+/* 整局下载：各段放进一个文件（「备份全部」的格式，载入打点文件时一次放回各段） */
+async function downloadGroup(g){ const name=fname(g[0])+`_${g.length}段.json`;
+  const r=await saveFile(name, new Blob([JSON.stringify({kind:BACKUP_KIND, v:1, at:new Date().toISOString(), sessions:g})],{type:"application/json"}), "json");
+  if(r==="ok"){ markBacked(g); msg(`这一局的 ${g.length} 段都存进「${name}」了。`); render(); } return r; }
+const segOpen=new Set();   // 首页哪几段点开了「更多」
+function cardGroup(g, all, box){ const first=g[0], last=g[g.length-1], sc=scored(last).score, done=last.ended && !last.part, n=g.reduce((a,x)=>a+x.taps.length,0);
+  const d=mk("div","it grp"), stars=g.reduce((a,x)=>a+x.taps.filter(y=>y.star).length,0);
+  const ic=mk("div","ic "+(last.mode==="replay"?"replay":"live"), last.mode==="replay"?"▶":"●"); d.appendChild(ic);
+  const t=mk("div","t",`${nm(first,"A")} ${sc.A} : ${sc.B} ${nm(first,"B")}${done?"":" · 没打完"}`); d.appendChild(t);
+  const nb=g.filter(x=>!isBacked(x)).length; if(nb){ const e=mk("span","nobk",nb===g.length?"未备份":`${nb} 段未备份`); e.title="还没存成文件：点卡片上的「下载」整局存一份"; t.appendChild(e); }
+  const dt=new Date(first.created);
+  d.appendChild(mk("div","m",`第 ${first.setNo} 局 · ${done?"":"已录 "}${g.length} 段 · 共 ${n} 分${stars?` · ★${stars}`:""} · ${dt.getMonth()+1}月${dt.getDate()}日 ${String(dt.getHours()).padStart(2,"0")}:${String(dt.getMinutes()).padStart(2,"0")}`));
+  const segs=mk("div","segs"); d.appendChild(segs);
+  g.forEach((x,k)=>{ const e=scored(x).score, row=mk("div","sg"), on=segOpen.has(x.id);
+    row.appendChild(mk("b",null,`第 ${k+1} 段`));
+    const info=mk("span","si",`${x.start.A}:${x.start.B}→${e.A}:${e.B} · ${x.taps.length}分${x.ended?"":" · 在打"}`); if(!isBacked(x)){ const z=mk("i","nb","●"); z.title="这一段还没备份"; info.prepend(z); } info.title=`第 ${k+1} 段：${x.start.A}:${x.start.B} 打到 ${e.A}:${e.B}，${x.taps.length} 分`; row.appendChild(info);
+    ebtn(row,"回看",()=>openReview(x),"回看 / 剪视频这一段");   /* 段行上写短：iPhone 竖屏一行要放下起止比分和分数 */ ebtn(row,on?"更多 ▴":"更多 ▾",()=>{ if(on) segOpen.delete(x.id); else segOpen.add(x.id); render(); });
+    if(on){ const mo=mk("div","sm"); row.appendChild(mo);
+      ebtn(mo, x.ended?"回到这一段接着点":(x.mode==="replay"?"接着看录像打点":"接着点"), ()=>goTap(x));
+      ebtn(mo,"单独下载",()=>download(x));
+      const pv=k>0 && prevHalf(x, all)===g[k-1]; if(pv){ const mg=ebtn(mo,"和上一段合并",()=>{ if(!mg.dataset.sure){ mg.dataset.sure="1"; mg.textContent="再点一次确认合并"; return; } segOpen.delete(x.id); mergeHalves(g[k-1], x); },"两段是同一个视频时，合成一条记录"); }
+      const del=ebtn(mo,"单独删除",()=>{ if(!del.dataset.sure){ del.dataset.sure="1"; del.textContent="再点一次删除这一段"; return; } segOpen.delete(x.id); store(sessions().filter(y=>y.id!==x.id)); render(); msg(`删了第 ${k+1} 段。`); }); del.style.color="#c0392b"; }
+    segs.appendChild(row); });
+  const acts=mk("div","acts"); d.appendChild(acts); const b=(txt,fn)=>ebtn(acts,txt,fn);
+  b("下载",()=>downloadGroup(g));
+  if(canNext(last)) b("接着打下一段",()=>contNext(last, all)); else b("打下一局",()=>nextGame(last));
+  const del=b("删除",()=>{ if(!del.dataset.sure){ del.dataset.sure="1"; del.textContent=`再点一次，删除这 ${g.length} 段`; return; } const ids=new Set(g.map(x=>x.id)); store(sessions().filter(x=>!ids.has(x.id))); render(); msg(`删了这一局的 ${g.length} 段。`); });
+  del.style.color="#c0392b";
+  box.appendChild(d); }
 $("bImport").addEventListener("click",()=>$("fJson").click());
 function newSession(mode){
   const v=id=>Math.max(0,Math.min(29,parseInt($(id).value,10)||0)); rememberNames($("nA").value, $("nB").value);
@@ -659,7 +754,7 @@ function newSession(mode){
           start:{A:v("sA"), B:v("sB")}, to:parseInt($("pts").value,10)||15, taps:[], last:"", ended:false, mode, clock:"wall", ver:VERSION};
 }
 /* 开局比分只管这一局（试用者 2026-11-07：新开一局第 1 分显示 3:3——上回「接着打下半段」带过来的比分留在框里了）：开局后清回 0:0 */
-function startMsg(s){ return s.start.A||s.start.B ? `开局比分 ${s.start.A}:${s.start.B}（接着打下半段时带过来的）；不对的话打完在回看页改「开局比分」。` : ""; }
+function startMsg(s){ return s.start.A||s.start.B ? `开局比分 ${s.start.A}:${s.start.B}（接着打下一段时带过来的）；不对的话打完在回看页改「开局比分」。` : ""; }
 function clearStart(){ $("sA").value=0; $("sB").value=0; }
 $("bLive").addEventListener("click",()=>{ cur=newSession("live"); clearStart(); persist(); msg(startMsg(cur)); show("live"); wake(); });
 $("bReplay").addEventListener("click",()=>{ cur=newSession("replay"); clearStart(); pickVideo(); });
@@ -687,8 +782,23 @@ function addTap(p){
   persist(); if(cur.mode==="replay"){ try{ navigator.vibrate&&navigator.vibrate(30); }catch(e){} } else feedback(p);
   if(cur.mode!=="replay") msg(""); render();
 }
+/* 一局分几段录（产品负责人 2026-11-19：「一局比赛，录制了3段视频」）：第几段 = 往前找同名字、同一局、打完比分 = 这条开局比分的记录，一路数回去 */
+function segPrev(c, all, seen=new Set([c.id])){ if(!(c.start.A||c.start.B)) return null;
+  return all.filter(p=>!seen.has(p.id) && p.created<c.created && p.setNo===c.setNo && full(p,"A")===full(c,"A") && full(p,"B")===full(c,"B") && p.taps.length
+    && (()=>{ const sc=scored(p).score; return sc.A===c.start.A && sc.B===c.start.B && !gameOverAt(sc.A, sc.B, p.to||21); })()).sort((x,y)=>y.created-x.created)[0]||null; }
+function segNo(s, all=sessions()){ let n=1, c=s; const seen=new Set([s.id]);
+  for(let p; (p=segPrev(c, all, seen)); c=p){ n++; seen.add(p.id); } return n; }
+/* 首页按局分组（产品负责人 2026-11-19「这三段作为一局，是否可以group一下」→「按分组方式做，放进 v1.6.4」）：认法同 segNo；
+   一条只接一个下一段（两条都接在同一条后面时，后打的那条算下一段，另一条照单条显示）。all 是新的在前，组排在它最新那一段的位置 */
+function segGroups(all){ const next=new Map(), prev=new Map(), byId=new Map(all.map(x=>[x.id,x]));
+  for(const c of all){ const p=segPrev(c, all); if(!p) continue; const o=next.get(p.id); if(o && o.created>c.created) continue; next.set(p.id, c); }
+  next.forEach((c,pid)=>prev.set(c.id, pid));
+  const out=[], used=new Set();
+  for(const x of all){ if(used.has(x.id)) continue; let h=x; while(prev.has(h.id)) h=byId.get(prev.get(h.id));
+    const g=[]; for(let c=h; c; c=next.get(c.id)){ g.push(c); used.add(c.id); } out.push(g); }
+  return out; }
 /* 误点了「本局结束」（试用者 2026-11-07：比赛还没完，「撤销上一下」撤不回来）：本局结束也算「上一下」，撤销就重新打开这局，打的点一个不动 */
-function reopen(s){ s.ended=false; s.last=""; s.lastEnd=null; cur=s; persist(); wake();
+function reopen(s){ s.ended=false; s.last=""; s.lastEnd=null; delete s.part; delete s.endT; cur=s; persist(); wake();
   msg(`撤销了「本局结束」：${nm(s,"A")} ${scored(s).score.A} : ${scored(s).score.B} ${nm(s,"B")}，接着点。`); }
 function undo(){ if(!cur||!cur.taps.length) return;
   if(cur.ended){ reopen(cur); render(); return; }
@@ -754,21 +864,39 @@ function endCands(s){   // 打完一局的一方和 tapLastWinner 同一个算�
   return half.length ? {who:half, why:"half"} : {who:[], why:""}; }
 function endGame(askBox){
   const s=cur; if(!s) return;
+  /* 点「本局结束」的那一刻（不是选完谁得分那一刻）：看录像 = 视频时刻，现场 = 手机时间，和「回合结束」x.end 一样记 */
+  const endT=s.mode==="replay" ? (video.currentTime ? (videoStart!=null ? Math.round(videoStart+video.currentTime*1000) : Math.round(video.currentTime*1000)) : null) : Date.now();
   if(!s.taps.length){ store(sessions().filter(x=>x.id!==s.id)); cur=null; show("home"); return; }
-  const done=w=>{ s.last=w; s.ended=true; persist(); try{ lock&&lock.release(); }catch(e){} $(askBox).hidden=true; const {score}=scored(s);
-    msg(`本局结束：${nm(s,"A")} ${score.A} : ${score.B} ${nm(s,"B")}，共 ${s.taps.length} 分。`+(view==="review"?"点右边的一行回看那一分；拖回合条两端调起止。":(bkOn()?"点「‹ 返回」会先下载这局的打点文件备份，再回首页。":"点「‹ 返回」回到首页，可以下载，或者载入视频回看。")));
+  const done=(w,part)=>{ s.last=w; s.ended=true; if(part) s.part=true; else delete s.part; s.endT=endT; persist(); try{ lock&&lock.release(); }catch(e){} $(askBox).hidden=true; const {score}=scored(s);
+    msg((part?`这段录像结束（这局没打完）：${nm(s,"A")} ${score.A} : ${score.B} ${nm(s,"B")}，共 ${s.taps.length} 分。下一段在首页点这条的「接着打下一段」，比分接着算。`:`本局结束：${nm(s,"A")} ${score.A} : ${score.B} ${nm(s,"B")}，共 ${s.taps.length} 分。`)+(view==="review"?"点右边的一行回看那一分；拖回合条两端调起止。":(bkOn()?"点「‹ 返回」会先下载这局的打点文件备份，再回首页。":"点「‹ 返回」回到首页，可以下载，或者载入视频回看。")));
     if(oddEnd(s)){ const sc=scored(s).score; msg(`本局结束：${nm(s,"A")} ${sc.A} : ${sc.B} ${nm(s,"B")}，共 ${s.taps.length} 分。这个比分不像打完的一局（没人到 ${s.to||21} 分），可能漏记了一分，或者有人站错了位置。`
       +(view==="review"?"要查就点上面的「查一查」，不查也行。":"要查的话，回看里载入比赛视频，工具带着查；不查也不影响。")); }   // 不强迫查（产品负责人 2026-11-18）
-    render(); offerSave(askBox, s); };
+    render();
+    if(!w){ msg($("msg").textContent+" 最后一分谁得的还没定，先不存；定了再存（首页这条会标「未备份」，点「‹ 返回」时也会先下载备份）。"); return; }
+    if(oddEnd(s)){ if(view==="review") return;   /* 回看里查错框会问「要查吗」，不用查 / 查完了再问保存 */
+      const box=$(askBox); box.hidden=false; box.innerHTML=""; const q=document.createElement("p"); q.className="hint"; q.textContent="比分不像打完的一局，要查吗？查要在回看里载入比赛视频。"; box.appendChild(q);
+      for(const [t,fn,cls] of [["去回看查",()=>{ box.hidden=true; openReview(s); }],["不用查",()=>{ s.chkOff=true; persist(); box.hidden=true; msg(""); render(); offerSave(askBox, s); },"no"]]){
+        const b=document.createElement("button"); b.type="button"; b.textContent=t; if(cls) b.className=cls; else b.style.background="var(--ok)"; b.onclick=fn; box.appendChild(b); }
+      return; }
+    offerSave(askBox, s); };
   const {who, why}=endCands(s);
   if(who.length===1){ done(who[0]); if(why==="half") msg(`停在半场：最后一分按比分推是 ${nm(s,who[0])} 拿到第 ${Math.ceil((s.to||21)/2)} 分（${nm(s,"A")} ${scored(s).score.A} : ${scored(s).score.B} ${nm(s,"B")}）。不对就「撤销上一下」。`); return; }
   const box=$(askBox); box.hidden=false; box.innerHTML="";
-  const q=document.createElement("p"); q.className="hint";
-  q.textContent=who.length ? `最后一分谁得的？（${why==="half"?"两边谁先到半场都说得通":"两边都是局点"}，从比分推不出来）` : "最后一分谁得的？（比分没到局点、也没到半场，推不出来，比如录像中途停了）"; box.appendChild(q);
-  for(const p of (who.length?who:["A","B"])){ const b=document.createElement("button"); b.type="button"; b.textContent=nm(s,p); b.style.background=p==="A"?"var(--a)":"var(--b)"; b.onclick=()=>done(p); box.appendChild(b); }
-  if(!who.length){ const n=document.createElement("button"); n.type="button"; n.className="no"; n.textContent="不知道"; n.onclick=()=>done(""); box.appendChild(n); }
-  const c=document.createElement("button"); c.type="button"; c.className="no"; c.style.background="var(--card)"; c.style.color="var(--fg)"; c.style.border="1px solid var(--line)";
-  c.textContent="点错了，还没打完"; c.onclick=()=>{ box.hidden=true; msg(""); }; box.appendChild(c);   // 比分还定不了输赢多半是点错了：给一个退出口（试用者 2026-11-07）
+  const q=document.createElement("p"); q.className="hint"; box.appendChild(q);
+  const btn=(t,fn,p)=>{ const b=document.createElement("button"); b.type="button"; b.textContent=t; if(p) b.style.background=p==="A"?"var(--a)":"var(--b)"; else { b.className="no"; } b.onclick=fn; box.appendChild(b); return b; };
+  const back=()=>{ const c=btn("点错了，接着点",()=>{ box.hidden=true; msg(""); }); c.style.background="var(--card)"; c.style.color="var(--fg)"; c.style.border="1px solid var(--line)"; };   // 给一个退出口（试用者 2026-11-07）
+  const ask=part=>{ box.innerHTML=""; box.appendChild(q);
+    q.textContent=who.length ? `最后一分谁得的？（${why==="half"?"两边谁先到半场都说得通":"两边都是局点"}，从比分推不出来）` : `最后一分谁得的？（${part?"这段录像停在这一分":"比分没到局点、也没到半场"}，推不出来）`;
+    for(const p of (who.length?who:["A","B"])) btn(nm(s,p),()=>done(p,part),p);
+    if(!who.length) btn("不知道",()=>done("",part));
+    back(); };
+  if(who.length){ ask(false); return; }
+  /* 比分没到局点、也没到半场（产品负责人 2026-11-19：一局录了 3 段，每段最后「不能算本局结束」）：先问是这段录像完了，还是这局打完了；
+     这段录像结束 → 照样问最后一分谁得的，记录标「没打完 · 第 n 段」（part），不提示「不像打完的一局」，首页「接着打下一段」接着算比分 */
+  q.textContent=`比分 ${scored(s).score.A}:${scored(s).score.B} 还没打完这一局：是这段录像结束了，还是这局就打到这里？`;
+  const sb=btn("这段录像结束，还没打完",()=>ask(true)); sb.style.background="var(--ok)"; sb.style.color="var(--bg)";
+  btn("这局打完了",()=>ask(false));
+  back();
 }
 function tipText(s){ const {score}=scored(s), last=s.taps[s.taps.length-1];
   if(gameOverAt(score.A,score.B,s.to||21)) return `比分 ${score.A}:${score.B} 这局已经结束了：点「本局结束」`;
@@ -811,7 +939,7 @@ async function vidPut(id, f, start){
 /* 记住在看哪条记录的回看：页面重新载入（导出保存后、发布新版时）回到这里，不回首页 */
 const LASTV="courtside-lastview";
 function lastView(id){ lset(LASTV, id ? JSON.stringify({id, at:Date.now()}) : ""); }
-async function openReview(s){ stopAll(); cur=s; sel=-1; lastView(s.id); pendingVideo=null; $("bSaveVid").hidden=true; expRestore(s);
+async function openReview(s){ stopAll(); cur=s; sel=-1; $("askRev").hidden=true; lastView(s.id); pendingVideo=null; $("bSaveVid").hidden=true; expRestore(s);
   if(vidFor!==s.id){ vidFor=null; videoStart=null; try{ video.removeAttribute("src"); video.load(); }catch(e){} }
   show("review");
   if(vidFor!==s.id){ const c=await vidGet(s.id); if(c && cur===s && vidFor!==s.id){ video.src=URL.createObjectURL(c.blob); videoStart=c.start; vidFor=s.id; render();
@@ -912,20 +1040,25 @@ function renderReview(){
   const iss=posIssues(s, rallies);
   listOrder.forEach(i=>{ const r=rallies[i]; const tr=document.createElement("tr"); if(i===sel) tr.className="on";
     const x=s.taps[i], len=L[i];
-    tr.innerHTML=`<td class="stc"><button class="st" type="button" title="高亮">${x.star?"★":"☆"}</button></td><td>${i+1}</td><td class="dot${r.server}" title="${esc(full(s,r.server))}：比分 ${r.before.A}:${r.before.B}，应在${SIDE[sideAt(rallies,i)]}区发球">${esc(tn(s,r.server))}<small class="sd">${SIDE[sideAt(rallies,i)]}</small>${iss.includes(i)?` <b class="warn" title="视频里在${SIDE[x.side]}区，和比分对不上">⚠</b>`:""}${x.wrong?' <small class="sd" title="只是这一分站错了，比分不改">站错</small>':""}</td><td>${r.after?`${r.after.A}:${r.after.B}`:"—"}${x.reset?' <small class="sd" title="从这一分起比分改过">✎</small>':""}${r.winner?` <span class="dot${r.winner}" title="${esc(full(s,r.winner))}">${esc(tn(s,r.winner))}得分</span>`:""}</td><td>${len!=null?dur(len):"—"}</td>`;
+    tr.innerHTML=`<td class="stc"><button class="st" type="button" title="高亮">${x.star?"★":"☆"}</button></td><td>${i+1}</td><td class="dot${r.server}" title="${esc(full(s,r.server))}：比分 ${r.before.A}:${r.before.B}，应在${SIDE[sideAt(rallies,i)]}区发球">${esc(tn(s,r.server))}<small class="sd">${SIDE[sideAt(rallies,i)]}</small>${iss.includes(i)?` <b class="warn" title="视频里在${SIDE[x.side]}区，和比分对不上">⚠</b>`:""}${x.wrong?' <small class="sd" title="只是这一分站错了，比分不改">站错</small>':""}</td><td>${r.after?`${r.after.A}:${r.after.B}`:"—"}${x.reset?' <small class="sd" title="从这一分起比分改过">✎</small>':""}${r.winner?` <span class="dot${r.winner}" title="${esc(full(s,r.winner))}">${esc(tn(s,r.winner))}得分</span>`:""}</td><td>${len!=null?dur(len):i===n-1&&lastApprox(s)!=null?`<span title="没按「回合结束」：按点「本局结束」的时刻估的，可能比球落地晚几秒；不算进合计和「最长的 N 分」">约 ${dur(lastApprox(s))}</span>`:"—"}</td>`;
     tr.querySelector(".stc").onclick=ev=>{ ev.stopPropagation(); toggleStar(i); };   // 整格都算点 ★
-    tr.onclick=()=>{ if(ready) return playRally(i);
+    tr.onclick=()=>{ if(chkSt==="ask"||chkSt==="srv"){ msg("正在查站位：先回答上面这一问，或者点「不查了」。"); return; } if(ready) return playRally(i);
       sel=i; renderReview(); msg(`第 ${i+1} 分：${nm(s,r.server)} 发球，`+(r.after?`打完 ${r.after.A}:${r.after.B}，${nm(s,r.winner)}得分。`:"谁得分没记下。")+(hasVid?"先对到视频上才能回放。":"要看这一分的画面，点「载入比赛视频」。")); };
     tb.appendChild(tr); });
+  /* 最后一分「打完」是「—」（产品负责人 2026-11-19 截图）：紧跟着写怎么定谁得的 */
+  const nL=s.taps.length-1;
+  if(nL>=0 && !rallies[nL].winner && listOrder.includes(nL)){ const tr=document.createElement("tr"), td=document.createElement("td"); td.colSpan=5; td.className="lasthint";
+    td.textContent=`第 ${nL+1} 分谁得的还没定（「—」）：回首页，在这条记录上点「${!s.ended?(s.mode==="replay"?"接着看录像打点":"接着点"):"回到这一段接着点"}」，再点「本局结束」选谁得的；一局分几段录的，选「这段录像结束，还没打完」。`;
+    tr.appendChild(td); tb.appendChild(tr); }
   // 合计（试用者 2026-11-04：想知道只留回合的视频有多长）：列表里这几分加起来多长，占整段视频多少；导出选项后面也写上时长
   const sum=ix=>ready?ix.reduce((a,i)=>a+L[i],0):0, all=s.taps.map((x,i)=>i), stars=all.filter(i=>s.taps[i].star), D=video.duration||0;
   const known=listOrder.filter(i=>L[i]!=null), gapSum=known.reduce((a,i)=>a+L[i],0);
   $("tot").textContent=ready?`合计 ${listOrder.length} 分，回合视频共 ${dur(sum(listOrder))}`+(D?`（整段视频 ${dur(D)}，只留回合能省掉 ${Math.round((1-sum(all)/D)*100)}%）`:"")
-    : `合计 ${listOrder.length} 分`+(known.length?`，按发球相隔算约 ${dur(gapSum)}（含分与分之间的空档${known.length<listOrder.length?"，最后一分不知道多长":""}）`:"")+(hasVid?"":"；没载入视频，回放和剪视频要先载入");
+    : `合计 ${listOrder.length} 分`+(known.length?`，按发球相隔算约 ${dur(gapSum)}（含分与分之间的空档${known.length<listOrder.length?`，最后一分${lastApprox(s)!=null?"按点「本局结束」的时刻估的、没算进来":"不知道多长"}`:""}）`:"")+(hasVid?"":"；没载入视频，回放和剪视频要先载入");
   $("nAll").textContent=`${n}${ready?`（${dur(sum(all))}）`:""}`; $("nList").textContent=`${listOrder.length}${ready?`（${dur(sum(listOrder))}）`:""}`; $("nStar").textContent=`${stars.length}${ready&&stars.length?`（${dur(sum(stars))}）`:""}`;
   $("bExport").disabled=!ready||!n||exporting; $("bExport").textContent=exporting?"正在导出……":$("bExport").dataset.sure?"照样导出":"开始导出";
   $("bChk").hidden=!n;
-  drawBar(); drawZoom(); drawChk(); drawAdj(); drawAddPt(); tick();
+  drawChk(); drawBar(); drawZoom(); drawAdj(); drawAddPt(); tick();
 }
 let sortK="no", sortDesc=false, listOrder=[];
 /* 「只看」（试用者 2026-11-04：只想看自己丢的那些分）：按谁得分 / 谁发球，加上每人自动挑的几组（v1.5，pickSets）——
@@ -978,17 +1111,19 @@ function drawBar(){
   const bar=$("rbar"); bar.innerHTML=""; const D0=video.duration; if(!D0||!canPlay()) return;
   const sp=spans(cur), {rallies}=scored(cur); barWin=[Math.max(0,sp[0][0]-10), Math.min(D0,sp[sp.length-1][1]+10)];
   const D=barWin[1]-barWin[0], X=t=>((t-barWin[0])/D*100)+"%";
-  sp.forEach(([a,e],i)=>{ const d=document.createElement("div"); d.className=`seg won-${rallies[i].winner||"x"}${i===sel?" on":""}${cur.taps[i].star?" star":""}`;
+  sp.forEach(([a,e],i)=>{ const d=document.createElement("div"); d.className=chkMk ? `seg ck ck-${chkMk[i]||"no"}${i===sel?" on":""}` : `seg won-${rallies[i].winner||"x"}${i===sel?" on":""}${cur.taps[i].star?" star":""}`;
     d.style.left=X(a); d.style.width=Math.max(0.3,(e-a)/D*100)+"%"; d.title=`第 ${i+1} 分`; d.dataset.i=i; bar.appendChild(d); });
-  if(sel>=0 && sp[sel]) for(const [k,t] of [["s",sp[sel][0]],["e",sp[sel][1]]]){ const h=document.createElement("div"); h.className="h"; h.style.left=X(t); h.dataset.h=k; bar.appendChild(h); }
+  if(chkRange && sp[chkRange[0]] && sp[chkRange[1]]){ const g=document.createElement("div"); g.className="rng"; g.style.left=X(sp[chkRange[0]][0]-1); g.style.width=((sp[chkRange[1]][1]-sp[chkRange[0]][0]+2)/D*100)+"%"; g.title=`怀疑范围：第 ${chkRange[0]+1}–${chkRange[1]+1} 分`; bar.appendChild(g); }
+  if(sel>=0 && sp[sel] && !chkBusy()) for(const [k,t] of [["s",sp[sel][0]],["e",sp[sel][1]]]){ const h=document.createElement("div"); h.className="h"; h.style.left=X(t); h.dataset.h=k; bar.appendChild(h); }
   const now=document.createElement("div"); now.className="now"; now.id="now"; bar.appendChild(now); drawNow();
+  $("ckLeg").hidden=!chkMk;
 }
 function drawNow(){ const n=$("now"), D=barWin[1]-barWin[0]; if(n&&D>0){ const f=(video.currentTime-barWin[0])/D; n.style.left=(Math.max(0,Math.min(1,f))*100)+"%"; n.hidden=f<0||f>1; }
   const z=$("znow"); if(z&&zwin){ const f=(video.currentTime-zwin[0])/(zwin[1]-zwin[0]); z.style.left=(Math.max(0,Math.min(1,f))*100)+"%"; z.hidden=f<0||f>1; } }
 /* 放大条：选中那一分前后各留 4 秒；邻近的分画淡色，绿线是发球那一刻 */
 let zwin=null;
 function drawZoom(){
-  const wrap=$("zwrap"), bar=$("zbar"); if(sel<0||!cur||!canPlay()||!cur.taps[sel]||!video.duration){ wrap.hidden=true; zwin=null; return; }
+  const wrap=$("zwrap"), bar=$("zbar"); if(sel<0||!cur||!canPlay()||!cur.taps[sel]||!video.duration||chkBusy()){ wrap.hidden=true; zwin=null; return; }
   wrap.hidden=false; bar.innerHTML="";
   const sp=spans(cur), [a,e]=sp[sel], D=video.duration; zwin=[Math.max(0,a-4), Math.min(D,e+4)];
   const X=t=>((t-zwin[0])/(zwin[1]-zwin[0])*100)+"%", W=(x,y)=>((y-x)/(zwin[1]-zwin[0])*100)+"%", {rallies}=scored(cur);
@@ -1063,100 +1198,146 @@ function addPtMsg(s,at){ const p=s.taps[at].p, {score}=scored(s);
   const was=at+1<s.taps.length ? s.taps[at+1].p : s.last;   // 补之前第 at 分的得分方（= 原来下一分的发球方）；一样就不提
   return `补了第 ${at+1} 分（${nm(s,p)} 发球）`+(at && was!==p?`，第 ${at} 分改成 ${nm(s,p)} 得分`:"")+`；后面的分号、得分方、比分已重算（现在 ${score.A}:${score.B}）。补错了点「删除这一分」。`; }
 /* 改了第 i 分的发球方之后的提示：第 1 分只是开局谁先发，比分不变；其余是上一分的得分方跟着变、后面的比分重算 */
-function fixServerMsg(s,i){ const p=s.taps[i].p, {rallies, score}=scored(s);
-  const head=`第 ${i+1} 分改成 ${nm(s,p)} 发球`, back="；再点一次改回来。";
+function fixServerMsg(s,i,back="；再点一次改回来。"){ const p=s.taps[i].p, {rallies, score}=scored(s);
+  const head=`第 ${i+1} 分改成 ${nm(s,p)} 发球`;
   if(!i) return `${head}（开局谁先发），比分不变${back}`;
   return `${head}：第 ${i} 分改成 ${nm(s,p)} 得分，后面的比分已重算（现在 ${score.A}:${score.B}）${back}`; }
+/* 编辑栏（v1.6.4 重排，产品负责人 2026-11-19：「按钮布局……看着比较混乱，占了太多高度，而且空白也太多」，R-121）：
+   一直显示的最多两行——第 N 分｜改发球方｜删除｜改错 ▾，开始 −0.5 +0.5｜结束 −0.5 +0.5（没视频只有第一行）；
+   不常用的收进「改错」：补一分、从这一分起比分是…、只是这一分站错了、重新对齐、恢复自动起止。每行用网格排，同一行的按钮等宽、不留半行空白。
+   正在查站位、问到某一分时整个编辑栏先收起（只答这一问）；查出错在哪时「改错」自动展开 */
+let more=false, chkSt="", chkRange=null, chkMk=null;
+const mk=(tag,cls,txt)=>{ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; };
+function erow(box, cols){ const r=mk("div","er"); r.style.gridTemplateColumns=cols; box.appendChild(r); return r; }
+function ebtn(row, t, fn, title){ const b=mk("button","btn",t); b.type="button"; if(title) b.title=title; b.onclick=fn; row.appendChild(b); return b; }
 function drawAdj(){
-  const box=$("adj"); if(sel<0||!cur||!cur.taps[sel]){ box.hidden=true; return; } box.hidden=false; box.innerHTML="";
-  const x=cur.taps[sel];
-  const lab=document.createElement("b"); lab.textContent=`第 ${sel+1} 分`; box.appendChild(lab);
-  // 改这一分的发球方（产品负责人 2026-11-18：回看时发现一分的发球方记错了，R-121）：只改谁发球，时间、起止、★ 都不动；
-  // 得分方是按下一分谁发球推的，所以上一分的得分方和后面的比分跟着变；再点一次改回来。现场打点中途点错照旧用「撤销」
-  const fx=document.createElement("button"); fx.className="btn"; fx.type="button"; const op=x.p==="A"?"B":"A";
-  fx.textContent=`改成 ${nm(cur,op)} 发球`; fx.title="这一分的发球方记错了：只改谁发球，时间、起止、★ 都不动；再点一次改回来";
-  fx.onclick=()=>{ const i=sel; x.p=op; persist(); msg(fixServerMsg(cur,i)); render(); };
-  box.appendChild(fx);
-  if(canPlay()){ const sp=spans(cur)[sel];
-  const btn=(t,fn,title)=>{ const b=document.createElement("button"); b.className="btn"; b.type="button"; b.textContent=t; if(title) b.title=title; b.onclick=()=>{ fn(); persist(); render(); }; box.appendChild(b); };
-  const span=document.createElement("span"); span.textContent=`开始 ${fmt(sp[0])}`; box.appendChild(span);
-  btn("−0.5",()=>setEdge(sel,"s",sp[0]-0.5)); btn("+0.5",()=>setEdge(sel,"s",sp[0]+0.5));
-  const span2=document.createElement("span"); span2.textContent=`结束 ${fmt(sp[1])}`; box.appendChild(span2);
-  btn("−0.5",()=>setEdge(sel,"e",sp[1]-0.5)); btn("+0.5",()=>setEdge(sel,"e",sp[1]+0.5));
-  if(x.s!=null||x.e!=null) btn("恢复自动",()=>{ delete x.s; delete x.e; });
-  btn("重新对齐",()=>{ if(!video.paused){ msg("先暂停，停在这一分发球的那一帧再点「重新对齐」。"); return; } alignAt(sel); msg(`第 ${sel+1} 分的发球对到 ${fmt(video.currentTime)}，其他分跟着平移。`); }, "视频剪过、整体对不上时用：暂停在这一分发球的那一帧再点，所有分一起平移"); }   // 没视频时只留「删除这一分」（试球没视频也能删）
+  const box=$("adj"); if(sel<0||!cur||!cur.taps[sel]||chkBusy()){ box.hidden=true; return; } box.hidden=false; box.innerHTML="";
+  const x=cur.taps[sel], i0=sel, play=canPlay(), open=more||chkSt==="bad", done=()=>{ persist(); render(); };
+  // 第一行：第 N 分｜改发球方｜删除｜改错
+  const r1=erow(box,"auto 1.5fr 1fr 1fr");   /* 改发球方带名字，给宽一点 */ r1.appendChild(mk("b","lab",`第 ${sel+1} 分`));
+  // 改这一分的发球方（产品负责人 2026-11-18，R-121）：只改谁发球，时间、起止、★ 都不动；上一分的得分方和后面的比分跟着变；再点一次改回来
+  const op=x.p==="A"?"B":"A";
+  ebtn(r1, `改成 ${nm(cur,op)} 发球`, ()=>{ x.p=op; persist(); msg(fixServerMsg(cur,i0)); render(); }, "这一分的发球方记错了：只改谁发球，时间、起止、★ 都不动；再点一次改回来");
   // 删掉这一分（试用者 2026-11-04：开头两下是试球）：点两次才删；后面的得分方、比分跟着重算
-  const del=document.createElement("button"); del.className="btn"; del.type="button"; del.textContent="删除这一分"; del.style.color="#c0392b";
-  del.onclick=()=>{ if(!del.dataset.sure){ del.dataset.sure="1"; del.textContent="再点一次确认删除"; return; }
-    const i=sel; cur.taps.splice(i,1); sel=Math.min(i,cur.taps.length-1); persist(); msg(`删了第 ${i+1} 分，后面的比分已重算。`); render(); };
-  box.appendChild(del);
+  const del=ebtn(r1, "删除", ()=>{ if(!del.dataset.sure){ del.dataset.sure="1"; del.textContent="再点删除"; return; }
+    cur.taps.splice(i0,1); sel=Math.min(i0,cur.taps.length-1); persist(); msg(`删了第 ${i0+1} 分，后面的比分已重算。`); render(); }, "删掉这一分（点两次）：后面的得分方、比分跟着重算");
+  del.classList.add("red");
+  const mo=ebtn(r1, open?"改错 ▴":"改错 ▾", ()=>{ more=!open; render(); }, "补一分、从这一分起改比分、只是这一分站错了、重新对齐"); if(open) mo.classList.add("on");
+  // 第二行：调起止
+  if(play){ const sp=spans(cur)[sel], r2=erow(box,"auto 1fr 1fr auto 1fr 1fr"), ed=(k,v)=>()=>{ setEdge(i0,k,v); done(); };
+    r2.appendChild(mk("span","lab",`开始\n${fmt(sp[0])}`)); ebtn(r2,"−0.5",ed("s",sp[0]-0.5)); ebtn(r2,"+0.5",ed("s",sp[0]+0.5));
+    r2.appendChild(mk("span","lab",`结束\n${fmt(sp[1])}`)); ebtn(r2,"−0.5",ed("e",sp[1]-0.5)); ebtn(r2,"+0.5",ed("e",sp[1]+0.5)); }
+  if(!open) return;
+  // 改错（折叠）
+  const fold=mk("div","fold"); box.appendChild(fold);
+  // 补一分（R-121）：有视频按视频现在的时刻插；没视频补在这一分前面，时间先取前后两分的中间
+  fold.appendChild(mk("p","hint", play ? "漏了一分？视频停在漏掉那一分发球前，点谁发球：" : "漏了一分？补在这一分前面（时间先取前后两分的中间，以后载入视频可以调），点谁发球："));
+  const r3=erow(fold,"1fr 1fr");
+  for(const q of ["A","B"]) ebtn(r3, `补 ${nm(cur,q)} 发球`, play ? addAtVideo(q) : ()=>{ const {at}=insertTap(cur, q, null, i0); sel=at; persist(); msg(addPtMsg(cur,at)); render(); });
   // 查错后的两种改法（R-121，产品负责人 2026-11-18）：「从这一分起比分是 X:Y」/「只是这一分站错了」
-  const rs=scored(cur).rallies, rb=rs[sel].before, cap=(cur.to||21)>=21?30:21;
-  const rz=document.createElement("button"); rz.className="btn"; rz.type="button"; rz.textContent="从这一分起比分是…";
-  rz.title="现场没人记分、中间漏了或多了分：填这一分开打前的真实比分，后面接着算；差的分记成「没记到的分」";
-  rz.onclick=()=>{ rz.remove(); const sl=p=>{ const e=document.createElement("select"); e.className="sel";
-      for(let v=0;v<=cap;v++){ const o=document.createElement("option"); o.value=o.textContent=String(v); e.appendChild(o); } e.value=String(rb[p]); return e; };
-    const a=sl("A"), b=sl("B"), lab=document.createElement("span"); lab.textContent=`${nm(cur,"A")}`; box.appendChild(lab); box.appendChild(a);
-    const co=document.createElement("span"); co.textContent=`: `; box.appendChild(co); box.appendChild(b); const lb=document.createElement("span"); lb.textContent=nm(cur,"B"); box.appendChild(lb);
-    const ok=document.createElement("button"); ok.className="btn"; ok.type="button"; ok.textContent="改";
-    ok.onclick=()=>{ const i=sel; x.reset={A:+a.value, B:+b.value}; persist(); msg(resetMsg(cur,i)); render(); }; box.appendChild(ok); };
-  box.appendChild(rz);
-  if(x.reset){ const un=document.createElement("button"); un.className="btn"; un.type="button"; un.textContent="取消改比分";
-    un.onclick=()=>{ delete x.reset; persist(); const sc=scored(cur).score; msg(`第 ${sel+1} 分的改比分取消了，比分照每分谁发球推（现在 ${sc.A}:${sc.B}）。`); render(); }; box.appendChild(un); }
-  const wr=document.createElement("button"); wr.className="btn"; wr.type="button"; wr.textContent=x.wrong?"取消「站错了」":"只是这一分站错了";
-  wr.title="比分没错，只是这一分发球的人站错了区：只打个标记，比分不改，导出照实";
-  wr.onclick=()=>{ const i=sel; if(x.wrong) delete x.wrong; else x.wrong=true; persist();
-    msg(x.wrong?`第 ${i+1} 分标成「只是这一分站错了」：比分不改，导出照实，查站位时跳过这一分。再点一次取消。`:`第 ${i+1} 分的「站错了」标记取消了。`); render(); };
-  box.appendChild(wr);
-  if(x.side){ const sv=document.createElement("span"); sv.className="hint"; const w=sideAt(rs,sel);
-    sv.textContent=`视频里在${SIDE[x.side]}区，按比分应在${SIDE[w]}区`+(x.side===w||x.wrong?"":" ⚠"); box.appendChild(sv); }
-  // 没视频时在这一分前面补一分（有视频用下面「补漏掉的一分」，按时刻插）：先点「前面补一分」，再点谁发球
-  if(!canPlay()){ const ins=document.createElement("button"); ins.className="btn"; ins.type="button"; ins.textContent="在这一分前面补一分";
-    ins.title="漏记了一分：补在这一分前面，时间先取前后两分的中间，以后载入视频可以调起止";
-    ins.onclick=()=>{ ins.remove(); for(const q of ["A","B"]){ const b=document.createElement("button"); b.className="btn"; b.type="button"; b.textContent=`补 ${nm(cur,q)} 发球`;
-      b.onclick=()=>{ const {at}=insertTap(cur, q, null, sel); sel=at; persist(); msg(addPtMsg(cur,at)); render(); }; box.appendChild(b); } };
-    box.appendChild(ins); }
+  const rs=scored(cur).rallies, rb=rs[sel].before, cap=(cur.to||21)>=21?30:21, r4=erow(fold,"1fr 1fr");
+  const rz=ebtn(r4, x.reset?"重填这一分起的比分":"从这一分起比分是…", ()=>{ rz.disabled=true;
+    const r5=erow(fold,"auto 1fr auto 1fr auto 1fr"), sl=p=>{ const e=mk("select","sel"); for(let v=0;v<=cap;v++){ const o=mk("option",null,String(v)); o.value=String(v); e.appendChild(o); } e.value=String(rb[p]); return e; };
+    const a=sl("A"), b=sl("B"); r5.append(mk("span","lab",nm(cur,"A")), a, mk("span","lab",":"), b, mk("span","lab",nm(cur,"B")));
+    ebtn(r5,"改",()=>{ x.reset={A:+a.value, B:+b.value}; persist(); msg(resetMsg(cur,i0)); render(); });
+    r4.after(r5); }, "现场没人记分、中间漏了或多了分：填这一分开打前的真实比分，后面接着算；差的分记成「没记到的分」");
+  ebtn(r4, x.wrong?"取消「站错了」":"只是这一分站错了", ()=>{ if(x.wrong) delete x.wrong; else x.wrong=true; persist();
+    msg(x.wrong?`第 ${i0+1} 分标成「只是这一分站错了」：比分不改，导出照实，查站位时跳过这一分。再点一次取消。`:`第 ${i0+1} 分的「站错了」标记取消了。`); render(); },
+    "比分没错，只是这一分发球的人站错了区：只打个标记，比分不改，导出照实");
+  const extra=[];
+  if(x.reset) extra.push(["取消改比分",()=>{ delete x.reset; persist(); const sc=scored(cur).score; msg(`第 ${i0+1} 分的改比分取消了，比分照每分谁发球推（现在 ${sc.A}:${sc.B}）。`); render(); }]);
+  if(play) extra.push(["重新对齐",()=>{ if(!video.paused){ msg("先暂停，停在这一分发球的那一帧再点「重新对齐」。"); return; } alignAt(i0); persist(); msg(`第 ${i0+1} 分的发球对到 ${fmt(video.currentTime)}，其他分跟着平移。`); render(); },
+    "视频剪过、整体对不上时用：暂停在这一分发球的那一帧再点，所有分一起平移"]);
+  if(play && (x.s!=null||x.e!=null)) extra.push(["恢复自动起止",()=>{ delete x.s; delete x.e; done(); }]);
+  if(extra.length){ const r6=erow(fold,`repeat(${extra.length},1fr)`);   /* 只有一颗就占满一行，不留半行空白 */ extra.forEach(e=>ebtn(r6,...e)); }
+  if(x.side){ const w=sideAt(rs,sel); fold.appendChild(mk("p","hint",`视频里在${SIDE[x.side]}区，按比分应在${SIDE[w]}区`+(x.side===w||x.wrong?"。":" ⚠"))); }
 }
-/* 查错框（R-121）：chk = 正在查（skip = 这次「看不清」的分、asked = 已经跳到的那一分、n = 第几问）；不在查时，比分不像打完、或有看出来还没处理的分就提一句 */
+/* 有视频时补一分：视频停在漏掉那一分的发球前，按视频现在的时刻插进去（离已有发球不到 MISS_MIN 秒不补） */
+const addAtVideo=q=>()=>{ if(!video.paused) video.pause(); const r=insertTap(cur, q, Math.round(video.currentTime*100)/100);
+  if(r.err){ msg(r.err); return; } sel=r.at; persist(); msg(addPtMsg(cur,r.at)); render(); };
+/* 查错框（R-121）：chk = 正在查（skip = 这次「看不清」的分、asked = 已经跳到的那一分、n = 第几问）；不在查时，比分不像打完、或有看出来还没处理的分就提一句。
+   v1.6.4：提示压成一行（一句短话 + 按钮同一行），长说明点了「查一查」再给 */
 let chk=null;
 function chkStart(){ if(!canPlay()){ msg("查站位要看视频：先「载入比赛视频」并对齐，再点「查比分和站位」。"); return; }
-  chk={skip:[], asked:-1, n:0}; render(); }
-function drawChk(){ const box=$("chk"), s=cur; if(!s){ box.hidden=true; return; }
+  const s=cur, sc=scored(s).score;
+  msg((oddEnd(s)?`比分 ${sc.A}:${sc.B} 不像打完的一局（没人到 ${s.to||21} 分）：可能漏记了一分，或者有人站错了位置。`:"")+"下面一次问一分：视频停在那一分发球，看发球的人站在哪个发球区（站在自己半场、面向球网看）。每答一问，怀疑的范围（回合条上的虚线框）就缩小一半，几次就能找到；回合条换成查的颜色：绿 = 看过对得上，浅绿 = 由此推得出没错，红 = 对不上，紫 = 正在问。问的时候先只答这一问，别的按钮暂时锁住。");
+  const seen=chkSeen(s), p0=chkPlan(s);
+  if(seen && p0.ok) msg("");   /* 上次看过的已经够下结论：查错框里明说 */
+  else if(seen) msg($("msg").textContent+` 上次看过的 ${seen} 次发球站位还记着，按现在的比分接着用`+(p0.bad?"":"；要从头问点「从头查」")+"。");
+  chk={skip:[], asked:-1, n:0, seen}; render(); }
+/* 看过的站位（side）记在这条记录的每一分上（本机记录、下载的打点文件、备份里都有），改比分、改发球方后按新比分重算；
+   只有「重新查一遍」会清掉（删掉一分时那一分的也没了）。代价只是多看几眼，清之前不再确认（产品负责人 2026-11-19 再点「查比分和站位」进不去） */
+const chkSeen=s=>s.taps.filter(x=>x.side && !x.wrong).length;
+function chkRestart(){ const s=cur, n=chkSeen(s); s.taps.forEach(x=>{ delete x.side; }); chk={skip:[], asked:-1, n:0, seen:0}; persist();
+  msg(`清掉了上次看过的 ${n} 次发球站位，从头问。`); render(); }
+/* 查错里补了 / 撤回一分：「看不清」的分号跟着挪。看过的站位（side）记在每一分上，跟着那一分走；比分变了，对得上 / 对不上都按新比分重算，不作废 */
+function chkShift(at, d){ chk.skip=chk.skip.filter(k=>d>0 || k!==at).map(k=>k>=at ? k+d : k); }
+function chkUndo(){ const s=cur, u=chk.undo; if(!u) return; chk.undo=null;
+  if(u.k==="srv"){ const x=s.taps[u.i]; x.p=x.p==="A"?"B":"A"; msg(`撤回了：第 ${u.i+1} 分改回 ${nm(s,x.p)} 发球，比分照原来的推。`); }
+  else { s.taps.splice(u.at,1); chkShift(u.at,-1); msg(`撤回了：补的第 ${u.at+1} 分删掉了，比分照原来的推。`); }
+  chk.asked=-1; chk.n=Math.max(0,chk.n-1); persist(); render(); }
+const chkBusy=()=>chkSt==="ask"||chkSt==="srv"||chkSt==="add";
+function drawChk(){ const box=$("chk"), s=cur; chkSt=""; chkRange=null; chkMk=null; $("review").classList.remove("asking"); if(!s){ box.hidden=true; return; }
   const iss=posIssues(s), eb=$("bExport"); if(!iss.length && eb.dataset.sure){ delete eb.dataset.sure; if(!exporting) eb.textContent="开始导出"; }
   if(chk && !canPlay()) chk=null;
-  box.innerHTML=""; const say=t=>{ const p=document.createElement("p"); p.textContent=t; box.appendChild(p); };
-  const btn=(t,fn,title)=>{ const b=document.createElement("button"); b.className="btn"; b.type="button"; b.textContent=t; if(title) b.title=title; b.onclick=fn; box.appendChild(b); };
-  const stop=()=>btn("不查了",()=>{ chk=null; msg(""); render(); });
+  box.innerHTML=""; const say=(t,row)=>(row||box).appendChild(mk(row?"span":"p","q",t));
+  const stop=r=>ebtn(r,"不查了",()=>{ chk=null; msg(""); render(); });
   if(chk){ const plan=chkPlan(s, chk.skip), rs=scored(s).rallies; box.hidden=false;
-    if(plan.ask!=null){ const i=plan.ask;
-      if(chk.asked!==i){ chk.asked=i; chk.n++; sel=i; video.pause(); video.currentTime=Math.max(0, serveAt(s,i)); queueMicrotask(render); }
-      say(`查站位（第 ${chk.n} 问）：视频停在第 ${i+1} 分发球。${nm(s,s.taps[i].p)} 站在哪个发球区？（站在自己半场、面向球网看；没停准就往后放一点）`);
-      const ans=v=>()=>{ if(v) s.taps[i].side=v; else chk.skip.push(i); persist(); render(); };
-      btn("右区",ans("R")); btn("左区",ans("L")); btn("看不清，跳过",ans(""),"换一分来问"); stop(); return; }
-    if(plan.bad){ const {p,k,j}=plan.bad, x=s.taps[k], r=rs[k]; if(chk.asked!==-2-k){ chk.asked=-2-k; sel=k; queueMicrotask(render); }
-      say(`找到了：第 ${k+1} 分按比分 ${r.before.A}:${r.before.B}，${nm(s,p)} 应在${SIDE[sideAt(rs,k)]}区发球，视频里在${SIDE[x.side]}区。`
-        +(j>=0?`${nm(s,p)} 上一次对得上的是第 ${j+1} 分，错就出在第 ${j+2}–${k+1} 分之间`:`${nm(s,p)} 从第 1 次发球就对不上，错就出在第 1–${k+1} 分之间`)
-        +"：可能漏记了一分、记错了谁发球，或者只是这一分站错了。在下面的编辑栏选怎么改，改完接着查。");
-      if(j+1<k) btn(`跳到第 ${j+2} 分`,()=>{ sel=j+1; video.currentTime=Math.max(0, serveAt(s,j+1)); render(); }, "从这一分往后看，找漏掉的那一分");
-      stop(); return; }
-    chk=null; s.chkOff=true; persist();
+    if(plan.ask!=null){ const i=plan.ask, x=s.taps[i], op=x.p==="A"?"B":"A", who=nm(s,x.p), oth=nm(s,op); chkSt="ask"; $("review").classList.add("asking");
+      if(chk.asked!==i){ chk.asked=i; chk.n++; sel=i; chk.srv=null; chk.add=false; video.pause(); video.currentTime=Math.max(0, serveAt(s,i)); queueMicrotask(render); }
+      chkRange=[plan.from, plan.to]; chkMk=chkMarks(s, plan, chk.skip); const b=rs[i].before;
+      /* 前面漏了一分（产品负责人 2026-11-19，R-121）：放开回合条和播放，往回找漏掉那一分的发球，按视频时刻补上；补完接着查 */
+      if(chk.add){ chkSt="add"; $("review").classList.remove("asking");
+        say(`往回放视频（回合条、−2s 都能用），停在漏掉那一分的发球前，点谁发球补上；补完接着查。`);
+        const r=erow(box,"1fr 1fr 1fr");
+        for(const q of ["A","B"]) ebtn(r, `补 ${nm(s,q)} 发球`, ()=>{ if(!video.paused) video.pause(); const z=insertTap(s, q, Math.round(video.currentTime*100)/100);
+          if(z.err){ msg(z.err); return; } chkShift(z.at, 1); chk.undo={k:"add", at:z.at}; chk.add=false; chk.srv=null; persist();
+          msg(addPtMsg(s,z.at).replace("补错了点「删除这一分」。","补错了点「撤回」。")); render(); }, "视频停在漏掉那一分的发球前再点");
+        ebtn(r,"回到这一问",()=>{ chk.add=false; video.currentTime=Math.max(0, serveAt(s,i)); render(); }); return; }
+      /* 视频里发球的不是工具说的那个人（产品负责人 2026-11-19「问到第四拍时，发现发球方不对了。怎么办？」）：等于找到一处错，二选一 */
+      if(chk.srv===i){ chkSt="srv";
+        say(`第 ${i+1} 分是 ${oth} 发球：只是这一分记错了，就改发球方；前面漏记了一分（后面的发球会整体错位），就去补那一分。改完接着查。`);
+        const r=erow(box,"1fr 1fr 1fr");
+        ebtn(r, `改成 ${oth} 发球`, ()=>{ x.p=op; chk.undo={k:"srv", i}; chk.srv=null; persist(); msg(fixServerMsg(s,i,"；点错了点「撤回」。")); render(); }, "只改谁发球，时间、起止、★ 都不动；上一分的得分方和后面的比分跟着变");
+        ebtn(r, "前面漏了一分", ()=>{ chk.add=true; render(); }, "往回找漏掉的那一分，按视频时刻补上");
+        ebtn(r, "回到这一问", ()=>{ chk.srv=null; render(); }); return; }
+      const sub=`第 ${chk.n} 问`+(plan.left>1?` · 最多再问 ${plan.left-1} 次`:" · 最后一问")+` · 怀疑第 ${plan.from+1}–${plan.to+1} 分`;
+      if(chk.undo){ const r=erow(box,"1fr auto"); say(sub, r).classList.add("sub"); ebtn(r,"撤回",chkUndo,"撤回刚才在查错里的改动（改发球方 / 补一分）"); }
+      else if(chk.seen){ const r=erow(box,"1fr auto"); say(sub, r).classList.add("sub"); ebtn(r,"从头查",chkRestart,"清掉上次看过的站位，从头问"); }
+      else say(sub).classList.add("sub");
+      say(`第 ${i+1} 分 · ${who} 发球 · 这时 ${b.A}:${b.B}：${who} 站在哪个发球区？`);
+      const ans=v=>()=>{ if(v) x.side=v; else chk.skip.push(i); persist(); render(); }, r=erow(box,"1fr 1fr 1fr 1fr 1fr");
+      ebtn(r,"右区",ans("R")); ebtn(r,"左区",ans("L")); ebtn(r,"看不清",ans(""),"这一分看不清：跳过，换一分来问");
+      ebtn(r,`不是 ${who}`,()=>{ chk.srv=i; render(); },`视频里发球的不是 ${who}`); stop(r); return; }
+    if(plan.bad){ const {p,k,j}=plan.bad, x=s.taps[k], r=rs[k]; chkSt="bad"; chkRange=[j+1, k]; chkMk=chkMarks(s, plan, chk.skip); if(chk.asked!==-2-k){ chk.asked=-2-k; sel=k; queueMicrotask(render); }
+      say(`找到了：第 ${k+1} 分（${r.before.A}:${r.before.B}）${nm(s,p)} 应在${SIDE[sideAt(rs,k)]}区、视频里在${SIDE[x.side]}区，`
+        +`错在第 ${j+2}–${k+1} 分之间：漏记一分、记错发球方，或只是这一分站错。在下面「改错」里改，改完接着查。`);
+      const rr=erow(box, `repeat(${1+(j+1<k)+!!chk.seen},1fr)`);
+      if(j+1<k) ebtn(rr,`跳到第 ${j+2} 分`,()=>{ sel=j+1; video.currentTime=Math.max(0, serveAt(s,j+1)); render(); }, "从这一分往后看，找漏掉的那一分");
+      if(chk.seen) ebtn(rr,"重新查一遍",chkRestart,"清掉看过的站位，从头问");
+      stop(rr); return; }
+    /* 一问没问就是 ok：上次看过的站位按现在的比分已经都对得上。明说，回合条留在查的颜色，给「重新查一遍」（不一闪而过） */
+    if(!chk.n){ const n=chkSeen(s), bad=posIssues(s).length; chkSt="prev"; chkMk=chkMarks(s, plan, chk.skip);
+      say(`上次已看过 ${n} 次发球的站位`+(bad?`（${bad} 次和比分对不上，但都不在两人最后一次发球上）`:"，都和比分对得上")+`；按现在的比分，两人最后一次发球都对得上，比分应该没问题。`);
+      const r=erow(box,"1fr 1fr"); ebtn(r,"重新查一遍",chkRestart,"清掉看过的站位，从头问"); ebtn(r,"好了",()=>{ chk=null; s.chkOff=true; persist(); msg(""); render(); if(s.ended) offerSave("askRev", s); }); return; }
+    const u=chk.undo; chk=null; s.chkOff=true; persist();
     const was=$("msg").hidden?"":$("msg").textContent+" ";   // 刚改完比分的那句留着
-    msg(was+"查完了：两人最后一次发球的站位都和比分对得上，比分应该没问题。（两处错正好互相抵消的，这样查不出来。）"); }
+    if(s.ended) queueMicrotask(()=>offerSave("askRev", s));
+    msg(was+"查完了：两人最后一次发球的站位都和比分对得上，比分应该没问题。（两处错正好互相抵消的，这样查不出来。）"
+      +(u ? (u.k==="srv" ? `刚才的改动要撤回：选中第 ${u.i+1} 分，在编辑栏点「改成 … 发球」。` : `刚才补的分要撤回：选中第 ${u.at+1} 分点「删除」。`) : "")); }
   const odd=oddEnd(s) && !s.chkOff, sc=scored(s).score;
   box.hidden=!odd && !iss.length; if(box.hidden) return;
-  if(odd){ say(`比分 ${sc.A}:${sc.B} 不像打完的一局（没人到 ${s.to||21} 分）：可能漏记了一分，或者有人站错了位置。要查吗？`);
-    btn("查一查",chkStart,"看几次发球站在哪个区，对半找出错的那一分"); btn("不用查",()=>{ s.chkOff=true; persist(); render(); }); }
-  if(iss.length){ say(`有 ${iss.length} 分的站位和比分对不上，还没处理：第 ${iss.slice(0,5).map(i=>i+1).join("、")}${iss.length>5?" ……":""} 分（列表里标 ⚠）。`);
-    btn(`去看第 ${iss[0]+1} 分`,()=>{ sel=iss[0]; if(canPlay()) video.currentTime=Math.max(0, serveAt(s,iss[0])); render(); }); }
+  if(odd){ const r=erow(box,"1fr auto auto"); say(`比分 ${sc.A}:${sc.B} 像没打完，要查吗？`, r).title="不像打完的一局：可能漏记了一分，或者有人站错了位置";
+    ebtn(r,"查一查",chkStart,"看几次发球站在哪个区，对半找出错的那一分"); ebtn(r,"不用查",()=>{ s.chkOff=true; persist(); render(); if(s.ended) offerSave("askRev", s); }); }
+  if(iss.length){ const r=erow(box,"1fr auto"); say(`⚠ 第 ${iss.slice(0,4).map(i=>i+1).join("、")}${iss.length>4?"…":""} 分站位和比分对不上`, r).title="列表里标 ⚠ 的分：视频里看到的发球区和比分推的不一样，还没改";
+    ebtn(r,"去看",()=>{ sel=iss[0]; more=true; if(canPlay()) video.currentTime=Math.max(0, serveAt(s,iss[0])); render(); }); }
 }
 $("bChk").addEventListener("click",chkStart);
-/* 有视频时的「补漏掉的一分」：视频停在漏掉那一分的发球前，点谁发球 */
-function drawAddPt(){ const box=$("addPt"), s=cur, on=!!s && canPlay() && $("rtap").hidden && s.taps.length>0;
+/* 没选中哪一分时的「补漏掉的一分」（选中一分后在编辑栏「改错」里）：一行，说明放在提示里 */
+function drawAddPt(){ const box=$("addPt"), s=cur, on=!!s && canPlay() && $("rtap").hidden && s.taps.length>0 && sel<0 && !chkSt;
   box.hidden=!on; if(!on) return; box.innerHTML="";
-  const lab=document.createElement("span"); lab.className="hint"; lab.textContent="漏了一分？视频停在那一分发球前，点谁发球："; box.appendChild(lab);
-  for(const q of ["A","B"]){ const b=document.createElement("button"); b.className="btn"; b.type="button"; b.textContent=`补 ${nm(s,q)} 发球`;
-    b.onclick=()=>{ if(!video.paused) video.pause(); const r=insertTap(cur, q, Math.round(video.currentTime*100)/100);
-      if(r.err){ msg(r.err); return; } sel=r.at; persist(); msg(addPtMsg(cur,r.at)); render(); }; box.appendChild(b); } }
+  const r=erow(box,"auto 1fr 1fr"); r.appendChild(mk("span","lab","漏了一分？")).title="视频停在漏掉那一分的发球前，点谁发球，按时刻补进去";
+  for(const q of ["A","B"]) ebtn(r, `补 ${nm(s,q)} 发球`, addAtVideo(q), "视频停在漏掉那一分的发球前再点"); }
 /* 画面上的比分：在哪一分里就显示那一分开始时的比分，打完那一刻跳成打完的比分 */
 function scoreAt(t){
   if(!cur||!canPlay()) return null; const sp=spans(cur), {rallies}=scored(cur); let k=-1;
@@ -1311,12 +1492,14 @@ $("bBackAll").addEventListener("click",async()=>{ const all=sessions().filter(s=
   const r=await saveFile(name, new Blob([JSON.stringify({kind:BACKUP_KIND, v:1, at:d.toISOString(), sessions:all})],{type:"application/json"}), "json");
   if(r==="ok"){ markBacked(all); msg(`${all.length} 局都备份进「${name}」了。`); render(); } });
 /* 打完一局自动问要不要保存（试用者 2026-11-10）：本局结束后在打点区上方弹出，点「保存这局」就存；点「稍后」首页标「未备份」 */
+/* 保存提示（产品负责人 2026-11-19「是否挪到“结束本局”，比分符合要求之后」）：只在这一局（或这一段）收好之后问——最后一分谁得的定了、
+   比分像打完（或停在半场）；不像打完的先问要不要查，不用查 / 查完了再问。兜底照旧：首页「未备份」、点「‹ 返回」先下载备份 */
 function offerSave(askBox, s){ if(!s || !s.taps.length || isBacked(s)) return;
-  const box=$(askBox); box.hidden=false; box.innerHTML="";
-  const q=document.createElement("p"); q.className="hint"; q.textContent="这局打完了，现在把打点存成文件吧：存好了，就算浏览器清了数据、换了入口打开，也能在首页「载入打点文件」放回来。"; box.appendChild(q);
+  const box=$(askBox), seg=!!s.part; box.hidden=false; box.innerHTML="";
+  const q=document.createElement("p"); q.className="hint"; q.textContent=(seg?"这一段的打点先存一份":"这局打完了，现在把打点存成文件吧")+"：存好了，就算浏览器清了数据、换了入口打开，也能在首页「载入打点文件」放回来。"; box.appendChild(q);
   const mk=(t,bg,fn,cls)=>{ const b=document.createElement("button"); b.type="button"; b.textContent=t; b.style.background=bg; if(cls) b.className=cls; b.onclick=fn; box.appendChild(b); };
-  mk("保存这局","#185943",async()=>{ const r=await download(s); if(r==="ok"||r==="copied"||r==="raw"){ box.hidden=true; if(r==="ok") msg("这局存好了。"); render(); } else msg("没存下来，可以再点一次「保存这局」。"); });
-  mk("稍后","#666",()=>{ box.hidden=true; msg("没保存：首页这一局会标「未备份」，记得找时间存。"); render(); }); }
+  mk(seg?"保存这一段":"保存这局","#185943",async()=>{ const r=await download(s); if(r==="ok"||r==="copied"||r==="raw"){ box.hidden=true; if(r==="ok") msg(seg?"这一段存好了。":"这局存好了。"); render(); } else msg("没存下来，可以再点一次「保存这局」。"); });
+  mk("稍后","#666",()=>{ box.hidden=true; msg(`没保存：首页这${seg?"一段":"一局"}会标「未备份」，记得找时间存。`); render(); }); }
 $("bDl").addEventListener("click",()=>cur&&download(cur));
 
 /* ===== 现场打点页 v1.6（试用者 2026-11-10：单手、不看屏幕也能按；分法默认斜分，不做下滑撤销；比分下面放整局的得分点卡）=====
@@ -1444,7 +1627,7 @@ $("lFlip").addEventListener("click",()=>{ if(!cur) return; flip=!flip; lset(FLIP
   b.addEventListener("contextmenu",e=>e.preventDefault()); })();
 /* 得分点卡：整局每一分按真实时间排开，一行放不下就折行（最多 3 行，时间长了每行代表的分钟数跟着变大）。
    竖线 = 发球；浅色带 = 这次发球到下一次发球（时间间隔）；深色 = 回合（发球到「回合结束」，开了那个按钮才有）；颜色 = 谁得分，数字 = 得分方打完几分。
-   两次发球隔了 2 分钟以上（局间休息、接着打下半段）压成 2 分钟，画一条虚线 */
+   两次发球隔了 2 分钟以上（局间休息、接着打下一段）压成 2 分钟，画一条虚线 */
 function drawCard(){ const s=cur, box=$("pcard"), T=s.taps, n=T.length;
   if(!n){ box.innerHTML=`<div class="pcap">每一分会在这里按时间排开；重发（擦网等）不用再按。</div>`; return; }
   const {rallies}=scored(s), CAP=120, m=[0], brk=[];
@@ -1493,7 +1676,7 @@ for(const id of ["bLive","bReplay"]) $(id).addEventListener("click",()=>{ if(!pe
 /* 新版提示（试用者 2026-11-10：posecap.com 已经更新，桌面 App 里还是旧页面——App 切回前台不会重新载入，场边打点页也没有刷新键）：
    posecap.com 版的 BUILD 是 make_courtside 填的这一版指纹；回到前台、回到首页时去网站上取一下这一页（不走缓存），指纹不一样就在顶上提示「有新版本」。
    正在现场打点、这局没打完时不提示，回到首页或打完再提示。claude.ai 版 BUILD 为空，不查（发布新版时 claude.ai 自己会重新载入） */
-const BUILD = "1838c5e30a44";
+const BUILD = "b3466b3dd7c2";
 let newBuild="", lastCheck=0;
 function freshReload(tag){ location.replace(location.pathname+"?v="+encodeURIComponent(tag||Date.now())); }   // 换个地址参数，绕开手机缓存
 async function checkUpdate(force){ if(!BUILD || newBuild) return; const now=Date.now(); if(!force && now-lastCheck<60000) return; lastCheck=now;
