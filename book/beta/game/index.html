@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>球路闯关 v96</title>
+<title>球路闯关 v97</title>
 </head><body>
 <style>
 /* 一屏游戏：上 = 比分条，中 = 球场（2D 俯视 / 3D 转播，SVG 自己投影），下 = 优势条 + 字幕 + 按钮。球馆深色一种外观，不跟系统深浅色。 */
@@ -168,6 +168,7 @@ body:has(#thumbPad:not([hidden])) #backZones{display:none}
 .splitfab.left{right:auto;left:10px}
 .stage:has(.splitfab.left:not([hidden])) .handchip:not(.opside){bottom:150px}   /* 有拇指按钮时，后左 / 后中 / 后右用方向键代替（试用者 2026-11-09） */
 .stage.tpR .orbitbar{bottom:210px}.stage.tpL .handchip:not(.opside){bottom:210px}
+.stage.tpL .orbitbar{flex-direction:column;align-items:flex-end}   /* v97：拇指键换到左边时，球探 / 缩放按钮留在右下角、竖着排——横着排会和拇指键撞（v96 竖屏手机上就撞，横屏 iPhone SE 球场只有 395px 宽更撞） */
 .aibox:not([hidden]) ~ .orbitbar{bottom:auto;top:8px;z-index:4}   /* 大白话框打开时，缩放 / 复位按钮挪到右上角，不被盖住 */.orbitbar button{opacity:.88;font-size:12px}
 #btnOrbit.on{background:var(--gold);color:#1d1d1d;opacity:1}
 #court.orbiting{outline:3px dashed var(--gold);outline-offset:-3px;border-radius:12px}
@@ -214,6 +215,25 @@ body:has(#thumbPad:not([hidden])) #backZones{display:none}
   .levels{grid-template-columns:1fr 1fr 1fr!important}
 }
 @media (min-width:900px) and (min-aspect-ratio:5/4) and (max-height:760px){ .adv{grid-template-columns:auto repeat(5,1fr)!important} .foot{gap:8px} }   /* v93：矮窗口局面五条改回横排，给字幕和按钮让高度 */
+/* v97（产品负责人 11-18：手机横屏对局时，右上角的对手信息牌盖住「转视角」，球场也很小）：手机横着拿（横屏、高不到 540px）照 iPad 横屏排——
+   左边球场占满整个高度、右边控制区（字幕、局面、按钮），右栏放不下就在栏里滑。以前球场排在上面、控制区堆在下面，横屏时球场只剩 100 像素高，
+   对手信息牌和右下角的按钮叠在一起。字号回到手机的大小（宽过 700px 的放大只给 iPad） */
+@media (min-aspect-ratio:5/4) and (max-height:540px){
+  body{font-size:15px}
+  .foot,.top,.orbitbar,.handchip,.hud{zoom:1}
+  .app{max-width:none;display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,34%);grid-template-rows:auto minmax(0,1fr);column-gap:12px;row-gap:4px}
+  .top{grid-column:1/-1;min-height:36px}
+  .stage{grid-column:1;grid-row:2}
+  .foot{grid-column:2;grid-row:2;justify-content:safe center;gap:6px;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .foot>*{flex:none} .foot>#say{flex:0 1 116px;height:auto;min-height:56px}
+  .adv div{font-size:11px;padding:4px 0} .adv b{font-size:11px}
+  #say{font-size:15px} #say .why{font-size:13px}
+  .actrow button{font-size:14px;padding:8px 6px} .actrow button.exit{font-size:13px} .actrow.tools button{font-size:13px}
+  #acts.rv{min-height:0}
+  .score{font-size:22px}
+  /* 玩家视角的拇指键占了右下角：球探 / 缩放按钮挪到左边、我的牌子上面竖着排（原来抬到 210px 高，横屏时正好撞上右上角的对手牌和小地图） */
+  .stage.tpR .orbitbar{bottom:72px;right:auto;left:8px;flex-direction:column;align-items:flex-start}
+}
 .screen h2{font-size:15px;margin:6px 0 0;color:var(--muted)}
 .screen p{margin:0;color:var(--muted)}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -317,7 +337,7 @@ svg text{font-family:var(--font)}
     <div class="entryrow"><a id="btnEntry" class="entrybtn" href="../v3/">← 返回主页</a></div>
     <div class="hero">
       <svg class="shuttle" viewBox="-16 -14 32 32" aria-hidden="true"><g style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))"><polygon points="0,10 -9,-8 9,-8" fill="#fff" stroke="#555" stroke-width="1.5"/><line x1="-3" y1="-8" x2="-1" y2="9" stroke="#bbb" stroke-width="1"/><line x1="3" y1="-8" x2="1" y2="9" stroke="#bbb" stroke-width="1"/><circle cx="0" cy="11" r="4.5" fill="#F7F7F7" stroke="#555" stroke-width="1.5"/></g></svg>
-      <h1>球路闯关<span class="ver">v96</span></h1>
+      <h1>球路闯关<span class="ver">v97</span></h1>
       <p class="tag">羽毛球战术闯关 · 9 级对手 · 35 页球路</p>
       <button class="plbtn" id="btnPlayer">👤 <span id="plName"></span> ▾</button> <button class="plbtn" id="btnCode" data-bookcode-btn>🔑 输入书码</button>
       <div class="hstats" id="hStats"></div>
@@ -1246,7 +1266,7 @@ const DATA = {"game":{"tiers":[{"id":"t8","name":"进阶","enabled":true,"option
 /* ---------- v18 补丁（2026-11-06 试用者意见）：9 级分三段、成人档、家长能力说明 ----------
    1–3 级：只管选球路（自动回中、自动启动），自己这边很少失误；4–6 级：自己回中（方向键一下挪一格），自动启动；
    7–9 级：自己回中、自己启动，开放玩家视角。 */
-const VERSION = "v96";
+const VERSION = "v97";
 { const a = document.getElementById("btnEntry"); let on = false; try { on = location.hostname.replace(/^www\./, "") === "posecap.com"; } catch (e) {}
   if (!on) { a.classList.add("off"); a.removeAttribute("href"); a.setAttribute("aria-disabled", "true"); a.title = "上线后回想三拍入口页（审查稿里没有入口页可回）"; } }
 /* 7–9 级、对手弱点、补的 14 条主动模式球路、家长 / 成人档、家长分组说明：v59 以前写在这里（patchData），2026-11-09 收回 config/game.yaml */
