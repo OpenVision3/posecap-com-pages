@@ -73,13 +73,13 @@ addEventListener("load",()=>xlGo(location.hash));
      label() 返回当前该写的字、paint() 重画一遍（自己管按钮字的页面用）。文案键 btn / btn_on，配置 texts 里给了以配置为准。
      页面上不显示到期日（11-14「期限句先不上」，term_status = omitted）：状态行写 texts.badge、验码成功写 texts.ok，都读共享配置（tactics-ai 11-18 已改成「已解锁」「已解锁。」）；兜底文案同步去日期，配置里万一还带 {date} 也不留「到」字。只有到期提示 expired 带日期。 */
 (function () {
-  const BOOKCODE_VERSION = "12";   // 两边打包时核对是不是同一版：改了接口或行为就加一
+  const BOOKCODE_VERSION = "13";   // 两边打包时核对是不是同一版：改了接口或行为就加一
   const TX = {   // 文案兜底（以配置 texts 为准；键名同 tactics-book docs/book/v3.0/bookcode_copy.md 第 5 节）
     title: "输入书码", lead: "", placeholder: "", go: "解锁", cancel: "取消", ok: "已解锁。", ok_nodate: "已解锁。",
     invalid: "这个书码不对，请再核对一下。", revoked: "这个书码已停用。", rate_limited: "输错太多次了，请稍后再试。", unavailable: "现在验不了书码，请稍后再试。",
     region_not_available: "目前只在加拿大魁北克以外地区提供。", province_title: "", province_prompt: "第一次激活，请选你所在的省份 / 地区：",   // 键名同 tactics-book 拟稿（交 tactics-ai 放进 texts） devices_left: "这个书码还能用在 {left} 台设备上。", expired: "这个书码已在 {date} 到期。", device_limit: "这个书码已经用在 3 台设备上了，不能再加新的设备。",
     not_open: "输入书码的地方还没开放，开放以后就在这里输入。", network: "连不上验码服务，请检查网络后再试。", badge: "已解锁", btn: "🔑 输入书码", btn_on: "🔑 已解锁", empty: "先输入书码",
-    checking: "正在核对……", term_draft: "", buy_soon: "购买即将开放。",
+    checking: "正在核对……", term_draft: "", buy_soon: "购买即将开放。", title_on: "书码", close: "关闭",   // title_on / close：第 13 版已解锁时框的标题和按钮（配置 texts 没给就用这里）
   };
   const ENV = (() => { try { const h = location.hostname.replace(/^www\./, ""), beta = /^\/book\/beta(\/|$)/.test(location.pathname);
     return h === "posecap.com" ? (beta ? "beta" : "prod") : "test"; } catch (e) { return "test"; } })();   // 出错落在测试那一侧
@@ -179,6 +179,7 @@ addEventListener("load",()=>xlGo(location.hash));
     box.addEventListener("click", (e) => { if (e.target === box) close(); });
     box.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); if (e.key === "Enter") q("ok").click(); });
     q("ok").addEventListener("click", async () => {
+      if (box.dataset.on === "1") return;   // 第 13 版：已解锁时框里不收码（回车也不提交）
       const m = q("m"); m.style.color = "#5b5446"; m.textContent = T("checking");
       const pv = q("prov").style.display !== "none" ? q("ps").value : "";
       if (q("prov").style.display !== "none" && !pv) { m.style.color = "#b4462b"; m.textContent = T("province_prompt"); return; }
@@ -198,6 +199,12 @@ addEventListener("load",()=>xlGo(location.hash));
     box.setAttribute("aria-label", T("title"));
     q("h").textContent = "🔑 " + T("title"); q("i").placeholder = T("placeholder"); q("x").textContent = T("cancel"); q("ok").textContent = T("go");
     const inf = info();
+    /* 第 13 版（产品负责人 11-19「关于书码，如果已经解锁，还可以输入，为什么？是为了过期后更新准备的吗？」，pose-briefing → Coordinator 转，R-120）：
+       已解锁时框里只看状态——标题「书码」、写「已解锁」和输码说明两句（lead、devices），按钮只留「关闭」；不出输入框、「解锁」、购买那句。
+       到期后 unlocked() 自己变回 false，又是能输码的框，所以换码用不着已解锁时的输入框；已解锁再输别的码只会白占那个码一台设备 */
+    box.dataset.on = inf ? "1" : "";
+    if (inf) { q("h").textContent = "🔑 " + T("title_on"); q("x").textContent = T("close"); box.setAttribute("aria-label", T("title_on")); }
+    for (const k of ["i", "ok", "b", "t", "m"]) q(k).style.display = inf ? "none" : "";
     q("why").textContent = inf ? T("badge").replace(/ · 到 $/, "") : (opt.reason || "");   // 第 12 版：不显示到期日（11-14「期限句先不上」，term_status = omitted；到期提示 expired 照旧带日期）
     q("have").textContent = inf ? "" : C.have_text; q("r").textContent = T("lead"); q("dev").textContent = T("devices");
     q("m").textContent = ""; q("i").value = ""; q("prov").style.display = "none";
@@ -212,9 +219,9 @@ addEventListener("load",()=>xlGo(location.hash));
     else if (ENV === "beta") b.textContent = T("buy_soon");   // beta 读不到测试支付地址：购买「即将开放」
     else if (C.buy_text) b.textContent = C.buy_text;   // 未定事项不写在锁页卡上，只写审查说明区（产品负责人 11-15）
     q("t").textContent = [C.pro_text, C.term_text].filter(Boolean).join("　");   // Pro 那句、期限句：配置给了才出（现在都不带）   // 期限句：config 里有就用；空着时只在审查稿出草稿
-    box.style.display = "flex"; setTimeout(() => q("i").focus(), 30);
+    box.style.display = "flex"; setTimeout(() => (inf ? q("x") : q("i")).focus(), 30);
   }
-  /* 第 12 版：页面上带 data-bookcode-btn 的入口按钮跟着状态换字——没解锁「🔑 输入书码」，解锁后「🔑 已解锁」（点开还是同一个框，看状态、换码）。
+  /* 第 12 版：页面上带 data-bookcode-btn 的入口按钮跟着状态换字——没解锁「🔑 输入书码」，解锁后「🔑 已解锁」（点开是同一个框；第 13 版起已解锁时只看状态、不能输码）。
      不进 subs：subs 有人订阅时验码成功不刷新页面，这里只换字，不改那条规矩 */
   const btnLabel = () => T(unlocked() ? "btn_on" : "btn");
   function paintBtns() { try { document.querySelectorAll("[data-bookcode-btn]").forEach((b) => { b.textContent = btnLabel(); }); } catch (e) {} }
