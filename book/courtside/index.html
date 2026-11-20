@@ -37,6 +37,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 -apple-system,"
 :root.quiet .updbar{background:#1f3a2f;color:#cfe5da}
 @media (max-width:520px){.appbar:has(#bHome:not([hidden])) .brand b{display:none}}
 .hint{color:var(--muted);font-size:13px;margin:0}
+.hint .btn{color:var(--fg);font-size:15px}   /* 放在灰色说明里的按钮照常颜色（产品负责人 2026-11-20：「打 ★」看着像被禁用了） */
 button{font:inherit;cursor:pointer;touch-action:manipulation;color:inherit}
 .btn{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:15px}
 .btn:disabled{opacity:.45;cursor:default}
@@ -460,12 +461,1918 @@ try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!
 <input type="file" id="fVideo" accept="video/*" hidden>
 </div>
 
+<script id="mp4muxer">/* mp4-muxer 5.2.2（https://github.com/Vanilagy/mp4-muxer，MIT License，Copyright (c) 2023 Vanilagy）：逐帧导出时把编好的视频、声音写成 mp4。原样内嵌，不改 */
+"use strict";
+var Mp4Muxer = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __accessCheck = (obj, member, msg) => {
+    if (!member.has(obj))
+      throw TypeError("Cannot " + msg);
+  };
+  var __privateGet = (obj, member, getter) => {
+    __accessCheck(obj, member, "read from private field");
+    return getter ? getter.call(obj) : member.get(obj);
+  };
+  var __privateAdd = (obj, member, value) => {
+    if (member.has(obj))
+      throw TypeError("Cannot add the same private member more than once");
+    member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+  };
+  var __privateSet = (obj, member, value, setter) => {
+    __accessCheck(obj, member, "write to private field");
+    setter ? setter.call(obj, value) : member.set(obj, value);
+    return value;
+  };
+  var __privateWrapper = (obj, member, setter, getter) => ({
+    set _(value) {
+      __privateSet(obj, member, value, setter);
+    },
+    get _() {
+      return __privateGet(obj, member, getter);
+    }
+  });
+  var __privateMethod = (obj, member, method) => {
+    __accessCheck(obj, member, "access private method");
+    return method;
+  };
+
+  // src/index.ts
+  var src_exports = {};
+  __export(src_exports, {
+    ArrayBufferTarget: () => ArrayBufferTarget,
+    FileSystemWritableFileStreamTarget: () => FileSystemWritableFileStreamTarget,
+    Muxer: () => Muxer,
+    StreamTarget: () => StreamTarget
+  });
+
+  // src/misc.ts
+  var bytes = new Uint8Array(8);
+  var view = new DataView(bytes.buffer);
+  var u8 = (value) => {
+    return [(value % 256 + 256) % 256];
+  };
+  var u16 = (value) => {
+    view.setUint16(0, value, false);
+    return [bytes[0], bytes[1]];
+  };
+  var i16 = (value) => {
+    view.setInt16(0, value, false);
+    return [bytes[0], bytes[1]];
+  };
+  var u24 = (value) => {
+    view.setUint32(0, value, false);
+    return [bytes[1], bytes[2], bytes[3]];
+  };
+  var u32 = (value) => {
+    view.setUint32(0, value, false);
+    return [bytes[0], bytes[1], bytes[2], bytes[3]];
+  };
+  var i32 = (value) => {
+    view.setInt32(0, value, false);
+    return [bytes[0], bytes[1], bytes[2], bytes[3]];
+  };
+  var u64 = (value) => {
+    view.setUint32(0, Math.floor(value / 2 ** 32), false);
+    view.setUint32(4, value, false);
+    return [bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]];
+  };
+  var fixed_8_8 = (value) => {
+    view.setInt16(0, 2 ** 8 * value, false);
+    return [bytes[0], bytes[1]];
+  };
+  var fixed_16_16 = (value) => {
+    view.setInt32(0, 2 ** 16 * value, false);
+    return [bytes[0], bytes[1], bytes[2], bytes[3]];
+  };
+  var fixed_2_30 = (value) => {
+    view.setInt32(0, 2 ** 30 * value, false);
+    return [bytes[0], bytes[1], bytes[2], bytes[3]];
+  };
+  var ascii = (text, nullTerminated = false) => {
+    let bytes2 = Array(text.length).fill(null).map((_, i) => text.charCodeAt(i));
+    if (nullTerminated)
+      bytes2.push(0);
+    return bytes2;
+  };
+  var last = (arr) => {
+    return arr && arr[arr.length - 1];
+  };
+  var lastPresentedSample = (samples) => {
+    let result = void 0;
+    for (let sample of samples) {
+      if (!result || sample.presentationTimestamp > result.presentationTimestamp) {
+        result = sample;
+      }
+    }
+    return result;
+  };
+  var intoTimescale = (timeInSeconds, timescale, round = true) => {
+    let value = timeInSeconds * timescale;
+    return round ? Math.round(value) : value;
+  };
+  var rotationMatrix = (rotationInDegrees) => {
+    let theta = rotationInDegrees * (Math.PI / 180);
+    let cosTheta = Math.cos(theta);
+    let sinTheta = Math.sin(theta);
+    return [
+      cosTheta,
+      sinTheta,
+      0,
+      -sinTheta,
+      cosTheta,
+      0,
+      0,
+      0,
+      1
+    ];
+  };
+  var IDENTITY_MATRIX = rotationMatrix(0);
+  var matrixToBytes = (matrix) => {
+    return [
+      fixed_16_16(matrix[0]),
+      fixed_16_16(matrix[1]),
+      fixed_2_30(matrix[2]),
+      fixed_16_16(matrix[3]),
+      fixed_16_16(matrix[4]),
+      fixed_2_30(matrix[5]),
+      fixed_16_16(matrix[6]),
+      fixed_16_16(matrix[7]),
+      fixed_2_30(matrix[8])
+    ];
+  };
+  var deepClone = (x) => {
+    if (!x)
+      return x;
+    if (typeof x !== "object")
+      return x;
+    if (Array.isArray(x))
+      return x.map(deepClone);
+    return Object.fromEntries(Object.entries(x).map(([key, value]) => [key, deepClone(value)]));
+  };
+  var isU32 = (value) => {
+    return value >= 0 && value < 2 ** 32;
+  };
+
+  // src/box.ts
+  var box = (type, contents, children) => ({
+    type,
+    contents: contents && new Uint8Array(contents.flat(10)),
+    children
+  });
+  var fullBox = (type, version, flags, contents, children) => box(
+    type,
+    [u8(version), u24(flags), contents ?? []],
+    children
+  );
+  var ftyp = (details) => {
+    let minorVersion = 512;
+    if (details.fragmented)
+      return box("ftyp", [
+        ascii("iso5"),
+        // Major brand
+        u32(minorVersion),
+        // Minor version
+        // Compatible brands
+        ascii("iso5"),
+        ascii("iso6"),
+        ascii("mp41")
+      ]);
+    return box("ftyp", [
+      ascii("isom"),
+      // Major brand
+      u32(minorVersion),
+      // Minor version
+      // Compatible brands
+      ascii("isom"),
+      details.holdsAvc ? ascii("avc1") : [],
+      ascii("mp41")
+    ]);
+  };
+  var mdat = (reserveLargeSize) => ({ type: "mdat", largeSize: reserveLargeSize });
+  var free = (size) => ({ type: "free", size });
+  var moov = (tracks, creationTime, fragmented = false) => box("moov", null, [
+    mvhd(creationTime, tracks),
+    ...tracks.map((x) => trak(x, creationTime)),
+    fragmented ? mvex(tracks) : null
+  ]);
+  var mvhd = (creationTime, tracks) => {
+    let duration = intoTimescale(Math.max(
+      0,
+      ...tracks.filter((x) => x.samples.length > 0).map((x) => {
+        const lastSample = lastPresentedSample(x.samples);
+        return lastSample.presentationTimestamp + lastSample.duration;
+      })
+    ), GLOBAL_TIMESCALE);
+    let nextTrackId = Math.max(...tracks.map((x) => x.id)) + 1;
+    let needsU64 = !isU32(creationTime) || !isU32(duration);
+    let u32OrU64 = needsU64 ? u64 : u32;
+    return fullBox("mvhd", +needsU64, 0, [
+      u32OrU64(creationTime),
+      // Creation time
+      u32OrU64(creationTime),
+      // Modification time
+      u32(GLOBAL_TIMESCALE),
+      // Timescale
+      u32OrU64(duration),
+      // Duration
+      fixed_16_16(1),
+      // Preferred rate
+      fixed_8_8(1),
+      // Preferred volume
+      Array(10).fill(0),
+      // Reserved
+      matrixToBytes(IDENTITY_MATRIX),
+      // Matrix
+      Array(24).fill(0),
+      // Pre-defined
+      u32(nextTrackId)
+      // Next track ID
+    ]);
+  };
+  var trak = (track, creationTime) => box("trak", null, [
+    tkhd(track, creationTime),
+    mdia(track, creationTime)
+  ]);
+  var tkhd = (track, creationTime) => {
+    let lastSample = lastPresentedSample(track.samples);
+    let durationInGlobalTimescale = intoTimescale(
+      lastSample ? lastSample.presentationTimestamp + lastSample.duration : 0,
+      GLOBAL_TIMESCALE
+    );
+    let needsU64 = !isU32(creationTime) || !isU32(durationInGlobalTimescale);
+    let u32OrU64 = needsU64 ? u64 : u32;
+    let matrix;
+    if (track.info.type === "video") {
+      matrix = typeof track.info.rotation === "number" ? rotationMatrix(track.info.rotation) : track.info.rotation;
+    } else {
+      matrix = IDENTITY_MATRIX;
+    }
+    return fullBox("tkhd", +needsU64, 3, [
+      u32OrU64(creationTime),
+      // Creation time
+      u32OrU64(creationTime),
+      // Modification time
+      u32(track.id),
+      // Track ID
+      u32(0),
+      // Reserved
+      u32OrU64(durationInGlobalTimescale),
+      // Duration
+      Array(8).fill(0),
+      // Reserved
+      u16(0),
+      // Layer
+      u16(0),
+      // Alternate group
+      fixed_8_8(track.info.type === "audio" ? 1 : 0),
+      // Volume
+      u16(0),
+      // Reserved
+      matrixToBytes(matrix),
+      // Matrix
+      fixed_16_16(track.info.type === "video" ? track.info.width : 0),
+      // Track width
+      fixed_16_16(track.info.type === "video" ? track.info.height : 0)
+      // Track height
+    ]);
+  };
+  var mdia = (track, creationTime) => box("mdia", null, [
+    mdhd(track, creationTime),
+    hdlr(track.info.type === "video" ? "vide" : "soun"),
+    minf(track)
+  ]);
+  var mdhd = (track, creationTime) => {
+    let lastSample = lastPresentedSample(track.samples);
+    let localDuration = intoTimescale(
+      lastSample ? lastSample.presentationTimestamp + lastSample.duration : 0,
+      track.timescale
+    );
+    let needsU64 = !isU32(creationTime) || !isU32(localDuration);
+    let u32OrU64 = needsU64 ? u64 : u32;
+    return fullBox("mdhd", +needsU64, 0, [
+      u32OrU64(creationTime),
+      // Creation time
+      u32OrU64(creationTime),
+      // Modification time
+      u32(track.timescale),
+      // Timescale
+      u32OrU64(localDuration),
+      // Duration
+      u16(21956),
+      // Language ("und", undetermined)
+      u16(0)
+      // Quality
+    ]);
+  };
+  var hdlr = (componentSubtype) => fullBox("hdlr", 0, 0, [
+    ascii("mhlr"),
+    // Component type
+    ascii(componentSubtype),
+    // Component subtype
+    u32(0),
+    // Component manufacturer
+    u32(0),
+    // Component flags
+    u32(0),
+    // Component flags mask
+    ascii("mp4-muxer-hdlr", true)
+    // Component name
+  ]);
+  var minf = (track) => box("minf", null, [
+    track.info.type === "video" ? vmhd() : smhd(),
+    dinf(),
+    stbl(track)
+  ]);
+  var vmhd = () => fullBox("vmhd", 0, 1, [
+    u16(0),
+    // Graphics mode
+    u16(0),
+    // Opcolor R
+    u16(0),
+    // Opcolor G
+    u16(0)
+    // Opcolor B
+  ]);
+  var smhd = () => fullBox("smhd", 0, 0, [
+    u16(0),
+    // Balance
+    u16(0)
+    // Reserved
+  ]);
+  var dinf = () => box("dinf", null, [
+    dref()
+  ]);
+  var dref = () => fullBox("dref", 0, 0, [
+    u32(1)
+    // Entry count
+  ], [
+    url()
+  ]);
+  var url = () => fullBox("url ", 0, 1);
+  var stbl = (track) => {
+    const needsCtts = track.compositionTimeOffsetTable.length > 1 || track.compositionTimeOffsetTable.some((x) => x.sampleCompositionTimeOffset !== 0);
+    return box("stbl", null, [
+      stsd(track),
+      stts(track),
+      stss(track),
+      stsc(track),
+      stsz(track),
+      stco(track),
+      needsCtts ? ctts(track) : null
+    ]);
+  };
+  var stsd = (track) => fullBox("stsd", 0, 0, [
+    u32(1)
+    // Entry count
+  ], [
+    track.info.type === "video" ? videoSampleDescription(
+      VIDEO_CODEC_TO_BOX_NAME[track.info.codec],
+      track
+    ) : soundSampleDescription(
+      AUDIO_CODEC_TO_BOX_NAME[track.info.codec],
+      track
+    )
+  ]);
+  var videoSampleDescription = (compressionType, track) => box(compressionType, [
+    Array(6).fill(0),
+    // Reserved
+    u16(1),
+    // Data reference index
+    u16(0),
+    // Pre-defined
+    u16(0),
+    // Reserved
+    Array(12).fill(0),
+    // Pre-defined
+    u16(track.info.width),
+    // Width
+    u16(track.info.height),
+    // Height
+    u32(4718592),
+    // Horizontal resolution
+    u32(4718592),
+    // Vertical resolution
+    u32(0),
+    // Reserved
+    u16(1),
+    // Frame count
+    Array(32).fill(0),
+    // Compressor name
+    u16(24),
+    // Depth
+    i16(65535)
+    // Pre-defined
+  ], [
+    VIDEO_CODEC_TO_CONFIGURATION_BOX[track.info.codec](track),
+    track.info.decoderConfig.colorSpace ? colr(track) : null
+  ]);
+  var COLOR_PRIMARIES_MAP = {
+    "bt709": 1,
+    // ITU-R BT.709
+    "bt470bg": 5,
+    // ITU-R BT.470BG
+    "smpte170m": 6
+    // ITU-R BT.601 525 - SMPTE 170M
+  };
+  var TRANSFER_CHARACTERISTICS_MAP = {
+    "bt709": 1,
+    // ITU-R BT.709
+    "smpte170m": 6,
+    // SMPTE 170M
+    "iec61966-2-1": 13
+    // IEC 61966-2-1
+  };
+  var MATRIX_COEFFICIENTS_MAP = {
+    "rgb": 0,
+    // Identity
+    "bt709": 1,
+    // ITU-R BT.709
+    "bt470bg": 5,
+    // ITU-R BT.470BG
+    "smpte170m": 6
+    // SMPTE 170M
+  };
+  var colr = (track) => box("colr", [
+    ascii("nclx"),
+    // Colour type
+    u16(COLOR_PRIMARIES_MAP[track.info.decoderConfig.colorSpace.primaries]),
+    // Colour primaries
+    u16(TRANSFER_CHARACTERISTICS_MAP[track.info.decoderConfig.colorSpace.transfer]),
+    // Transfer characteristics
+    u16(MATRIX_COEFFICIENTS_MAP[track.info.decoderConfig.colorSpace.matrix]),
+    // Matrix coefficients
+    u8((track.info.decoderConfig.colorSpace.fullRange ? 1 : 0) << 7)
+    // Full range flag
+  ]);
+  var avcC = (track) => track.info.decoderConfig && box("avcC", [
+    // For AVC, description is an AVCDecoderConfigurationRecord, so nothing else to do here
+    ...new Uint8Array(track.info.decoderConfig.description)
+  ]);
+  var hvcC = (track) => track.info.decoderConfig && box("hvcC", [
+    // For HEVC, description is a HEVCDecoderConfigurationRecord, so nothing else to do here
+    ...new Uint8Array(track.info.decoderConfig.description)
+  ]);
+  var vpcC = (track) => {
+    if (!track.info.decoderConfig) {
+      return null;
+    }
+    let decoderConfig = track.info.decoderConfig;
+    if (!decoderConfig.colorSpace) {
+      throw new Error(`'colorSpace' is required in the decoder config for VP9.`);
+    }
+    let parts = decoderConfig.codec.split(".");
+    let profile = Number(parts[1]);
+    let level = Number(parts[2]);
+    let bitDepth = Number(parts[3]);
+    let chromaSubsampling = 0;
+    let thirdByte = (bitDepth << 4) + (chromaSubsampling << 1) + Number(decoderConfig.colorSpace.fullRange);
+    let colourPrimaries = 2;
+    let transferCharacteristics = 2;
+    let matrixCoefficients = 2;
+    return fullBox("vpcC", 1, 0, [
+      u8(profile),
+      // Profile
+      u8(level),
+      // Level
+      u8(thirdByte),
+      // Bit depth, chroma subsampling, full range
+      u8(colourPrimaries),
+      // Colour primaries
+      u8(transferCharacteristics),
+      // Transfer characteristics
+      u8(matrixCoefficients),
+      // Matrix coefficients
+      u16(0)
+      // Codec initialization data size
+    ]);
+  };
+  var av1C = () => {
+    let marker = 1;
+    let version = 1;
+    let firstByte = (marker << 7) + version;
+    return box("av1C", [
+      firstByte,
+      0,
+      0,
+      0
+    ]);
+  };
+  var soundSampleDescription = (compressionType, track) => box(compressionType, [
+    Array(6).fill(0),
+    // Reserved
+    u16(1),
+    // Data reference index
+    u16(0),
+    // Version
+    u16(0),
+    // Revision level
+    u32(0),
+    // Vendor
+    u16(track.info.numberOfChannels),
+    // Number of channels
+    u16(16),
+    // Sample size (bits)
+    u16(0),
+    // Compression ID
+    u16(0),
+    // Packet size
+    fixed_16_16(track.info.sampleRate)
+    // Sample rate
+  ], [
+    AUDIO_CODEC_TO_CONFIGURATION_BOX[track.info.codec](track)
+  ]);
+  var esds = (track) => {
+    let description = new Uint8Array(track.info.decoderConfig.description);
+    return fullBox("esds", 0, 0, [
+      // https://stackoverflow.com/a/54803118
+      u32(58753152),
+      // TAG(3) = Object Descriptor ([2])
+      u8(32 + description.byteLength),
+      // length of this OD (which includes the next 2 tags)
+      u16(1),
+      // ES_ID = 1
+      u8(0),
+      // flags etc = 0
+      u32(75530368),
+      // TAG(4) = ES Descriptor ([2]) embedded in above OD
+      u8(18 + description.byteLength),
+      // length of this ESD
+      u8(64),
+      // MPEG-4 Audio
+      u8(21),
+      // stream type(6bits)=5 audio, flags(2bits)=1
+      u24(0),
+      // 24bit buffer size
+      u32(130071),
+      // max bitrate
+      u32(130071),
+      // avg bitrate
+      u32(92307584),
+      // TAG(5) = ASC ([2],[3]) embedded in above OD
+      u8(description.byteLength),
+      // length
+      ...description,
+      u32(109084800),
+      // TAG(6)
+      u8(1),
+      // length
+      u8(2)
+      // data
+    ]);
+  };
+  var dOps = (track) => {
+    let preskip = 3840;
+    let gain = 0;
+    const description = track.info.decoderConfig?.description;
+    if (description) {
+      if (description.byteLength < 18) {
+        throw new TypeError("Invalid decoder description provided for Opus; must be at least 18 bytes long.");
+      }
+      const view2 = ArrayBuffer.isView(description) ? new DataView(description.buffer, description.byteOffset, description.byteLength) : new DataView(description);
+      preskip = view2.getUint16(10, true);
+      gain = view2.getInt16(14, true);
+    }
+    return box("dOps", [
+      u8(0),
+      // Version
+      u8(track.info.numberOfChannels),
+      // OutputChannelCount
+      u16(preskip),
+      u32(track.info.sampleRate),
+      // InputSampleRate
+      fixed_8_8(gain),
+      // OutputGain
+      u8(0)
+      // ChannelMappingFamily
+    ]);
+  };
+  var stts = (track) => {
+    return fullBox("stts", 0, 0, [
+      u32(track.timeToSampleTable.length),
+      // Number of entries
+      track.timeToSampleTable.map((x) => [
+        // Time-to-sample table
+        u32(x.sampleCount),
+        // Sample count
+        u32(x.sampleDelta)
+        // Sample duration
+      ])
+    ]);
+  };
+  var stss = (track) => {
+    if (track.samples.every((x) => x.type === "key"))
+      return null;
+    let keySamples = [...track.samples.entries()].filter(([, sample]) => sample.type === "key");
+    return fullBox("stss", 0, 0, [
+      u32(keySamples.length),
+      // Number of entries
+      keySamples.map(([index]) => u32(index + 1))
+      // Sync sample table
+    ]);
+  };
+  var stsc = (track) => {
+    return fullBox("stsc", 0, 0, [
+      u32(track.compactlyCodedChunkTable.length),
+      // Number of entries
+      track.compactlyCodedChunkTable.map((x) => [
+        // Sample-to-chunk table
+        u32(x.firstChunk),
+        // First chunk
+        u32(x.samplesPerChunk),
+        // Samples per chunk
+        u32(1)
+        // Sample description index
+      ])
+    ]);
+  };
+  var stsz = (track) => fullBox("stsz", 0, 0, [
+    u32(0),
+    // Sample size (0 means non-constant size)
+    u32(track.samples.length),
+    // Number of entries
+    track.samples.map((x) => u32(x.size))
+    // Sample size table
+  ]);
+  var stco = (track) => {
+    if (track.finalizedChunks.length > 0 && last(track.finalizedChunks).offset >= 2 ** 32) {
+      return fullBox("co64", 0, 0, [
+        u32(track.finalizedChunks.length),
+        // Number of entries
+        track.finalizedChunks.map((x) => u64(x.offset))
+        // Chunk offset table
+      ]);
+    }
+    return fullBox("stco", 0, 0, [
+      u32(track.finalizedChunks.length),
+      // Number of entries
+      track.finalizedChunks.map((x) => u32(x.offset))
+      // Chunk offset table
+    ]);
+  };
+  var ctts = (track) => {
+    return fullBox("ctts", 0, 0, [
+      u32(track.compositionTimeOffsetTable.length),
+      // Number of entries
+      track.compositionTimeOffsetTable.map((x) => [
+        // Time-to-sample table
+        u32(x.sampleCount),
+        // Sample count
+        u32(x.sampleCompositionTimeOffset)
+        // Sample offset
+      ])
+    ]);
+  };
+  var mvex = (tracks) => {
+    return box("mvex", null, tracks.map(trex));
+  };
+  var trex = (track) => {
+    return fullBox("trex", 0, 0, [
+      u32(track.id),
+      // Track ID
+      u32(1),
+      // Default sample description index
+      u32(0),
+      // Default sample duration
+      u32(0),
+      // Default sample size
+      u32(0)
+      // Default sample flags
+    ]);
+  };
+  var moof = (sequenceNumber, tracks) => {
+    return box("moof", null, [
+      mfhd(sequenceNumber),
+      ...tracks.map(traf)
+    ]);
+  };
+  var mfhd = (sequenceNumber) => {
+    return fullBox("mfhd", 0, 0, [
+      u32(sequenceNumber)
+      // Sequence number
+    ]);
+  };
+  var fragmentSampleFlags = (sample) => {
+    let byte1 = 0;
+    let byte2 = 0;
+    let byte3 = 0;
+    let byte4 = 0;
+    let sampleIsDifferenceSample = sample.type === "delta";
+    byte2 |= +sampleIsDifferenceSample;
+    if (sampleIsDifferenceSample) {
+      byte1 |= 1;
+    } else {
+      byte1 |= 2;
+    }
+    return byte1 << 24 | byte2 << 16 | byte3 << 8 | byte4;
+  };
+  var traf = (track) => {
+    return box("traf", null, [
+      tfhd(track),
+      tfdt(track),
+      trun(track)
+    ]);
+  };
+  var tfhd = (track) => {
+    let tfFlags = 0;
+    tfFlags |= 8;
+    tfFlags |= 16;
+    tfFlags |= 32;
+    tfFlags |= 131072;
+    let referenceSample = track.currentChunk.samples[1] ?? track.currentChunk.samples[0];
+    let referenceSampleInfo = {
+      duration: referenceSample.timescaleUnitsToNextSample,
+      size: referenceSample.size,
+      flags: fragmentSampleFlags(referenceSample)
+    };
+    return fullBox("tfhd", 0, tfFlags, [
+      u32(track.id),
+      // Track ID
+      u32(referenceSampleInfo.duration),
+      // Default sample duration
+      u32(referenceSampleInfo.size),
+      // Default sample size
+      u32(referenceSampleInfo.flags)
+      // Default sample flags
+    ]);
+  };
+  var tfdt = (track) => {
+    return fullBox("tfdt", 1, 0, [
+      u64(intoTimescale(track.currentChunk.startTimestamp, track.timescale))
+      // Base Media Decode Time
+    ]);
+  };
+  var trun = (track) => {
+    let allSampleDurations = track.currentChunk.samples.map((x) => x.timescaleUnitsToNextSample);
+    let allSampleSizes = track.currentChunk.samples.map((x) => x.size);
+    let allSampleFlags = track.currentChunk.samples.map(fragmentSampleFlags);
+    let allSampleCompositionTimeOffsets = track.currentChunk.samples.map((x) => intoTimescale(x.presentationTimestamp - x.decodeTimestamp, track.timescale));
+    let uniqueSampleDurations = new Set(allSampleDurations);
+    let uniqueSampleSizes = new Set(allSampleSizes);
+    let uniqueSampleFlags = new Set(allSampleFlags);
+    let uniqueSampleCompositionTimeOffsets = new Set(allSampleCompositionTimeOffsets);
+    let firstSampleFlagsPresent = uniqueSampleFlags.size === 2 && allSampleFlags[0] !== allSampleFlags[1];
+    let sampleDurationPresent = uniqueSampleDurations.size > 1;
+    let sampleSizePresent = uniqueSampleSizes.size > 1;
+    let sampleFlagsPresent = !firstSampleFlagsPresent && uniqueSampleFlags.size > 1;
+    let sampleCompositionTimeOffsetsPresent = uniqueSampleCompositionTimeOffsets.size > 1 || [...uniqueSampleCompositionTimeOffsets].some((x) => x !== 0);
+    let flags = 0;
+    flags |= 1;
+    flags |= 4 * +firstSampleFlagsPresent;
+    flags |= 256 * +sampleDurationPresent;
+    flags |= 512 * +sampleSizePresent;
+    flags |= 1024 * +sampleFlagsPresent;
+    flags |= 2048 * +sampleCompositionTimeOffsetsPresent;
+    return fullBox("trun", 1, flags, [
+      u32(track.currentChunk.samples.length),
+      // Sample count
+      u32(track.currentChunk.offset - track.currentChunk.moofOffset || 0),
+      // Data offset
+      firstSampleFlagsPresent ? u32(allSampleFlags[0]) : [],
+      track.currentChunk.samples.map((_, i) => [
+        sampleDurationPresent ? u32(allSampleDurations[i]) : [],
+        // Sample duration
+        sampleSizePresent ? u32(allSampleSizes[i]) : [],
+        // Sample size
+        sampleFlagsPresent ? u32(allSampleFlags[i]) : [],
+        // Sample flags
+        // Sample composition time offsets
+        sampleCompositionTimeOffsetsPresent ? i32(allSampleCompositionTimeOffsets[i]) : []
+      ])
+    ]);
+  };
+  var mfra = (tracks) => {
+    return box("mfra", null, [
+      ...tracks.map(tfra),
+      mfro()
+    ]);
+  };
+  var tfra = (track, trackIndex) => {
+    let version = 1;
+    return fullBox("tfra", version, 0, [
+      u32(track.id),
+      // Track ID
+      u32(63),
+      // This specifies that traf number, trun number and sample number are 32-bit ints
+      u32(track.finalizedChunks.length),
+      // Number of entries
+      track.finalizedChunks.map((chunk) => [
+        u64(intoTimescale(chunk.startTimestamp, track.timescale)),
+        // Time
+        u64(chunk.moofOffset),
+        // moof offset
+        u32(trackIndex + 1),
+        // traf number
+        u32(1),
+        // trun number
+        u32(1)
+        // Sample number
+      ])
+    ]);
+  };
+  var mfro = () => {
+    return fullBox("mfro", 0, 0, [
+      // This value needs to be overwritten manually from the outside, where the actual size of the enclosing mfra box
+      // is known
+      u32(0)
+      // Size
+    ]);
+  };
+  var VIDEO_CODEC_TO_BOX_NAME = {
+    "avc": "avc1",
+    "hevc": "hvc1",
+    "vp9": "vp09",
+    "av1": "av01"
+  };
+  var VIDEO_CODEC_TO_CONFIGURATION_BOX = {
+    "avc": avcC,
+    "hevc": hvcC,
+    "vp9": vpcC,
+    "av1": av1C
+  };
+  var AUDIO_CODEC_TO_BOX_NAME = {
+    "aac": "mp4a",
+    "opus": "Opus"
+  };
+  var AUDIO_CODEC_TO_CONFIGURATION_BOX = {
+    "aac": esds,
+    "opus": dOps
+  };
+
+  // src/target.ts
+  var isTarget = Symbol("isTarget");
+  var Target = class {
+  };
+  isTarget;
+  var ArrayBufferTarget = class extends Target {
+    constructor() {
+      super(...arguments);
+      this.buffer = null;
+    }
+  };
+  var StreamTarget = class extends Target {
+    constructor(options) {
+      super();
+      this.options = options;
+      if (typeof options !== "object") {
+        throw new TypeError("StreamTarget requires an options object to be passed to its constructor.");
+      }
+      if (options.onData) {
+        if (typeof options.onData !== "function") {
+          throw new TypeError("options.onData, when provided, must be a function.");
+        }
+        if (options.onData.length < 2) {
+          throw new TypeError(
+            "options.onData, when provided, must be a function that takes in at least two arguments (data and position). Ignoring the position argument, which specifies the byte offset at which the data is to be written, can lead to broken outputs."
+          );
+        }
+      }
+      if (options.chunked !== void 0 && typeof options.chunked !== "boolean") {
+        throw new TypeError("options.chunked, when provided, must be a boolean.");
+      }
+      if (options.chunkSize !== void 0 && (!Number.isInteger(options.chunkSize) || options.chunkSize < 1024)) {
+        throw new TypeError("options.chunkSize, when provided, must be an integer and not smaller than 1024.");
+      }
+    }
+  };
+  var FileSystemWritableFileStreamTarget = class extends Target {
+    constructor(stream, options) {
+      super();
+      this.stream = stream;
+      this.options = options;
+      if (!(stream instanceof FileSystemWritableFileStream)) {
+        throw new TypeError("FileSystemWritableFileStreamTarget requires a FileSystemWritableFileStream instance.");
+      }
+      if (options !== void 0 && typeof options !== "object") {
+        throw new TypeError("FileSystemWritableFileStreamTarget's options, when provided, must be an object.");
+      }
+      if (options) {
+        if (options.chunkSize !== void 0 && (!Number.isInteger(options.chunkSize) || options.chunkSize <= 0)) {
+          throw new TypeError("options.chunkSize, when provided, must be a positive integer");
+        }
+      }
+    }
+  };
+
+  // src/writer.ts
+  var _helper, _helperView;
+  var Writer = class {
+    constructor() {
+      this.pos = 0;
+      __privateAdd(this, _helper, new Uint8Array(8));
+      __privateAdd(this, _helperView, new DataView(__privateGet(this, _helper).buffer));
+      /**
+       * Stores the position from the start of the file to where boxes elements have been written. This is used to
+       * rewrite/edit elements that were already added before, and to measure sizes of things.
+       */
+      this.offsets = /* @__PURE__ */ new WeakMap();
+    }
+    /** Sets the current position for future writes to a new one. */
+    seek(newPos) {
+      this.pos = newPos;
+    }
+    writeU32(value) {
+      __privateGet(this, _helperView).setUint32(0, value, false);
+      this.write(__privateGet(this, _helper).subarray(0, 4));
+    }
+    writeU64(value) {
+      __privateGet(this, _helperView).setUint32(0, Math.floor(value / 2 ** 32), false);
+      __privateGet(this, _helperView).setUint32(4, value, false);
+      this.write(__privateGet(this, _helper).subarray(0, 8));
+    }
+    writeAscii(text) {
+      for (let i = 0; i < text.length; i++) {
+        __privateGet(this, _helperView).setUint8(i % 8, text.charCodeAt(i));
+        if (i % 8 === 7)
+          this.write(__privateGet(this, _helper));
+      }
+      if (text.length % 8 !== 0) {
+        this.write(__privateGet(this, _helper).subarray(0, text.length % 8));
+      }
+    }
+    writeBox(box2) {
+      this.offsets.set(box2, this.pos);
+      if (box2.contents && !box2.children) {
+        this.writeBoxHeader(box2, box2.size ?? box2.contents.byteLength + 8);
+        this.write(box2.contents);
+      } else {
+        let startPos = this.pos;
+        this.writeBoxHeader(box2, 0);
+        if (box2.contents)
+          this.write(box2.contents);
+        if (box2.children) {
+          for (let child of box2.children)
+            if (child)
+              this.writeBox(child);
+        }
+        let endPos = this.pos;
+        let size = box2.size ?? endPos - startPos;
+        this.seek(startPos);
+        this.writeBoxHeader(box2, size);
+        this.seek(endPos);
+      }
+    }
+    writeBoxHeader(box2, size) {
+      this.writeU32(box2.largeSize ? 1 : size);
+      this.writeAscii(box2.type);
+      if (box2.largeSize)
+        this.writeU64(size);
+    }
+    measureBoxHeader(box2) {
+      return 8 + (box2.largeSize ? 8 : 0);
+    }
+    patchBox(box2) {
+      let endPos = this.pos;
+      this.seek(this.offsets.get(box2));
+      this.writeBox(box2);
+      this.seek(endPos);
+    }
+    measureBox(box2) {
+      if (box2.contents && !box2.children) {
+        let headerSize = this.measureBoxHeader(box2);
+        return headerSize + box2.contents.byteLength;
+      } else {
+        let result = this.measureBoxHeader(box2);
+        if (box2.contents)
+          result += box2.contents.byteLength;
+        if (box2.children) {
+          for (let child of box2.children)
+            if (child)
+              result += this.measureBox(child);
+        }
+        return result;
+      }
+    }
+  };
+  _helper = new WeakMap();
+  _helperView = new WeakMap();
+  var _target, _buffer, _bytes, _maxPos, _ensureSize, ensureSize_fn;
+  var ArrayBufferTargetWriter = class extends Writer {
+    constructor(target) {
+      super();
+      __privateAdd(this, _ensureSize);
+      __privateAdd(this, _target, void 0);
+      __privateAdd(this, _buffer, new ArrayBuffer(2 ** 16));
+      __privateAdd(this, _bytes, new Uint8Array(__privateGet(this, _buffer)));
+      __privateAdd(this, _maxPos, 0);
+      __privateSet(this, _target, target);
+    }
+    write(data) {
+      __privateMethod(this, _ensureSize, ensureSize_fn).call(this, this.pos + data.byteLength);
+      __privateGet(this, _bytes).set(data, this.pos);
+      this.pos += data.byteLength;
+      __privateSet(this, _maxPos, Math.max(__privateGet(this, _maxPos), this.pos));
+    }
+    finalize() {
+      __privateMethod(this, _ensureSize, ensureSize_fn).call(this, this.pos);
+      __privateGet(this, _target).buffer = __privateGet(this, _buffer).slice(0, Math.max(__privateGet(this, _maxPos), this.pos));
+    }
+  };
+  _target = new WeakMap();
+  _buffer = new WeakMap();
+  _bytes = new WeakMap();
+  _maxPos = new WeakMap();
+  _ensureSize = new WeakSet();
+  ensureSize_fn = function(size) {
+    let newLength = __privateGet(this, _buffer).byteLength;
+    while (newLength < size)
+      newLength *= 2;
+    if (newLength === __privateGet(this, _buffer).byteLength)
+      return;
+    let newBuffer = new ArrayBuffer(newLength);
+    let newBytes = new Uint8Array(newBuffer);
+    newBytes.set(__privateGet(this, _bytes), 0);
+    __privateSet(this, _buffer, newBuffer);
+    __privateSet(this, _bytes, newBytes);
+  };
+  var DEFAULT_CHUNK_SIZE = 2 ** 24;
+  var MAX_CHUNKS_AT_ONCE = 2;
+  var _target2, _sections, _chunked, _chunkSize, _chunks, _writeDataIntoChunks, writeDataIntoChunks_fn, _insertSectionIntoChunk, insertSectionIntoChunk_fn, _createChunk, createChunk_fn, _flushChunks, flushChunks_fn;
+  var StreamTargetWriter = class extends Writer {
+    constructor(target) {
+      super();
+      __privateAdd(this, _writeDataIntoChunks);
+      __privateAdd(this, _insertSectionIntoChunk);
+      __privateAdd(this, _createChunk);
+      __privateAdd(this, _flushChunks);
+      __privateAdd(this, _target2, void 0);
+      __privateAdd(this, _sections, []);
+      __privateAdd(this, _chunked, void 0);
+      __privateAdd(this, _chunkSize, void 0);
+      /**
+       * The data is divided up into fixed-size chunks, whose contents are first filled in RAM and then flushed out.
+       * A chunk is flushed if all of its contents have been written.
+       */
+      __privateAdd(this, _chunks, []);
+      __privateSet(this, _target2, target);
+      __privateSet(this, _chunked, target.options?.chunked ?? false);
+      __privateSet(this, _chunkSize, target.options?.chunkSize ?? DEFAULT_CHUNK_SIZE);
+    }
+    write(data) {
+      __privateGet(this, _sections).push({
+        data: data.slice(),
+        start: this.pos
+      });
+      this.pos += data.byteLength;
+    }
+    flush() {
+      if (__privateGet(this, _sections).length === 0)
+        return;
+      let chunks = [];
+      let sorted = [...__privateGet(this, _sections)].sort((a, b) => a.start - b.start);
+      chunks.push({
+        start: sorted[0].start,
+        size: sorted[0].data.byteLength
+      });
+      for (let i = 1; i < sorted.length; i++) {
+        let lastChunk = chunks[chunks.length - 1];
+        let section = sorted[i];
+        if (section.start <= lastChunk.start + lastChunk.size) {
+          lastChunk.size = Math.max(lastChunk.size, section.start + section.data.byteLength - lastChunk.start);
+        } else {
+          chunks.push({
+            start: section.start,
+            size: section.data.byteLength
+          });
+        }
+      }
+      for (let chunk of chunks) {
+        chunk.data = new Uint8Array(chunk.size);
+        for (let section of __privateGet(this, _sections)) {
+          if (chunk.start <= section.start && section.start < chunk.start + chunk.size) {
+            chunk.data.set(section.data, section.start - chunk.start);
+          }
+        }
+        if (__privateGet(this, _chunked)) {
+          __privateMethod(this, _writeDataIntoChunks, writeDataIntoChunks_fn).call(this, chunk.data, chunk.start);
+          __privateMethod(this, _flushChunks, flushChunks_fn).call(this);
+        } else {
+          __privateGet(this, _target2).options.onData?.(chunk.data, chunk.start);
+        }
+      }
+      __privateGet(this, _sections).length = 0;
+    }
+    finalize() {
+      if (__privateGet(this, _chunked)) {
+        __privateMethod(this, _flushChunks, flushChunks_fn).call(this, true);
+      }
+    }
+  };
+  _target2 = new WeakMap();
+  _sections = new WeakMap();
+  _chunked = new WeakMap();
+  _chunkSize = new WeakMap();
+  _chunks = new WeakMap();
+  _writeDataIntoChunks = new WeakSet();
+  writeDataIntoChunks_fn = function(data, position) {
+    let chunkIndex = __privateGet(this, _chunks).findIndex((x) => x.start <= position && position < x.start + __privateGet(this, _chunkSize));
+    if (chunkIndex === -1)
+      chunkIndex = __privateMethod(this, _createChunk, createChunk_fn).call(this, position);
+    let chunk = __privateGet(this, _chunks)[chunkIndex];
+    let relativePosition = position - chunk.start;
+    let toWrite = data.subarray(0, Math.min(__privateGet(this, _chunkSize) - relativePosition, data.byteLength));
+    chunk.data.set(toWrite, relativePosition);
+    let section = {
+      start: relativePosition,
+      end: relativePosition + toWrite.byteLength
+    };
+    __privateMethod(this, _insertSectionIntoChunk, insertSectionIntoChunk_fn).call(this, chunk, section);
+    if (chunk.written[0].start === 0 && chunk.written[0].end === __privateGet(this, _chunkSize)) {
+      chunk.shouldFlush = true;
+    }
+    if (__privateGet(this, _chunks).length > MAX_CHUNKS_AT_ONCE) {
+      for (let i = 0; i < __privateGet(this, _chunks).length - 1; i++) {
+        __privateGet(this, _chunks)[i].shouldFlush = true;
+      }
+      __privateMethod(this, _flushChunks, flushChunks_fn).call(this);
+    }
+    if (toWrite.byteLength < data.byteLength) {
+      __privateMethod(this, _writeDataIntoChunks, writeDataIntoChunks_fn).call(this, data.subarray(toWrite.byteLength), position + toWrite.byteLength);
+    }
+  };
+  _insertSectionIntoChunk = new WeakSet();
+  insertSectionIntoChunk_fn = function(chunk, section) {
+    let low = 0;
+    let high = chunk.written.length - 1;
+    let index = -1;
+    while (low <= high) {
+      let mid = Math.floor(low + (high - low + 1) / 2);
+      if (chunk.written[mid].start <= section.start) {
+        low = mid + 1;
+        index = mid;
+      } else {
+        high = mid - 1;
+      }
+    }
+    chunk.written.splice(index + 1, 0, section);
+    if (index === -1 || chunk.written[index].end < section.start)
+      index++;
+    while (index < chunk.written.length - 1 && chunk.written[index].end >= chunk.written[index + 1].start) {
+      chunk.written[index].end = Math.max(chunk.written[index].end, chunk.written[index + 1].end);
+      chunk.written.splice(index + 1, 1);
+    }
+  };
+  _createChunk = new WeakSet();
+  createChunk_fn = function(includesPosition) {
+    let start = Math.floor(includesPosition / __privateGet(this, _chunkSize)) * __privateGet(this, _chunkSize);
+    let chunk = {
+      start,
+      data: new Uint8Array(__privateGet(this, _chunkSize)),
+      written: [],
+      shouldFlush: false
+    };
+    __privateGet(this, _chunks).push(chunk);
+    __privateGet(this, _chunks).sort((a, b) => a.start - b.start);
+    return __privateGet(this, _chunks).indexOf(chunk);
+  };
+  _flushChunks = new WeakSet();
+  flushChunks_fn = function(force = false) {
+    for (let i = 0; i < __privateGet(this, _chunks).length; i++) {
+      let chunk = __privateGet(this, _chunks)[i];
+      if (!chunk.shouldFlush && !force)
+        continue;
+      for (let section of chunk.written) {
+        __privateGet(this, _target2).options.onData?.(
+          chunk.data.subarray(section.start, section.end),
+          chunk.start + section.start
+        );
+      }
+      __privateGet(this, _chunks).splice(i--, 1);
+    }
+  };
+  var FileSystemWritableFileStreamTargetWriter = class extends StreamTargetWriter {
+    constructor(target) {
+      super(new StreamTarget({
+        onData: (data, position) => target.stream.write({
+          type: "write",
+          data,
+          position
+        }),
+        chunked: true,
+        chunkSize: target.options?.chunkSize
+      }));
+    }
+  };
+
+  // src/muxer.ts
+  var GLOBAL_TIMESCALE = 1e3;
+  var SUPPORTED_VIDEO_CODECS = ["avc", "hevc", "vp9", "av1"];
+  var SUPPORTED_AUDIO_CODECS = ["aac", "opus"];
+  var TIMESTAMP_OFFSET = 2082844800;
+  var FIRST_TIMESTAMP_BEHAVIORS = ["strict", "offset", "cross-track-offset"];
+  var _options, _writer, _ftypSize, _mdat, _videoTrack, _audioTrack, _creationTime, _finalizedChunks, _nextFragmentNumber, _videoSampleQueue, _audioSampleQueue, _finalized, _validateOptions, validateOptions_fn, _writeHeader, writeHeader_fn, _computeMoovSizeUpperBound, computeMoovSizeUpperBound_fn, _prepareTracks, prepareTracks_fn, _generateMpeg4AudioSpecificConfig, generateMpeg4AudioSpecificConfig_fn, _createSampleForTrack, createSampleForTrack_fn, _addSampleToTrack, addSampleToTrack_fn, _validateTimestamp, validateTimestamp_fn, _finalizeCurrentChunk, finalizeCurrentChunk_fn, _finalizeFragment, finalizeFragment_fn, _maybeFlushStreamingTargetWriter, maybeFlushStreamingTargetWriter_fn, _ensureNotFinalized, ensureNotFinalized_fn;
+  var Muxer = class {
+    constructor(options) {
+      __privateAdd(this, _validateOptions);
+      __privateAdd(this, _writeHeader);
+      __privateAdd(this, _computeMoovSizeUpperBound);
+      __privateAdd(this, _prepareTracks);
+      // https://wiki.multimedia.cx/index.php/MPEG-4_Audio
+      __privateAdd(this, _generateMpeg4AudioSpecificConfig);
+      __privateAdd(this, _createSampleForTrack);
+      __privateAdd(this, _addSampleToTrack);
+      __privateAdd(this, _validateTimestamp);
+      __privateAdd(this, _finalizeCurrentChunk);
+      __privateAdd(this, _finalizeFragment);
+      __privateAdd(this, _maybeFlushStreamingTargetWriter);
+      __privateAdd(this, _ensureNotFinalized);
+      __privateAdd(this, _options, void 0);
+      __privateAdd(this, _writer, void 0);
+      __privateAdd(this, _ftypSize, void 0);
+      __privateAdd(this, _mdat, void 0);
+      __privateAdd(this, _videoTrack, null);
+      __privateAdd(this, _audioTrack, null);
+      __privateAdd(this, _creationTime, Math.floor(Date.now() / 1e3) + TIMESTAMP_OFFSET);
+      __privateAdd(this, _finalizedChunks, []);
+      // Fields for fragmented MP4:
+      __privateAdd(this, _nextFragmentNumber, 1);
+      __privateAdd(this, _videoSampleQueue, []);
+      __privateAdd(this, _audioSampleQueue, []);
+      __privateAdd(this, _finalized, false);
+      __privateMethod(this, _validateOptions, validateOptions_fn).call(this, options);
+      options.video = deepClone(options.video);
+      options.audio = deepClone(options.audio);
+      options.fastStart = deepClone(options.fastStart);
+      this.target = options.target;
+      __privateSet(this, _options, {
+        firstTimestampBehavior: "strict",
+        ...options
+      });
+      if (options.target instanceof ArrayBufferTarget) {
+        __privateSet(this, _writer, new ArrayBufferTargetWriter(options.target));
+      } else if (options.target instanceof StreamTarget) {
+        __privateSet(this, _writer, new StreamTargetWriter(options.target));
+      } else if (options.target instanceof FileSystemWritableFileStreamTarget) {
+        __privateSet(this, _writer, new FileSystemWritableFileStreamTargetWriter(options.target));
+      } else {
+        throw new Error(`Invalid target: ${options.target}`);
+      }
+      __privateMethod(this, _prepareTracks, prepareTracks_fn).call(this);
+      __privateMethod(this, _writeHeader, writeHeader_fn).call(this);
+    }
+    addVideoChunk(sample, meta, timestamp, compositionTimeOffset) {
+      if (!(sample instanceof EncodedVideoChunk)) {
+        throw new TypeError("addVideoChunk's first argument (sample) must be of type EncodedVideoChunk.");
+      }
+      if (meta && typeof meta !== "object") {
+        throw new TypeError("addVideoChunk's second argument (meta), when provided, must be an object.");
+      }
+      if (timestamp !== void 0 && (!Number.isFinite(timestamp) || timestamp < 0)) {
+        throw new TypeError(
+          "addVideoChunk's third argument (timestamp), when provided, must be a non-negative real number."
+        );
+      }
+      if (compositionTimeOffset !== void 0 && !Number.isFinite(compositionTimeOffset)) {
+        throw new TypeError(
+          "addVideoChunk's fourth argument (compositionTimeOffset), when provided, must be a real number."
+        );
+      }
+      let data = new Uint8Array(sample.byteLength);
+      sample.copyTo(data);
+      this.addVideoChunkRaw(
+        data,
+        sample.type,
+        timestamp ?? sample.timestamp,
+        sample.duration,
+        meta,
+        compositionTimeOffset
+      );
+    }
+    addVideoChunkRaw(data, type, timestamp, duration, meta, compositionTimeOffset) {
+      if (!(data instanceof Uint8Array)) {
+        throw new TypeError("addVideoChunkRaw's first argument (data) must be an instance of Uint8Array.");
+      }
+      if (type !== "key" && type !== "delta") {
+        throw new TypeError("addVideoChunkRaw's second argument (type) must be either 'key' or 'delta'.");
+      }
+      if (!Number.isFinite(timestamp) || timestamp < 0) {
+        throw new TypeError("addVideoChunkRaw's third argument (timestamp) must be a non-negative real number.");
+      }
+      if (!Number.isFinite(duration) || duration < 0) {
+        throw new TypeError("addVideoChunkRaw's fourth argument (duration) must be a non-negative real number.");
+      }
+      if (meta && typeof meta !== "object") {
+        throw new TypeError("addVideoChunkRaw's fifth argument (meta), when provided, must be an object.");
+      }
+      if (compositionTimeOffset !== void 0 && !Number.isFinite(compositionTimeOffset)) {
+        throw new TypeError(
+          "addVideoChunkRaw's sixth argument (compositionTimeOffset), when provided, must be a real number."
+        );
+      }
+      __privateMethod(this, _ensureNotFinalized, ensureNotFinalized_fn).call(this);
+      if (!__privateGet(this, _options).video)
+        throw new Error("No video track declared.");
+      if (typeof __privateGet(this, _options).fastStart === "object" && __privateGet(this, _videoTrack).samples.length === __privateGet(this, _options).fastStart.expectedVideoChunks) {
+        throw new Error(`Cannot add more video chunks than specified in 'fastStart' (${__privateGet(this, _options).fastStart.expectedVideoChunks}).`);
+      }
+      let videoSample = __privateMethod(this, _createSampleForTrack, createSampleForTrack_fn).call(this, __privateGet(this, _videoTrack), data, type, timestamp, duration, meta, compositionTimeOffset);
+      if (__privateGet(this, _options).fastStart === "fragmented" && __privateGet(this, _audioTrack)) {
+        while (__privateGet(this, _audioSampleQueue).length > 0 && __privateGet(this, _audioSampleQueue)[0].decodeTimestamp <= videoSample.decodeTimestamp) {
+          let audioSample = __privateGet(this, _audioSampleQueue).shift();
+          __privateMethod(this, _addSampleToTrack, addSampleToTrack_fn).call(this, __privateGet(this, _audioTrack), audioSample);
+        }
+        if (videoSample.decodeTimestamp <= __privateGet(this, _audioTrack).lastDecodeTimestamp) {
+          __privateMethod(this, _addSampleToTrack, addSampleToTrack_fn).call(this, __privateGet(this, _videoTrack), videoSample);
+        } else {
+          __privateGet(this, _videoSampleQueue).push(videoSample);
+        }
+      } else {
+        __privateMethod(this, _addSampleToTrack, addSampleToTrack_fn).call(this, __privateGet(this, _videoTrack), videoSample);
+      }
+    }
+    addAudioChunk(sample, meta, timestamp) {
+      if (!(sample instanceof EncodedAudioChunk)) {
+        throw new TypeError("addAudioChunk's first argument (sample) must be of type EncodedAudioChunk.");
+      }
+      if (meta && typeof meta !== "object") {
+        throw new TypeError("addAudioChunk's second argument (meta), when provided, must be an object.");
+      }
+      if (timestamp !== void 0 && (!Number.isFinite(timestamp) || timestamp < 0)) {
+        throw new TypeError(
+          "addAudioChunk's third argument (timestamp), when provided, must be a non-negative real number."
+        );
+      }
+      let data = new Uint8Array(sample.byteLength);
+      sample.copyTo(data);
+      this.addAudioChunkRaw(data, sample.type, timestamp ?? sample.timestamp, sample.duration, meta);
+    }
+    addAudioChunkRaw(data, type, timestamp, duration, meta) {
+      if (!(data instanceof Uint8Array)) {
+        throw new TypeError("addAudioChunkRaw's first argument (data) must be an instance of Uint8Array.");
+      }
+      if (type !== "key" && type !== "delta") {
+        throw new TypeError("addAudioChunkRaw's second argument (type) must be either 'key' or 'delta'.");
+      }
+      if (!Number.isFinite(timestamp) || timestamp < 0) {
+        throw new TypeError("addAudioChunkRaw's third argument (timestamp) must be a non-negative real number.");
+      }
+      if (!Number.isFinite(duration) || duration < 0) {
+        throw new TypeError("addAudioChunkRaw's fourth argument (duration) must be a non-negative real number.");
+      }
+      if (meta && typeof meta !== "object") {
+        throw new TypeError("addAudioChunkRaw's fifth argument (meta), when provided, must be an object.");
+      }
+      __privateMethod(this, _ensureNotFinalized, ensureNotFinalized_fn).call(this);
+      if (!__privateGet(this, _options).audio)
+        throw new Error("No audio track declared.");
+      if (typeof __privateGet(this, _options).fastStart === "object" && __privateGet(this, _audioTrack).samples.length === __privateGet(this, _options).fastStart.expectedAudioChunks) {
+        throw new Error(`Cannot add more audio chunks than specified in 'fastStart' (${__privateGet(this, _options).fastStart.expectedAudioChunks}).`);
+      }
+      let audioSample = __privateMethod(this, _createSampleForTrack, createSampleForTrack_fn).call(this, __privateGet(this, _audioTrack), data, type, timestamp, duration, meta);
+      if (__privateGet(this, _options).fastStart === "fragmented" && __privateGet(this, _videoTrack)) {
+        while (__privateGet(this, _videoSampleQueue).length > 0 && __privateGet(this, _videoSampleQueue)[0].decodeTimestamp <= audioSample.decodeTimestamp) {
+          let videoSample = __privateGet(this, _videoSampleQueue).shift();
+          __privateMethod(this, _addSampleToTrack, addSampleToTrack_fn).call(this, __privateGet(this, _videoTrack), videoSample);
+        }
+        if (audioSample.decodeTimestamp <= __privateGet(this, _videoTrack).lastDecodeTimestamp) {
+          __privateMethod(this, _addSampleToTrack, addSampleToTrack_fn).call(this, __privateGet(this, _audioTrack), audioSample);
+        } else {
+          __privateGet(this, _audioSampleQueue).push(audioSample);
+        }
+      } else {
+        __privateMethod(this, _addSampleToTrack, addSampleToTrack_fn).call(this, __privateGet(this, _audioTrack), audioSample);
+      }
+    }
+    /** Finalizes the file, making it ready for use. Must be called after all video and audio chunks have been added. */
+    finalize() {
+      if (__privateGet(this, _finalized)) {
+        throw new Error("Cannot finalize a muxer more than once.");
+      }
+      if (__privateGet(this, _options).fastStart === "fragmented") {
+        for (let videoSample of __privateGet(this, _videoSampleQueue))
+          __privateMethod(this, _addSampleToTrack, addSampleToTrack_fn).call(this, __privateGet(this, _videoTrack), videoSample);
+        for (let audioSample of __privateGet(this, _audioSampleQueue))
+          __privateMethod(this, _addSampleToTrack, addSampleToTrack_fn).call(this, __privateGet(this, _audioTrack), audioSample);
+        __privateMethod(this, _finalizeFragment, finalizeFragment_fn).call(this, false);
+      } else {
+        if (__privateGet(this, _videoTrack))
+          __privateMethod(this, _finalizeCurrentChunk, finalizeCurrentChunk_fn).call(this, __privateGet(this, _videoTrack));
+        if (__privateGet(this, _audioTrack))
+          __privateMethod(this, _finalizeCurrentChunk, finalizeCurrentChunk_fn).call(this, __privateGet(this, _audioTrack));
+      }
+      let tracks = [__privateGet(this, _videoTrack), __privateGet(this, _audioTrack)].filter(Boolean);
+      if (__privateGet(this, _options).fastStart === "in-memory") {
+        let mdatSize;
+        for (let i = 0; i < 2; i++) {
+          let movieBox2 = moov(tracks, __privateGet(this, _creationTime));
+          let movieBoxSize = __privateGet(this, _writer).measureBox(movieBox2);
+          mdatSize = __privateGet(this, _writer).measureBox(__privateGet(this, _mdat));
+          let currentChunkPos = __privateGet(this, _writer).pos + movieBoxSize + mdatSize;
+          for (let chunk of __privateGet(this, _finalizedChunks)) {
+            chunk.offset = currentChunkPos;
+            for (let { data } of chunk.samples) {
+              currentChunkPos += data.byteLength;
+              mdatSize += data.byteLength;
+            }
+          }
+          if (currentChunkPos < 2 ** 32)
+            break;
+          if (mdatSize >= 2 ** 32)
+            __privateGet(this, _mdat).largeSize = true;
+        }
+        let movieBox = moov(tracks, __privateGet(this, _creationTime));
+        __privateGet(this, _writer).writeBox(movieBox);
+        __privateGet(this, _mdat).size = mdatSize;
+        __privateGet(this, _writer).writeBox(__privateGet(this, _mdat));
+        for (let chunk of __privateGet(this, _finalizedChunks)) {
+          for (let sample of chunk.samples) {
+            __privateGet(this, _writer).write(sample.data);
+            sample.data = null;
+          }
+        }
+      } else if (__privateGet(this, _options).fastStart === "fragmented") {
+        let startPos = __privateGet(this, _writer).pos;
+        let mfraBox = mfra(tracks);
+        __privateGet(this, _writer).writeBox(mfraBox);
+        let mfraBoxSize = __privateGet(this, _writer).pos - startPos;
+        __privateGet(this, _writer).seek(__privateGet(this, _writer).pos - 4);
+        __privateGet(this, _writer).writeU32(mfraBoxSize);
+      } else {
+        let mdatPos = __privateGet(this, _writer).offsets.get(__privateGet(this, _mdat));
+        let mdatSize = __privateGet(this, _writer).pos - mdatPos;
+        __privateGet(this, _mdat).size = mdatSize;
+        __privateGet(this, _mdat).largeSize = mdatSize >= 2 ** 32;
+        __privateGet(this, _writer).patchBox(__privateGet(this, _mdat));
+        let movieBox = moov(tracks, __privateGet(this, _creationTime));
+        if (typeof __privateGet(this, _options).fastStart === "object") {
+          __privateGet(this, _writer).seek(__privateGet(this, _ftypSize));
+          __privateGet(this, _writer).writeBox(movieBox);
+          let remainingBytes = mdatPos - __privateGet(this, _writer).pos;
+          __privateGet(this, _writer).writeBox(free(remainingBytes));
+        } else {
+          __privateGet(this, _writer).writeBox(movieBox);
+        }
+      }
+      __privateMethod(this, _maybeFlushStreamingTargetWriter, maybeFlushStreamingTargetWriter_fn).call(this);
+      __privateGet(this, _writer).finalize();
+      __privateSet(this, _finalized, true);
+    }
+  };
+  _options = new WeakMap();
+  _writer = new WeakMap();
+  _ftypSize = new WeakMap();
+  _mdat = new WeakMap();
+  _videoTrack = new WeakMap();
+  _audioTrack = new WeakMap();
+  _creationTime = new WeakMap();
+  _finalizedChunks = new WeakMap();
+  _nextFragmentNumber = new WeakMap();
+  _videoSampleQueue = new WeakMap();
+  _audioSampleQueue = new WeakMap();
+  _finalized = new WeakMap();
+  _validateOptions = new WeakSet();
+  validateOptions_fn = function(options) {
+    if (typeof options !== "object") {
+      throw new TypeError("The muxer requires an options object to be passed to its constructor.");
+    }
+    if (!(options.target instanceof Target)) {
+      throw new TypeError("The target must be provided and an instance of Target.");
+    }
+    if (options.video) {
+      if (!SUPPORTED_VIDEO_CODECS.includes(options.video.codec)) {
+        throw new TypeError(`Unsupported video codec: ${options.video.codec}`);
+      }
+      if (!Number.isInteger(options.video.width) || options.video.width <= 0) {
+        throw new TypeError(`Invalid video width: ${options.video.width}. Must be a positive integer.`);
+      }
+      if (!Number.isInteger(options.video.height) || options.video.height <= 0) {
+        throw new TypeError(`Invalid video height: ${options.video.height}. Must be a positive integer.`);
+      }
+      const videoRotation = options.video.rotation;
+      if (typeof videoRotation === "number" && ![0, 90, 180, 270].includes(videoRotation)) {
+        throw new TypeError(`Invalid video rotation: ${videoRotation}. Has to be 0, 90, 180 or 270.`);
+      } else if (Array.isArray(videoRotation) && (videoRotation.length !== 9 || videoRotation.some((value) => typeof value !== "number"))) {
+        throw new TypeError(`Invalid video transformation matrix: ${videoRotation.join()}`);
+      }
+      if (options.video.frameRate !== void 0 && (!Number.isInteger(options.video.frameRate) || options.video.frameRate <= 0)) {
+        throw new TypeError(
+          `Invalid video frame rate: ${options.video.frameRate}. Must be a positive integer.`
+        );
+      }
+    }
+    if (options.audio) {
+      if (!SUPPORTED_AUDIO_CODECS.includes(options.audio.codec)) {
+        throw new TypeError(`Unsupported audio codec: ${options.audio.codec}`);
+      }
+      if (!Number.isInteger(options.audio.numberOfChannels) || options.audio.numberOfChannels <= 0) {
+        throw new TypeError(
+          `Invalid number of audio channels: ${options.audio.numberOfChannels}. Must be a positive integer.`
+        );
+      }
+      if (!Number.isInteger(options.audio.sampleRate) || options.audio.sampleRate <= 0) {
+        throw new TypeError(
+          `Invalid audio sample rate: ${options.audio.sampleRate}. Must be a positive integer.`
+        );
+      }
+    }
+    if (options.firstTimestampBehavior && !FIRST_TIMESTAMP_BEHAVIORS.includes(options.firstTimestampBehavior)) {
+      throw new TypeError(`Invalid first timestamp behavior: ${options.firstTimestampBehavior}`);
+    }
+    if (typeof options.fastStart === "object") {
+      if (options.video) {
+        if (options.fastStart.expectedVideoChunks === void 0) {
+          throw new TypeError(`'fastStart' is an object but is missing property 'expectedVideoChunks'.`);
+        } else if (!Number.isInteger(options.fastStart.expectedVideoChunks) || options.fastStart.expectedVideoChunks < 0) {
+          throw new TypeError(`'expectedVideoChunks' must be a non-negative integer.`);
+        }
+      }
+      if (options.audio) {
+        if (options.fastStart.expectedAudioChunks === void 0) {
+          throw new TypeError(`'fastStart' is an object but is missing property 'expectedAudioChunks'.`);
+        } else if (!Number.isInteger(options.fastStart.expectedAudioChunks) || options.fastStart.expectedAudioChunks < 0) {
+          throw new TypeError(`'expectedAudioChunks' must be a non-negative integer.`);
+        }
+      }
+    } else if (![false, "in-memory", "fragmented"].includes(options.fastStart)) {
+      throw new TypeError(`'fastStart' option must be false, 'in-memory', 'fragmented' or an object.`);
+    }
+    if (options.minFragmentDuration !== void 0 && (!Number.isFinite(options.minFragmentDuration) || options.minFragmentDuration < 0)) {
+      throw new TypeError(`'minFragmentDuration' must be a non-negative number.`);
+    }
+  };
+  _writeHeader = new WeakSet();
+  writeHeader_fn = function() {
+    __privateGet(this, _writer).writeBox(ftyp({
+      holdsAvc: __privateGet(this, _options).video?.codec === "avc",
+      fragmented: __privateGet(this, _options).fastStart === "fragmented"
+    }));
+    __privateSet(this, _ftypSize, __privateGet(this, _writer).pos);
+    if (__privateGet(this, _options).fastStart === "in-memory") {
+      __privateSet(this, _mdat, mdat(false));
+    } else if (__privateGet(this, _options).fastStart === "fragmented") {
+    } else {
+      if (typeof __privateGet(this, _options).fastStart === "object") {
+        let moovSizeUpperBound = __privateMethod(this, _computeMoovSizeUpperBound, computeMoovSizeUpperBound_fn).call(this);
+        __privateGet(this, _writer).seek(__privateGet(this, _writer).pos + moovSizeUpperBound);
+      }
+      __privateSet(this, _mdat, mdat(true));
+      __privateGet(this, _writer).writeBox(__privateGet(this, _mdat));
+    }
+    __privateMethod(this, _maybeFlushStreamingTargetWriter, maybeFlushStreamingTargetWriter_fn).call(this);
+  };
+  _computeMoovSizeUpperBound = new WeakSet();
+  computeMoovSizeUpperBound_fn = function() {
+    if (typeof __privateGet(this, _options).fastStart !== "object")
+      return;
+    let upperBound = 0;
+    let sampleCounts = [
+      __privateGet(this, _options).fastStart.expectedVideoChunks,
+      __privateGet(this, _options).fastStart.expectedAudioChunks
+    ];
+    for (let n of sampleCounts) {
+      if (!n)
+        continue;
+      upperBound += (4 + 4) * Math.ceil(2 / 3 * n);
+      upperBound += 4 * n;
+      upperBound += (4 + 4 + 4) * Math.ceil(2 / 3 * n);
+      upperBound += 4 * n;
+      upperBound += 8 * n;
+    }
+    upperBound += 4096;
+    return upperBound;
+  };
+  _prepareTracks = new WeakSet();
+  prepareTracks_fn = function() {
+    if (__privateGet(this, _options).video) {
+      __privateSet(this, _videoTrack, {
+        id: 1,
+        info: {
+          type: "video",
+          codec: __privateGet(this, _options).video.codec,
+          width: __privateGet(this, _options).video.width,
+          height: __privateGet(this, _options).video.height,
+          rotation: __privateGet(this, _options).video.rotation ?? 0,
+          decoderConfig: null
+        },
+        // The fallback contains many common frame rates as factors
+        timescale: __privateGet(this, _options).video.frameRate ?? 57600,
+        samples: [],
+        finalizedChunks: [],
+        currentChunk: null,
+        firstDecodeTimestamp: void 0,
+        lastDecodeTimestamp: -1,
+        timeToSampleTable: [],
+        compositionTimeOffsetTable: [],
+        lastTimescaleUnits: null,
+        lastSample: null,
+        compactlyCodedChunkTable: []
+      });
+    }
+    if (__privateGet(this, _options).audio) {
+      __privateSet(this, _audioTrack, {
+        id: __privateGet(this, _options).video ? 2 : 1,
+        info: {
+          type: "audio",
+          codec: __privateGet(this, _options).audio.codec,
+          numberOfChannels: __privateGet(this, _options).audio.numberOfChannels,
+          sampleRate: __privateGet(this, _options).audio.sampleRate,
+          decoderConfig: null
+        },
+        timescale: __privateGet(this, _options).audio.sampleRate,
+        samples: [],
+        finalizedChunks: [],
+        currentChunk: null,
+        firstDecodeTimestamp: void 0,
+        lastDecodeTimestamp: -1,
+        timeToSampleTable: [],
+        compositionTimeOffsetTable: [],
+        lastTimescaleUnits: null,
+        lastSample: null,
+        compactlyCodedChunkTable: []
+      });
+      if (__privateGet(this, _options).audio.codec === "aac") {
+        let guessedCodecPrivate = __privateMethod(this, _generateMpeg4AudioSpecificConfig, generateMpeg4AudioSpecificConfig_fn).call(
+          this,
+          2,
+          // Object type for AAC-LC, since it's the most common
+          __privateGet(this, _options).audio.sampleRate,
+          __privateGet(this, _options).audio.numberOfChannels
+        );
+        __privateGet(this, _audioTrack).info.decoderConfig = {
+          codec: __privateGet(this, _options).audio.codec,
+          description: guessedCodecPrivate,
+          numberOfChannels: __privateGet(this, _options).audio.numberOfChannels,
+          sampleRate: __privateGet(this, _options).audio.sampleRate
+        };
+      }
+    }
+  };
+  _generateMpeg4AudioSpecificConfig = new WeakSet();
+  generateMpeg4AudioSpecificConfig_fn = function(objectType, sampleRate, numberOfChannels) {
+    let frequencyIndices = [96e3, 88200, 64e3, 48e3, 44100, 32e3, 24e3, 22050, 16e3, 12e3, 11025, 8e3, 7350];
+    let frequencyIndex = frequencyIndices.indexOf(sampleRate);
+    let channelConfig = numberOfChannels;
+    let configBits = "";
+    configBits += objectType.toString(2).padStart(5, "0");
+    configBits += frequencyIndex.toString(2).padStart(4, "0");
+    if (frequencyIndex === 15)
+      configBits += sampleRate.toString(2).padStart(24, "0");
+    configBits += channelConfig.toString(2).padStart(4, "0");
+    let paddingLength = Math.ceil(configBits.length / 8) * 8;
+    configBits = configBits.padEnd(paddingLength, "0");
+    let configBytes = new Uint8Array(configBits.length / 8);
+    for (let i = 0; i < configBits.length; i += 8) {
+      configBytes[i / 8] = parseInt(configBits.slice(i, i + 8), 2);
+    }
+    return configBytes;
+  };
+  _createSampleForTrack = new WeakSet();
+  createSampleForTrack_fn = function(track, data, type, timestamp, duration, meta, compositionTimeOffset) {
+    let presentationTimestampInSeconds = timestamp / 1e6;
+    let decodeTimestampInSeconds = (timestamp - (compositionTimeOffset ?? 0)) / 1e6;
+    let durationInSeconds = duration / 1e6;
+    let adjusted = __privateMethod(this, _validateTimestamp, validateTimestamp_fn).call(this, presentationTimestampInSeconds, decodeTimestampInSeconds, track);
+    presentationTimestampInSeconds = adjusted.presentationTimestamp;
+    decodeTimestampInSeconds = adjusted.decodeTimestamp;
+    if (meta?.decoderConfig) {
+      if (track.info.decoderConfig === null) {
+        track.info.decoderConfig = meta.decoderConfig;
+      } else {
+        Object.assign(track.info.decoderConfig, meta.decoderConfig);
+      }
+    }
+    let sample = {
+      presentationTimestamp: presentationTimestampInSeconds,
+      decodeTimestamp: decodeTimestampInSeconds,
+      duration: durationInSeconds,
+      data,
+      size: data.byteLength,
+      type,
+      // Will be refined once the next sample comes in
+      timescaleUnitsToNextSample: intoTimescale(durationInSeconds, track.timescale)
+    };
+    return sample;
+  };
+  _addSampleToTrack = new WeakSet();
+  addSampleToTrack_fn = function(track, sample) {
+    if (__privateGet(this, _options).fastStart !== "fragmented") {
+      track.samples.push(sample);
+    }
+    const sampleCompositionTimeOffset = intoTimescale(sample.presentationTimestamp - sample.decodeTimestamp, track.timescale);
+    if (track.lastTimescaleUnits !== null) {
+      let timescaleUnits = intoTimescale(sample.decodeTimestamp, track.timescale, false);
+      let delta = Math.round(timescaleUnits - track.lastTimescaleUnits);
+      track.lastTimescaleUnits += delta;
+      track.lastSample.timescaleUnitsToNextSample = delta;
+      if (__privateGet(this, _options).fastStart !== "fragmented") {
+        let lastTableEntry = last(track.timeToSampleTable);
+        if (lastTableEntry.sampleCount === 1) {
+          lastTableEntry.sampleDelta = delta;
+          lastTableEntry.sampleCount++;
+        } else if (lastTableEntry.sampleDelta === delta) {
+          lastTableEntry.sampleCount++;
+        } else {
+          lastTableEntry.sampleCount--;
+          track.timeToSampleTable.push({
+            sampleCount: 2,
+            sampleDelta: delta
+          });
+        }
+        const lastCompositionTimeOffsetTableEntry = last(track.compositionTimeOffsetTable);
+        if (lastCompositionTimeOffsetTableEntry.sampleCompositionTimeOffset === sampleCompositionTimeOffset) {
+          lastCompositionTimeOffsetTableEntry.sampleCount++;
+        } else {
+          track.compositionTimeOffsetTable.push({
+            sampleCount: 1,
+            sampleCompositionTimeOffset
+          });
+        }
+      }
+    } else {
+      track.lastTimescaleUnits = 0;
+      if (__privateGet(this, _options).fastStart !== "fragmented") {
+        track.timeToSampleTable.push({
+          sampleCount: 1,
+          sampleDelta: intoTimescale(sample.duration, track.timescale)
+        });
+        track.compositionTimeOffsetTable.push({
+          sampleCount: 1,
+          sampleCompositionTimeOffset
+        });
+      }
+    }
+    track.lastSample = sample;
+    let beginNewChunk = false;
+    if (!track.currentChunk) {
+      beginNewChunk = true;
+    } else {
+      let currentChunkDuration = sample.presentationTimestamp - track.currentChunk.startTimestamp;
+      if (__privateGet(this, _options).fastStart === "fragmented") {
+        let mostImportantTrack = __privateGet(this, _videoTrack) ?? __privateGet(this, _audioTrack);
+        const chunkDuration = __privateGet(this, _options).minFragmentDuration ?? 1;
+        if (track === mostImportantTrack && sample.type === "key" && currentChunkDuration >= chunkDuration) {
+          beginNewChunk = true;
+          __privateMethod(this, _finalizeFragment, finalizeFragment_fn).call(this);
+        }
+      } else {
+        beginNewChunk = currentChunkDuration >= 0.5;
+      }
+    }
+    if (beginNewChunk) {
+      if (track.currentChunk) {
+        __privateMethod(this, _finalizeCurrentChunk, finalizeCurrentChunk_fn).call(this, track);
+      }
+      track.currentChunk = {
+        startTimestamp: sample.presentationTimestamp,
+        samples: []
+      };
+    }
+    track.currentChunk.samples.push(sample);
+  };
+  _validateTimestamp = new WeakSet();
+  validateTimestamp_fn = function(presentationTimestamp, decodeTimestamp, track) {
+    const strictTimestampBehavior = __privateGet(this, _options).firstTimestampBehavior === "strict";
+    const noLastDecodeTimestamp = track.lastDecodeTimestamp === -1;
+    const timestampNonZero = decodeTimestamp !== 0;
+    if (strictTimestampBehavior && noLastDecodeTimestamp && timestampNonZero) {
+      throw new Error(
+        `The first chunk for your media track must have a timestamp of 0 (received DTS=${decodeTimestamp}).Non-zero first timestamps are often caused by directly piping frames or audio data from a MediaStreamTrack into the encoder. Their timestamps are typically relative to the age of thedocument, which is probably what you want.
+
+If you want to offset all timestamps of a track such that the first one is zero, set firstTimestampBehavior: 'offset' in the options.
+`
+      );
+    } else if (__privateGet(this, _options).firstTimestampBehavior === "offset" || __privateGet(this, _options).firstTimestampBehavior === "cross-track-offset") {
+      if (track.firstDecodeTimestamp === void 0) {
+        track.firstDecodeTimestamp = decodeTimestamp;
+      }
+      let baseDecodeTimestamp;
+      if (__privateGet(this, _options).firstTimestampBehavior === "offset") {
+        baseDecodeTimestamp = track.firstDecodeTimestamp;
+      } else {
+        baseDecodeTimestamp = Math.min(
+          __privateGet(this, _videoTrack)?.firstDecodeTimestamp ?? Infinity,
+          __privateGet(this, _audioTrack)?.firstDecodeTimestamp ?? Infinity
+        );
+      }
+      decodeTimestamp -= baseDecodeTimestamp;
+      presentationTimestamp -= baseDecodeTimestamp;
+    }
+    if (decodeTimestamp < track.lastDecodeTimestamp) {
+      throw new Error(
+        `Timestamps must be monotonically increasing (DTS went from ${track.lastDecodeTimestamp * 1e6} to ${decodeTimestamp * 1e6}).`
+      );
+    }
+    track.lastDecodeTimestamp = decodeTimestamp;
+    return { presentationTimestamp, decodeTimestamp };
+  };
+  _finalizeCurrentChunk = new WeakSet();
+  finalizeCurrentChunk_fn = function(track) {
+    if (__privateGet(this, _options).fastStart === "fragmented") {
+      throw new Error("Can't finalize individual chunks if 'fastStart' is set to 'fragmented'.");
+    }
+    if (!track.currentChunk)
+      return;
+    track.finalizedChunks.push(track.currentChunk);
+    __privateGet(this, _finalizedChunks).push(track.currentChunk);
+    if (track.compactlyCodedChunkTable.length === 0 || last(track.compactlyCodedChunkTable).samplesPerChunk !== track.currentChunk.samples.length) {
+      track.compactlyCodedChunkTable.push({
+        firstChunk: track.finalizedChunks.length,
+        // 1-indexed
+        samplesPerChunk: track.currentChunk.samples.length
+      });
+    }
+    if (__privateGet(this, _options).fastStart === "in-memory") {
+      track.currentChunk.offset = 0;
+      return;
+    }
+    track.currentChunk.offset = __privateGet(this, _writer).pos;
+    for (let sample of track.currentChunk.samples) {
+      __privateGet(this, _writer).write(sample.data);
+      sample.data = null;
+    }
+    __privateMethod(this, _maybeFlushStreamingTargetWriter, maybeFlushStreamingTargetWriter_fn).call(this);
+  };
+  _finalizeFragment = new WeakSet();
+  finalizeFragment_fn = function(flushStreamingWriter = true) {
+    if (__privateGet(this, _options).fastStart !== "fragmented") {
+      throw new Error("Can't finalize a fragment unless 'fastStart' is set to 'fragmented'.");
+    }
+    let tracks = [__privateGet(this, _videoTrack), __privateGet(this, _audioTrack)].filter((track) => track && track.currentChunk);
+    if (tracks.length === 0)
+      return;
+    let fragmentNumber = __privateWrapper(this, _nextFragmentNumber)._++;
+    if (fragmentNumber === 1) {
+      let movieBox = moov(tracks, __privateGet(this, _creationTime), true);
+      __privateGet(this, _writer).writeBox(movieBox);
+    }
+    let moofOffset = __privateGet(this, _writer).pos;
+    let moofBox = moof(fragmentNumber, tracks);
+    __privateGet(this, _writer).writeBox(moofBox);
+    {
+      let mdatBox = mdat(false);
+      let totalTrackSampleSize = 0;
+      for (let track of tracks) {
+        for (let sample of track.currentChunk.samples) {
+          totalTrackSampleSize += sample.size;
+        }
+      }
+      let mdatSize = __privateGet(this, _writer).measureBox(mdatBox) + totalTrackSampleSize;
+      if (mdatSize >= 2 ** 32) {
+        mdatBox.largeSize = true;
+        mdatSize = __privateGet(this, _writer).measureBox(mdatBox) + totalTrackSampleSize;
+      }
+      mdatBox.size = mdatSize;
+      __privateGet(this, _writer).writeBox(mdatBox);
+    }
+    for (let track of tracks) {
+      track.currentChunk.offset = __privateGet(this, _writer).pos;
+      track.currentChunk.moofOffset = moofOffset;
+      for (let sample of track.currentChunk.samples) {
+        __privateGet(this, _writer).write(sample.data);
+        sample.data = null;
+      }
+    }
+    let endPos = __privateGet(this, _writer).pos;
+    __privateGet(this, _writer).seek(__privateGet(this, _writer).offsets.get(moofBox));
+    let newMoofBox = moof(fragmentNumber, tracks);
+    __privateGet(this, _writer).writeBox(newMoofBox);
+    __privateGet(this, _writer).seek(endPos);
+    for (let track of tracks) {
+      track.finalizedChunks.push(track.currentChunk);
+      __privateGet(this, _finalizedChunks).push(track.currentChunk);
+      track.currentChunk = null;
+    }
+    if (flushStreamingWriter) {
+      __privateMethod(this, _maybeFlushStreamingTargetWriter, maybeFlushStreamingTargetWriter_fn).call(this);
+    }
+  };
+  _maybeFlushStreamingTargetWriter = new WeakSet();
+  maybeFlushStreamingTargetWriter_fn = function() {
+    if (__privateGet(this, _writer) instanceof StreamTargetWriter) {
+      __privateGet(this, _writer).flush();
+    }
+  };
+  _ensureNotFinalized = new WeakSet();
+  ensureNotFinalized_fn = function() {
+    if (__privateGet(this, _finalized)) {
+      throw new Error("Cannot add new video or audio chunks after the file has been finalized.");
+    }
+  };
+  return __toCommonJS(src_exports);
+})();
+if (typeof module === "object" && typeof module.exports === "object") Object.assign(module.exports, Mp4Muxer)
+</script>
 <script>
 const $ = id => document.getElementById(id);
-const VERSION = "v1.6.6";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。v1.6 现场打点页改成单手不看屏幕也能按（斜分椭圆、撤销小椭圆、暗色）、视频和上次导出存本机、页面重新载入回到回看、打完一局提醒保存、首页标「未备份」、请浏览器别清数据（2026-11-10）；v1.6.1 回合结束挪进打点区、有新版时提示更新、桌面 App 里加刷新键（同日）；v1.6.2 ★ 整格好按、手点 ★ 不限个数，「最长的 N 分打 ★」的 N 只管自动挑，「只看」下拉加「打了 ★ 的」、回看视频右上角静音键（默认静音、记住选择）、首页介绍打开 3 次后收起（同日）；v1.6.3 回看编辑栏能改这一分的发球方、能补漏掉的一分；比分和站位对不上时带着查出错的那一分，能「从这一分起比分是 X:Y」或标「只是这一分站错了」，列表写应在左 / 右区（2026-11-18，R-121）；v1.6.4 回看编辑栏重排：常用的两行、不常用的收进「改错」，查错提示压成一行，按钮等宽、高 44px；查一查时锁住无关操作、问题里写第几问和这时的比分、回合条按查到哪一步上色、问到的那一分不是这个人发球时能当场改发球方或补一分、查过再查说清上次的结论并能重新查一遍；一局分几段录时「本局结束」先问是不是这段录像结束、「接着打下一段」不限段数（2026-11-19，R-121）；v1.6.5 回看时每一分能写一段备注（自由输入、带提示文字），列表里有备注的分下面写前几个字，「只看」加「有备注的」，跟着打点文件和备份走，导出视频画面上不打（2026-11-19，R-121）；v1.6.6 手机上存文件不再多出一个「文本.txt」（2026-11-20，R-121）。改了功能往上加，打点文件里记着是哪一版打的
+const VERSION = "v1.6.7";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。v1.6 现场打点页改成单手不看屏幕也能按（斜分椭圆、撤销小椭圆、暗色）、视频和上次导出存本机、页面重新载入回到回看、打完一局提醒保存、首页标「未备份」、请浏览器别清数据（2026-11-10）；v1.6.1 回合结束挪进打点区、有新版时提示更新、桌面 App 里加刷新键（同日）；v1.6.2 ★ 整格好按、手点 ★ 不限个数，「最长的 N 分打 ★」的 N 只管自动挑，「只看」下拉加「打了 ★ 的」、回看视频右上角静音键（默认静音、记住选择）、首页介绍打开 3 次后收起（同日）；v1.6.3 回看编辑栏能改这一分的发球方、能补漏掉的一分；比分和站位对不上时带着查出错的那一分，能「从这一分起比分是 X:Y」或标「只是这一分站错了」，列表写应在左 / 右区（2026-11-18，R-121）；v1.6.4 回看编辑栏重排：常用的两行、不常用的收进「改错」，查错提示压成一行，按钮等宽、高 44px；查一查时锁住无关操作、问题里写第几问和这时的比分、回合条按查到哪一步上色、问到的那一分不是这个人发球时能当场改发球方或补一分、查过再查说清上次的结论并能重新查一遍；一局分几段录时「本局结束」先问是不是这段录像结束、「接着打下一段」不限段数（2026-11-19，R-121）；v1.6.5 回看时每一分能写一段备注（自由输入、带提示文字），列表里有备注的分下面写前几个字，「只看」加「有备注的」，跟着打点文件和备份走，导出视频画面上不打（2026-11-19，R-121）；v1.6.6 手机上存文件不再多出一个「文本.txt」（2026-11-20，R-121）；v1.6.7 导出改成逐帧导出：不再边放边录，直接读视频文件、硬件解码、印比分、硬件编码成 mp4，4K 60 帧的手机视频也流畅（每秒 30 帧，画得慢只是导出久一点），读不了的照旧边放边录；边放边录按视频的帧来画、导出完写明帧数，手机上走边放边录导 4K 先提醒（产品负责人 2026-11-20：手机上导出只有 13 帧/秒，「要做，否则导出功能废了」，R-121）。改了功能往上加，打点文件里记着是哪一版打的
 const KEY = "courtside-taps-v1", PRE = 1.5, GAP = 1.0, LAST = 15;   // 回合 = 发球前 1.5 s 到下一分开始前 1 s；最后一分到发球后 15 s
 let cur = null, lock = null, view = "home", sel = -1, playEnd = null, videoStart = null, exporting = false;
-let vidFor = null;   // 视频载给了哪条记录；没载视频也能回看（试用者 2026-11-06 问「没有视频怎么回看」）：列表、比分、★、改名都能用，回放和剪视频要载入视频
+let vidFor = null, vidBlob = null;   // vidBlob：载入的视频文件本身（逐帧导出直接读它）   // 视频载给了哪条记录；没载视频也能回看（试用者 2026-11-06 问「没有视频怎么回看」）：列表、比分、★、改名都能用，回放和剪视频要载入视频
 const video = $("video");
 function canPlay(){ return !!cur && vidFor===cur.id && onVideo(cur); }
 /* 每一分多长：载了视频按回合起止；没视频按这一分发球到下一分发球相隔多久（两台手机 / 看录像记的时刻都行）。
@@ -945,14 +2852,14 @@ async function vidPut(id, f, start){
 const LASTV="courtside-lastview";
 function lastView(id){ lset(LASTV, id ? JSON.stringify({id, at:Date.now()}) : ""); }
 async function openReview(s){ stopAll(); cur=s; sel=-1; noteOpen=false; $("askRev").hidden=true; lastView(s.id); pendingVideo=null; $("bSaveVid").hidden=true; expRestore(s);
-  if(vidFor!==s.id){ vidFor=null; videoStart=null; try{ video.removeAttribute("src"); video.load(); }catch(e){} }
+  if(vidFor!==s.id){ vidFor=null; vidBlob=null; videoStart=null; try{ video.removeAttribute("src"); video.load(); }catch(e){} }
   show("review");
-  if(vidFor!==s.id){ const c=await vidGet(s.id); if(c && cur===s && vidFor!==s.id){ video.src=URL.createObjectURL(c.blob); videoStart=c.start; vidFor=s.id; render();
+  if(vidFor!==s.id){ const c=await vidGet(s.id); if(c && cur===s && vidFor!==s.id){ video.src=URL.createObjectURL(c.blob); vidBlob=c.blob; videoStart=c.start; vidFor=s.id; render();
       msg(`用的是上次载入的视频「${c.name}」，不用再选。`+(canPlay()?"点右边的一行回看那一分。":s.mode==="replay"&&!s.ended?"接着边看边点。":"现场打的点要先对到视频上：把视频停在第 1 次发球，点「对齐」。")+"不是这个视频就点「换视频」。"); return; } }
   msg(canPlay() ? "点右边的一行回看那一分。" : vidFor===s.id ? "现场打的点要先对到视频上：把视频停在第 1 次发球，点「对齐」。"
     : "没载入视频：右边能看每一分谁发球、谁得分。要一分一分回放、剪视频，点「载入比赛视频」。"); }
 $("fVideo").addEventListener("change",async e=>{ const f=e.target.files[0]; e.target.value=""; if(!f||!cur) return;
-  stopAll(); video.src=URL.createObjectURL(f); videoStart=null; vidFor=cur.id;
+  stopAll(); video.src=URL.createObjectURL(f); vidBlob=f; videoStart=null; vidFor=cur.id;
   try{ videoStart=await videoCreated(f); }catch(err){ videoStart=null; }
   if(cur.mode==="replay" && !cur.taps.length) cur.videoName=f.name;
   persist(); lastView(cur.id); sel=-1; show("review"); if(!cur.ended) wake(); vidPut(cur.id, f, videoStart);
@@ -1061,7 +2968,7 @@ function renderReview(){
   $("tot").textContent=ready?`合计 ${listOrder.length} 分，回合视频共 ${dur(sum(listOrder))}`+(D?`（整段视频 ${dur(D)}，只留回合能省掉 ${Math.round((1-sum(all)/D)*100)}%）`:"")
     : `合计 ${listOrder.length} 分`+(known.length?`，按发球相隔算约 ${dur(gapSum)}（含分与分之间的空档${known.length<listOrder.length?`，最后一分${lastApprox(s)!=null?"按点「本局结束」的时刻估的、没算进来":"不知道多长"}`:""}）`:"")+(hasVid?"":"；没载入视频，回放和剪视频要先载入");
   $("nAll").textContent=`${n}${ready?`（${dur(sum(all))}）`:""}`; $("nList").textContent=`${listOrder.length}${ready?`（${dur(sum(listOrder))}）`:""}`; $("nStar").textContent=`${stars.length}${ready&&stars.length?`（${dur(sum(stars))}）`:""}`;
-  $("bExport").disabled=!ready||!n||exporting; $("bExport").textContent=exporting?"正在导出……":$("bExport").dataset.sure?"照样导出":"开始导出";
+  $("bExport").disabled=!ready||!n||exporting; $("bExport").textContent=exporting?"正在导出……":$("bExport").dataset.sure||$("bExport").dataset.sure4k?"照样导出":"开始导出";
   $("bChk").hidden=!n;
   drawChk(); drawBar(); drawZoom(); drawAdj(); drawAddPt(); tick();
 }
@@ -1395,9 +3302,218 @@ function drawShuttle(g,x,y,h){ const k=h/26; g.save(); g.translate(x,y); g.scale
   g.fillStyle="#fff"; g.strokeStyle="#9aa"; g.lineWidth=1; g.beginPath(); g.moveTo(3,2); g.lineTo(17,2); g.lineTo(13,16); g.lineTo(7,16); g.closePath(); g.fill(); g.stroke();
   g.fillStyle="#185943"; g.fillRect(6.5,15,7,2.4); g.fillStyle="#F2B01E"; g.beginPath(); g.moveTo(6.5,17.4); g.quadraticCurveTo(10,25,13.5,17.4); g.closePath(); g.fill(); g.restore(); }
 
+/* ===== 逐帧导出（产品负责人 2026-11-20「要做，否则导出功能废了」，R-121）=====
+   边放边录（canvas + MediaRecorder）要跟着实时放：iPhone 15 Pro Max 上 4K 60 帧 HDR 的原视频，每帧画到画布上来不及，只录到 13 帧/秒、一顿一顿。
+   这里不放视频：直接读视频文件，用手机的硬件解码器（WebCodecs VideoDecoder）一帧一帧解出来，印上比分，再用硬件编码器（VideoEncoder，H.264）编好，
+   写成 mp4（内嵌 mp4-muxer）。画得慢只是导出要等久一点，导出的视频是流畅的；原视频 60 帧的按视频时间每秒取 30 帧。
+   声音不重编：原视频的 AAC 一帧一帧照搬（时间跟着这几分接起来）；片头卡那几秒用 AudioEncoder 编一段静音。
+   读不了的（不是 mp4 / mov、分段式 mp4、声音不是 AAC、浏览器没有 WebCodecs、解不了这种编码）就照旧边放边录 */
+function mp4Kids(u8, off, end){ const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength), r=[];
+  while(off+8<=end){ let size=dv.getUint32(off), hl=8; const type=String.fromCharCode(u8[off+4],u8[off+5],u8[off+6],u8[off+7]);
+    if(size===1){ size=Number(dv.getBigUint64(off+8)); hl=16; } else if(size===0) size=end-off;
+    if(size<hl || off+size>end) break; r.push({type, b:off+hl, e:off+size}); off+=size; }
+  return r; }
+function hvcCodec(d){ const sp=d[1]>>6, tier=(d[1]>>5)&1, prof=d[1]&31; let c=((d[2]<<24)|(d[3]<<16)|(d[4]<<8)|d[5])>>>0, r=0;
+  for(let i=0;i<32;i++){ r=((r<<1)|(c&1))>>>0; c>>>=1; }
+  const cons=[...d.subarray(6,12)]; while(cons.length && !cons[cons.length-1]) cons.pop();
+  return `hvc1.${["","A","B","C"][sp]}${prof}.${r.toString(16)}.${tier?"H":"L"}${d[12]}`+cons.map(b=>"."+b.toString(16)).join(""); }
+function ascFromEsds(d){ let p=4; const len=()=>{ let n=0, b; do{ b=d[p++]; n=(n<<7)|(b&0x7f); }while(b&0x80 && p<d.length); return n; };
+  if(d[p++]!==3) return null; len(); p+=2; const fl=d[p++]; if(fl&0x80) p+=2; if(fl&0x40) p+=d[p]+1; if(fl&0x20) p+=2;
+  if(d[p++]!==4) return null; len(); const oti=d[p]; p+=13; if(d[p++]!==5) return null; const n=len(); return {oti, asc:d.slice(p,p+n)}; }
+function mp4Track(u8, trak, movieTs){
+  const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength), K=(box,t)=>box && mp4Kids(u8,box.b,box.e).find(k=>k.type===t), str=(o)=>String.fromCharCode(u8[o],u8[o+1],u8[o+2],u8[o+3]);
+  const mdia=K(trak,"mdia"), mdhd=K(mdia,"mdhd"), hdlr=K(mdia,"hdlr"), tkhd=K(trak,"tkhd"); if(!mdhd||!hdlr) return null;
+  const ts=u8[mdhd.b]===1 ? dv.getUint32(mdhd.b+20) : dv.getUint32(mdhd.b+12), kind=str(hdlr.b+8);
+  const stbl=K(K(mdia,"minf"),"stbl"), stsd=K(stbl,"stsd"); if(!stbl||!stsd) return null;
+  const eo=stsd.b+8, ent={b:eo+8, e:eo+dv.getUint32(eo)}, t={kind, ts, fmt:str(eo+4)};
+  if(kind==="vide"){ t.width=dv.getUint16(ent.b+24); t.height=dv.getUint16(ent.b+26);
+    const cs=mp4Kids(u8, ent.b+78, ent.e), avcC=cs.find(k=>k.type==="avcC"), hvcC=cs.find(k=>k.type==="hvcC");
+    if(avcC){ const d=u8.slice(avcC.b,avcC.e); t.desc=d; t.codec="avc1."+[1,2,3].map(i=>d[i].toString(16).padStart(2,"0")).join(""); }
+    else if(hvcC){ const d=u8.slice(hvcC.b,hvcC.e); t.desc=d; t.codec=hvcCodec(d); t.nalLen=(d[21]&3)+1; }   // 每个 NAL 前面长度占几个字节
+    const colr=cs.find(k=>k.type==="colr" && ["nclx","nclc"].includes(str(k.b)));   // 颜色标记：传递特性 18 = HLG、16 = PQ（HDR）
+    if(colr){ t.prim=dv.getUint16(colr.b+4); t.trc=dv.getUint16(colr.b+6); }
+    if(tkhd){ const m=tkhd.b+(u8[tkhd.b]===1?52:40), a=dv.getInt32(m)/65536, b=dv.getInt32(m+4)/65536; t.rot=((Math.round(Math.atan2(b,a)*180/Math.PI)%360)+360)%360; } }
+  else if(kind==="soun"){ const ver=dv.getUint16(ent.b+8); t.channels=dv.getUint16(ent.b+16); t.sampleRate=dv.getUint32(ent.b+24)>>>16;
+    if(ver===2){ t.sampleRate=Math.round(dv.getFloat64(ent.b+32)); t.channels=dv.getUint32(ent.b+40); }
+    let cs=mp4Kids(u8, ent.b+28+(ver===1?16:ver===2?36:0), ent.e); const wave=cs.find(k=>k.type==="wave"); if(wave) cs=cs.concat(mp4Kids(u8,wave.b,wave.e));
+    const esds=cs.find(k=>k.type==="esds"), x=esds && t.fmt==="mp4a" ? ascFromEsds(u8.subarray(esds.b,esds.e)) : null;
+    if(x && x.oti===0x40 && x.asc.length){ t.desc=x.asc; t.codec="mp4a.40."+(x.asc[0]>>3); } }
+  else return null;
+  // 样本表：每一帧在文件里的位置、大小、解码 / 显示时间、是不是关键帧
+  const tab=ty=>K(stbl,ty), n32=o=>dv.getUint32(o);
+  const stsz=tab("stsz"), stsc=tab("stsc"), stco=tab("stco"), co64=tab("co64"), stts=tab("stts"), ctts=tab("ctts"), stss=tab("stss");
+  if(!stsz||!stsc||!(stco||co64)||!stts) return null;
+  const fixed=n32(stsz.b+4), N=n32(stsz.b+8), size=new Uint32Array(N); for(let i=0;i<N;i++) size[i]=fixed||n32(stsz.b+12+i*4);
+  const nCh=n32((stco||co64).b+4), chunk=[]; for(let i=0;i<nCh;i++) chunk.push(stco ? n32(stco.b+8+i*4) : Number(dv.getBigUint64(co64.b+8+i*8)));
+  const off=new Float64Array(N), sc=[]; for(let i=0,m=n32(stsc.b+4);i<m;i++) sc.push([n32(stsc.b+8+i*12)-1, n32(stsc.b+12+i*12)]);
+  for(let c=0,k=0,s=0;c<nCh && s<N;c++){ while(k+1<sc.length && sc[k+1][0]<=c) k++; let o=chunk[c]; for(let j=0;j<sc[k][1] && s<N;j++,s++){ off[s]=o; o+=size[s]; } }
+  const dts=new Float64Array(N); for(let i=0,s=0,d=0,m=n32(stts.b+4);i<m;i++){ const c=n32(stts.b+8+i*8), dl=n32(stts.b+12+i*8); for(let j=0;j<c && s<N;j++,s++){ dts[s]=d; d+=dl; } }
+  // 显示时间偏移一律按有符号读（产品负责人 2026-11-20 的 iPhone 视频：ctts 是 version 0 却写了负数，按无符号读成 2³² ÷ 600 ≈ 7158278 秒，第 2 分一帧没找到）；
+  // 正常的偏移远小于 2³¹，有符号、无符号读出来一样
+  const cto=new Float64Array(N); if(ctts){ for(let i=0,s=0,m=n32(ctts.b+4);i<m;i++){ const c=n32(ctts.b+8+i*8), o=dv.getInt32(ctts.b+12+i*8); for(let j=0;j<c && s<N;j++,s++) cto[s]=o; } }
+  let key=null; if(stss){ key=new Uint8Array(N); for(let i=0,m=n32(stss.b+4);i<m;i++){ const k=n32(stss.b+8+i*4)-1; if(k>=0&&k<N) key[k]=1; } }
+  // 编辑表（iPhone 的 mov 常有）：播放器的时间 = (显示时间 − 起点) ÷ 时间刻度 + 开头空着的那一段；和 <video> 的 currentTime 一致，回合起止就按它取
+  let delay=0, start=0; const edts=K(trak,"edts"), elst=edts && K(edts,"elst");
+  if(elst){ const v1=u8[elst.b]===1, m=n32(elst.b+4); for(let i=0,o=elst.b+8;i<m;i++,o+=v1?20:12){ const dur=v1?Number(dv.getBigUint64(o)):n32(o), mt=v1?Number(dv.getBigInt64(o+8)):dv.getInt32(o+4);
+      if(mt===-1){ delay+=dur/movieTs; continue; } start=mt; break; } }
+  t.samples=Array.from({length:N}, (_,i)=>({off:off[i], size:size[i], pts:(dts[i]+cto[i]-start)/ts+delay, dur:(i+1<N?dts[i+1]-dts[i]:(i?dts[i]-dts[i-1]:0))/ts, key:key?!!key[i]:true}));
+  return t; }
+async function mp4Demux(blob){
+  let pos=0, moov=null;
+  for(let k=0; k<10000 && pos+8<=blob.size; k++){ const h=new DataView(await blob.slice(pos, pos+16).arrayBuffer()); let size=h.getUint32(0), hl=8;
+    const type=String.fromCharCode(h.getUint8(4),h.getUint8(5),h.getUint8(6),h.getUint8(7));
+    if(size===1){ size=Number(h.getBigUint64(8)); hl=16; } else if(size===0) size=blob.size-pos;
+    if(size<hl) break; if(type==="moof") throw new Error("分段式 mp4");
+    if(type==="moov"){ moov={pos, size, hl}; break; } pos+=size; }
+  if(!moov) throw new Error("找不到 moov");
+  const u8=new Uint8Array(await blob.slice(moov.pos, moov.pos+moov.size).arrayBuffer()), dv=new DataView(u8.buffer);
+  const top=mp4Kids(u8, moov.hl, u8.length), mvhd=top.find(k=>k.type==="mvhd"), movieTs=mvhd ? (u8[mvhd.b]===1 ? dv.getUint32(mvhd.b+20) : dv.getUint32(mvhd.b+12)) : 1000;
+  if(top.some(k=>k.type==="mvex")) throw new Error("分段式 mp4");
+  const tr=top.filter(k=>k.type==="trak").map(x=>mp4Track(u8,x,movieTs)).filter(Boolean);
+  return {video:tr.find(t=>t.kind==="vide" && t.codec && t.samples.length), audio:tr.find(t=>t.kind==="soun" && t.codec && t.samples.length)}; }
+/* 按块读文件（一次 8 MB），一帧一帧取 */
+function mp4Reader(blob){ let buf=null, bs=0, be=0;
+  return async(off,size)=>{ if(!(buf && off>=bs && off+size<=be)){ bs=off; be=Math.min(blob.size, off+Math.max(size, 8<<20)); buf=new Uint8Array(await blob.slice(bs,be).arrayBuffer()); }
+    return buf.slice(off-bs, off-bs+size); }; }
+/* HDR 转普通画面（产品负责人 2026-11-20：「导出的视频颜色发白是什么问题？」）：iPhone 默认录 HLG HDR（BT.2020 色域）。
+   Safari 解出来的帧把 HLG 的原始数值原样交出来、却标成普通 sRGB（真 Safari 上量过：纯红条导出成 174,79,39，正是 HLG / BT.2020 的原始数值），
+   画到画布上就发白、发灰。文件标的是 HLG / PQ、浏览器却没说帧是 HDR 时，用 WebGL 按标准换算一遍：
+   去掉 HLG 曲线（场景线性 × 1.3）→ BT.2020 换到 BT.709 → 高光柔和压下来 → 套 sRGB。只换画面，比分栏不换。
+   亮度按苹果自己的换算对齐（macOS avconvert 把同一段 HLG 转成普通 H.264，六条彩条逐个比，差 5 级以内）：HLG 参考白落在普通画面约 62% 的灰，
+   给高光留余地，和 iPhone 相册里看到的一样；PQ 按同一个参考白（203 nit → 0.345）*/
+function hdrFixer(W, H, pq){ try{ const gc=document.createElement("canvas"); gc.width=W; gc.height=H;
+  const gl=gc.getContext("webgl",{premultipliedAlpha:false, preserveDrawingBuffer:true, antialias:false}); if(!gl) return null;
+  const sh=(ty,src)=>{ const o=gl.createShader(ty); gl.shaderSource(o,src); gl.compileShader(o); if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
+  const pr=gl.createProgram();
+  gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 p; varying vec2 uv; void main(){ uv=vec2((p.x+1.0)*0.5, 1.0-(p.y+1.0)*0.5); gl_Position=vec4(p,0.0,1.0); }"));
+  gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, `precision highp float; varying vec2 uv; uniform sampler2D t; uniform float pq;
+    vec3 hlgInv(vec3 v){ vec3 lo=v*v/3.0, hi=(exp((v-0.55991073)/0.17883277)+0.28466892)/12.0; return mix(lo,hi,step(0.5,v)); }
+    vec3 pqEotf(vec3 v){ vec3 p=pow(max(v,0.0),vec3(1.0/78.84375)); return pow(max(p-0.8359375,0.0)/(18.8515625-18.6875*p),vec3(1.0/0.1593017578125))*10000.0; }
+    vec3 srgb(vec3 x){ return mix(x*12.92, 1.055*pow(x,vec3(1.0/2.4))-0.055, step(0.0031308,x)); }
+    void main(){ vec3 v=texture2D(t,uv).rgb, L;
+      if(pq>0.5) L=pqEotf(v)/588.0; else L=hlgInv(v)*1.3;
+      vec3 o=mat3(1.6605,-0.1246,-0.0182, -0.5876,1.1329,-0.1006, -0.0728,-0.0083,1.1187)*L;
+      float m=max(max(o.r,o.g),o.b); if(m>0.8) o*=(0.8+0.2*(1.0-exp(-(m-0.8)/0.2)))/m;
+      gl_FragColor=vec4(srgb(clamp(o,0.0,1.0)),1.0); }`));
+  gl.linkProgram(pr); if(!gl.getProgramParameter(pr,gl.LINK_STATUS)) return null; gl.useProgram(pr);
+  const b=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(pr,"p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const tx=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tx); for(const [k,v] of [[gl.TEXTURE_MIN_FILTER,gl.NEAREST],[gl.TEXTURE_MAG_FILTER,gl.NEAREST],[gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE],[gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D,k,v);
+  gl.uniform1f(gl.getUniformLocation(pr,"pq"), pq?1:0); gl.viewport(0,0,W,H);
+  return src=>{ const g2=src.getContext("2d"); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,src); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); g2.drawImage(gc,0,0,W,H); };
+  }catch(e){ console.warn("HDR 换算用不了", e); return null; } }
+/* HEVC 一帧里第一个图像 NAL 的类型（8 / 9 = RASL 前导帧，6 / 7 = RADL，16–21 = 关键帧）；找不到返回 -1 */
+function hevcVclType(d, nalLen){ for(let o=0;o+nalLen<d.length;){ let l=0; for(let k=0;k<nalLen;k++) l=l*256+d[o+k]; const t=(d[o+nalLen]>>1)&63; if(t<32) return t; if(!l) break; o+=nalLen+l; } return -1; }
+const wcSleep=()=>new Promise(r=>setTimeout(r,0));
+/* wcSkip：这个视频逐帧导出没成功过，下一次点「开始导出」直接边放边录（要用户重新点一下：隔了一会儿 Safari 不让视频自己放，2026-11-20 真 Safari 上试出来） */
+let wcSkip=null;
+function wcAvailable(){ return typeof VideoDecoder==="function" && typeof VideoEncoder==="function" && typeof VideoFrame==="function" && typeof Mp4Muxer==="object" && !!vidBlob && wcSkip!==vidBlob; }
+/* 片头卡的静音：AudioEncoder 编 n 帧（每帧 1024 个采样）；编不了就返回 null（那就不放片头卡，免得声音和画面错开） */
+async function wcSilence(sr, ch, n){ if(typeof AudioEncoder!=="function" || typeof AudioData!=="function" || n<=0) return null;
+  try{ const cfg={codec:"mp4a.40.2", sampleRate:sr, numberOfChannels:ch, bitrate:96000}; if(!(await AudioEncoder.isConfigSupported(cfg)).supported) return null;
+    const out=[]; let bad=null; const ae=new AudioEncoder({output:c=>{ const d=new Uint8Array(c.byteLength); c.copyTo(d); out.push(d); }, error:e=>{ bad=e; }}); ae.configure(cfg);
+    const fr=(n+4)*1024, ad=new AudioData({format:"f32-planar", sampleRate:sr, numberOfFrames:fr, numberOfChannels:ch, timestamp:0, data:new Float32Array(fr*ch)});
+    ae.encode(ad); ad.close(); await ae.flush(); ae.close(); return bad || out.length<n ? null : out.slice(out.length-n); }catch(e){ return null; } }
+/* 画质（产品负责人 2026-11-20：「fps 只有 22.82，画质也很差，作为高光时刻有点儿掉价」）：逐帧导出出 1080p，原视频 60 帧就保留 60 帧，
+   码率 60 帧 10 Mbps、30 帧 6 Mbps（约每分钟 75 / 45 MB，整个文件在手机内存里拼）；编码器按画质优先 */
+async function wcCodec(W, H, fps){ for(const codec of ["avc1.64002a","avc1.640028","avc1.4d002a","avc1.42e02a"]){ const c={codec, width:W, height:H, bitrate:fps>40?10e6:6e6, framerate:fps, latencyMode:"quality", avc:{format:"annexb"}};
+    try{ if((await VideoEncoder.isConfigSupported(c)).supported) return c; }catch(e){} } return null; }
+/* 编码器出来的 H.264 一律自己整理成 mp4 要的样子（产品负责人 2026-11-20 在 Mac 的 Safari 上试：导出的视频只有声音、黑屏）：
+   要 annexb（带起始码），拆成一个个 NAL，SPS / PPS 拿来拼 avcC（解码参数），其余按 4 字节长度前缀写进 mp4。
+   不靠编码器给的 description、也不管它实际给的是哪种格式（长度前缀的也认）：Chrome、Safari 走同一条路 */
+function h264Nals(u8){ const out=[], n=u8.length;
+  if(n>=4 && u8[0]===0 && u8[1]===0 && (u8[2]===1 || (u8[2]===0 && u8[3]===1))){ let s=-1, i=0;
+    while(i+3<=n){ if(u8[i]===0 && u8[i+1]===0 && (u8[i+2]===1 || (i+3<n && u8[i+2]===0 && u8[i+3]===1))){ if(s>=0) out.push(u8.subarray(s,i)); i+=u8[i+2]===1?3:4; s=i; } else i++; }
+    if(s>=0) out.push(u8.subarray(s)); return out.filter(x=>x.length); }
+  const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength); for(let o=0;o+4<=n;){ const l=dv.getUint32(o); if(!l || o+4+l>n) break; out.push(u8.subarray(o+4,o+4+l)); o+=4+l; } return out; }
+function avcCFrom(sps, pps){ const a=[1, sps[1], sps[2], sps[3], 0xff, 0xe1, sps.length>>8, sps.length&255, ...sps, 1, pps.length>>8, pps.length&255, ...pps];
+  if([100,110,122,144].includes(sps[1])) a.push(0xfd, 0xf8, 0xf8, 0);   // High 以上：4:2:0、8 bit、没有扩展 SPS
+  return Uint8Array.from(a); }
+const u8Of=x=>x instanceof ArrayBuffer ? new Uint8Array(x) : new Uint8Array(x.buffer, x.byteOffset, x.byteLength);
+/* 导出：clips = [[开始, 结束, 第几分], …]（视频时间，秒）；paintCard() 画片头卡，paintFrame(帧, 第几分, 视频时间) 画一帧并印比分；
+   onProgress(已完成的视频秒数)；isCanceled()。返回 {blob, stat}；不能用这条路就 throw（外面改走边放边录） */
+async function exportWC({blob, clips, W, H, cardS, cv, paintCard, paintFrame, onProgress, isCanceled}){
+  const src=await mp4Demux(blob), V=src.video, A=src.audio; if(!V) throw new Error("没有能读的视频轨");
+  const dcfg={codec:V.codec, description:V.desc, codedWidth:V.width, codedHeight:V.height};
+  if(!(await VideoDecoder.isConfigSupported(dcfg)).supported) throw new Error("解不了 "+V.codec);
+  // 原视频几帧：相邻两帧显示时间差的中位数；60 帧以上的出 60 帧，其余 30 帧。reorder = 解码顺序和显示顺序最多差几帧（B 帧），解出来的帧先攒这么多再按时间排
+  const ps=V.samples.map(x=>x.pts), srt=ps.slice().sort((x,y)=>x-y), dts=[]; for(let i=1;i<srt.length && i<600;i++) if(srt[i]-srt[i-1]>1e-4) dts.push(srt[i]-srt[i-1]);
+  dts.sort((x,y)=>x-y); const srcFps=dts.length ? 1/dts[dts.length>>1] : 30, outFps=srcFps>40 ? 60 : 30, minGap=1/(outFps*1.5);
+  const rank=new Map(srt.map((x,i)=>[x,i])); let reorder=0; for(let i=0;i<ps.length && i<3000;i++) reorder=Math.max(reorder, Math.abs(i-rank.get(ps[i])));
+  reorder=Math.min(8, reorder+1);
+  const ecfg=await wcCodec(W,H,outFps); if(!ecfg) throw new Error("编不了 H.264");
+  const silence=A && cardS>0 ? await wcSilence(A.sampleRate, A.channels, Math.floor(cardS*A.sampleRate/1024)) : null;
+  if(A && !silence) cardS=0;
+  const target=new Mp4Muxer.ArrayBufferTarget(), mux=new Mp4Muxer.Muxer({target, fastStart:"in-memory", firstTimestampBehavior:"offset",
+    video:{codec:"avc", width:W, height:H, frameRate:outFps}, audio:A ? {codec:"aac", sampleRate:A.sampleRate, numberOfChannels:A.channels} : undefined});
+  let err=null, nOut=0; const t0=performance.now();
+  /* 画面画不上的兜底（同上，Safari 黑屏）：前几帧画完看画布下半截一行，全黑就换 createImageBitmap 再画一次；还是黑就放弃逐帧，外面改用边放边录。
+     比赛录像不会整帧纯黑，开头连着 3 帧都黑才算画不上 */
+  const cx=cv.getContext("2d"); let viaBmp=false, seenPic=false, blackRun=0;
+  const isBlack=()=>{ const d=cx.getImageData(0, Math.floor(H*0.8), W, 1).data; let mx=0; for(let i=0;i<d.length;i+=16) mx=Math.max(mx,d[i],d[i+1],d[i+2]); return mx<12; };
+  let sps=null, pps=null, vMeta=null;
+  const onChunk=(c,m)=>{ try{ const d=new Uint8Array(c.byteLength); c.copyTo(d); const keep=[];
+      for(const x of h264Nals(d)){ const ty=x[0]&31; if(ty===7){ if(!sps) sps=x.slice(); } else if(ty===8){ if(!pps) pps=x.slice(); } else if(ty!==9) keep.push(x); }
+      const out=new Uint8Array(keep.reduce((a,x)=>a+4+x.length,0)), ov=new DataView(out.buffer); let o=0; for(const x of keep){ ov.setUint32(o,x.length); out.set(x,o+4); o+=4+x.length; }
+      let meta; if(!vMeta){ const desc=sps&&pps ? avcCFrom(sps,pps) : m&&m.decoderConfig&&m.decoderConfig.description ? u8Of(m.decoderConfig.description).slice() : null;
+        if(!desc) throw new Error("编码器没给出 SPS / PPS");
+        vMeta={decoderConfig:{codec:"avc1."+[1,2,3].map(i=>desc[i].toString(16).padStart(2,"0")).join(""), codedWidth:W, codedHeight:H, description:desc}}; meta=vMeta; }
+      mux.addVideoChunkRaw(out, c.type, c.timestamp, c.duration || Math.round(1e6/30), meta); }catch(e){ err=e; } };
+  const enc=new VideoEncoder({output:onChunk, error:e=>{ err=e; }}); enc.configure(ecfg);
+  const frames=[], dec=new VideoDecoder({output:f=>frames.push(f), error:e=>{ err=e; }}); dec.configure(dcfg);
+  const put=async ts=>{ const f=new VideoFrame(cv,{timestamp:Math.round(ts*1e6), duration:Math.round(1e6/outFps)}); enc.encode(f,{keyFrame:nOut%(outFps*2)===0}); f.close(); nOut++;
+    while(enc.encodeQueueSize>3 && !err) await wcSleep(); };
+  const aMeta={decoderConfig:A ? {codec:A.codec, sampleRate:A.sampleRate, numberOfChannels:A.channels, description:A.desc} : null};
+  let aFirst=true; const aPut=(d,ts,dur)=>{ mux.addAudioChunkRaw(d, "key", Math.round(ts*1e6), Math.round(dur*1e6), aFirst?aMeta:undefined); aFirst=false; };
+  const cleanup=()=>{ for(const f of frames.splice(0)) try{ f.close(); }catch(e){} try{ dec.close(); }catch(e){} try{ enc.close(); }catch(e){} };
+  try{
+    let base=0;
+    if(cardS>0){ paintCard(); for(let k=0;k<Math.round(cardS*outFps);k++) await put(k/outFps);
+      if(silence) silence.forEach((d,k)=>aPut(d, k*1024/A.sampleRate, 1024/A.sampleRate)); base=cardS; }
+    const vr=mp4Reader(blob), ar=A ? mp4Reader(blob) : null, S=V.samples; let done=0, nClip=0;
+    /* 查对不上（产品负责人 2026-11-20 Safari 上导出「好球合集」只有 75 帧 = 片头卡，回合一帧没画）：
+       这一分在视频范围里却一帧没画上 → 停下改用边放边录，提示里写解出几帧、时间是多少、要的是哪一段；整分都在视频外 → 跳过并写明 */
+    const vEnd=S.reduce((m,x)=>Math.max(m,x.pts),0), outside=[]; let nLate=0, nAll=0, csp="", fix=null, hdr="";
+    for(const [a,e,clip] of clips){ if(isCanceled()) throw new Error("取消");
+      if(a>=vEnd){ outside.push(clip+1); continue; }
+      let nDec=0, nDrawn=0, tMin=Infinity, tMax=-Infinity;
+      if(A) for(const s of A.samples) if(s.pts>=a && s.pts<e) aPut(await ar(s.off,s.size), base+s.pts-a, s.dur);
+      // 从这一分开始前最近的关键帧解起，解到结束后再多几帧（有 B 帧时显示顺序和解码顺序不同）
+      let k0=0; for(let i=0;i<S.length;i++){ if(S[i].key && S[i].pts<=a+1e-3) k0=i; if(S[i].pts>a+1) break; }
+      let k1=k0; for(let i=k0;i<S.length;i++){ if(S[i].pts<e) k1=i; else if(S[i].pts>e+1) break; } k1=Math.min(S.length-1,k1+4);
+      let lastT=-Infinity;
+      const drain=async(final)=>{ frames.sort((x,y)=>x.timestamp-y.timestamp);
+        if(!csp && frames[0]){ const c=frames[0].colorSpace||{}; csp=[c.primaries,c.transfer,c.matrix,c.fullRange?"full":"tv"].join("/");
+          if((V.trc===18 || V.trc===16) && !["hlg","pq"].includes(c.transfer)){ fix=hdrFixer(W, H, V.trc===16); hdr=fix ? (V.trc===16?"PQ":"HLG")+" → 普通画面" : "HDR 换算用不了"; } }   // 按显示时间排好再画（Safari 22.82 帧：疑似乱序的帧被当成多余的扔了）
+        while(frames.length>(final?0:reorder)){ const f=frames.shift(), t=f.timestamp/1e6; nDec++; tMin=Math.min(tMin,t); tMax=Math.max(tMax,t);
+          if(t>=a-1e-4 && t<e && t<=lastT) nLate++;
+          if(t>=a-1e-4 && t<e && t-lastT>=minGap){ lastT=t; nDrawn++;
+            try{ if(viaBmp){ const bm=await createImageBitmap(f); paintFrame(bm, clip, t, V.rot||0, fix); bm.close(); } else paintFrame(f, clip, t, V.rot||0, fix);
+              if(blackRun<3 && !seenPic){ if(isBlack()){ if(!viaBmp){ try{ const bm=await createImageBitmap(f); paintFrame(bm, clip, t, V.rot||0, fix); bm.close(); if(!isBlack()){ viaBmp=true; seenPic=true; } }catch(e){} }
+                  if(!seenPic && ++blackRun>=3) throw new Error("解出来的画面画不上（全黑）"); } else seenPic=true; }
+            }finally{ f.close(); }
+            await put(base+t-a); onProgress(done+t-a); } else f.close(); } };
+      /* 开放 GOP（产品负责人 2026-11-20 iPhone 视频在 Safari 上 Decoder failure）：HEVC 从 CRA 关键帧中途解起时，紧跟着的 RASL 帧引用的是上一组的帧，
+         按标准要丢掉（它们显示在关键帧之前，本来也不在这一分里）；Chrome 自己会丢，Safari 喂了就报错。这里不喂，直到第一张不是前导帧的图 */
+      let lead=!!V.nalLen;
+      for(let i=k0;i<=k1;i++){ if(err) throw err; if(isCanceled()) throw new Error("取消");
+        const s=S[i], data=await vr(s.off,s.size);
+        if(lead && i>k0){ const ty=hevcVclType(data, V.nalLen); if(ty===8 || ty===9) continue; if(ty!==6 && ty!==7) lead=false; }
+        dec.decode(new EncodedVideoChunk({type:s.key?"key":"delta", timestamp:Math.round(s.pts*1e6), data}));
+        for(let w=0; dec.decodeQueueSize>2 && !err; w++){ if(w>200 && frames.length) await drain(true); await wcSleep(); }   // 攒着的帧太多、解码器等不到空位时先画掉
+        await drain(false); }
+      await dec.flush(); await drain(true); if(err) throw err;
+      if(!nDrawn){ const f2=x=>isFinite(x)?x.toFixed(2):"—"; throw new Error(`第 ${clip+1} 分（${f2(a)}–${f2(e)} 秒）一帧没画上：喂了第 ${k0+1}–${k1+1} 帧（${f2(S[k0].pts)}–${f2(S[k1].pts)} 秒），解出 ${nDec} 帧，时间 ${f2(tMin)}–${f2(tMax)} 秒`); }
+      nAll+=nDec; nClip++; base+=e-a; done+=e-a; }
+    if(!nClip) throw new Error(`选的 ${clips.length} 分都在视频结束（${vEnd.toFixed(1)} 秒）以后：这一局对不上这段视频`);
+    await enc.flush(); if(err) throw err; mux.finalize();
+    const sec=(performance.now()-t0)/1000;
+    return {blob:new Blob([target.buffer],{type:"video/mp4"}), stat:{frames:nOut, sec, src:`${V.width}×${V.height}`, codec:V.codec, out:vMeta?vMeta.decoderConfig.codec:"", bmp:viaBmp, outside, srcFps, outFps, nAll, nLate, reorder, csp, hdr}};
+  }finally{ cleanup(); } }
+
 /* ===== 导出带比分的精简视频（试用者 2026-11-04 定）：选中的几分一个接一个放，每帧画到 canvas 上再印比分，canvas + 声音录成一个文件。
    要按实际时长放一遍；浏览器切到后台会停帧，导出时别切走。 */
-let audio=null, canceled=false;
+let audio=null, canceled=false, expStat="";   // expStat：上一次导出的帧数情况（查卡顿用）
 $("bCancel").addEventListener("click",()=>{ canceled=true; });
 function audioOut(el){
   const ac=new (window.AudioContext||window.webkitAudioContext)(), src=ac.createMediaElementSource(el), dest=ac.createMediaStreamDestination(), spk=ac.createGain();
@@ -1415,14 +3531,20 @@ $("bExport").addEventListener("click",async()=>{
   if(bad.length && !eb.dataset.sure){ eb.dataset.sure="1"; eb.textContent="照样导出";
     msg(`要导出的分里有 ${bad.length} 分站位和比分对不上，还没处理（第 ${bad.map(i=>i+1).join("、")} 分，列表里标 ⚠），导出的比分可能被人看出来不对。要改就点那一分；不改就再点「照样导出」。`); return; }
   delete eb.dataset.sure;
-  const mime=pickMime(); if(!mime){ msg("这个浏览器不支持录制视频（MediaRecorder），换电脑上的 Chrome / Safari 试试。"); return; }
+  /* 4K 原视频在手机上导出会一顿一顿（产品负责人 2026-11-20：iPhone 15 Pro Max、3840×2160 60 帧，导出只有 12.95 帧/秒，时长对、一顿一顿）：
+     手机把每一帧 4K（多半还是 HDR）画到画布上来不及，和导出多大无关；电脑上是流畅的。先说清楚，再点一次照样导出 */
+  if(touch && Math.max(video.videoWidth, video.videoHeight)>=2160 && !wcAvailable() && !eb.dataset.sure4k){ eb.dataset.sure4k="1"; eb.textContent="照样导出";
+    msg(`这段视频是 ${video.videoWidth}×${video.videoHeight}（4K），手机上导出来不及一帧一帧画，导出的视频会一顿一顿（时长不变）。想要流畅：用电脑打开场边打点导出这一局，或者以后录像改成 1080p。仍要在手机上导出，就再点「照样导出」。`); return; }
+  delete eb.dataset.sure4k;
+  const mime=pickMime(); if(!mime && !wcAvailable()){ msg("这个浏览器不支持录制视频（MediaRecorder），换电脑上的 Chrome / Safari 试试。"); return; }
   stopAll(); exporting=true; canceled=false; $("review").classList.add("busy"); $("expOv").hidden=false; $("bExport").disabled=true; $("bExport").textContent="正在导出……"; const pg=$("prog"); pg.hidden=false; pg.value=0;
   // 导出用另一个播放器（试用者 2026-11-10：导出、保存后回来，画面黑屏放不了）：原来是主播放器的声音被接进录制通路，接上就拆不掉，
   // 手机上保存时离开页面再回来，它就坏了。现在导出时临时叠一个播放器在画面上，录完就拆，主播放器不碰
   const ev=document.createElement("video"); ev.className="expvid"; ev.playsInline=true; ev.setAttribute("playsinline",""); ev.preload="auto"; ev.src=video.currentSrc; $("scr").appendChild(ev);
   const a=audioOut(ev); a.spk.gain.value=0; try{ a.ac.resume(); }catch(e){}   // 导出时不出声
   ev.play().then(()=>{ if(card) ev.pause(); }).catch(()=>{});   // 趁这一下点击先放一下（iPhone 要「刚点过」才让有声音的视频播放），后面才能自己接着放
-  const W0=video.videoWidth, H0=video.videoHeight, k=Math.min(1, 1280/Math.max(W0,H0)), W=Math.round(W0*k/2)*2, H=Math.round(H0*k/2)*2;
+  const W0=video.videoWidth, H0=video.videoHeight, fit=lim=>{ const k=Math.min(1, lim/Math.max(W0,H0)); return [Math.round(W0*k/2)*2, Math.round(H0*k/2)*2]; };
+  let [W,H]=fit(wcAvailable()?1920:1280);   /* 逐帧导出出 1080p；边放边录照旧 720p（实时画不动更大的：Safari 上 1080p 只画进 26 帧/秒） */
   const cv=document.createElement("canvas"); cv.width=W; cv.height=H; const g=cv.getContext("2d");
   const {rallies}=scored(cur), total=idx.reduce((a,i)=>a+sp[i][1]-sp[i][0],0); let doneT=0, clip=null;
   // 片头卡（v1.5）：这段视频是什么、谁对谁、第几局、几分；比分栏下面写这一分为什么被挑上（关键分、连丢第几分）
@@ -1430,31 +3552,69 @@ $("bExport").addEventListener("click",async()=>{
   const title=mode==="star" ? "好球合集" : mode==="list" && $("filt").value ? fo.dataset.title : "精简版";
   let card={title, sub:`${full(cur,"A")} vs ${full(cur,"B")} · 第 ${cur.setNo} 局 · ${idx.length} 分`, date:new Date(cur.created).toLocaleDateString("zh-CN")};
   const why=i=>[P.key[i]?"关键分":"", fk[0]==="p"&&fk[2]==="runLost" ? P[fk[1]].runOf[i] : "", fk[0]==="p"&&fk[2]==="good"&&!P.key[i]&&P.secs[i]!=null ? `回合 ${dur(P.secs[i])}` : ""].filter(Boolean).join(" · ");
-  const fs=Math.round(Math.min(W,H)*0.06);
-  const draw=()=>{ if(!exporting) return;
-    if(card){ g.fillStyle="#185943"; g.fillRect(0,0,W,H); g.textAlign="center"; g.fillStyle="#fff";
+  let fs=Math.round(Math.min(W,H)*0.06);
+  /* 卡顿（产品负责人 2026-11-20：手机上导出的视频只有 12.95 帧/秒，像慢动作）：
+     ① 有 requestVideoFrameCallback 的浏览器（Safari 15.4+、Chrome）改成视频每出一帧画一次，不再按屏幕刷新（60–120 次/秒）空画，手机上省一半以上的活；
+     原视频 60 帧的，最多每秒画 30 帧（录的就是 30 帧）；
+     ② 量一下导出时视频每秒放出几帧（nV）、画进画布几帧（nP），原视频多大、几帧，导出完写在提示里——卡在解码还是卡在录制，下次一看就知道 */
+  const rv=typeof ev.requestVideoFrameCallback==="function"; let sched=false;
+  const st={nV:0, nP:0, wall:0, t0:0, minDt:Infinity, lastMT:null, lastP:0};   // 原视频 60 帧时隔一帧画一帧：录的只要 30 帧，多画的白费手机的力气
+  const next=()=>{ if(sched||!exporting) return; sched=true; const go=(now,meta)=>{ sched=false;
+      if(meta && clip!=null){ st.nV++; if(st.lastMT!=null){ const d=meta.mediaTime-st.lastMT; if(d>0.001 && d<st.minDt) st.minDt=d; } st.lastMT=meta.mediaTime; }
+      if(meta && clip!=null && Math.abs(meta.mediaTime-st.lastP)<1/45){ next(); return; } if(meta) st.lastP=meta.mediaTime; draw(); };   // 按视频自己的时间算，不按墙钟（帧有时扎堆送来）
+    if(!card && rv) ev.requestVideoFrameCallback(go); else requestAnimationFrame(go); };
+  /* 片头卡、比分栏两段画法：边放边录（下面的 draw）和逐帧导出（exportWC）共用 */
+  const paintCard=()=>{ g.fillStyle="#185943"; g.fillRect(0,0,W,H); g.textAlign="center"; g.fillStyle="#fff";
       g.font=`800 ${Math.round(fs*1.4)}px -apple-system,"PingFang SC","Noto Sans SC",sans-serif`; g.fillText(card.title, W/2, H/2-fs*0.3);
       g.font=`500 ${Math.round(fs*0.7)}px -apple-system,"PingFang SC","Noto Sans SC",sans-serif`; g.fillStyle="#cfe5da"; g.fillText(card.sub, W/2, H/2+fs*0.9); g.fillText(card.date, W/2, H/2+fs*1.9);
-      g.textAlign="left"; requestAnimationFrame(draw); return; }
-    g.drawImage(ev,0,0,W,H);
-    if(clip!=null){ const r=rallies[clip], t=ev.currentTime, after=t>sp[clip][1]-0.3 && r.after, sc=after?r.after:r.before;
-      // 比分栏位置固定（和画面上的一样）：顶部居中，羽毛球位、两位数比分都留好宽度，比分变了、换发球都不晃
-      const srv=after?"":r.server, ic=fs*0.95, gap=fs*0.35, sub=`第 ${clip+1} 分 · ${nm(cur,r.server)} 发球`+(why(clip)?` · ${why(clip)}`:"");
-      g.font=`800 ${fs}px -apple-system,"PingFang SC","Noto Sans SC",sans-serif`;
+      g.textAlign="left"; };
+  const draw=()=>{ if(!exporting) return;
+    if(card){ paintCard(); next(); return; }
+    g.drawImage(ev,0,0,W,H); if(clip!=null && !ev.paused) st.nP++;
+    if(clip!=null) paintOver(ev.currentTime);
+    next(); };
+  /* 比分栏（产品负责人 2026-11-20「需要美化一下，可以参考回放部分；太大，遮挡太多视频区域」）：照回放页的样子，一行圆角条——
+     羽毛球 | 名字 | 比分 : 比分 | 名字 | 羽毛球，格子固定（比分变了、换发球都不晃）；字号按短边 3.6%（原来 6%，1080p 上遮挡 4.6% → 约 1.1%）；
+     「第几分 · 谁发球」不再写（谁发球看羽毛球）；挑选理由（关键分、连丢第几分、回合多长）改成条下面的小金色标签，只在每分开头 3 秒出现 */
+  const sbs=Math.round(Math.min(W,H)*0.036), sbTop=fs*1.2;   // 离顶的空照旧（试用者 2026-11-04：QuickTime 顶部会盖住比分栏；按画面算，横屏竖屏留的空一样）
+  const rrect=(x,y,w,h,r)=>{ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); };
+  const paintOver=t=>{ { const r=rallies[clip], after=t>sp[clip][1]-0.3 && r.after, sc=after?r.after:r.before;
+      const srv=after?"":r.server, f=sbs, ic=f*1.05, gap=f*0.32, pad=f*0.45, F='-apple-system,"PingFang SC","Noto Sans SC",sans-serif';
+      g.font=`800 ${f}px ${F}`;
       const wa=g.measureText(nm(cur,"A")).width, wb=g.measureText(nm(cur,"B")).width, wd=g.measureText("88").width, wc=g.measureText(":").width;
-      const w=ic+gap+wa+gap+wd+gap+wc+gap+wd+gap+wb+gap+ic, x0=(W-w)/2-fs*0.5, y0=fs*1.2,   /* 往下让开播放器的标题栏（试用者 2026-11-04：QuickTime 顶部会盖住比分栏）；按字号算，横屏竖屏留的空一样，竖屏不会空太多 */ base=y0+fs*1.05;
-      g.fillStyle="rgba(20,30,25,.78)"; g.fillRect(x0, y0, w+fs, fs*2.2);
-      let x=x0+fs*0.5; if(srv==="A") drawShuttle(g, x, y0+fs*0.2, ic*1.3); x+=ic+gap;
-      g.textAlign="left"; g.fillStyle="#fff"; g.fillText(nm(cur,"A"), x, base); x+=wa+gap;
-      g.textAlign="right"; g.fillStyle="#F2B01E"; g.fillText(String(sc.A), x+wd, base); x+=wd+gap;
-      g.textAlign="left"; g.fillText(":", x, base); x+=wc+gap;
-      g.fillText(String(sc.B), x, base); x+=wd+gap;
+      const w=pad+ic+gap+wa+gap+wd+gap+wc+gap+wd+gap+wb+gap+ic+pad, h=f*1.45, x0=(W-w)/2, y0=sbTop, base=y0+h/2+f*0.36, sy=y0+(h-ic*1.25)/2;
+      g.fillStyle="rgba(20,30,25,.78)"; rrect(x0, y0, w, h, f*0.4); g.fill();
+      let x=x0+pad; if(srv==="A") drawShuttle(g, x, sy, ic*1.25); x+=ic+gap;
+      g.textAlign="right"; g.fillStyle="#fff"; g.fillText(nm(cur,"A"), x+wa, base); x+=wa+gap;
+      g.fillStyle="#F2B01E"; g.fillText(String(sc.A), x+wd, base); x+=wd+gap;
+      g.textAlign="center"; g.fillText(":", x+wc/2, base-f*0.06); x+=wc+gap;
+      g.textAlign="left"; g.fillText(String(sc.B), x, base); x+=wd+gap;
       g.fillStyle="#fff"; g.fillText(nm(cur,"B"), x, base); x+=wb+gap;
-      if(srv==="B") drawShuttle(g, x, y0+fs*0.2, ic*1.3);
-      g.font=`500 ${Math.round(fs*0.5)}px -apple-system,"PingFang SC","Noto Sans SC",sans-serif`; g.fillStyle="#cfe5da"; g.textAlign="center"; g.fillText(sub, x0+(w+fs)/2, y0+fs*1.95); g.textAlign="left"; }
-    requestAnimationFrame(draw); };
-  let rec, chunks=[];
+      if(srv==="B") drawShuttle(g, x, sy, ic*1.25);
+      const ws=why(clip);
+      if(ws && t-sp[clip][0]<3){ g.font=`600 ${Math.round(f*0.55)}px ${F}`; const cw=g.measureText(ws).width+f*0.8, ch=f*0.85, cy=y0+h+f*0.2;
+        g.fillStyle="rgba(242,176,30,.92)"; rrect((W-cw)/2, cy, cw, ch, ch/2); g.fill(); g.fillStyle="#1b2a22"; g.textAlign="center"; g.fillText(ws, W/2, cy+ch/2+f*0.2); }
+      g.textAlign="left"; } };
+  let rec, chunks=[], viaWC=false; expStat="";
+  const outName=ext=>`${fname(cur)}_${title.replace(/\s*·\s*/g,"_").replace(/[\\/:*?"<>|\s]+/g,"")}.${ext}`;
   try{
+    if(wcAvailable()){ const t1=performance.now();
+      const paintFrame=(f,i,t,rot,fix)=>{ clip=i;
+        if(rot){ const sw=rot%180?H:W, sh=rot%180?W:H; g.save(); g.translate(W/2,H/2); g.rotate(rot*Math.PI/180); g.drawImage(f,-sw/2,-sh/2,sw,sh); g.restore(); } else g.drawImage(f,0,0,W,H);
+        if(fix) fix(cv);   // HDR 换成普通画面，在印比分之前
+        paintOver(t); };
+      $("expTxt").textContent="正在准备……";
+      try{ const r=await exportWC({blob:vidBlob, clips:idx.map(i=>[sp[i][0], sp[i][1], i]), W, H, cardS:PICKS.card_seconds||0, cv, paintCard, paintFrame,
+          onProgress:d=>{ const f=d/total, el=(performance.now()-t1)/1000; pg.value=f; $("expTxt").textContent=`逐帧导出 ${Math.round(f*100)}%`+(f>0.02?` · 还要约 ${dur(Math.max(0,el/f-el))}`:""); },
+          isCanceled:()=>canceled});
+        viaWC=true; clip=null; const sec=r.stat.sec;
+        expStat=`逐帧导出：原视频 ${r.stat.src}（${r.stat.codec}，约 ${Math.round(r.stat.srcFps)} 帧/秒）→ ${W}×${H} ${r.stat.outFps} 帧/秒（${r.stat.out}${r.stat.bmp?"，位图画法":""}），${r.stat.frames} 帧，用了 ${dur(sec)}；解出 ${r.stat.nAll} 帧，顺序乱的 ${r.stat.nLate} 帧，攒 ${r.stat.reorder} 帧排序；颜色 ${r.stat.csp||"—"}${r.stat.hdr?"，"+r.stat.hdr:""}`+(r.stat.outside.length?`；第 ${r.stat.outside.join("、")} 分在视频结束以后，没导出`:"");
+        await saveBlob(outName("mp4"), r.blob); $("msg").hidden=false; $("msg").textContent+=`（${expStat}）`;
+      }catch(err){ if(canceled){ msg("已取消导出。"); throw null; }
+        console.warn("逐帧导出没成功", err); wcSkip=vidBlob; clip=null;
+        msg(`这段视频没法逐帧导出（${err&&err.message||err}）。再点一次「开始导出」改用边放边录：要按实际时长放一遍，画面可能一顿一顿。`); throw null; }
+    }
+    if(!viaWC){
     if(ev.readyState<1) await waitEv(ev,"loadedmetadata");
     const stream=new MediaStream([...cv.captureStream(30).getVideoTracks(), ...a.dest.stream.getAudioTracks()]);
     rec=new MediaRecorder(stream,{mimeType:mime, videoBitsPerSecond:4e6}); rec.ondataavailable=e=>{ if(e.data&&e.data.size) chunks.push(e.data); };
@@ -1464,17 +3624,21 @@ $("bExport").addEventListener("click",async()=>{
     for(const i of idx){
       clip=i; ev.currentTime=sp[i][0]; await waitEv(ev,"seeked"); draw();
       if(rec.state==="inactive") rec.start(1000); else rec.resume();
-      await ev.play();
+      await ev.play(); st.t0=performance.now(); st.lastMT=null;
       await new Promise(res=>{ const f=()=>{ if(canceled||ev.currentTime>=sp[i][1]||ev.ended){ res(); return; }
           const done=doneT+ev.currentTime-sp[i][0]; pg.value=done/total;
           $("expTxt").textContent=`第 ${idx.indexOf(i)+1} / ${idx.length} 段 · ${Math.round(done/total*100)}% · 还要约 ${dur(Math.max(0,total-done))}`;
           if(ev.paused && !document.hidden) ev.play().catch(()=>{});   // 被暂停了（误点、切回来）就接着放
           setTimeout(f,100); }; f(); });
-      ev.pause(); rec.pause(); doneT+=sp[i][1]-sp[i][0]; if(canceled) break; }
+      ev.pause(); rec.pause(); st.wall+=performance.now()-st.t0; doneT+=sp[i][1]-sp[i][0]; if(canceled) break; }
     const stopped=waitEv(rec,"stop"); rec.stop(); await stopped;
     if(canceled){ msg("已取消导出。"); throw null; }
     const ext=mime.startsWith("video/mp4")?"mp4":"webm", blob=new Blob(chunks,{type:mime.split(";")[0]});
-    await saveBlob(`${fname(cur)}_${title.replace(/\s*·\s*/g,"_").replace(/[\\/:*?"<>|\s]+/g,"")}.${ext}`, blob);
+    await saveBlob(outName(ext), blob);
+    const sec=st.wall/1000, f1=x=>Math.round(x*10)/10; expStat=(expStat?expStat+"；":"")+`原视频 ${W0}×${H0}`+(isFinite(st.minDt)?`、约 ${Math.round(1/st.minDt)} 帧/秒`:"")+`；导出成 ${W}×${H}：`
+      +(rv?`视频每秒放出 ${f1(st.nV/sec)} 帧、`:"")+`每秒画进 ${f1(st.nP/sec)} 帧`;
+    $("msg").hidden=false; $("msg").textContent+=`（导出情况：${expStat}）`;
+    }
   }catch(err){ if(err) msg("导出没成功："+(err&&err.message||err)); }
   try{ ev.pause(); ev.removeAttribute("src"); ev.load(); ev.remove(); a.ac.close(); }catch(e){}
   exporting=false; clip=null; pg.hidden=true; $("review").classList.remove("busy"); $("expOv").hidden=true; render();
@@ -1719,7 +3883,7 @@ for(const id of ["bLive","bReplay"]) $(id).addEventListener("click",()=>{ if(!pe
 /* 新版提示（试用者 2026-11-10：posecap.com 已经更新，桌面 App 里还是旧页面——App 切回前台不会重新载入，场边打点页也没有刷新键）：
    posecap.com 版的 BUILD 是 make_courtside 填的这一版指纹；回到前台、回到首页时去网站上取一下这一页（不走缓存），指纹不一样就在顶上提示「有新版本」。
    正在现场打点、这局没打完时不提示，回到首页或打完再提示。claude.ai 版 BUILD 为空，不查（发布新版时 claude.ai 自己会重新载入） */
-const BUILD = "02106f6ca381";
+const BUILD = "8c0119633e29";
 let newBuild="", lastCheck=0;
 function freshReload(tag){ location.replace(location.pathname+"?v="+encodeURIComponent(tag||Date.now())); }   // 换个地址参数，绕开手机缓存
 async function checkUpdate(force){ if(!BUILD || newBuild) return; const now=Date.now(); if(!force && now-lastCheck<60000) return; lastCheck=now;
