@@ -351,13 +351,19 @@ progress{width:100%}
 .review.busy .vfs{display:none}
 .fsui{display:none}
 html.fs-on,html.fs-on body{overflow:hidden}
+/* 全屏时把底下的页面钉住（v1.8.0 beta 真机 11-22「从全屏横屏模式切换到竖屏模式后，上面的控件都不可点击。感觉好像控件高度错位了」）：
+   编辑页是长页面，进全屏前已经往下滚了一段；转屏时 Safari 会改这段滚动，iPhone 上固定层画在对的地方、点的位置却差了这段。钉住就不会滚 */
+html.fs-on body{position:fixed;left:0;right:0;top:var(--fsy,0);width:100%}
 /* 全屏时页面底色纯黑：iPhone Safari 的地址栏、底部工具栏按页面底色和 theme-color 上色（产品负责人 2026-11-22「浏览器的背景色不是全黑，如何解决？」），退出时换回来 */
 html.fs-on,html.fs-on body{background:#000!important}
 /* 手机和视频同为竖（或同为横）、长宽比只差一点时铺满，不留窄黑边：上下（或左右）裁掉一小条（同日，trishot 提议先做出来给他看） */
 #scr.fs.fill video{object-fit:cover}
 #scr.fs{touch-action:manipulation;position:fixed;inset:0;z-index:60;border-radius:0;height:100vh;height:100dvh;width:100vw;align-items:center;--fsbot:96px;--fstop:52px;color:#fff;
   padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box}
-#scr.fs video{width:100%;height:100%;max-height:none;max-width:none;object-fit:contain}
+#scr.fs video{width:100%;height:100%;max-height:none;max-width:none;object-fit:contain;pointer-events:none}
+/* 全屏时视频本身不接手指（v1.8.0 beta 真机 11-22：Safari「列表一览上面的控件都不可点击」「转回横屏就好了」，播放中横屏转竖屏才有）：
+   iPhone 上正在放的视频单独一层，转成竖屏后画到了顶上一小块，接手指的范围却还是横屏时铺满的大小，盖住了列表上面的控件；
+   视频不接手指，点画面出现 / 隐藏控件改由外层（#scr）接 */
 #scr.fs .vswap,#scr.fs .vmute,#scr.fs .vfs{display:none}
 #scr.fs .fsui{display:block;position:absolute;inset:0;pointer-events:none}
 #scr.fs .fsui>*{pointer-events:auto}
@@ -411,6 +417,11 @@ html.fs-on,html.fs-on body{background:#000!important}
 .fsbub.out{background:#444;color:#fff}
 .fshint{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);background:rgba(0,0,0,.72);color:#fff;font-weight:700;font-size:16px;line-height:1.45;padding:10px 16px;border-radius:12px;pointer-events:none!important;transition:opacity .4s;z-index:6;width:max-content;max-width:min(84vw,520px);text-align:center}
 .fshint[hidden]{display:none}
+/* 控件栏的标签点了以后：画面中间一条「第 N 分加上了「好球」· 撤销」，3 秒，点一下去掉（11-22：误点会给正在放的那一分多一个标签） */
+.fsundo{position:absolute;left:50%;top:30%;transform:translateX(-50%);z-index:7;border:0;border-radius:999px;background:rgba(0,0,0,.78);color:#fff;font:inherit;font-size:15px;font-weight:700;padding:10px 16px;white-space:nowrap;touch-action:manipulation}
+.fsundo b{color:#ffd24a;margin-left:10px}
+.fsundo[hidden]{display:none}
+#scr.fs.split .fsundo{top:12%}
 /* 备注当字幕：整分都在，最多两行；点字幕就改 */
 .fssub{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(var(--fsbot) - 2px);max-width:min(88%,760px);background:rgba(0,0,0,.45);color:#fff;font-size:16px;line-height:1.35;font-weight:600;text-shadow:0 1px 2px #000;
   padding:0;border:6px solid transparent;border-left-width:12px;border-right-width:12px;border-radius:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-align:center;cursor:pointer;transition:bottom .25s}
@@ -575,7 +586,7 @@ try{ if(JSON.parse(localStorage.getItem(STORE_NS+"courtside-taps-v1")||"[]").som
             <span class="mid"><button class="fsb" id="fsPrev" type="button" title="上一分（↑）" aria-label="上一分"></button><button class="fsb" id="fsB2" type="button" title="退 2 秒（←）">−2s</button><button class="fsb" id="fsPlay" type="button">▶</button><button class="fsb" id="fsF2" type="button" title="进 2 秒（→）">+2s</button><button class="fsb" id="fsNext" type="button" title="下一分（↓）" aria-label="下一分"></button></span>
             <button class="fsb" id="fsRate" type="button" title="播放速度">1×</button><button class="fsb" id="fsStar" type="button" title="这一分打 ★ / 取消">☆</button><span class="fsqts" id="fsQts"></span><button class="fsb" id="fsAddN" type="button">＋ 备注</button><button class="fsb" id="fsListB" type="button">列表</button></div>
         </div>
-        <div class="fsbub" id="fsBub" hidden></div><div class="fstgt" id="fsTgt" hidden></div><div class="fsline" id="fsLine" hidden></div><div class="fshint" id="fsHint" hidden></div>
+        <div class="fsbub" id="fsBub" hidden></div><div class="fstgt" id="fsTgt" hidden></div><div class="fsline" id="fsLine" hidden></div><div class="fshint" id="fsHint" hidden></div><button class="fsundo" id="fsUndo" type="button" hidden></button>
         <div class="fslist" id="fsList" hidden>
           <div class="fslh"><select id="fsFilt" aria-label="只看"></select><label title="放完一分自动接列表下一分，跳过分与分之间的空档；关了放完这一分停住"><input type="checkbox" id="fsChain"> 连着放<span id="fsChTag"></span></label><button class="fsb x" id="fsListX" type="button" aria-label="收起列表">✕</button></div>
           <div class="fsrows" id="fsRows"></div>
@@ -4038,7 +4049,7 @@ let fsTheme=null;
 function fsThemeSet(on){ let m=document.querySelector('meta[name="theme-color"]');
   if(on){ fsTheme={had:!!m, v:m?m.getAttribute("content"):null}; if(!m){ m=document.createElement("meta"); m.name="theme-color"; document.head.appendChild(m); } m.setAttribute("content","#000000"); }
   else if(fsTheme){ if(fsTheme.had) m&&m.setAttribute("content",fsTheme.v); else if(m) m.remove(); fsTheme=null; } }
-let fsOn=false, fsSys=false, fsChain=true, fsListOpen=false, fsTimer=0, fsScrub=-1, fsNoteI=-1, fsNoteResume=false, fsBarSig="", fsListSig="", fsFiltSig="", fsLastK=-2, fsRowK=-2;
+let fsScrollY=0, fsOn=false, fsSys=false, fsChain=true, fsListOpen=false, fsTimer=0, fsScrub=-1, fsNoteI=-1, fsNoteResume=false, fsBarSig="", fsListSig="", fsFiltSig="", fsLastK=-2, fsRowK=-2;
 const fsCan=()=>!!(document.fullscreenEnabled||document.webkitFullscreenEnabled);
 /* 正在看的是第几分：选中的那一分还在它的起止里就是它；不然取视频现在位置之前开始的最后一分 */
 function fsCur(){ if(!cur||!canPlay()) return -1; const sp=spans(cur), t=video.currentTime;
@@ -4050,13 +4061,14 @@ function fsNeighbor(k,d){ const L=listOrder; if(!L.length) return -1; const p=L.
   const c=L.filter(i=>d>0?i>k:i<k); return c.length ? (d>0?Math.min(...c):Math.max(...c)) : -1; }
 function fsEnter(){ if(!canPlay()||exporting||fsOn) return;
   fsOn=true; fsChain=!proLocked("chain", filtKind($("filt").value), ENT); fsListOpen=false; fsBarSig=""; fsListSig=""; fsFiltSig="";
+  fsScrollY=window.scrollY||document.documentElement.scrollTop||0; document.documentElement.style.setProperty("--fsy", (-fsScrollY)+"px");
   scr.classList.add("fs"); document.documentElement.classList.add("fs-on"); fsThemeSet(true); fsHomeHint(); fsQtBuild(); scr.classList.toggle("nosb", lget(FS_SB,"1")==="0");
   if(sel<0) sel=fsCur();
   const rq=scr.requestFullscreen||scr.webkitRequestFullscreen;
   if(fsCan() && rq){ try{ fsSys=true; const p=rq.call(scr); if(p&&p.catch) p.catch(()=>{ fsSys=false; }); }catch(e){ fsSys=false; } }
   fsLayout(); renderReview(); fsPoke(); }
 function fsExit(){ if(!fsOn) return; fsNoteClose(false); fsOn=false; clearTimeout(fsTimer); fsScrub=-1;
-  scr.classList.remove("fs","ui-off","split","port","lst","nosb","fill"); document.documentElement.classList.remove("fs-on"); fsThemeSet(false); fsToastQ=[]; $("fsList").hidden=true; $("fsBub").hidden=true; scr.style.removeProperty("--fsbot");
+  $("fsUndo").hidden=true; fsUndoAct=null; scr.classList.remove("fs","ui-off","split","port","lst","nosb","fill"); document.documentElement.classList.remove("fs-on"); document.documentElement.style.removeProperty("--fsy"); try{ window.scrollTo(0, fsScrollY); }catch(e){} fsThemeSet(false); fsToastQ=[]; $("fsList").hidden=true; $("fsBub").hidden=true; scr.style.removeProperty("--fsbot");
   if(fsSys){ fsSys=false; const d=document; if(d.fullscreenElement||d.webkitFullscreenElement){ try{ const p=(d.exitFullscreen||d.webkitExitFullscreen).call(d); if(p&&p.catch) p.catch(()=>{}); }catch(e){} } }
   if(cur && canPlay()) sel=fsCur(); render(); try{ scr.scrollIntoView({block:"nearest"}); }catch(e){} }
 for(const ev of ["fullscreenchange","webkitfullscreenchange"]) document.addEventListener(ev,()=>{ if(fsOn && fsSys && !(document.fullscreenElement||document.webkitFullscreenElement)){ fsSys=false; fsExit(); } });
@@ -4074,14 +4086,21 @@ function fsLayout(){ if(!fsOn) return; const W=scr.clientWidth||innerWidth, Hh=s
 addEventListener("resize",()=>{ if(fsOn){ fsLayout(); fsDraw(); } });
 /* 底栏变高（时间那行写上字、按钮换行）就重量一次，字幕跟着挪，不压回合条 */
 if(window.ResizeObserver) new ResizeObserver(()=>{ if(fsOn) scr.style.setProperty("--fsbot", $("fsBot").offsetHeight+"px"); }).observe($("fsBot"));
-{ let fsSz=""; const re=()=>{ if(!fsOn) return; const k=scr.clientWidth+"x"+scr.clientHeight+"|"+video.videoWidth+"x"+video.videoHeight; if(k===fsSz) return; fsSz=k; fsLayout(); fsDraw(); };
+{ let fsSz=""; const re=()=>{ if(!fsOn) return; const k=scr.clientWidth+"x"+scr.clientHeight+"|"+video.videoWidth+"x"+video.videoHeight; if(k===fsSz) return; fsSz=k; fsLayout(); fsDraw(); fsUnstick(); };
+  /* 转屏以后：滚动归零，再让全屏层重排一次（iPhone 转屏后固定层点的位置会跟画的位置错开，重排一次就对上） */
+  /* 11-22 他补「点播放按钮，显示点在下面的 好球/下网等按钮上了」：不是被挡，是点的位置整体往下偏了一排（约 60 像素 ≈ 桌面图标打开时竖屏顶上的安全区）。
+     判断：转竖屏时排版已按竖屏算好，正在放视频时屏幕上画的控件层没跟着重画、还在横屏时的位置。这里转屏后真正逼它重排重画：挪 1 像素再挪回、换一次合成层 */
+  const fsUnstick=()=>{ if(!fsOn) return; try{ if(window.scrollX||window.scrollY) window.scrollTo(0,0); const se=document.scrollingElement; if(se&&se.scrollTop) se.scrollTop=0; }catch(e){}
+    scr.style.top="1px"; scr.style.transform="translateZ(0)"; void scr.offsetHeight;
+    requestAnimationFrame(()=>{ scr.style.top=""; void scr.offsetHeight; requestAnimationFrame(()=>{ scr.style.transform=""; }); }); };
+  if(window.visualViewport) visualViewport.addEventListener("resize",()=>{ if(fsOn && fsNoteI<0) setTimeout(fsUnstick,120); });
   if(window.ResizeObserver) new ResizeObserver(re).observe(scr);
-  video.addEventListener("resize",re); addEventListener("orientationchange",()=>setTimeout(re,350)); }
+  video.addEventListener("resize",re); addEventListener("orientationchange",()=>{ setTimeout(()=>{ re(); fsUnstick(); },350); setTimeout(fsUnstick,800); setTimeout(fsUnstick,1500); }); }
 video.addEventListener("loadedmetadata",()=>{ if(fsOn) fsLayout(); });
 /* 控件：点一下画面出现 / 隐藏；播放中 3 秒不碰自动隐藏（开着列表、写备注、按着回合条时不藏；竖屏看横拍的控件不盖画面，不藏） */
 function fsPoke(){ if(!fsOn) return; scr.classList.remove("ui-off"); clearTimeout(fsTimer);
   fsTimer=setTimeout(()=>{ if(fsOn && !video.paused && fsScrub<0 && fsNoteI<0 && !fsListOpen && !scr.classList.contains("split")) scr.classList.add("ui-off"); },3000); }
-scr.addEventListener("click",e=>{ if(!fsOn || !(e.target===video || e.target===$("fsui"))) return;
+scr.addEventListener("click",e=>{ if(!fsOn || !(e.target===video || e.target===scr || e.target===$("fsui"))) return;
   if(scr.classList.contains("ui-off")) fsPoke(); else if(!scr.classList.contains("split")){ clearTimeout(fsTimer); scr.classList.add("ui-off"); } });
 $("fsui").addEventListener("pointerdown",()=>fsPoke());
 scr.addEventListener("pointermove",e=>{ if(fsOn && e.pointerType==="mouse" && fsScrub<0) fsPoke(); });
@@ -4231,7 +4250,12 @@ function fsQtFit(){ const box=$("fsQts"), bs=[...box.children]; bs.forEach(b=>b.
   const ref=$("fsRate"), last=()=>{ const L=[$("fsAddN"), $("fsListB")].filter(e=>e.offsetParent); return L[L.length-1]; };
   for(let i=bs.length-1;i>=0;i--){ const l=last(); if(!l || l.offsetTop<=ref.offsetTop+2) break; bs[i].hidden=true; } }
 $("fsQts").addEventListener("click",e=>{ const b=e.target.closest("[data-t]"); if(!b||!cur) return; e.stopPropagation(); const k=fsCur(), x=cur.taps[k]; if(!x) return;
-  const t=b.dataset.t, on=!tagsOf(x).includes(t); toggleTag(x,t,on); if(on) tagBump(t); persist(); fsBarSig=""; fsTick(); fsPoke(); fsDraw(); });
+  const t=b.dataset.t, on=!tagsOf(x).includes(t); toggleTag(x,t,on); if(on) tagBump(t); persist(); fsBarSig=""; fsTick(); fsPoke(); fsDraw(); fsUndoShow(k,t,on); });
+let fsUndoT=0, fsUndoAct=null;
+function fsUndoShow(k,t,on){ const u=$("fsUndo"); u.innerHTML=`第 ${k+1} 分${on?"加上":"去掉"}了「${esc(t)}」<b>撤销</b>`; u.hidden=false; fsUndoAct={k,t,on};
+  clearTimeout(fsUndoT); fsUndoT=setTimeout(()=>{ u.hidden=true; fsUndoAct=null; },3000); }
+$("fsUndo").addEventListener("click",e=>{ e.stopPropagation(); const a=fsUndoAct, u=$("fsUndo"); u.hidden=true; clearTimeout(fsUndoT); fsUndoAct=null; if(!a||!cur||!cur.taps[a.k]) return;
+  toggleTag(cur.taps[a.k], a.t, !a.on); persist(); fsBarSig=""; fsDraw(); });
 $("fsNtxt").addEventListener("keydown",e=>{ e.stopPropagation(); if(e.key==="Escape"){ e.preventDefault(); fsNoteClose(false); } else if(e.key==="Enter" && (e.metaKey||e.ctrlKey) && !e.isComposing){ e.preventDefault(); fsNoteClose(true); } });
 /* 电脑上：空格播放暂停，← → 退进 2 秒，↑ ↓ 上一分下一分，Esc 退出（系统全屏时 Esc 先由浏览器退系统全屏，跟着退出全屏回看） */
 function fsKey(e){ if(e.target.closest("input,textarea,select")) return; const k=e.key;
@@ -4262,6 +4286,20 @@ function msUpdate(){ if(!MS) return;
 function msPos(){ if(!MS || !MS.setPositionState || !canPlay()) return; const d=video.duration;
   if(!(d>0) || !isFinite(d)) return; try{ MS.setPositionState({duration:d, playbackRate:video.playbackRate||1, position:Math.min(d, Math.max(0, video.currentTime))}); }catch(e){} }
 function msAct(a,f){ try{ MS.setActionHandler(a,f); }catch(e){} }
+/* 播放卡住自救（v1.8.0，产品负责人 2026-11-22 iPad Pro「视频播放卡顿频发……突然停顿，但是播放按钮仍然播放状态」「卡住后要快进或者快退恢复」）：
+   正在放时每 0.7 秒看一次：连着两次时间不走，或者时间在走却一帧都没画（requestVideoFrameCallback 没回调），就原地跳 0.01 秒——等于替他点了一下 ±2 秒。
+   暂停、正在跳、还在缓冲（readyState < 3）、在导出时不管。根本原因还在查，这一条先兜底；wdN 记救了几次（审查副本里显示） */
+let wdLast=-1, wdHit=0, wdFrames=0, wdN=0, wdHook=false;
+function wdFrame(){ wdFrames++; try{ video.requestVideoFrameCallback(wdFrame); }catch(e){} }
+setInterval(()=>{ if(video.paused || video.seeking || video.ended || video.readyState<3 || exporting || !video.currentSrc){ wdLast=-1; wdHit=0; wdFrames=0; return; }
+  if(!wdHook && typeof video.requestVideoFrameCallback==="function"){ wdHook=true; wdFrames=1; try{ video.requestVideoFrameCallback(wdFrame); }catch(e){ wdHook=false; } }
+  const t=video.currentTime, adv=wdLast<0 ? 1 : t-wdLast; wdLast=t;
+  const r=video.getBoundingClientRect(), seen=document.visibilityState==="visible" && r.width>0 && r.bottom>0 && r.top<innerHeight;   // 滚出屏幕时浏览器可以不画帧，不算卡
+  const stuck=adv<0.05 || (seen && wdHook && wdFrames===0 && adv>0.3); wdFrames=0;
+  if(!stuck){ wdHit=0; return; }
+  if(++wdHit<2) return; wdHit=0; wdN++; wdLast=-1;
+  try{ video.currentTime=Math.min((video.duration||t+1)-0.05, t+0.01); }catch(e){}
+  if(wdHook){ try{ video.requestVideoFrameCallback(wdFrame); }catch(e){} } }, 700);
 if(MS){
   msAct("previoustrack",()=>{ if(!canPlay()) return; const i=fsNeighbor(fsCur(),-1); if(i>=0) fsJump(i,true); });
   msAct("nexttrack",()=>{ if(!canPlay()) return; const i=fsNeighbor(fsCur(),1); if(i>=0) fsJump(i,true); });
@@ -4425,7 +4463,7 @@ for(const id of ["bLive","bReplay"]) $(id).addEventListener("click",()=>{ if(!pe
 /* 新版提示（试用者 2026-11-10：posecap.com 已经更新，桌面 App 里还是旧页面——App 切回前台不会重新载入，场边打点页也没有刷新键）：
    posecap.com 版的 BUILD 是 make_courtside 填的这一版指纹；回到前台、回到首页时去网站上取一下这一页（不走缓存），指纹不一样就在顶上提示「有新版本」。
    正在现场打点、这局没打完时不提示，回到首页或打完再提示。claude.ai 版 BUILD 为空，不查（发布新版时 claude.ai 自己会重新载入） */
-const BUILD = "4b87c006b181";
+const BUILD = "e19dbebb461e";
 let newBuild="", lastCheck=0;
 function freshReload(tag){ location.replace(location.pathname+"?v="+encodeURIComponent(tag||Date.now())); }   // 换个地址参数，绕开手机缓存
 async function checkUpdate(force){ if(!BUILD || newBuild) return; const now=Date.now(); if(!force && now-lastCheck<60000) return; lastCheck=now;
