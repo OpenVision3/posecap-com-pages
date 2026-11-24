@@ -575,7 +575,7 @@ try{ if(JSON.parse(localStorage.getItem(STORE_NS+"courtside-taps-v1")||"[]").som
     <div class="novid" id="noVid" hidden><b>没有载入视频</b>
       <p class="hint">右边照样能看每一分谁发球、谁得分、打完几比几，能筛「只看」、打 ★、改名字和开局比分。长度按这一分发球到下一分发球相隔多久算（含分与分之间的空档）。<br>要一分一分回放、调起止、剪带比分的视频，再载入这局的比赛录像。</p>
       <button class="go alt" id="bLoadVid" type="button" style="font-size:16px;padding:10px 16px">载入比赛视频</button></div>
-    <div class="screen" id="scr"><video id="video" playsinline preload="metadata"></video><div class="sb" id="sb" hidden></div><button class="vswap" id="vSwap" type="button" title="换一个视频（这一局的视频选错了）">换视频</button><button class="vmute" id="vMute" type="button"></button><button class="vfs" id="vFs" type="button" title="全屏回看（电脑上：空格播放 / 暂停，← → 退进 2 秒，↑ ↓ 上一分 / 下一分，Esc 退出）" hidden>⛶ 全屏</button>
+    <div class="screen" id="scr"><video id="video" playsinline preload="metadata" disablepictureinpicture></video><div class="sb" id="sb" hidden></div><button class="vswap" id="vSwap" type="button" title="换一个视频（这一局的视频选错了）">换视频</button><button class="vmute" id="vMute" type="button"></button><button class="vfs" id="vFs" type="button" title="全屏回看（电脑上：空格播放 / 暂停，← → 退进 2 秒，↑ ↓ 上一分 / 下一分，Esc 退出）" hidden>⛶ 全屏</button>
       <!-- 全屏回看（v1.7.0，R-121）：只在 #scr.fs 时显示 -->
       <div class="fsui" id="fsui">
         <div class="fstop"><button class="fsb" id="fsBack" type="button">‹ 返回编辑</button><span class="gap"></span><button class="fsb tg" id="fsSb" type="button" title="画面上的比分牌：显示 / 不显示">比分</button><button class="fsb tg" id="fsNt" type="button" title="备注字幕：显示 / 不显示">字幕</button><button class="fsb tg" id="fsMute" type="button"></button></div>
@@ -2570,6 +2570,9 @@ const KEY = STORE_NS+"courtside-taps-v1", PRE = 1.5, GAP = 1.0, LAST = 15;   // 
 let cur = null, lock = null, view = "home", sel = -1, playEnd = null, videoStart = null, exporting = false;
 let vidFor = null, vidBlob = null;   // vidBlob：载入的视频文件本身（逐帧导出直接读它）   // 视频载给了哪条记录；没载视频也能回看（试用者 2026-11-06 问「没有视频怎么回看」）：列表、比分、★、改名都能用，回放和剪视频要载入视频
 const video = $("video");
+/* 不给画中画（v1.8.0，产品负责人 2026-11-24 选 A）：iPad 系统全屏时 Safari 自带的画中画按钮一点，视频缩成小窗，比分、回合条、控件留在黑底页面上；
+   <video> 上写了 disablepictureinpicture，这里再按属性设一次（老一点的 Safari 只认属性）。iPhone 页面内铺满，本来就没有这个按钮 */
+try{ video.disablePictureInPicture=true; }catch(e){}
 function canPlay(){ return !!cur && vidFor===cur.id && onVideo(cur); }
 /* 每一分多长：载了视频按回合起止；没视频按这一分发球到下一分发球相隔多久（两台手机 / 看录像记的时刻都行）。
    最后一分没有下一次发球（产品负责人 2026-11-19「为什么最后一分没有时长？」）：按过「回合结束」就用它（发球 → 回合结束，是真的回合长度，进统计）；
@@ -4289,17 +4292,20 @@ function msAct(a,f){ try{ MS.setActionHandler(a,f); }catch(e){} }
 /* 播放卡住自救（v1.8.0，产品负责人 2026-11-22 iPad Pro「视频播放卡顿频发……突然停顿，但是播放按钮仍然播放状态」「卡住后要快进或者快退恢复」）：
    正在放时每 0.7 秒看一次：连着两次时间不走，或者时间在走却一帧都没画（requestVideoFrameCallback 没回调），就原地跳 0.01 秒——等于替他点了一下 ±2 秒。
    暂停、正在跳、还在缓冲（readyState < 3）、在导出时不管。根本原因还在查，这一条先兜底；wdN 记救了几次（审查副本里显示） */
-let wdLast=-1, wdHit=0, wdFrames=0, wdN=0, wdHook=false;
+/* 11-22 二改（产品负责人在 beta 上「iPad上播放时还是有卡顿，但是没有停的了」）：每 0.35 秒看一次、连着两次 ≈ 0.7 秒就救（原来 0.7 秒一次 ≈ 1.4 秒）；
+   刚跳完、刚开始放的 0.8 秒里时间本来就可能不走，这段不判 */
+let wdLast=-1, wdHit=0, wdFrames=0, wdN=0, wdHook=false, wdQuiet=0;
+for(const ev of ["seeked","play","playing","ratechange"]) video.addEventListener(ev,()=>{ wdQuiet=performance.now()+800; wdLast=-1; wdHit=0; });
 function wdFrame(){ wdFrames++; try{ video.requestVideoFrameCallback(wdFrame); }catch(e){} }
-setInterval(()=>{ if(video.paused || video.seeking || video.ended || video.readyState<3 || exporting || !video.currentSrc){ wdLast=-1; wdHit=0; wdFrames=0; return; }
+setInterval(()=>{ if(video.paused || video.seeking || video.ended || video.readyState<3 || exporting || !video.currentSrc || performance.now()<wdQuiet){ wdLast=-1; wdHit=0; wdFrames=0; return; }
   if(!wdHook && typeof video.requestVideoFrameCallback==="function"){ wdHook=true; wdFrames=1; try{ video.requestVideoFrameCallback(wdFrame); }catch(e){ wdHook=false; } }
   const t=video.currentTime, adv=wdLast<0 ? 1 : t-wdLast; wdLast=t;
   const r=video.getBoundingClientRect(), seen=document.visibilityState==="visible" && r.width>0 && r.bottom>0 && r.top<innerHeight;   // 滚出屏幕时浏览器可以不画帧，不算卡
-  const stuck=adv<0.05 || (seen && wdHook && wdFrames===0 && adv>0.3); wdFrames=0;
+  const stuck=adv<0.03 || (seen && wdHook && wdFrames===0 && adv>0.2); wdFrames=0;
   if(!stuck){ wdHit=0; return; }
   if(++wdHit<2) return; wdHit=0; wdN++; wdLast=-1;
   try{ video.currentTime=Math.min((video.duration||t+1)-0.05, t+0.01); }catch(e){}
-  if(wdHook){ try{ video.requestVideoFrameCallback(wdFrame); }catch(e){} } }, 700);
+  if(wdHook){ try{ video.requestVideoFrameCallback(wdFrame); }catch(e){} } }, 350);
 if(MS){
   msAct("previoustrack",()=>{ if(!canPlay()) return; const i=fsNeighbor(fsCur(),-1); if(i>=0) fsJump(i,true); });
   msAct("nexttrack",()=>{ if(!canPlay()) return; const i=fsNeighbor(fsCur(),1); if(i>=0) fsJump(i,true); });
@@ -4463,7 +4469,7 @@ for(const id of ["bLive","bReplay"]) $(id).addEventListener("click",()=>{ if(!pe
 /* 新版提示（试用者 2026-11-10：posecap.com 已经更新，桌面 App 里还是旧页面——App 切回前台不会重新载入，场边打点页也没有刷新键）：
    posecap.com 版的 BUILD 是 make_courtside 填的这一版指纹；回到前台、回到首页时去网站上取一下这一页（不走缓存），指纹不一样就在顶上提示「有新版本」。
    正在现场打点、这局没打完时不提示，回到首页或打完再提示。claude.ai 版 BUILD 为空，不查（发布新版时 claude.ai 自己会重新载入） */
-const BUILD = "e19dbebb461e";
+const BUILD = "0bc4b9dc1e04";
 let newBuild="", lastCheck=0;
 function freshReload(tag){ location.replace(location.pathname+"?v="+encodeURIComponent(tag||Date.now())); }   // 换个地址参数，绕开手机缓存
 async function checkUpdate(force){ if(!BUILD || newBuild) return; const now=Date.now(); if(!force && now-lastCheck<60000) return; lastCheck=now;
