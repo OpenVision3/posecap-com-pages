@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>场边打点</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="icon-192.png"><meta name="apple-mobile-web-app-title" content="场边打点"><meta name="theme-color" content="#185943">
 <!-- 场边打点独立工具（试用者 2026-11-04 定：给家长单独用，不依赖逐拍标注器；先只做羽毛球，先放 claude.ai，稳定后放 posecap.com）。
@@ -236,6 +236,8 @@ input[type=number]{width:3.6em}
 @media (max-width:860px){.review{grid-template-columns:1fr}}
 .vbox{display:flex;flex-direction:column;gap:8px;min-width:0}
 .screen{position:relative;background:#000;border-radius:12px;overflow:hidden;display:flex;justify-content:center}
+/* 框贴住视频本身（产品负责人 2026-11-22「竖屏黑边」截图 21：竖拍视频左右各留一条黑边，「全屏」「换视频」压在黑边上）：框跟视频一样宽、居中 */
+.screen:not(.fs){width:fit-content;max-width:100%;margin-left:auto;margin-right:auto}
 .screen video{display:block;max-width:100%;max-height:min(68vh,720px);width:auto;height:auto}
 /* 比分栏（试用者 2026-11-04：比分不随字体、发球状态晃动）：顶部居中，格子固定——羽毛球位 | 名字 | 两位数比分 : 两位数比分 | 名字 | 羽毛球位 */
 .sb{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:rgba(20,30,25,.78);color:#fff;border-radius:8px;padding:4px 10px;font-weight:800;font-size:18px;pointer-events:none;
@@ -295,7 +297,17 @@ input[type=number]{width:3.6em}
 .plist tr.nrow td{font-size:12.5px;line-height:1.3;color:var(--muted);padding-top:0;max-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .plist tr.nrow td b{color:var(--fg);font-weight:600;margin-right:4px}
 .plist tr.hasnote td{border-bottom:0}
+/* 快速备注（v1.8.0）：标签按钮（编辑页、全屏输入条）和显示用的小圆角块 */
+.tagpick{display:grid;gap:6px;margin:0 0 6px}
+.tgrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tgg{font-size:12px;color:var(--muted);min-width:2.6em}
+.tgb{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:0 12px;min-height:34px;font:inherit;font-size:14px;font-weight:700;touch-action:manipulation;cursor:pointer}
+.tgb.on{background:#F2B01E;border-color:#F2B01E;color:#111}
+.tgb.more,.tgb.add{border-style:dashed;color:var(--muted);font-weight:600}
+.tgc{display:inline-block;padding:0 6px;margin:0 4px 2px 0;border-radius:6px;background:rgba(242,176,30,.25);font-size:.9em;font-weight:700;line-height:1.55;white-space:nowrap}
+.tgx{white-space:normal}
 .adj textarea.note{font:inherit;font-size:16px;line-height:1.35;width:100%;box-sizing:border-box;min-height:64px;resize:vertical;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg)}
+.protag{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:6px;font-size:11px;font-weight:800;line-height:1.4;background:#F2B01E;color:#1d2b24;vertical-align:1px}
 .plist td.lasthint{font-size:12.5px;line-height:1.35;color:var(--warn);background:var(--warnbg);text-align:left;white-space:normal}
 .warn{color:#c0392b}
 /* 回看页名字框占满这一行（试用者 2026-11-10：名字显示不全，两边又空着）：比分居中，两边名字框各占剩下的一半 */
@@ -328,8 +340,171 @@ progress{width:100%}
 .expov{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(20,30,25,.85);color:#fff;border-radius:10px;padding:8px 12px;display:flex;gap:10px;align-items:center;font-size:14px;white-space:nowrap}
 /* 换视频叠在画面右下角（试用者 2026-11-10：放在播放按钮那一排，手机上单独占了一行） */
 .vswap{position:absolute;right:8px;bottom:8px;z-index:3;border:0;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:700;background:rgba(20,30,25,.6);color:#fff}
-.vmute{position:absolute;right:8px;top:8px;z-index:3;border:0;border-radius:999px;width:40px;height:40px;padding:0;font-size:20px;line-height:40px;background:rgba(20,30,25,.6);color:#fff}
+.vmute{position:absolute;right:8px;top:8px;z-index:3;border:0;border-radius:999px;width:40px;height:40px;padding:0;font-size:20px;line-height:40px;background:rgba(20,30,25,.6);color:#fff;display:flex;align-items:center;justify-content:center}
+.ic{width:22px;height:22px;display:block;flex:none}
 .review.busy .vswap,.review.busy .vmute{display:none}
+/* 全屏回看（v1.7.0，R-121，产品负责人 2026-11-21「okay，就按这个先出一个样页看看效果」，设计稿 trishot 写）：
+   #scr 加 .fs 铺满整个窗口（能系统全屏的设备再叫系统全屏，iPhone 上只能页面内铺满）；控件浮在画面上，点一下出现 / 隐藏，播放中 3 秒不碰自动藏；
+   竖屏看横拍的视频（.split）：视频在上、控件和列表排在下面空出来的地方，不盖画面，控件不自动藏 */
+.vfs{position:absolute;left:8px;bottom:8px;z-index:3;border:0;border-radius:999px;height:32px;padding:0 12px;font-size:13px;font-weight:800;background:rgba(20,30,25,.6);color:#fff}
+.review.busy .vfs{display:none}
+.fsui{display:none}
+html.fs-on,html.fs-on body{overflow:hidden}
+/* 全屏时把底下的页面钉住（v1.8.0 beta 真机 11-22「从全屏横屏模式切换到竖屏模式后，上面的控件都不可点击。感觉好像控件高度错位了」）：
+   编辑页是长页面，进全屏前已经往下滚了一段；转屏时 Safari 会改这段滚动，iPhone 上固定层画在对的地方、点的位置却差了这段。钉住就不会滚 */
+html.fs-on body{position:fixed;left:0;right:0;top:var(--fsy,0);width:100%}
+/* 全屏时页面底色纯黑：iPhone Safari 的地址栏、底部工具栏按页面底色和 theme-color 上色（产品负责人 2026-11-22「浏览器的背景色不是全黑，如何解决？」），退出时换回来 */
+html.fs-on,html.fs-on body{background:#000!important}
+/* 手机和视频同为竖（或同为横）、长宽比只差一点时铺满，不留窄黑边：上下（或左右）裁掉一小条（同日，trishot 提议先做出来给他看） */
+#scr.fs.fill video{object-fit:cover}
+#scr.fs{touch-action:manipulation;position:fixed;inset:0;z-index:60;border-radius:0;height:100vh;height:100dvh;width:100vw;align-items:center;--fsbot:96px;--fstop:52px;color:#fff;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-sizing:border-box}
+#scr.fs video{width:100%;height:100%;max-height:none;max-width:none;object-fit:contain;pointer-events:none}
+/* 全屏时视频本身不接手指（v1.8.0 beta 真机 11-22：Safari「列表一览上面的控件都不可点击」「转回横屏就好了」，播放中横屏转竖屏才有）：
+   iPhone 上正在放的视频单独一层，转成竖屏后画到了顶上一小块，接手指的范围却还是横屏时铺满的大小，盖住了列表上面的控件；
+   视频不接手指，点画面出现 / 隐藏控件改由外层（#scr）接 */
+#scr.fs .vswap,#scr.fs .vmute,#scr.fs .vfs{display:none}
+#scr.fs .fsui{display:block;position:absolute;inset:0;pointer-events:none}
+#scr.fs .fsui>*{pointer-events:auto}
+#scr.fs .sb{top:calc(env(safe-area-inset-top) + 10px);transition:opacity .25s}
+#scr.fs.nosb .sb{display:none}
+.fsb{border:0;border-radius:999px;min-height:40px;min-width:40px;padding:0 12px;background:rgba(20,30,25,.62);color:#fff;font-weight:800;font-size:15px;white-space:nowrap;touch-action:manipulation;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.fsb.tg{background:rgba(255,255,255,.92);color:#111}
+.fsb.tg.off{background:rgba(20,30,25,.45);color:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4);text-decoration:line-through}
+.fsb:disabled{opacity:.35}
+.fstop{position:absolute;left:0;right:0;top:0;display:flex;gap:6px;align-items:center;padding:calc(env(safe-area-inset-top) + 6px) calc(env(safe-area-inset-right) + 8px) 6px calc(env(safe-area-inset-left) + 8px);
+  background:linear-gradient(rgba(0,0,0,.55),transparent);transition:opacity .25s}
+.fstop .gap{flex:1}
+.fsbot{position:absolute;left:0;right:0;bottom:0;padding:18px calc(env(safe-area-inset-right) + 8px) calc(env(safe-area-inset-bottom) + 6px) calc(env(safe-area-inset-left) + 8px);
+  background:linear-gradient(transparent,rgba(0,0,0,.65) 30%);transition:opacity .25s;display:grid;gap:6px}
+.fsrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.fsrow .fsclock{font:700 13px ui-monospace,Menlo,monospace;white-space:nowrap;margin-right:auto;text-shadow:0 1px 2px #000;background:rgba(0,0,0,.4);padding:3px 8px;border-radius:8px}
+.fsrow .fsclock small{display:block;font:600 12px system-ui,sans-serif;opacity:.85}
+.fsrow .mid{display:flex;gap:6px;align-items:center}
+#fsPlay{min-width:56px;font-size:18px;background:rgba(255,255,255,.92);color:#111}
+#scr.fs.ui-off .fstop,#scr.fs.ui-off .fsbot{opacity:0;pointer-events:none}
+/* 写备注时回合条、播放那排藏起来：键盘辅助条盖在上面时不会透出来、也点不到（11-22 截图 22、23） */
+#scr.fs.noting .fsbot,#scr.fs.noting .fssub{visibility:hidden}
+/* 「返回编辑」任何时候都点得到（R-121 2026-11-21 截图 19：放着放着控件藏了，找不到返回）：控件藏起来时它留着、半透明 */
+#scr.fs.ui-off .fstop{opacity:1;background:none}
+#scr.fs .fstop>*{transition:opacity .25s}
+#scr.fs.ui-off .fstop>*{opacity:0}
+#scr.fs.ui-off .fstop>#fsBack{opacity:.8;pointer-events:auto}
+/* iPhone Safari（iOS 26）竖屏的地址栏、底部工具栏浮在页面上，整屏高（dvh）会伸到工具栏底下，回合条和播放那一排被压住；
+   竖屏按「工具栏都展开时剩下的高度」（svh）排，控件落在两条栏之间（截图 19） */
+@media (orientation:portrait){#scr.fs{height:100svh}}
+#scr.fs.ui-off .sb{opacity:.9}
+/* 回合条：每一分等宽（不按时长）；A、B 得分两种色，★ 顶上小星，有备注底下小点，不在列表里的淡掉，正在放的加亮加高 */
+.fsbar{position:relative;height:30px;display:flex;gap:1px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer}
+.fsbar .s{position:relative;flex:1 1 0;min-width:0;max-width:56px;margin:9px 0;border-radius:2px;background:#9fb3a9}
+.fsbar .s.won-A{background:#f7a46a}.fsbar .s.won-B{background:#79aeea}
+.fsbar .s.dim{opacity:.28}
+.fsbar .s.on{margin:2px 0;box-shadow:0 0 0 2px #fff;z-index:2;filter:brightness(1.15)}
+.fsbar .s.star::before{content:"★";position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:10px;color:#ffd24a;line-height:1}
+.fsbar .s.note::after{content:"";position:absolute;bottom:-6px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#fff}
+.fsbar .s .pg{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.55);border-radius:2px;pointer-events:none}
+.fsbub{position:absolute;transform:translateX(-50%);background:#fff;color:#111;font-weight:800;font-size:15px;padding:6px 10px;border-radius:10px;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.4);pointer-events:none!important;z-index:5}
+.fsbub[hidden]{display:none}
+/* 拖回合条：手指下那一分套虚线框，框往上伸出一截（手指挡住回合条），细线连到气泡；原来在放的那一分照旧实心高亮（产品负责人 2026-11-22 问「拖动时是否画一个虚线框表示当前要选的拍？」，trishot 给做法，他回「可以」） */
+/* 11-22 二改「虚线框要保持连续平滑移动，当吸合到拍时，有震动，同时虚线框也需要动画过渡」：拖着走时框跟着手指、矮；吸到一分上滑到正中、长高（.snap），震一下 */
+.fstgt{position:absolute;border:2px dashed #fff;border-radius:6px;box-sizing:border-box;pointer-events:none!important;z-index:5;box-shadow:0 0 0 1px rgba(0,0,0,.35);
+  transition:left .07s linear,top .16s cubic-bezier(.3,1.6,.5,1),height .16s cubic-bezier(.3,1.6,.5,1),border-color .16s,background-color .16s}
+.fstgt.snap{border-color:#ffd24a;background:rgba(255,210,74,.12)}
+.fstgt.nt,.fstgt.nt~.fsline{transition:none}
+.fsline{position:absolute;width:2px;background:#fff;pointer-events:none!important;z-index:5;transition:left .07s linear,top .16s cubic-bezier(.3,1.6,.5,1),height .16s cubic-bezier(.3,1.6,.5,1)}
+.fstgt[hidden],.fsline[hidden]{display:none}
+.fsbub.out{background:#444;color:#fff}
+.fshint{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);background:rgba(0,0,0,.72);color:#fff;font-weight:700;font-size:16px;line-height:1.45;padding:10px 16px;border-radius:12px;pointer-events:none!important;transition:opacity .4s;z-index:6;width:max-content;max-width:min(84vw,520px);text-align:center}
+.fshint[hidden]{display:none}
+/* 控件栏的标签点了以后：画面中间一条「第 N 分加上了「好球」· 撤销」，3 秒，点一下去掉（11-22：误点会给正在放的那一分多一个标签） */
+.fsundo{position:absolute;left:50%;top:30%;transform:translateX(-50%);z-index:7;border:0;border-radius:999px;background:rgba(0,0,0,.78);color:#fff;font:inherit;font-size:15px;font-weight:700;padding:10px 16px;white-space:nowrap;touch-action:manipulation}
+.fsundo b{color:#ffd24a;margin-left:10px}
+.fsundo[hidden]{display:none}
+#scr.fs.split .fsundo{top:12%}
+/* 备注当字幕：整分都在，最多两行；点字幕就改 */
+.fssub{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(var(--fsbot) - 2px);max-width:min(88%,760px);background:rgba(0,0,0,.45);color:#fff;font-size:16px;line-height:1.35;font-weight:600;text-shadow:0 1px 2px #000;
+  padding:0;border:6px solid transparent;border-left-width:12px;border-right-width:12px;border-radius:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-align:center;cursor:pointer;transition:bottom .25s}
+.fssub[hidden]{display:none}
+#scr.fs.ui-off .fssub{bottom:calc(env(safe-area-inset-bottom) + 14px)}
+/* 播放列表：横屏从右侧滑出占三分之一，竖屏从底部升起占下半屏；视频接着放 */
+.fslist{position:absolute;right:0;top:0;bottom:0;width:34%;min-width:280px;background:rgba(22,26,24,.94);display:flex;flex-direction:column;z-index:4;
+  padding:calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 8px) calc(env(safe-area-inset-bottom) + 8px) 8px;box-sizing:border-box}
+.fslist[hidden]{display:none}
+#scr.fs.port .fslist{left:0;right:0;top:auto;width:auto;min-width:0;height:50%;border-radius:14px 14px 0 0;padding-top:8px}
+#scr.fs.lst:not(.port) .fstop,#scr.fs.lst:not(.port) .fsbot{right:max(34%,280px)}
+/* 开着列表时比分牌挪到左边那块的正中、顶栏下面；「列表」按钮收起（列表上有 ✕） */
+#scr.fs.lst:not(.port) .sb{left:calc((100% - max(34%,280px)) / 2);top:calc(env(safe-area-inset-top) + var(--fstop) + 4px)}
+#scr.fs.lst #fsListB{display:none}
+#scr.fs.lst:not(.port) .fssub{left:calc((100% - max(34%,280px)) / 2);max-width:calc((100% - max(34%,280px)) * .9)}
+#scr.fs.split .fshint{top:22%}
+#scr.fs.lst .fsrow{flex-wrap:nowrap;gap:4px}#scr.fs.lst .fsbot .fsrow{display:grid;grid-template-columns:1fr auto auto auto;justify-items:start}#scr.fs.lst .fsrow .fsclock{grid-column:1/-1}#scr.fs.lst .fsrow .mid{gap:4px}#scr.fs.lst .fsrow .fsb{padding:0 8px;font-size:14px}
+#scr.fs.scrub:not(.split) .fssub{bottom:calc(var(--fsbot) + 70px)}
+#scr.fs.lst.port .fsbot{bottom:50%}
+#scr.fs.lst.port .fssub{bottom:calc(50% + var(--fsbot) - 2px)}
+.fslh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.15)}
+.fslh select{font:inherit;font-size:14px;max-width:100%;padding:6px 8px;border-radius:8px;background:#2a2f2c;color:#fff;border:1px solid #445}
+.fslh label{display:inline-flex;gap:6px;align-items:center;font-size:14px;font-weight:700}
+.fslh input{width:auto}
+.fslh .x{margin-left:auto}
+.fsrows{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;margin-top:4px}
+.fsr{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto 40px;gap:2px 8px;align-items:center;padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px;cursor:pointer}
+.fsr>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fsr.on{background:rgba(242,176,30,.28);border-radius:8px}
+.fsr b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.fsr .w-A{color:#f7a46a}.fsr .w-B{color:#79aeea}
+.fsr .len{opacity:.8;font-size:13px}
+.fsr .st{border:0;background:none;color:#ffd24a;font-size:20px;min-height:40px}
+.fsr .nt{grid-column:1/-1;font-size:12.5px;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fsr .nt::before{content:"备注 ";font-weight:800;opacity:.9}
+.fsempty{padding:16px 4px;opacity:.7;font-size:14px}
+/* 竖屏看横拍的视频：视频在上，字幕、控件、列表依次排在下面，不盖画面 */
+#scr.fs.split{flex-direction:column;justify-content:flex-start;align-items:stretch}
+#scr.fs.split .fsui{display:contents}
+#scr.fs.split .fstop{position:static;order:0;background:none}
+#scr.fs.split video{order:1;height:auto;max-height:45dvh;flex:none}
+#scr.fs.split .sb{top:calc(env(safe-area-inset-top) + var(--fstop) + 8px)}
+#scr.fs.split .fssub{position:static;order:2;transform:none;max-width:none;margin:8px 10px 0;border-radius:8px;text-align:left}
+#scr.fs.split .fsbot{position:static;order:3;background:none;padding-top:8px}
+#scr.fs.split .fslist{position:static;order:4;flex:1;min-height:0;width:auto;min-width:0;height:auto;border-radius:0;background:#161a18;padding-top:8px}
+#scr.fs.split #fsListB,#scr.fs.split .fslh .x{display:none}
+#scr.fs.split.ui-off .fstop,#scr.fs.split.ui-off .fsbot{opacity:1;pointer-events:auto}
+/* 全屏里加改备注：先暂停，输入条贴在键盘上方（visualViewport 算键盘高），点空白处不关（不丢字），退出用「取消」 */
+.fsnbg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:8}
+.fsnbg[hidden],.fsnote[hidden]{display:none}
+.fsnote{position:fixed;left:0;right:0;bottom:0;z-index:9;background:#1f2421;color:#fff;padding:8px calc(env(safe-area-inset-right) + 10px) calc(env(safe-area-inset-bottom) + 8px) calc(env(safe-area-inset-left) + 10px);
+  display:grid;gap:6px;box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.fsnote .lab{font-size:13px;opacity:.85;font-weight:700}
+.fsnote .fstags{max-height:34vh;overflow:auto}
+.fsnote .fstags .tagpick{margin:0}
+.fsnote .tgb{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff}
+.fsnote .tgb.on{background:#F2B01E;border-color:#F2B01E;color:#111}
+.fsnote .tgb.more,.fsnote .tgb.add{color:rgba(255,255,255,.75)}
+.fsnote .tgg{color:rgba(255,255,255,.6)}
+.fsnote .r .clrall{margin-right:auto;color:#ff9b8f}
+.fsnote.tight .fstags,.fsnote.tight .clrall{display:none}
+/* 控件栏里的快速标签：和别的按钮一套，有这个词时金底 */
+.fsqts{display:contents}
+.fsb.fsqt{font-size:14px;padding:0 10px}
+.fsb.fsqt.on{background:#F2B01E;color:#111}
+.fsb.fsqt[hidden]{display:none}
+#scr.fs.lst .fsqts{display:none}
+.fsnote textarea{font:inherit;font-size:16px;width:100%;box-sizing:border-box;min-height:3.2em;max-height:30vh;padding:8px 10px;border-radius:10px;border:1px solid #556;background:#111;color:#fff;resize:none}
+.fsnote .r{display:flex;gap:8px;justify-content:flex-end}
+.fsnote .r .fsb{min-height:44px}
+.fsnote .r .ok{background:#F2B01E;color:#111}
+.fsnote .tw{position:relative}
+.fsnote .tw textarea{padding-right:44px;display:block}
+.fsnote .clr{position:absolute;right:4px;top:4px;width:36px;height:36px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:15px;font-weight:800;touch-action:manipulation}
+.fsnote .clr[hidden]{display:none}
+/* 键盘上面地方不够（iPhone 横屏只剩 80 像素左右，R-121 2026-11-21 截图 15「横屏输入看不到输入的备注内容」）：收成一行——「第 13 分」小标 + 输入框 + 取消 + 完成 */
+.fsnote.tight{grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px;padding-top:3px;padding-bottom:3px}
+.fsnote.tight .lab{font-size:12px;background:rgba(255,255,255,.12);border-radius:8px;padding:4px 8px;white-space:nowrap}
+.fsnote.tight textarea{min-height:0;height:36px;padding-top:7px;padding-bottom:7px;line-height:1.35}
+.fsnote.tight .clr{top:3px;width:30px;height:30px;font-size:13px}
+.fsnote.tight .r .fsb{min-height:36px}
+@media (max-width:520px){.fsrow .fsb{padding:0 9px;font-size:14px}.fsrow .fsclock{width:100%;margin-right:0;background:none;padding:0 2px}.fsrow .mid{width:100%;justify-content:space-between}}
+/* 窄屏上比分牌挪到顶栏下面，不和按钮叠在一起 */
+@media (max-width:640px){#scr.fs .sb{top:calc(env(safe-area-inset-top) + var(--fstop) + 4px);font-size:16px}}
 .expvid{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;z-index:1}
 .expov{z-index:2}.review.busy .sb{display:none}
 /* 播放那一排在手机上排一行（同日：「1×」掉到第二行）：按钮收窄、时间字小一号 */
@@ -339,7 +514,8 @@ progress{width:100%}
 </head>
 <body>
 <script>/* 有没打完的现场打点时页面一载入就用暗色（试用者 2026-11-10：页面重新载入时会先闪一下亮底） */
-try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!s.ended&&s.mode!=="replay")) document.documentElement.classList.add("quiet"); }catch(e){}</script>
+var STORE_NS="";   /* 存储名前缀（R-125，2026-11-20）：正式版空着；make_courtside --beta 打 beta 包时填 "beta:"，beta 和正式页同在 posecap.com，记录、视频、设置各存各的，beta 怎么改都碰不到正式页 */
+try{ if(JSON.parse(localStorage.getItem(STORE_NS+"courtside-taps-v1")||"[]").some(s=>s&&!s.ended&&s.mode!=="replay")) document.documentElement.classList.add("quiet"); }catch(e){}</script>
 <div class="page">
 <header class="appbar"><svg class="appicon" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="ig" cx=".3" cy=".2" r=".9"><stop offset="0" stop-color="#2f8f68"/><stop offset=".75" stop-color="#185943"/></radialGradient></defs><rect width="100" height="100" rx="22" fill="url(#ig)"/><rect x="14" y="12" width="72" height="44" rx="3" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6"/><text x="50" y="42" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="22" fill="#F2B01E">15:13</text><rect x="10" y="62" width="37" height="28" rx="8" fill="#F07A2A"/><rect x="53" y="62" width="37" height="28" rx="8" fill="#2F7FD9"/><text x="28.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">A</text><text x="71.5" y="82" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="17" fill="#fff">B</text></svg><div class="brand"><b>场边打点</b><small class="ver" id="ver"></small></div><span id="sub"></span><button class="btn" id="heroMore" type="button" aria-controls="hero"></button><button class="btn" id="bReload" type="button" hidden title="重新载入这一页（装到桌面的 App 里没有浏览器的刷新键）">↻</button><button class="btn" id="bHome" type="button" hidden>‹ 返回</button></header>
 <button class="updbar" id="updBar" type="button" hidden>有新版本了，点这里更新 ↻</button>
@@ -368,7 +544,7 @@ try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!
   </div>
   <div class="panel">
     <h2>我的记录<span><button class="linkbtn" id="bBackAll" type="button" title="把这台设备上的全部记录存成一个文件">备份全部</button> · <button class="linkbtn" id="bImport" type="button">载入打点文件</button></span></h2>
-    <p class="bkwarn" id="bkWarn" hidden></p><p class="hint" id="persistNote" hidden></p>
+    <p class="bkwarn" id="bkWarn" hidden></p><p class="hint" id="persistNote" hidden></p><p class="hint" id="proNote" hidden></p>
     <div class="list" id="list"></div>
   </div>
   <div id="raw" hidden><p class="hint">这里不能直接保存文件：长按下面的文字全选、复制，粘贴到备忘录，存成 .json 文件。</p>
@@ -398,7 +574,26 @@ try{ if(JSON.parse(localStorage.getItem("courtside-taps-v1")||"[]").some(s=>s&&!
     <div class="novid" id="noVid" hidden><b>没有载入视频</b>
       <p class="hint">右边照样能看每一分谁发球、谁得分、打完几比几，能筛「只看」、打 ★、改名字和开局比分。长度按这一分发球到下一分发球相隔多久算（含分与分之间的空档）。<br>要一分一分回放、调起止、剪带比分的视频，再载入这局的比赛录像。</p>
       <button class="go alt" id="bLoadVid" type="button" style="font-size:16px;padding:10px 16px">载入比赛视频</button></div>
-    <div class="screen" id="scr"><video id="video" playsinline preload="metadata"></video><div class="sb" id="sb" hidden></div><button class="vswap" id="vSwap" type="button" title="换一个视频（这一局的视频选错了）">换视频</button><button class="vmute" id="vMute" type="button"></button>
+    <div class="screen" id="scr"><video id="video" playsinline preload="metadata" disablepictureinpicture></video><div class="sb" id="sb" hidden></div><button class="vswap" id="vSwap" type="button" title="换一个视频（这一局的视频选错了）">换视频</button><button class="vmute" id="vMute" type="button"></button><button class="vfs" id="vFs" type="button" title="全屏回看（电脑上：空格播放 / 暂停，← → 退进 2 秒，↑ ↓ 上一分 / 下一分，Esc 退出）" hidden>⛶ 全屏</button>
+      <!-- 全屏回看（v1.7.0，R-121）：只在 #scr.fs 时显示 -->
+      <div class="fsui" id="fsui">
+        <div class="fstop"><button class="fsb" id="fsBack" type="button">‹ 返回编辑</button><span class="gap"></span><button class="fsb tg" id="fsSb" type="button" title="画面上的比分牌：显示 / 不显示">比分</button><button class="fsb tg" id="fsNt" type="button" title="备注字幕：显示 / 不显示">字幕</button><button class="fsb tg" id="fsMute" type="button"></button></div>
+        <div class="fssub" id="fsSub" hidden title="点一下改这一分的备注"></div>
+        <div class="fsbot" id="fsBot">
+          <div class="fsbar" id="fsBar" title="按住左右滑，松手跳到那一分"></div>
+          <div class="fsrow"><span class="fsclock" id="fsClock"></span>
+            <span class="mid"><button class="fsb" id="fsPrev" type="button" title="上一分（↑）" aria-label="上一分"></button><button class="fsb" id="fsB2" type="button" title="退 2 秒（←）">−2s</button><button class="fsb" id="fsPlay" type="button">▶</button><button class="fsb" id="fsF2" type="button" title="进 2 秒（→）">+2s</button><button class="fsb" id="fsNext" type="button" title="下一分（↓）" aria-label="下一分"></button></span>
+            <button class="fsb" id="fsRate" type="button" title="播放速度">1×</button><button class="fsb" id="fsStar" type="button" title="这一分打 ★ / 取消">☆</button><span class="fsqts" id="fsQts"></span><button class="fsb" id="fsAddN" type="button">＋ 备注</button><button class="fsb" id="fsListB" type="button">列表</button></div>
+        </div>
+        <div class="fsbub" id="fsBub" hidden></div><div class="fstgt" id="fsTgt" hidden></div><div class="fsline" id="fsLine" hidden></div><div class="fshint" id="fsHint" hidden></div><button class="fsundo" id="fsUndo" type="button" hidden></button>
+        <div class="fslist" id="fsList" hidden>
+          <div class="fslh"><select id="fsFilt" aria-label="只看"></select><label title="放完一分自动接列表下一分，跳过分与分之间的空档；关了放完这一分停住"><input type="checkbox" id="fsChain"> 连着放<span id="fsChTag"></span></label><button class="fsb x" id="fsListX" type="button" aria-label="收起列表">✕</button></div>
+          <div class="fsrows" id="fsRows"></div>
+        </div>
+        <div class="fsnbg" id="fsNbg" hidden></div><div id="fsKbProbe" aria-hidden="true" style="position:fixed;top:0;left:0;width:0;height:0;pointer-events:none"></div>
+        <div class="fsnote" id="fsNote" hidden><div class="lab" id="fsNlab"></div><div class="fstags" id="fsTags"></div><div class="tw"><textarea id="fsNtxt" rows="2" maxlength="500"></textarea><button class="clr" id="fsNclr" type="button" title="清空输入框；清空后点「完成」就删掉这一分的备注" aria-label="清空">✕</button></div>
+          <div class="r"><button class="fsb clrall" id="fsNall" type="button" title="标签和自己写的一起清掉；点「完成」才生效">清空备注</button><button class="fsb" id="fsNno" type="button">取消</button><button class="fsb ok" id="fsNok" type="button">完成</button></div></div>
+      </div>
       <div class="expov" id="expOv" hidden><b>正在导出</b><span id="expTxt"></span><button class="btn" id="bCancel" type="button">取消导出</button></div></div>
     <div class="transport" id="trans">
       <span class="clock" id="clock">00:00.0</span>
@@ -2369,11 +2564,14 @@ if (typeof module === "object" && typeof module.exports === "object") Object.ass
 </script>
 <script>
 const $ = id => document.getElementById(id);
-const VERSION = "v1.6.7";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。v1.6 现场打点页改成单手不看屏幕也能按（斜分椭圆、撤销小椭圆、暗色）、视频和上次导出存本机、页面重新载入回到回看、打完一局提醒保存、首页标「未备份」、请浏览器别清数据（2026-11-10）；v1.6.1 回合结束挪进打点区、有新版时提示更新、桌面 App 里加刷新键（同日）；v1.6.2 ★ 整格好按、手点 ★ 不限个数，「最长的 N 分打 ★」的 N 只管自动挑，「只看」下拉加「打了 ★ 的」、回看视频右上角静音键（默认静音、记住选择）、首页介绍打开 3 次后收起（同日）；v1.6.3 回看编辑栏能改这一分的发球方、能补漏掉的一分；比分和站位对不上时带着查出错的那一分，能「从这一分起比分是 X:Y」或标「只是这一分站错了」，列表写应在左 / 右区（2026-11-18，R-121）；v1.6.4 回看编辑栏重排：常用的两行、不常用的收进「改错」，查错提示压成一行，按钮等宽、高 44px；查一查时锁住无关操作、问题里写第几问和这时的比分、回合条按查到哪一步上色、问到的那一分不是这个人发球时能当场改发球方或补一分、查过再查说清上次的结论并能重新查一遍；一局分几段录时「本局结束」先问是不是这段录像结束、「接着打下一段」不限段数（2026-11-19，R-121）；v1.6.5 回看时每一分能写一段备注（自由输入、带提示文字），列表里有备注的分下面写前几个字，「只看」加「有备注的」，跟着打点文件和备份走，导出视频画面上不打（2026-11-19，R-121）；v1.6.6 手机上存文件不再多出一个「文本.txt」（2026-11-20，R-121）；v1.6.7 导出改成逐帧导出：不再边放边录，直接读视频文件、硬件解码、印比分、硬件编码成 mp4，4K 60 帧的手机视频也流畅（每秒 30 帧，画得慢只是导出久一点），读不了的照旧边放边录；边放边录按视频的帧来画、导出完写明帧数，手机上走边放边录导 4K 先提醒（产品负责人 2026-11-20：手机上导出只有 13 帧/秒，「要做，否则导出功能废了」，R-121）。改了功能往上加，打点文件里记着是哪一版打的
-const KEY = "courtside-taps-v1", PRE = 1.5, GAP = 1.0, LAST = 15;   // 回合 = 发球前 1.5 s 到下一分开始前 1 s；最后一分到发球后 15 s
+const VERSION = "v1.8.0";   // 试用者 2026-11-04 定 v1.0；v1.1 加「回合结束」按钮、首页重做；v1.2 没有视频也能回看（2026-11-06）；v1.2.1 误点「本局结束」能撤销；v1.3 现场打点回首页前先存备份；v1.3.1 名字点选；v1.3.2 开局比分用完清零、打点页写明开局比分；v1.3.3 最后一分按局点 / 半场推；v1.3.4 记录里写明接着哪个比分打的；v1.4 上下半段合并、按任一分重新对齐（剪过头的视频也能对上）；v1.4.1 回合条只显示本局这一段；v1.4.2 常用名字记 50 个、按钮用短名最多两行；v1.4.3 对调挪到「新的一局」行末（2026-11-07）；v1.5 自动挑片：「只看」按人挑好球 / 丢的关键分 / 连丢段 / 接发丢的 / 发球丢的，导出先放片头卡（R-121 改方向，2026-11-09）。v1.6 现场打点页改成单手不看屏幕也能按（斜分椭圆、撤销小椭圆、暗色）、视频和上次导出存本机、页面重新载入回到回看、打完一局提醒保存、首页标「未备份」、请浏览器别清数据（2026-11-10）；v1.6.1 回合结束挪进打点区、有新版时提示更新、桌面 App 里加刷新键（同日）；v1.6.2 ★ 整格好按、手点 ★ 不限个数，「最长的 N 分打 ★」的 N 只管自动挑，「只看」下拉加「打了 ★ 的」、回看视频右上角静音键（默认静音、记住选择）、首页介绍打开 3 次后收起（同日）；v1.6.3 回看编辑栏能改这一分的发球方、能补漏掉的一分；比分和站位对不上时带着查出错的那一分，能「从这一分起比分是 X:Y」或标「只是这一分站错了」，列表写应在左 / 右区（2026-11-18，R-121）；v1.6.4 回看编辑栏重排：常用的两行、不常用的收进「改错」，查错提示压成一行，按钮等宽、高 44px；查一查时锁住无关操作、问题里写第几问和这时的比分、回合条按查到哪一步上色、问到的那一分不是这个人发球时能当场改发球方或补一分、查过再查说清上次的结论并能重新查一遍；一局分几段录时「本局结束」先问是不是这段录像结束、「接着打下一段」不限段数（2026-11-19，R-121）；v1.6.5 回看时每一分能写一段备注（自由输入、带提示文字），列表里有备注的分下面写前几个字，「只看」加「有备注的」，跟着打点文件和备份走，导出视频画面上不打（2026-11-19，R-121）；v1.6.6 手机上存文件不再多出一个「文本.txt」（2026-11-20，R-121）；v1.6.7 导出改成逐帧导出：不再边放边录，直接读视频文件、硬件解码、印比分、硬件编码成 mp4，4K 60 帧的手机视频也流畅（每秒 30 帧，画得慢只是导出久一点），读不了的照旧边放边录；边放边录按视频的帧来画、导出完写明帧数，手机上走边放边录导 4K 先提醒（产品负责人 2026-11-20：手机上导出只有 13 帧/秒，「要做，否则导出功能废了」，R-121）；v1.7.0 全屏回看：视频右上角「⛶ 全屏」，横竖跟着手机走、画面不裁，控件点一下出现、播放中 3 秒自动藏，回合条每分等宽、按住滑冒气泡松手跳过去，列表「只看」同编辑页、连着放默认开跳过空档，备注当字幕、点字幕或「＋ 备注」在全屏里加改（产品负责人 2026-11-21「okay，就按这个先出一个样页看看效果」，样页，R-121）；同版加锁屏「正在播放」：封面换成方形铺满的大图、标题写谁对谁第几分几比几、锁屏 ⏮ ⏭ = 上一分 / 下一分（产品负责人 2026-11-21「当锁屏时，图标显示不太友好。请该进。」，R-121）；样页第 2 稿按 iPhone 截图改：全屏键挪左下不压比分牌、全屏里不双击放大、字幕两行截齐、按钮图形不用表情、顶部「字幕」开关开关两种样子、字幕只听「字幕」开关不自动藏、键盘上面地方不够（iPhone 横屏）写备注收成一行、按量到的位置贴住键盘、竖屏看横拍只留视频贴顶加常驻列表一种布局（转屏、视频后读出尺寸都重判）、「返回编辑」不跟着藏、竖屏按 svh 排避开 Safari 浮动工具栏、编辑页视频框贴住视频不留黑边、横屏写备注提示缩成一句、写备注时底下那排藏起来、点空白不丢字、全屏时页面底色和 theme-color 换纯黑、同向且长宽比相近时铺满不留窄黑边、第一次进全屏提示从桌面图标打开、全屏时间和编辑页一样显示整段视频「0:12.2 / 5:32.6」（第八条三处默认 11-22 定：时间同编辑页、回合条等宽、连着放默认开）、拖回合条时虚线框跟着手指平滑走（矮）、吸到一分上滑到正中长高变金色并轻震、细线连到气泡、滑出松手取消、手指下是第几分按每段实际位置找（分少时不再错开一格）、筛过写列表第几、秒数和列表同口径、方向反着提示一次、字幕贴回合条、回合条每格最宽 56 像素（同日「请改进。全屏按钮位置有覆盖情况。」「请根据截图进行改进。」，R-121）；v1.8.0 快速备注：编辑页和全屏写备注时上面一排标签（露出最常用的 8 个、「更多」展开全部、「＋ 自定义」），点一下加上、再点去掉；标签（x.tags）和自己写的（x.note）分开存、合在一起显示（标签在前、小圆角块）；「只看」能按标签筛、带次数；全屏控件栏里直接放 2–3 颗最常用的（看空位）；导出视频不打（产品负责人 2026-11-22「需要增加快速备注方法」「备注tag和自己输入的部分，如何统一区分管理？」「最高频的2-3个是否可以就放到控件栏里面？」，设计稿 trishot 写，R-121）。改了功能往上加，打点文件里记着是哪一版打的
+const KEY = STORE_NS+"courtside-taps-v1", PRE = 1.5, GAP = 1.0, LAST = 15;   // 回合 = 发球前 1.5 s 到下一分开始前 1 s；最后一分到发球后 15 s
 let cur = null, lock = null, view = "home", sel = -1, playEnd = null, videoStart = null, exporting = false;
 let vidFor = null, vidBlob = null;   // vidBlob：载入的视频文件本身（逐帧导出直接读它）   // 视频载给了哪条记录；没载视频也能回看（试用者 2026-11-06 问「没有视频怎么回看」）：列表、比分、★、改名都能用，回放和剪视频要载入视频
 const video = $("video");
+/* 不给画中画（v1.8.0，产品负责人 2026-11-24 选 A）：iPad 系统全屏时 Safari 自带的画中画按钮一点，视频缩成小窗，比分、回合条、控件留在黑底页面上；
+   <video> 上写了 disablepictureinpicture，这里再按属性设一次（老一点的 Safari 只认属性）。iPhone 页面内铺满，本来就没有这个按钮 */
+try{ video.disablePictureInPicture=true; }catch(e){}
 function canPlay(){ return !!cur && vidFor===cur.id && onVideo(cur); }
 /* 每一分多长：载了视频按回合起止；没视频按这一分发球到下一分发球相隔多久（两台手机 / 看录像记的时刻都行）。
    最后一分没有下一次发球（产品负责人 2026-11-19「为什么最后一分没有时长？」）：按过「回合结束」就用它（发球 → 回合结束，是真的回合长度，进统计）；
@@ -2455,7 +2653,7 @@ function resetMsg(s,i){ const {rallies}=scored(s), r=rallies[i], x=s.taps[i], wa
 /* ===== 自动挑片（R-121 改方向，试用者 2026-11-09：「打点的主要目的是记分，同时为录制的视频提供回合时间戳；记分 + 视频才能产生更多有用的东西」，
    家长报告页撤掉，算关键分、回合长短、连丢连得的口径留下来给回看的「只看」挑分、导出好球合集 / 丢分合集）=====
    口径在 config/courtside_picks.yaml（关键分、长短回合产品负责人 2026-11-09 定「乙」），python -m scripts.make_courtside 注入下面这一行 */
-const PICKS = {"key_points": {"game_point": true, "late_from": {"15": 13, "21": 18}, "max_diff": 1}, "rally_length": {"sources": ["button", "trimmed", "gap"], "gap_adjust": true, "min_known": 6, "max_seconds": 300.0}, "good_max": 6, "lose_run_min": 3, "card_seconds": 2.5};
+const PICKS = {"key_points": {"game_point": true, "late_from": {"15": 13, "21": 18}, "max_diff": 1}, "rally_length": {"sources": ["button", "trimmed", "gap"], "gap_adjust": true, "min_known": 6, "max_seconds": 300.0}, "good_max": 6, "lose_run_min": 3, "card_seconds": 2.5, "summary": {"pro": {"enabled": false, "chain": ["auto"], "export": ["auto", "star", "manual"], "lock_msg": "这个要 Pro 订阅：自动挑出来的分连着放、导出 ★、自动挑的和手动筛出来的合集。记分、回看、精简版导出都免费。", "notice": "从这一版起，自动挑出来的分连着放、导出 ★、自动挑的和手动筛出来的合集要 Pro 订阅；记分、回看、精简版导出照旧免费。"}}};
 function med(a){ const v=[...a].sort((x,y)=>x-y), n=v.length; return n ? (n%2 ? v[(n-1)/2] : (v[n/2-1]+v[n/2])/2) : null; }
 /* 这一分开打前的比分是不是关键分：gpA / gpB = 那一方的局点，both = 两边都是（29 平），tie / close = 尾段平分 / 一分之差；不是返回 "" */
 function keyKind(a,b,to,R=PICKS){ const K=R.key_points, gA=gameOverAt(a+1,b,to), gB=gameOverAt(a,b+1,to);
@@ -2500,6 +2698,28 @@ function pickSets(s, R=PICKS){
       runLost:loseRun.flat(), recvLost:all.filter(i=>lost(i) && rallies[i].server===op), srvLost:all.filter(i=>lost(i) && rallies[i].server===me),
       runOf:Object.fromEntries(loseRun.flatMap(x=>x.map((i,k)=>[i, `连丢第 ${k+1}/${x.length} 分`]))) }; }
   return out; }
+
+/* ===== Pro 开关（R-125 合成裁定五，产品负责人 2026-11-13「都按建议」）=====
+   哪些动作要 Pro 写在 config/courtside_picks.yaml 的 summary.pro：chain = 连着放、export = 导出，列的是列表的筛法
+   （all = 全部、manual = 按谁得分 / 谁发球手筛、star = 打了 ★ 的、auto = 自动挑的那几组）。没有这一段或 enabled 关着 = 什么都不锁。
+   点一分回放、看自动挑出来的列表都不锁（回看免费，R-120）。前端开关挡不住改页面的人（R-125 裁定 5 已接受）。 */
+function filtKind(fv){ return !fv ? "all" : fv==="star" ? "star" : fv.startsWith("p:") ? "auto" : "manual"; }
+function exportKind(mode, fv){ return mode==="all" ? "all" : mode==="star" ? "star" : filtKind(fv); }
+function proGate(R=PICKS){ const g=R.summary && R.summary.pro; return g && g.enabled ? g : null; }
+/* 预览（产品负责人 2026-11-20「按丙做」：订阅还没做好，提示「要 Pro 订阅」是死路）：开关开着、PRO_PREVIEW 为真时什么都不锁，
+   以后要 Pro 的几项只标「Pro」小标，不弹任何提示（同日：「现在免费试用 暗示要收费了，我觉得不用加，直接试用」「去掉吧」）。
+   make_courtside --beta 打包时设成 true；订阅和查订阅接口做好、产品负责人说切的时候再改成 false（真锁，提示用 summary.pro 的 lock_msg / notice）。
+   正式包开关关着，这个不起作用 */
+const PRO_PREVIEW = false;
+function proTagged(action, kind, ent, R=PICKS){ const g=proGate(R); return !!(g && !(ent && ent.pro) && (g[action]||[]).includes(kind)); }
+function proLocked(action, kind, ent, R=PICKS, pv=PRO_PREVIEW){ return !pv && proTagged(action, kind, ent, R); }
+/* 查权益先打桩：pose-platform 的权益查询（R-125 附件第四节第 1 条，含离线宽限）做好前一律当没订阅；
+   本机调试（file:// / localhost）认 ?pro=1 / ?pro=0，别的网址不认 */
+function proLocalDev(){ const h=location.hostname; return location.protocol==="file:" || h==="localhost" || h==="127.0.0.1"; }
+function proEnt(){ const q=new URLSearchParams(location.search).get("pro");
+  if(proLocalDev() && (q==="1" || q==="0")) return {pro:q==="1", src:"dev"};
+  return {pro:false, src:"stub"}; }
+const ENT=proEnt(), PRO_NOTE=STORE_NS+"courtside-pro-note";
 
 /* ===== 存取 ===== */
 function sessions(){ try{ const a=JSON.parse(localStorage.getItem(KEY)||"[]"); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
@@ -2552,6 +2772,7 @@ function spans(s){
 function show(v){ view=v; if(v==="home") for(const id of ["askLive","askReplay","askRev"]){ const e=$(id); if(e) e.hidden=true; } document.documentElement.classList.toggle("quiet", v==="live"); document.querySelector(".page").classList.toggle("livemode", v==="live"); $("home").hidden=v!=="home"; $("live").hidden=v!=="live"; $("review").hidden=v!=="review"; $("bHome").hidden=v==="home"; $("heroMore").hidden=v!=="home"; document.documentElement.classList.toggle("home-v", v==="home"); if(typeof showUpdate==="function"){ $("bReload").hidden=!(standalone && v!=="live"); showUpdate(); if(v==="home") checkUpdate(false); } render(); }
 function render(){
   if(typeof showUpdate==="function") showUpdate();   // 打完一局也要能看到新版提示
+  try{ msUpdate(); }catch(e){}   // 锁屏「正在播放」：离开回看就清掉（脚本还没跑到那一段时先跳过）
   if(view==="home"){ $("sub").textContent=""; renderList(); return; }
   if(!cur) return;
   const {score}=scored(cur), n=cur.taps.length;
@@ -2560,7 +2781,7 @@ function render(){
   if(view==="review") renderReview();
 }
 /* 打过的名字：只存在这台设备的浏览器里（和打点记录一样不上传），最近用的在前、最多 12 个；删了记录名字还在，长按（右键）一个名字可以删掉它 */
-const NAMES="courtside-names", NMAX=50;   // 试用者 2026-11-07：12 个太少；打字提示全给，按钮只排两行
+const NAMES=STORE_NS+"courtside-names", NMAX=50;   // 试用者 2026-11-07：12 个太少；打字提示全给，按钮只排两行
 let chipsAll=false;
 function savedNames(){ try{ const a=JSON.parse(localStorage.getItem(NAMES)||"[]"); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
 function knownNames(){ const out=[]; const add=n=>{ n=(n||"").trim(); if(n && n!=="A" && n!=="B" && !out.includes(n)) out.push(n); };
@@ -2598,6 +2819,8 @@ function mergeHalves(p, s){
   const sc=scored(m).score; msg(`合并好了：${nm(m,"A")} ${sc.A} : ${sc.B} ${nm(m,"B")}，共 ${m.taps.length} 分。要备份就点这条的「下载」。`); render(); }
 $("bSwap").addEventListener("click",()=>{ const a=$("nA").value; $("nA").value=$("nB").value; $("nB").value=a; });   // 对调放在「新的一局」行末（试用者 2026-11-07）
 function renderList(){ renderNames();
+  // 上锁那一版首页提示一次（R-125 合成裁定五）：没订阅、开关开着时出一次，出过就记在这台设备上
+  const pn=$("proNote"), g=proGate(); if(g && !PRO_PREVIEW && !ENT.pro && pn.hidden && lget(PRO_NOTE,"")!=="1"){ pn.textContent=g.notice; pn.hidden=false; lset(PRO_NOTE,"1"); }
   const box=$("list"); box.innerHTML=""; const all=sessions();
   const nb=all.filter(s=>!isBacked(s)).length, w=$("bkWarn"); w.hidden=!nb;
   if(nb){ w.textContent=`有 ${nb} 条记录还没备份（一局分几段录的，每段算一条）：打点只存在这个浏览器里，清了数据或换个入口打开就看不到了。`; const b=document.createElement("button"); b.className="btn"; b.type="button"; b.textContent="全部备份"; b.style.padding="4px 10px"; b.onclick=()=>$("bBackAll").click(); w.appendChild(b); }
@@ -2731,7 +2954,7 @@ function addFin(){
 function finState(){ const i=finTarget(), x=i>=0&&cur.taps[i]; return {i, done:!!(x&&x.end!=null)}; }
 function drawFin(btn){ const {i,done}=finState(); btn.disabled=i<0; btn.classList.toggle("done",done); btn.textContent=done?`第 ${i+1} 分已结束 ✓${btn.id==="lFin"?"":"（再点改时间）"}`:"回合结束"; }
 $("rFin").addEventListener("click",e=>{ addFin(); e.currentTarget.blur(); });   // 现场的 lFin 按下就记，在下面 v1.6 那一段
-const ADV="courtside-adv", PTS="courtside-pts";   // 每局几分：记住上次选的，默认 15 分（试用者 2026-11-05）
+const ADV=STORE_NS+"courtside-adv", PTS=STORE_NS+"courtside-pts";   // 每局几分：记住上次选的，默认 15 分（试用者 2026-11-05）
 try{ $("pts").value=localStorage.getItem(PTS)||"15"; }catch(e){ $("pts").value="15"; }
 $("pts").addEventListener("change",e=>{ try{ localStorage.setItem(PTS, e.target.value); }catch(err){} });
 function advOn(){ try{ return localStorage.getItem(ADV)==="1"; }catch(e){ return false; } }
@@ -2739,7 +2962,7 @@ $("advLive").checked=advOn();
 $("advLive").addEventListener("change",e=>{ try{ localStorage.setItem(ADV, e.target.checked?"1":"0"); }catch(err){} });
 /* 回首页前备份（试用者 2026-11-07：现场打点怕丢，回首页前强制下载本局打点文件，开关默认开）：
    现场打点页点「‹ 记录」时，这局有改动没备份过就先下载；存下来了（或复制 / 显示了文字）才回首页，取消了就留在打点页 */
-const BK="courtside-backup";
+const BK=STORE_NS+"courtside-backup";
 function bkOn(){ try{ return localStorage.getItem(BK)!=="0"; }catch(e){ return true; } }
 $("bkLive").checked=bkOn();
 $("bkLive").addEventListener("change",e=>{ try{ localStorage.setItem(BK, e.target.checked?"1":"0"); }catch(err){} });
@@ -2839,7 +3062,7 @@ $("vSwap").addEventListener("click",()=>{ if(!exporting) pickVideo(); });
 /* 视频存在这台设备上（试用者 2026-11-10 手机上：每次选视频 iPhone 都要先压缩一遍、很慢；导出保存后页面重新载入，回到首页又得再选一遍）：
    最近载入的一个视频连同是哪条记录、拍摄时间存进浏览器的 IndexedDB，只留一个；下次进这条记录的回看直接用，不用再选、不再压缩。
    放不下（空间不够、浏览器不让存）就算了，照旧每次选。视频只在这台设备上，不上传 */
-const VDB="courtside-video";
+const VDB=STORE_NS+"courtside-video";
 function vdb(){ return new Promise((ok,no)=>{ try{ const r=indexedDB.open(VDB,1); r.onupgradeneeded=()=>r.result.createObjectStore("v"); r.onsuccess=()=>ok(r.result); r.onerror=()=>no(r.error); }catch(e){ no(e); } }); }
 async function vidGet(id){ try{ const db=await vdb(); return await new Promise(ok=>{ const q=db.transaction("v").objectStore("v").get("last"); q.onsuccess=()=>{ const c=q.result; ok(c&&c.id===id&&c.blob?c:null); }; q.onerror=()=>ok(null); }); }catch(e){ return null; } }
 async function vidPut(id, f, start){
@@ -2849,7 +3072,7 @@ async function vidPut(id, f, start){
     await new Promise((ok,no)=>{ const t=db.transaction("v","readwrite"); t.objectStore("v").put({id, name:f.name, size:f.size, start, blob, at:Date.now()}, "last"); t.oncomplete=ok; t.onerror=()=>no(t.error); t.onabort=()=>no(t.error); });
   }catch(e){ console.info("视频没存下", e); } }
 /* 记住在看哪条记录的回看：页面重新载入（导出保存后、发布新版时）回到这里，不回首页 */
-const LASTV="courtside-lastview";
+const LASTV=STORE_NS+"courtside-lastview";
 function lastView(id){ lset(LASTV, id ? JSON.stringify({id, at:Date.now()}) : ""); }
 async function openReview(s){ stopAll(); cur=s; sel=-1; noteOpen=false; $("askRev").hidden=true; lastView(s.id); pendingVideo=null; $("bSaveVid").hidden=true; expRestore(s);
   if(vidFor!==s.id){ vidFor=null; vidBlob=null; videoStart=null; try{ video.removeAttribute("src"); video.load(); }catch(e){} }
@@ -2903,13 +3126,15 @@ video.addEventListener("timeupdate",()=>{ tick(); });
 function tick(){
   if(view!=="review"||!cur) return;
   const t=video.currentTime; $("clock").textContent=`${fmt(t)} / ${fmt(video.duration)}`;
-  if(playEnd!=null && t>=playEnd){ const nx=listOrder[listOrder.indexOf(sel)+1]; if($("chain").checked && cur && nx!=null && canPlay()){ playRally(nx); } else { video.pause(); playEnd=null; } }
+  if(playEnd!=null && t>=playEnd){ const nx=fsOn ? (fsNeighbor(sel,1)>=0 ? fsNeighbor(sel,1) : null) : listOrder[listOrder.indexOf(sel)+1];   // 全屏里按自己的「连着放」（默认开）
+    if((fsOn ? fsChain : $("chain").checked) && cur && nx!=null && canPlay() && !proLocked("chain", filtKind($("filt").value), ENT)){ playRally(nx); } else { video.pause(); playEnd=null; } }
   // 编辑时放着放着进了下一分（试用者 2026-11-04：好连续标每分的结束）：选中的那一分跟着换；只在播放中换，拖把手、暂停时不动
   if(!video.paused && sel>=0 && canPlay()){ const sp=spans(cur), j=sp.findIndex(([a,e])=>t>=a&&t<e); if(j>=0 && j!==sel){ sel=j; renderReview(); return; } }
   if(cur.mode==="replay" && !cur.ended) drawFin($("rFin"));   // 放到别的分，按钮上写的是哪一分跟着变
-  drawNow(); drawBoard(t);
+  drawNow(); drawBoard(t); if(fsOn) fsDraw();
 }
 document.addEventListener("keydown",e=>{
+  if(fsOn){ if(!exporting) fsKey(e); return; }
   if(view!=="review"||exporting||e.target.closest("input,textarea")) return;
   const k=e.key.toLowerCase();
   if(k===" "){ e.preventDefault(); $("vPlay").click(); }
@@ -2924,7 +3149,7 @@ document.addEventListener("keydown",e=>{
 /* ===== 回看 ===== */
 function renderReview(){
   const s=cur, n=s.taps.length, ready=canPlay(), hasVid=vidFor===s.id;
-  $("noVid").hidden=hasVid; $("scr").hidden=!hasVid; $("trans").hidden=!hasVid; $("rbar").hidden=!hasVid;
+  $("noVid").hidden=hasVid; $("scr").hidden=!hasVid; $("vFs").hidden=!ready||exporting; $("trans").hidden=!hasVid; $("rbar").hidden=!hasVid;
   $("bLoadVid").textContent=s.mode==="replay" && !s.ended ? "载入视频接着打点" : "载入比赛视频";
   $("rtap").hidden=!(s.mode==="replay" && !s.ended && hasVid);
   if(!$("rtap").hidden) drawFin($("rFin"));
@@ -2946,7 +3171,7 @@ function renderReview(){
   else if(sortDesc) order.reverse();
   // 只看（试用者 2026-11-04：只想看自己丢的那些分）：谁得分 / 谁发球
   const P=pickSets(s); fillFilt(s, P); const fv=$("filt").value, pk=fv.split(":");
-  const keep=i=>{ const r=rallies[i]; return !fv || (fv==="star" ? !!s.taps[i].star : fv==="note" ? !!noteOf(s.taps[i]) : pk[0]==="p" ? P[pk[1]][pk[2]].includes(i) : fv[0]==="w" ? r.winner===fv[1] : r.server===fv[1]); };
+  const keep=i=>{ const r=rallies[i]; return !fv || (fv==="star" ? !!s.taps[i].star : fv==="note" ? hasNote(s.taps[i]) : pk[0]==="t" ? tagsOf(s.taps[i]).includes(fv.slice(2)) : pk[0]==="p" ? P[pk[1]][pk[2]].includes(i) : fv[0]==="w" ? r.winner===fv[1] : r.server===fv[1]); };
   listOrder=order.filter(keep);
   document.querySelectorAll(".plist th[data-k]").forEach(th=>{ const k=th.dataset.k, base={star:"★",no:"#",len:"长度",srv:"发球",win:"打完"}[k]; th.classList.toggle("on",k===sortK); th.textContent=base+(k===sortK&&k!=="star"?(sortDesc?" ↓":" ↑"):""); });
   const iss=posIssues(s, rallies);
@@ -2968,7 +3193,12 @@ function renderReview(){
   $("tot").textContent=ready?`合计 ${listOrder.length} 分，回合视频共 ${dur(sum(listOrder))}`+(D?`（整段视频 ${dur(D)}，只留回合能省掉 ${Math.round((1-sum(all)/D)*100)}%）`:"")
     : `合计 ${listOrder.length} 分`+(known.length?`，按发球相隔算约 ${dur(gapSum)}（含分与分之间的空档${known.length<listOrder.length?`，最后一分${lastApprox(s)!=null?"按点「本局结束」的时刻估的、没算进来":"不知道多长"}`:""}）`:"")+(hasVid?"":"；没载入视频，回放和剪视频要先载入");
   $("nAll").textContent=`${n}${ready?`（${dur(sum(all))}）`:""}`; $("nList").textContent=`${listOrder.length}${ready?`（${dur(sum(listOrder))}）`:""}`; $("nStar").textContent=`${stars.length}${ready&&stars.length?`（${dur(sum(stars))}）`:""}`;
-  $("bExport").disabled=!ready||!n||exporting; $("bExport").textContent=exporting?"正在导出……":$("bExport").dataset.sure||$("bExport").dataset.sure4k?"照样导出":"开始导出";
+  // Pro 上锁的动作在按钮上标 🔒（点了提示，不灰掉：灰掉看不出为什么）
+  const exLock=proLocked("export", exportKind(document.querySelector("input[name=ex]:checked").value, fv), ENT);
+  const tag=on=>on&&PRO_PREVIEW?' <span class="protag">Pro</span>':"";   // 预览：以后要 Pro 的标个小标，不锁
+  const chTag=proTagged("chain", filtKind(fv), ENT), exTag=proTagged("export", exportKind(document.querySelector("input[name=ex]:checked").value, fv), ENT);
+  $("bChain").innerHTML=(proLocked("chain", filtKind(fv), ENT)?"🔒 ":"")+"▶ 按列表连着放"+tag(chTag);
+  $("bExport").disabled=!ready||!n||exporting; $("bExport").innerHTML=exporting?"正在导出……":$("bExport").dataset.sure||$("bExport").dataset.sure4k?"照样导出":(exLock?"🔒 ":"")+"开始导出"+tag(exTag);
   $("bChk").hidden=!n;
   drawChk(); drawBar(); drawZoom(); drawAdj(); drawAddPt(); tick();
 }
@@ -2976,18 +3206,24 @@ let sortK="no", sortDesc=false, listOrder=[];
 /* 「只看」（试用者 2026-11-04：只想看自己丢的那些分）：按谁得分 / 谁发球，加上每人自动挑的几组（v1.5，pickSets）——
    选好了「按列表连着放」或导出「列表里的」，就是好球合集 / 丢分合集；data-title 是导出片头卡和文件名用的 */
 const PICK_KINDS=[["good","好球","赢的关键分、最长的回合"],["keyLost","丢的关键分",""],["runLost","连丢段",""],["recvLost","接发丢的","对方发球时"],["srvLost","发球丢的","自己发球时"]];
-function fillFilt(s, P=pickSets(s)){ const f=$("filt"), v=f.value, nStar=s.taps.filter(x=>x.star).length, nNote=s.taps.filter(x=>noteOf(x)).length, sig=nStar+"|"+nNote+"|"+nm(s,"A")+"|"+nm(s,"B")+"|"+JSON.stringify(["A","B"].map(p=>PICK_KINDS.map(([k])=>P[p][k].length)));
+/* 这一局每个标签用在几分上：[[词, 分数]]，多的在前 */
+function tagCount(s){ const m=new Map(); for(const x of s.taps) for(const t of tagsOf(x)) m.set(t,(m.get(t)||0)+1); return [...m].sort((a,b)=>b[1]-a[1] || (a[0]<b[0]?-1:1)); }
+function fillFilt(s, P=pickSets(s)){ const f=$("filt"), v=f.value, nStar=s.taps.filter(x=>x.star).length, nNote=s.taps.filter(hasNote).length, TC=tagCount(s), sig=nStar+"|"+nNote+"|"+JSON.stringify(TC)+"|"+nm(s,"A")+"|"+nm(s,"B")+"|"+JSON.stringify(["A","B"].map(p=>PICK_KINDS.map(([k])=>P[p][k].length)));
   if(f.dataset.sig===sig) return; f.dataset.sig=sig;
   const o=(k,l,t)=>`<option value="${k}" data-title="${esc(t||l)}">${esc(l)}</option>`;
   // 「打了 ★ 的」（试用者 2026-11-10：下拉里也要能只看 ★ 的分）
   f.innerHTML=o("","全部")+o("star",`打了 ★ 的（${nStar} 分）`,"好球合集").replace("<option", nStar||v==="star"?"<option":"<option disabled")
-    +o("note",`有备注的（${nNote} 分）`,"有备注的分").replace("<option", nNote||v==="note"?"<option":"<option disabled")+`<optgroup label="谁得分 / 谁发球">`+[["wA",`${nm(s,"A")} 得分`],["wB",`${nm(s,"B")} 得分（${nm(s,"A")} 丢分）`],["sA",`${nm(s,"A")} 发球`],["sB",`${nm(s,"B")} 发球`]].map(([k,l])=>o(k,l)).join("")+"</optgroup>"
+    +o("note",`有备注的（${nNote} 分）`,"有备注的分").replace("<option", nNote||v==="note"?"<option":"<option disabled")
+    // 按标签筛（v1.8.0）：这一局用过的每个词一项，带次数（「这一局下网几次」就看这里），多的在前
+    +(TC.length?`<optgroup label="按标签">`+TC.map(([t,n])=>o("t:"+t,`${t}（${n} 分）`,`标签「${t}」`)).join("")+"</optgroup>":"")
+    +`<optgroup label="谁得分 / 谁发球">`+[["wA",`${nm(s,"A")} 得分`],["wB",`${nm(s,"B")} 得分（${nm(s,"A")} 丢分）`],["sA",`${nm(s,"A")} 发球`],["sB",`${nm(s,"B")} 发球`]].map(([k,l])=>o(k,l)).join("")+"</optgroup>"
     +["A","B"].map(p=>`<optgroup label="${esc(nm(s,p))}">`+PICK_KINDS.map(([k,l,d])=>{ const n=P[p][k].length;
       return o(`p:${p}:${k}`, `${l}（${n} 分）${d?" · "+d:""}`, `${nm(s,p)} · ${k==="good"?"好球合集":l}`).replace("<option", n||v===`p:${p}:${k}`?"<option":"<option disabled"); }).join("")+"</optgroup>").join("");
   f.value=v; if(f.value!==v) f.value=""; }
 $("filt").addEventListener("change",()=>{ renderReview(); });
+document.querySelectorAll("input[name=ex]").forEach(r=>r.addEventListener("change",()=>renderReview()));   // 换导出范围，🔒 跟着变
 /* 按列表连着放（试用者 2026-11-04 问勾选框怎么用）：一键从列表第一行放起，等于勾上「自动接下一行」再点第一行 */
-$("bChain").addEventListener("click",()=>{ if(!canPlay()){ msg(cur&&vidFor===cur.id?"先对到视频上。":"连着放要先「载入比赛视频」。"); return; } if(!listOrder.length){ msg("列表里没有分。"); return; }
+$("bChain").addEventListener("click",()=>{ if(proLocked("chain", filtKind($("filt").value), ENT)){ msg(proGate().lock_msg); return; } if(!canPlay()){ msg(cur&&vidFor===cur.id?"先对到视频上。":"连着放要先「载入比赛视频」。"); return; } if(!listOrder.length){ msg("列表里没有分。"); return; }
   $("chain").checked=true; playRally(listOrder[0]); msg(`按列表连着放 ${listOrder.length} 分；按「暂停」停下，取消勾选「自动接下一行」就只放当前这一分。`); });
 document.querySelectorAll(".plist th[data-k]").forEach(th=>th.addEventListener("click",()=>{ const k=th.dataset.k;
   if(k===sortK && k!=="star") sortDesc=!sortDesc; else { sortK=k; sortDesc=k==="len"; } renderReview(); }));
@@ -3123,7 +3359,53 @@ function fixServerMsg(s,i,back="；再点一次改回来。"){ const p=s.taps[i]
    每一分只存一段自由文字 x.note（存在记录里，本机、下载的打点文件、备份都跟着走；老记录没有就是没备注）；不记是谁写的，以后要分再加字段，没有就当不知道。
    导出视频画面上不打备注。查一查提问时编辑栏整个收起，备注入口一起锁住 */
 const NOTE_MAX=500;
+const NOTE_PH_S="这一分想记点什么？";   // 横屏键盘上面只剩一行时用（11-22：长句折两行被裁一半）
+const NOTE_PH="标签里没有的，自己补几句（比如：这一拍为什么这么打）";   // v1.8.0：上面有了标签那一排，长例子不再要（原句举的例子都进了标签）   // 编辑页备注框、全屏输入条同一句
 const noteOf=x=>(x&&typeof x.note==="string"?x.note.trim():"");
+/* ===== 快速备注（标签，v1.8.0）=====
+   产品负责人 2026-11-22（trishot 会话）：「关于备注，全屏和非全屏模式下，需要增加快速备注方法。比如：失误等。请给出可能的高频备注选项。」
+   「好的，按这个出。备注tag和自己输入的部分，如何统一区分管理？」「好的，按这个做。另外，最高频的2-3个是否可以就放到控件栏里面？根据控件栏的空余位置。」（设计稿 trishot 写）
+   存法：每一分 x.tags = 点选的词（按点的先后，去重，没有就不写这个字段）；x.note 照旧是自己打的那段话。旧记录只有 note，原样算手写备注，不拆。
+   显示：标签在前、小圆角块，手写的跟在后面。「有备注的」= 有标签或有手写。下载、备份是整条记录，标签跟着走；老版本载入会原样带着 tags、只是不显示。
+   这台手机上另存：每个词点过几次（排序用）、自定义的词。词不带「谁」：场边打点只有 A、B，谁得分记录里已有。导出的视频不打标签、不打备注 */
+const TAG_TOP=["下网","出界","发球失误","没接到","回球太高","回中慢","球路选错","好球"];
+const TAG_MORE=[["失误",["接发失误","判断失误","挂网","打到对手手上"]],["球路",["该放网却挑","该杀没杀","老打同一个点","没准备下一拍","打到空当"]],
+  ["技术",["步法不到位","启动慢","击球点太低","反手没回到位","发力不对"]],["得分",["杀球得分","吊球得分","网前得分","对手失误"]],["状态",["着急了","犹豫了","体力下降"]],["标记",["关键分","给教练看"]]];
+const TAG_BAR0=["下网","出界","好球"], TAG_LEN=12, TAG_N=12;
+const tagsOf=x=>Array.isArray(x&&x.tags) ? x.tags.filter(t=>typeof t==="string" && t.trim()) : [];
+const hasNote=x=>tagsOf(x).length>0 || !!noteOf(x);
+function setTags(x, arr){ const a=[...new Set(arr.map(t=>String(t).trim().slice(0,TAG_LEN)).filter(Boolean))].slice(0,TAG_N); if(a.length) x.tags=a; else delete x.tags; }
+function toggleTag(x, t, on){ const a=tagsOf(x); setTags(x, on ? [...a, t] : a.filter(y=>y!==t)); }
+const tagUseKey=()=>STORE_NS+"courtside-tag-use", tagMineKey=()=>STORE_NS+"courtside-tag-mine";
+function tagUse(){ try{ const o=JSON.parse(localStorage.getItem(tagUseKey())||"{}"); return o && typeof o==="object" && !Array.isArray(o) ? o : {}; }catch(e){ return {}; } }
+function tagBump(t){ try{ const o=tagUse(); o[t]=(o[t]||0)+1; localStorage.setItem(tagUseKey(), JSON.stringify(o)); }catch(e){} }
+function tagMine(){ try{ const a=JSON.parse(localStorage.getItem(tagMineKey())||"[]"); return Array.isArray(a) ? a.filter(t=>typeof t==="string" && t.trim()) : []; }catch(e){ return []; } }
+function tagMineAdd(t){ try{ const a=tagMine(); if(!a.includes(t)){ a.push(t); localStorage.setItem(tagMineKey(), JSON.stringify(a.slice(-40))); } }catch(e){} }
+const tagAll=()=>[...TAG_TOP, ...tagMine(), ...TAG_MORE.flatMap(g=>g[1])].filter((t,i,a)=>a.indexOf(t)===i);
+/* 露出的 8 个：点过越多越靠前，一样多的照默认次序（默认 8 个在前） */
+function tagTop(){ const u=tagUse(); return tagAll().map((t,i)=>[t,i]).sort((a,b)=>(u[b[0]]||0)-(u[a[0]]||0) || a[1]-b[1]).slice(0,8).map(a=>a[0]); }
+/* 全屏控件栏里那 2–3 颗：这台手机上点得最多的；还没点过的照默认「下网」「出界」「好球」补齐 */
+function tagBar(){ const u=tagUse(), used=Object.keys(u).filter(t=>u[t]>0).sort((a,b)=>u[b]-u[a]); return [...used, ...TAG_BAR0].filter((t,i,a)=>a.indexOf(t)===i).slice(0,3); }
+const tagChips=x=>tagsOf(x).map(t=>`<span class="tgc">${esc(t)}</span>`).join("");
+const noteHtml=x=>{ const n=noteOf(x); return tagChips(x)+(n?`<span class="tgx">${esc(n.replace(/\s+/g," "))}</span>`:""); };
+const noteText=x=>[...tagsOf(x).map(t=>`【${t}】`), noteOf(x)].filter(Boolean).join(" ");
+/* 标签那一排（编辑页、全屏输入条同一套）：露出 8 个 + 已选但不在这 8 个里的 +「更多…」（分组展开全部、「＋ 自定义」）。
+   一打开就定住次序，点的时候按钮不跳位；get() = 现在选了哪些（Set），set(t, on) = 选上 / 去掉 */
+function tagPicker(host, get, set){ if(!host._top) host._top=tagTop();
+  const sel=get(), top=host._top, extra=[...sel].filter(t=>!top.includes(t)); host.innerHTML=""; host.classList.add("tagpick");
+  const re=()=>tagPicker(host, get, set);
+  const chip=(t,row)=>{ const on=sel.has(t), b=mk("button","tgb"+(on?" on":""),t); b.type="button"; b.setAttribute("aria-pressed", String(on));
+    b.onclick=e=>{ e.stopPropagation(); const now=!get().has(t); set(t, now); if(now) tagBump(t); re(); }; row.appendChild(b); };
+  const r1=mk("div","tgrow"); host.appendChild(r1); for(const t of [...top, ...extra]) chip(t, r1);
+  const mb=mk("button","tgb more", host._open ? "收起" : "更多…"); mb.type="button"; mb.onclick=e=>{ e.stopPropagation(); host._open=!host._open; re(); }; r1.appendChild(mb);
+  if(!host._open) return;
+  const shown=new Set([...top, ...extra]), mine=tagMine().filter(t=>!shown.has(t));
+  for(const [g,ws] of [...(mine.length?[["我的",mine]]:[]), ...TAG_MORE]){ const rest=ws.filter(t=>!shown.has(t)); if(!rest.length) continue;
+    const r=mk("div","tgrow"); r.appendChild(mk("span","tgg",g)); rest.forEach(t=>chip(t,r)); host.appendChild(r); }
+  const r=mk("div","tgrow"), ad=mk("button","tgb add","＋ 自定义"); ad.type="button";
+  ad.onclick=e=>{ e.stopPropagation(); let t=null; try{ t=prompt(`加一个自己的词（最多 ${TAG_LEN} 个字），以后这台手机上都能点：`,""); }catch(er){}
+    t=(t||"").trim().slice(0,TAG_LEN); if(!t) return; tagMineAdd(t); if(!get().has(t)){ set(t,true); tagBump(t); } re(); };
+  r.appendChild(ad); host.appendChild(r); }
 let noteOpen=false;
 let more=false, chkSt="", chkRange=null, chkMk=null;
 const mk=(tag,cls,txt)=>{ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; };
@@ -3143,7 +3425,7 @@ function drawAdj(){
   del.classList.add("red");
   const mo=ebtn(r1, open?"改错 ▴":"改错 ▾", ()=>{ more=!open; if(more) noteOpen=false; render(); }, "补一分、从这一分起改比分、只是这一分站错了、重新对齐"); if(open) mo.classList.add("on");
   // 备注（R-121）：和「改错」同一时间只展开一个，编辑栏不多占一行；有备注的按钮上带 ✎
-  const nOpen=noteOpen && !open, nb=ebtn(r1, noteOf(x)?"备注 ✎":"备注", ()=>{ noteOpen=!nOpen; if(noteOpen) more=false; render(); if(noteOpen){ const t=box.querySelector("textarea.note"); if(t) t.focus(); } }, "给这一分写几句复盘时的备注");
+  const nOpen=noteOpen && !open, nb=ebtn(r1, hasNote(x)?"备注 ✎":"备注", ()=>{ noteOpen=!nOpen; if(noteOpen) more=false; render(); if(noteOpen){ const t=box.querySelector("textarea.note"); if(t) t.focus(); } }, "给这一分写几句复盘时的备注");
   if(nOpen) nb.classList.add("on");
   // 第二行：调起止
   if(play){ const sp=spans(cur)[sel], r2=erow(box,"auto 1fr 1fr auto 1fr 1fr"), ed=(k,v)=>()=>{ setEdge(i0,k,v); done(); };
@@ -3177,28 +3459,33 @@ function drawAdj(){
 }
 /* 列表里有备注的那一分下面加一行（备注 + 前几个字，太长省略）；写备注时只改这一行，不重画整个列表（重画会吞掉接着点下一行的那一下） */
 function noteRow(tr, x){ let t2=tr.nextElementSibling; if(!(t2 && t2.classList.contains("nrow"))) t2=null;
-  const nt=noteOf(x); tr.classList.toggle("hasnote", !!nt);
+  const nt=hasNote(x); tr.classList.toggle("hasnote", nt);
   if(!nt){ if(t2) t2.remove(); return; }
   if(!t2){ t2=document.createElement("tr"); t2.className="nrow"; t2.appendChild(document.createElement("td")); t2.firstChild.colSpan=5; tr.after(t2); }
   t2.classList.toggle("on", tr.classList.contains("on")); t2.onclick=()=>tr.onclick();
-  t2.firstChild.innerHTML=`<b>备注</b>${esc(nt.replace(/\s+/g," "))}`; t2.firstChild.title=nt; }
+  t2.firstChild.innerHTML=`<b>备注</b>${noteHtml(x)}`; t2.firstChild.title=noteText(x); }
 /* 备注框：边打边存（不重画，光标不跳），离开输入框再刷新列表；写的时候视频先停（连着放会跳到下一分，备注框也跟着换） */
 function drawNote(box, x, i0){ const fold=mk("div","fold"); box.appendChild(fold);
+  // 快速备注（v1.8.0）：点一下加上、再点去掉，马上存；输入框里只放自己打的字
+  const tp=mk("div"); fold.appendChild(tp);
+  const after=()=>{ persist(); const tr=document.querySelector(`#rows tr[data-i="${i0}"]`); if(tr) noteRow(tr, x);
+    const nb=box.querySelector(".er .btn.on"); if(nb && nb.textContent.startsWith("备注")) nb.textContent=hasNote(x)?"备注 ✎":"备注"; };
+  tagPicker(tp, ()=>new Set(tagsOf(x)), (t,on)=>{ toggleTag(x,t,on); after(); });
   const t=mk("textarea","note"); t.maxLength=NOTE_MAX; t.rows=2; t.value=x.note||"";
-  t.placeholder="这一分复盘时想记下的，比如：球路打法错了（该放网却挑了后场）、失误（杀球下网）、技术问题（反手没回到位）";
+  t.placeholder=NOTE_PH;
   t.setAttribute("aria-label",`第 ${i0+1} 分的备注`);
   const save=()=>{ const v=t.value.slice(0,NOTE_MAX); if(v.trim()) x.note=v; else delete x.note; persist();
     const tr=document.querySelector(`#rows tr[data-i="${i0}"]`); if(tr) noteRow(tr, x);
-    const nb=box.querySelector(".er .btn.on"); if(nb && nb.textContent.startsWith("备注")) nb.textContent=noteOf(x)?"备注 ✎":"备注"; };
+    const nb=box.querySelector(".er .btn.on"); if(nb && nb.textContent.startsWith("备注")) nb.textContent=hasNote(x)?"备注 ✎":"备注"; };
   t.addEventListener("focus",()=>{ if(!video.paused) video.pause(); });
   t.addEventListener("input",save);
   t.addEventListener("keydown",e=>e.stopPropagation());
   fold.appendChild(t);
   const r=erow(fold,"1fr 1fr");
-  const clr=ebtn(r, "清空", ()=>{ if(!noteOf(x) && !t.value.trim()) return; if(!clr.dataset.sure){ clr.dataset.sure="1"; clr.textContent="再点清空"; return; }
-    delete x.note; persist(); msg(`第 ${i0+1} 分的备注清空了。`); render(); }, "清掉这一分的备注（点两次）");
+  const clr=ebtn(r, "清空备注", ()=>{ if(!hasNote(x) && !t.value.trim()) return; if(!clr.dataset.sure){ clr.dataset.sure="1"; clr.textContent="再点清空"; return; }
+    delete x.note; delete x.tags; persist(); msg(`第 ${i0+1} 分的备注（标签和自己写的）清空了。`); render(); }, "标签和自己写的一起清掉（点两次）；只去掉一个标签就点那个标签");
   clr.classList.add("red");
-  ebtn(r, "好了", ()=>{ save(); noteOpen=false; msg(noteOf(x)?`第 ${i0+1} 分的备注存好了。`:""); render(); }, "收起备注框（边写边存，不点也存了）"); }
+  ebtn(r, "好了", ()=>{ save(); noteOpen=false; msg(hasNote(x)?`第 ${i0+1} 分的备注存好了。`:""); render(); }, "收起备注框（边写边存，不点也存了）"); }
 /* 有视频时补一分：视频停在漏掉那一分的发球前，按视频现在的时刻插进去（离已有发球不到 MISS_MIN 秒不补） */
 const addAtVideo=q=>()=>{ if(!video.paused) video.pause(); const r=insertTap(cur, q, Math.round(video.currentTime*100)/100);
   if(r.err){ msg(r.err); return; } sel=r.at; persist(); msg(addPtMsg(cur,r.at)); render(); };
@@ -3524,6 +3811,7 @@ $("bExport").addEventListener("click",async()=>{
   if(exporting||!cur||!canPlay()) return;
   const only=document.querySelector("input[name=ex]:checked").value==="star", sp=spans(cur);
   const mode=document.querySelector("input[name=ex]:checked").value;
+  if(proLocked("export", exportKind(mode, $("filt").value), ENT)){ msg(proGate().lock_msg); return; }
   const idx=mode==="list" ? listOrder.slice().sort((a,b)=>a-b) : cur.taps.map((x,i)=>i).filter(i=>!only||cur.taps[i].star);
   if(!idx.length){ msg(only?"还没有 ★ 的分：在右边列表里点 ☆ 标几分。":"一分都没有。"); return; }
   // 导出不强制核对（产品负责人 2026-11-18）：只有导出的这几分里有看出来还没处理的，提醒一句，再点一次照样导出
@@ -3693,7 +3981,7 @@ async function download(s){
   catch(e){ $("raw").hidden=false; $("rawText").value=text; $("rawText").focus(); $("rawText").select(); return "raw"; }   // 文字框在首页，回首页正好看得到
 }
 /* 备份全部：所有记录存成一个文件（载入打点文件时认得出来，一次放回去） */
-const BACKUP_KIND="courtside-backup";
+const BACKUP_KIND="courtside-backup"   /* 备份文件的格式名，不是存储名：不加前缀，正式版、beta 的备份互相载得进 */;
 $("bBackAll").addEventListener("click",async()=>{ const all=sessions().filter(s=>s.taps&&s.taps.length); if(!all.length){ msg("还没有记录可以备份。"); return; }
   const d=new Date(), p2=x=>String(x).padStart(2,"0"), name=`场边打点_全部记录_${d.getFullYear()}${p2(d.getMonth()+1)}${p2(d.getDate())}_${all.length}局.json`;
   const r=await saveFile(name, new Blob([JSON.stringify({kind:BACKUP_KIND, v:1, at:d.toISOString(), sessions:all})],{type:"application/json"}), "json");
@@ -3713,7 +4001,7 @@ $("bDl").addEventListener("click",()=>cur&&download(cur));
    打点区：整块按落点坐标判断是谁（不用瞄准按钮），分界线两边各 12px 不算；按下就记，0.6 秒内的第二下不算。
    反馈按人不按位置：A 震 1 下 / 低音 1 声，B 震 2 下 / 高音 2 声，回合结束长震 / 双音，撤销 3 下 / 下行音；没反馈 = 没记上。
    安卓用 navigator.vibrate；iPhone 的网页不能震，用提示音 + 整屏闪颜色（轻震是试验项：借 iOS 18 的开关控件） */
-const SPLIT="courtside-split", FLIP="courtside-flip", SND="courtside-snd", HAP="courtside-hap", SPLITS=[["diag","斜分"],["diagL","左手斜分"],["lr","左右分"],["ud","上下分"]];   // 左手斜分（试用者 2026-11-10）：斜分左右镜像，右下 / 左上，顺着左手拇指的弧线
+const SPLIT=STORE_NS+"courtside-split", FLIP=STORE_NS+"courtside-flip", SND=STORE_NS+"courtside-snd", HAP=STORE_NS+"courtside-hap", SPLITS=[["diag","斜分"],["diagL","左手斜分"],["lr","左右分"],["ud","上下分"]];   // 左手斜分（试用者 2026-11-10）：斜分左右镜像，右下 / 左上，顺着左手拇指的弧线
 const canVib=typeof navigator.vibrate==="function";
 const lget=(k,d)=>{ try{ const v=localStorage.getItem(k); return v==null?d:v; }catch(e){ return d; } }, lset=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
 let split=lget(SPLIT,"diag"), flip=lget(FLIP,"0")==="1", fx=null, hapEl=null, lastHit=0;
@@ -3722,13 +4010,310 @@ function sndOn(){ return lget(SND,"0")==="1"; }   // 提示音默认关（试用
 function hapOn(){ return true; }   // 震动一直开（试用者 2026-11-10：默认都要震动，只留提示音开关）   // 震动默认开（安卓、iPhone 都是），由首页的「按键反馈」选
 /* 回看视频静音（试用者 2026-11-10）：右上角按钮，默认静音，记住上次的选择；只管回放，导出的视频照样带声音 */
 /* 首页介绍（试用者 2026-11-10）：这个页面打开过 3 次以后默认收起；点顶栏的「介绍」展开，每次打开还是收起的 */
-const OPENS="courtside-opens"; const opens=(parseInt(lget(OPENS,"0"),10)||0)+1; lset(OPENS, String(opens));
+const OPENS=STORE_NS+"courtside-opens"; const opens=(parseInt(lget(OPENS,"0"),10)||0)+1; lset(OPENS, String(opens));
 function setHero(fold){ $("hero").classList.toggle("fold", fold); const b=$("heroMore"); b.textContent=fold?"介绍":"收起"; b.title=fold?"看看场边打点能做什么":"把介绍收起来"; b.setAttribute("aria-expanded", String(!fold)); }
 setHero(opens>3); $("heroMore").addEventListener("click",()=>setHero(!$("hero").classList.contains("fold")));
-const MUTE="courtside-mute";
-function setMute(m){ video.muted=m; lset(MUTE, m?"1":"0"); const b=$("vMute"); b.textContent=m?"🔇":"🔊"; b.title=m?"现在静音：点一下开声音":"现在有声音：点一下静音"; b.setAttribute("aria-label", b.title); }
+const MUTE=STORE_NS+"courtside-mute";
+/* 按钮上的图形（R-121，2026-11-21：⏮ ⏭ 🔇 🔊 在 iPhone 上显示成蓝底表情方块，和别的按钮不是一套）：自己画，跟着字的颜色 */
+const IC={prev:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h2.5v14H5zM19.5 5v14L8.5 12z" fill="currentColor"/></svg>',
+  next:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 5H19v14h-2.5zM4.5 5v14l11-7z" fill="currentColor"/></svg>',
+  snd:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-4.5v15L7 15H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+  mute:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-4.5v15L7 15H3z" fill="currentColor"/><path d="M15.5 9.5l5 5M20.5 9.5l-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>'};
+function setMute(m){ video.muted=m; lset(MUTE, m?"1":"0"); const b=$("vMute"); b.innerHTML=m?IC.mute:IC.snd; b.title=m?"现在静音：点一下开声音":"现在有声音：点一下静音"; b.setAttribute("aria-label", b.title); }
 setMute(lget(MUTE,"1")==="1");
 $("vMute").addEventListener("click",e=>{ e.stopPropagation(); setMute(!video.muted); });
+/* ===== 全屏回看（v1.7.0，R-121，产品负责人 2026-11-21「okay，就按这个先出一个样页看看效果」；设计稿 trishot 写、他说过 okay）=====
+   进出：视频右上角「⛶ 全屏」，左上角「‹ 返回编辑」回到编辑页、停在正在看的那一分。全屏里能打 ★、加改备注；调起止、改比分、改名字回编辑页。
+   能系统全屏的（电脑、iPad、安卓）叫系统全屏；iPhone 的 Safari 只给 <video> 系统全屏（那是系统播放器，放不了我们的比分牌、回合条、备注），所以 iPhone 上是页面内铺满。
+   连着放默认开、跳过分与分之间的空档，和编辑页的「点一行后自动接下一行」各管各的；「只看」和编辑页是同一个（改了两边一起变） */
+const FS_SB=STORE_NS+"courtside-fs-sb", FS_NT=STORE_NS+"courtside-fs-note";
+const scr=$("scr"), FS_HINT=STORE_NS+"courtside-fs-hint";
+$("fsPrev").innerHTML=IC.prev; $("fsNext").innerHTML=IC.next;
+/* 全屏里不让 iPhone 双指缩放（双击放大由 touch-action 关掉）：放大以后整层控件被推出屏幕边（R-121，2026-11-21 截图 08） */
+for(const ev of ["gesturestart","gesturechange"]) document.addEventListener(ev,e=>{ if(fsOn) e.preventDefault(); },{passive:false});
+/* 手机方向和视频方向反着、画面很小：提示一句，这台设备只提示一次（R-121，2026-11-21） */
+/* 提示一个一个出，每条 3.2 秒 */
+let fsToastQ=[], fsToastOn=false;
+function fsToast(t){ fsToastQ.push(t); if(!fsToastOn) fsToastNext(); }
+function fsToastNext(){ const h=$("fsHint"), t=fsToastQ.shift(); if(!t || !fsOn){ fsToastOn=false; fsToastQ=[]; h.hidden=true; return; } fsToastOn=true;
+  h.textContent=t; h.style.opacity=1; h.hidden=false; setTimeout(()=>{ h.style.opacity=0; setTimeout(fsToastNext,450); },3200); }
+function fsHintMaybe(){ if(!fsOn || !video.videoWidth || lget(FS_HINT,"")) return;
+  const port=innerHeight>innerWidth, vport=video.videoHeight>video.videoWidth*1.05, vland=video.videoWidth>video.videoHeight*1.05;
+  const t=!port&&vport ? "把手机竖过来看，画面更大" : port&&vland ? "把手机横过来看，画面更大" : ""; if(!t) return;
+  lset(FS_HINT,"1"); fsToast(t); }
+/* 第一次进全屏、在浏览器里（不是从桌面图标打开）的手机上：告诉一句怎样没有地址栏，只说一次（同日，产品负责人问黑边和栏的颜色） */
+const FS_HOME=STORE_NS+"courtside-fs-home";
+function fsHomeHint(){ if(lget(FS_HOME,"")) return; const app=navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+  const phone=window.matchMedia && matchMedia("(pointer:coarse)").matches; if(app || !phone) return;
+  lset(FS_HOME,"1"); fsToast("想全屏不带地址栏：点浏览器的分享 →「添加到主屏幕」，以后从桌面图标打开"); }
+/* theme-color 跟着换成纯黑，退出换回原来的（没有就删掉） */
+let fsTheme=null;
+function fsThemeSet(on){ let m=document.querySelector('meta[name="theme-color"]');
+  if(on){ fsTheme={had:!!m, v:m?m.getAttribute("content"):null}; if(!m){ m=document.createElement("meta"); m.name="theme-color"; document.head.appendChild(m); } m.setAttribute("content","#000000"); }
+  else if(fsTheme){ if(fsTheme.had) m&&m.setAttribute("content",fsTheme.v); else if(m) m.remove(); fsTheme=null; } }
+let fsScrollY=0, fsOn=false, fsSys=false, fsChain=true, fsListOpen=false, fsTimer=0, fsScrub=-1, fsNoteI=-1, fsNoteResume=false, fsBarSig="", fsListSig="", fsFiltSig="", fsLastK=-2, fsRowK=-2;
+const fsCan=()=>!!(document.fullscreenEnabled||document.webkitFullscreenEnabled);
+/* 正在看的是第几分：选中的那一分还在它的起止里就是它；不然取视频现在位置之前开始的最后一分 */
+function fsCur(){ if(!cur||!canPlay()) return -1; const sp=spans(cur), t=video.currentTime;
+  if(sel>=0 && sp[sel] && t>=sp[sel][0]-0.05 && t<=sp[sel][1]+0.05) return sel;
+  let k=0; for(let i=0;i<sp.length;i++){ if(t>=sp[i][0]-0.05) k=i; } return k; }
+/* 上一分 / 下一分按列表走（「只看」筛过、排过序的顺序）；这一分不在列表里，就取列表里编号挨着的 */
+function fsNeighbor(k,d){ const L=listOrder; if(!L.length) return -1; const p=L.indexOf(k);
+  if(p>=0){ const q=p+d; return q>=0&&q<L.length?L[q]:-1; }
+  const c=L.filter(i=>d>0?i>k:i<k); return c.length ? (d>0?Math.min(...c):Math.max(...c)) : -1; }
+function fsEnter(){ if(!canPlay()||exporting||fsOn) return;
+  fsOn=true; fsChain=!proLocked("chain", filtKind($("filt").value), ENT); fsListOpen=false; fsBarSig=""; fsListSig=""; fsFiltSig="";
+  fsScrollY=window.scrollY||document.documentElement.scrollTop||0; document.documentElement.style.setProperty("--fsy", (-fsScrollY)+"px");
+  scr.classList.add("fs"); document.documentElement.classList.add("fs-on"); fsThemeSet(true); fsHomeHint(); fsQtBuild(); scr.classList.toggle("nosb", lget(FS_SB,"1")==="0");
+  if(sel<0) sel=fsCur();
+  const rq=scr.requestFullscreen||scr.webkitRequestFullscreen;
+  if(fsCan() && rq){ try{ fsSys=true; const p=rq.call(scr); if(p&&p.catch) p.catch(()=>{ fsSys=false; }); }catch(e){ fsSys=false; } }
+  fsLayout(); renderReview(); fsPoke(); }
+function fsExit(){ if(!fsOn) return; fsNoteClose(false); fsOn=false; clearTimeout(fsTimer); fsScrub=-1;
+  $("fsUndo").hidden=true; fsUndoAct=null; scr.classList.remove("fs","ui-off","split","port","lst","nosb","fill"); document.documentElement.classList.remove("fs-on"); document.documentElement.style.removeProperty("--fsy"); try{ window.scrollTo(0, fsScrollY); }catch(e){} fsThemeSet(false); fsToastQ=[]; $("fsList").hidden=true; $("fsBub").hidden=true; scr.style.removeProperty("--fsbot");
+  if(fsSys){ fsSys=false; const d=document; if(d.fullscreenElement||d.webkitFullscreenElement){ try{ const p=(d.exitFullscreen||d.webkitExitFullscreen).call(d); if(p&&p.catch) p.catch(()=>{}); }catch(e){} } }
+  if(cur && canPlay()) sel=fsCur(); render(); try{ scr.scrollIntoView({block:"nearest"}); }catch(e){} }
+for(const ev of ["fullscreenchange","webkitfullscreenchange"]) document.addEventListener(ev,()=>{ if(fsOn && fsSys && !(document.fullscreenElement||document.webkitFullscreenElement)){ fsSys=false; fsExit(); } });
+/* 横竖跟着手机走：竖屏看横拍的视频 → .split（视频在上，控件、列表排在下面）；其余控件浮在画面上 */
+/* 竖屏看横拍只有一种布局（产品负责人 2026-11-21 看了两张截图问「哪个布局是对的？」，trishot 答第二种，他回「好的」）：视频贴顶、比分牌压在画面上、下面回合条、按钮、常驻列表，没有「列表」按钮、不能收起。
+   以前转屏时读到的是转之前的屏幕宽高、或者进全屏时视频还没读出尺寸，就掉回「视频在中间、上下黑边」那一种；现在量全屏层自己的宽高，全屏层或视频尺寸一变就重判 */
+function fsLayout(){ if(!fsOn) return; const W=scr.clientWidth||innerWidth, Hh=scr.clientHeight||innerHeight, port=Hh>W, split=port && video.videoWidth>video.videoHeight*1.05;
+  scr.classList.toggle("port",port); scr.classList.toggle("split",split);
+  // 铺满：手机和视频同向、长宽比差不到 12%（裁掉的不到 12%）才铺满；差得多照旧不裁，留边
+  { const vw=video.videoWidth, vh=video.videoHeight, r=vw&&vh ? (vw/vh)/(W/Hh) : 0, crop=r ? 1-Math.min(r,1/r) : 1;
+    scr.classList.toggle("fill", !split && crop>0 && crop<0.12 && (port===(vh>vw))); }
+  $("fsList").hidden=!(split||fsListOpen); scr.classList.toggle("lst", !split && fsListOpen);
+  if(split) scr.classList.remove("ui-off");
+  fsQtFit(); scr.style.setProperty("--fsbot", $("fsBot").offsetHeight+"px"); fsHintMaybe(); }
+addEventListener("resize",()=>{ if(fsOn){ fsLayout(); fsDraw(); } });
+/* 底栏变高（时间那行写上字、按钮换行）就重量一次，字幕跟着挪，不压回合条 */
+if(window.ResizeObserver) new ResizeObserver(()=>{ if(fsOn) scr.style.setProperty("--fsbot", $("fsBot").offsetHeight+"px"); }).observe($("fsBot"));
+{ let fsSz=""; const re=()=>{ if(!fsOn) return; const k=scr.clientWidth+"x"+scr.clientHeight+"|"+video.videoWidth+"x"+video.videoHeight; if(k===fsSz) return; fsSz=k; fsLayout(); fsDraw(); fsUnstick(); };
+  /* 转屏以后：滚动归零，再让全屏层重排一次（iPhone 转屏后固定层点的位置会跟画的位置错开，重排一次就对上） */
+  /* 11-22 他补「点播放按钮，显示点在下面的 好球/下网等按钮上了」：不是被挡，是点的位置整体往下偏了一排（约 60 像素 ≈ 桌面图标打开时竖屏顶上的安全区）。
+     判断：转竖屏时排版已按竖屏算好，正在放视频时屏幕上画的控件层没跟着重画、还在横屏时的位置。这里转屏后真正逼它重排重画：挪 1 像素再挪回、换一次合成层 */
+  const fsUnstick=()=>{ if(!fsOn) return; try{ if(window.scrollX||window.scrollY) window.scrollTo(0,0); const se=document.scrollingElement; if(se&&se.scrollTop) se.scrollTop=0; }catch(e){}
+    scr.style.top="1px"; scr.style.transform="translateZ(0)"; void scr.offsetHeight;
+    requestAnimationFrame(()=>{ scr.style.top=""; void scr.offsetHeight; requestAnimationFrame(()=>{ scr.style.transform=""; }); }); };
+  if(window.visualViewport) visualViewport.addEventListener("resize",()=>{ if(fsOn && fsNoteI<0) setTimeout(fsUnstick,120); });
+  if(window.ResizeObserver) new ResizeObserver(re).observe(scr);
+  video.addEventListener("resize",re); addEventListener("orientationchange",()=>{ setTimeout(()=>{ re(); fsUnstick(); },350); setTimeout(fsUnstick,800); setTimeout(fsUnstick,1500); }); }
+video.addEventListener("loadedmetadata",()=>{ if(fsOn) fsLayout(); });
+/* 控件：点一下画面出现 / 隐藏；播放中 3 秒不碰自动隐藏（开着列表、写备注、按着回合条时不藏；竖屏看横拍的控件不盖画面，不藏） */
+function fsPoke(){ if(!fsOn) return; scr.classList.remove("ui-off"); clearTimeout(fsTimer);
+  fsTimer=setTimeout(()=>{ if(fsOn && !video.paused && fsScrub<0 && fsNoteI<0 && !fsListOpen && !scr.classList.contains("split")) scr.classList.add("ui-off"); },3000); }
+scr.addEventListener("click",e=>{ if(!fsOn || !(e.target===video || e.target===scr || e.target===$("fsui"))) return;
+  if(scr.classList.contains("ui-off")) fsPoke(); else if(!scr.classList.contains("split")){ clearTimeout(fsTimer); scr.classList.add("ui-off"); } });
+$("fsui").addEventListener("pointerdown",()=>fsPoke());
+scr.addEventListener("pointermove",e=>{ if(fsOn && e.pointerType==="mouse" && fsScrub<0) fsPoke(); });
+video.addEventListener("play",()=>{ if(fsOn){ fsPoke(); fsDraw(); } });
+video.addEventListener("pause",()=>{ if(fsOn){ clearTimeout(fsTimer); scr.classList.remove("ui-off"); fsDraw(); } });
+/* 播放 / 暂停：在一分里面就放到这一分的结束；停在空档或这一分放完了，连着放开着就接列表下一分，关着就放编号下一分 */
+function fsPlayToggle(){ if(!video.paused){ video.pause(); return; } audioWake();
+  const sp=spans(cur), t=video.currentTime, k=fsCur();
+  if(sp[k] && t>=sp[k][0]-0.05 && t<sp[k][1]-0.15){ sel=k; playEnd=sp[k][1]; video.play().catch(()=>{ revive(true); }); renderReview(); return; }
+  const nx=fsChain ? fsNeighbor(k,1) : (k+1<sp.length ? k+1 : -1); playRally(nx>=0 ? nx : k); }
+/* 跳到第 i 分：在放就接着放，停着就停在这一分开头 */
+function fsJump(i, play){ if(i<0||!cur||!cur.taps[i]) return; if(play || !video.paused){ playRally(i); return; }
+  const sp=spans(cur)[i]; sel=i; playEnd=sp[1]; video.currentTime=sp[0]; renderReview(); }
+function fsSeek(d){ video.currentTime=Math.max(0,Math.min(video.duration||0, video.currentTime+d)); fsDraw(); }
+function fsDraw(){ if(!fsOn||!cur||!canPlay()) return;
+  const s=cur, sp=spans(s), {rallies}=scored(s), n=s.taps.length, k=fsCur(), t=video.currentTime, x=s.taps[k];
+  if(!x) return;
+  const a=sp[k][0], e=sp[k][1], inPt=t>=a-0.05 && t<=e+0.05;
+  // 时间：这一分内的「已放 / 时长」，下面「第 13 / 38 分」
+  // 时间和编辑页同一口径：整段视频「0:12.2 / 5:32.6」（产品负责人 2026-11-22「时间显示口径；保持和非全屏的一致，0:12.2 / 5:32.6.」）；下面一行第几分，「只看」筛过时另写在列表里排第几
+  const lp=listOrder.indexOf(k), filtered=listOrder.length<n;
+  $("fsClock").innerHTML=`${fmt(t)} / ${fmt(video.duration)}`
+    +`<small>${filtered ? `第 ${k+1} 分 · `+(lp>=0?`列表 ${lp+1} / ${listOrder.length}`:"不在列表里") : `第 ${k+1} / ${n} 分`}${inPt?"":" · 分与分之间"}</small>`;
+  // 回合条：每一分等宽；只在内容变了时重画，平时只挪「正在放」和进度
+  const keep=new Set(listOrder), bar=$("fsBar"), sig=[n, rallies.map(r=>r.winner||"x").join(""), s.taps.map(y=>(y.star?"s":"")+(hasNote(y)?"n"+tagsOf(y).join("/")+"|"+noteOf(y).length:"")).join(","), listOrder.join(",")].join("|");
+  if(sig!==fsBarSig){ fsBarSig=sig; bar.innerHTML=rallies.map((r,i)=>`<div class="s won-${r.winner||"x"}${keep.has(i)?"":" dim"}${s.taps[i].star?" star":""}${hasNote(s.taps[i])?" note":""}"></div>`).join(""); fsLastK=-2; }
+  if(fsLastK!==k){ bar.querySelectorAll(".s.on").forEach(c=>{ c.classList.remove("on"); c.innerHTML=""; }); const c=bar.children[k]; if(c){ c.classList.add("on"); c.innerHTML='<i class="pg"></i>'; } fsLastK=k; }
+  const pg=bar.querySelector(".pg"); if(pg) pg.style.width=(inPt&&e>a ? Math.min(100,Math.max(0,(t-a)/(e-a)*100)) : 0)+"%";
+  // 按钮
+  $("fsPlay").textContent=video.paused?"▶":"❚❚"; $("fsPlay").title=video.paused?"播放（空格）":"暂停（空格）";
+  $("fsPrev").disabled=fsNeighbor(k,-1)<0; $("fsNext").disabled=fsNeighbor(k,1)<0;
+  $("fsRate").textContent=video.playbackRate+"×";
+  $("fsStar").textContent=x.star?"★":"☆"; $("fsStar").style.color=x.star?"#ffd24a":"";
+  { const b=$("fsMute"), m=video.muted; if(b.dataset.m!==String(m)){ b.dataset.m=m; b.innerHTML=m?IC.mute:IC.snd; } b.classList.toggle("off",m); } $("fsMute").title=video.muted?"现在静音：点一下开声音":"现在有声音：点一下静音";
+  $("fsSb").classList.toggle("off", scr.classList.contains("nosb"));
+  const ntOn=lget(FS_NT,"1")!=="0"; $("fsNt").classList.toggle("off", !ntOn);
+  const nt=hasNote(x); $("fsAddN").textContent=nt?"✎ 备注":"＋ 备注";
+  // 控件栏里的快速标签：这一分有这个词就高亮
+  $("fsQts").querySelectorAll("[data-t]").forEach(b=>{ const on=tagsOf(x).includes(b.dataset.t); b.classList.toggle("on",on); b.setAttribute("aria-pressed",String(on)); });
+  // 备注字幕：只听「字幕」开关（产品负责人 2026-11-21「字幕能否不自动隐藏，只受"字幕"按钮开关控制？」）：分与分之间、拖回合条、竖屏开列表都不藏；写备注时输入条里就是这段字，不重复显示
+  const sub=$("fsSub"), showSub=nt && ntOn && fsNoteI<0, sh=nt?noteHtml(x):""; if(sub.dataset.h!==sh){ sub.dataset.h=sh; sub.innerHTML=sh; } if(sub.hidden===showSub){ sub.hidden=!showSub; }
+  // 列表
+  if(!$("fsList").hidden) fsDrawList(s, rallies, k, sig);
+}
+function fsDrawList(s, rallies, k, sig){ const f=$("filt"), ff=$("fsFilt");
+  if(f.dataset.sig+"|"+f.value!==fsFiltSig){ fsFiltSig=f.dataset.sig+"|"+f.value; ff.innerHTML=f.innerHTML; ff.value=f.value; }
+  const kind=filtKind(f.value), lock=proLocked("chain", kind, ENT), ch=$("fsChain");
+  if(lock) fsChain=false; ch.checked=fsChain; ch.disabled=lock;
+  $("fsChTag").innerHTML=lock?" 🔒":(proTagged("chain", kind, ENT)&&PRO_PREVIEW?' <span class="protag">Pro</span>':"");
+  const box=$("fsRows"), lsig=sig+"|"+nm(s,"A")+"|"+nm(s,"B");
+  if(lsig!==fsListSig){ fsListSig=lsig; fsRowK=-2; const L=lens(s);
+    box.innerHTML=listOrder.length ? listOrder.map(i=>{ const r=rallies[i], y=s.taps[i], nt=hasNote(y);
+      return `<div class="fsr" data-i="${i}"><b>第 ${i+1} 分</b><b>${r.after?`${r.after.A}:${r.after.B}`:"—"}</b><span class="w-${r.winner||"x"}">${r.winner?esc(nm(s,r.winner))+" 得分":"谁得分未定"}</span><span class="len">${L[i]!=null?dur(L[i]):"—"}</span><button class="st" type="button" data-st="${i}" aria-label="第 ${i+1} 分打 ★ / 取消">${y.star?"★":"☆"}</button>${nt?`<div class="nt">${noteHtml(y)}</div>`:""}</div>`; }).join("")
+      : `<p class="fsempty">「只看」这一项里没有分，换一项看看。</p>`; }
+  if(fsRowK!==k){ fsRowK=k; box.querySelectorAll(".fsr.on").forEach(r=>r.classList.remove("on")); const r=box.querySelector(`.fsr[data-i="${k}"]`); if(r){ r.classList.add("on"); try{ r.scrollIntoView({block:"nearest"}); }catch(e){} } }
+}
+$("fsRows").addEventListener("click",e=>{ const st=e.target.closest("[data-st]"); if(st){ e.stopPropagation(); toggleStar(+st.dataset.st); return; }
+  const r=e.target.closest(".fsr"); if(r) fsJump(+r.dataset.i, true); });
+$("fsFilt").addEventListener("change",e=>{ $("filt").value=e.target.value; renderReview(); });
+$("fsChain").addEventListener("change",e=>{ fsChain=e.target.checked; });
+$("vFs").addEventListener("click",e=>{ e.stopPropagation(); fsEnter(); });
+$("fsBack").addEventListener("click",()=>fsExit());
+$("fsPlay").addEventListener("click",()=>fsPlayToggle());
+$("fsB2").addEventListener("click",()=>fsSeek(-2));
+$("fsF2").addEventListener("click",()=>fsSeek(2));
+$("fsPrev").addEventListener("click",()=>fsJump(fsNeighbor(fsCur(),-1), true));
+$("fsNext").addEventListener("click",()=>fsJump(fsNeighbor(fsCur(),1), true));
+$("fsRate").addEventListener("click",()=>{ $("vRate").click(); fsDraw(); });
+$("fsStar").addEventListener("click",()=>{ const k=fsCur(); if(k>=0) toggleStar(k); });
+$("fsMute").addEventListener("click",()=>{ setMute(!video.muted); fsDraw(); });
+$("fsSb").addEventListener("click",()=>{ const off=!scr.classList.contains("nosb"); scr.classList.toggle("nosb",off); lset(FS_SB, off?"0":"1"); fsDraw(); });
+$("fsNt").addEventListener("click",()=>{ lset(FS_NT, lget(FS_NT,"1")==="0"?"1":"0"); fsDraw(); });
+$("fsListB").addEventListener("click",()=>{ fsListOpen=!fsListOpen; fsListSig=""; fsRowK=-2; fsLayout(); fsDraw(); fsPoke(); });
+$("fsListX").addEventListener("click",()=>{ fsListOpen=false; fsLayout(); fsDraw(); fsPoke(); });
+/* 回合条：一局五六十分，竖屏手机上一分只有几个像素，不靠点准靠滑——按住左右滑冒气泡「第 23 分 · 14:9 · A 得分 ★」，松手跳到那一分 */
+const fsBarEl=$("fsBar");
+/* 手指下是第几分：按每一段实际画在哪找（11-22：分少时每段宽到 56 像素就不再变宽、靠左排，按「总宽 ÷ 分数」算会错开一格）；手指在两段之间的缝或末尾空白里，取最近的那段 */
+function fsBarAt(e){ const C=fsBarEl.children, x=e.clientX; let best=0, bd=Infinity;
+  for(let i=0;i<C.length;i++){ const g=C[i].getBoundingClientRect(); if(x>=g.left && x<g.right) return i; const d=Math.min(Math.abs(x-g.left),Math.abs(x-g.right)); if(d<bd){ bd=d; best=i; } }
+  return Math.max(0, Math.min((cur?cur.taps.length:1)-1, best)); }
+/* 手指离回合条上下超过 48 像素、或滑出左右两头：松手算取消，气泡写「松手取消」、虚线框收起 */
+function fsBarOut(e){ const r=fsBarEl.getBoundingClientRect(), C=fsBarEl.children, L=C.length ? C[0].getBoundingClientRect().left : r.left, Rr=C.length ? C[C.length-1].getBoundingClientRect().right : r.right;
+  return e.clientY<r.top-48 || e.clientY>r.bottom+48 || e.clientX<L-12 || e.clientX>Rr+12; }   // 左右按实际画到哪为界（分少时右边是空白）
+/* 吸上：手指在这一分中间三成里（这一分够宽时），或手指停下 0.12 秒；吸上时框滑到这一分正中、长高、变金色，震一下 */
+let fsSnapK=-1, fsPauseT=0, fsLastE=null;
+function fsBubAt(e,i,hold){ const b=$("fsBub"), bx=$("fsTgt"), ln=$("fsLine"), s=cur, r=scored(s).rallies[i], sr=scr.getBoundingClientRect(), br=fsBarEl.getBoundingClientRect(), out=fsBarOut(e);
+  b.textContent=out ? "松手取消" : `第 ${i+1} 分 · ${r.after?`${r.after.A}:${r.after.B}`:"—"} · ${r.winner?nm(s,r.winner)+" 得分":"谁得分未定"}${s.taps[i].star?" ★":""}`;
+  b.classList.toggle("out",out); const first=bx.hidden; b.hidden=false; bx.hidden=ln.hidden=out;
+  const seg=fsBarEl.children[i], g=seg ? seg.getBoundingClientRect() : br, cx=g.left+g.width/2-sr.left, f=Math.max(fsBarEl.children[0]?fsBarEl.children[0].getBoundingClientRect().left:br.left, Math.min(fsBarEl.lastElementChild?fsBarEl.lastElementChild.getBoundingClientRect().right:br.right, e.clientX))-sr.left;
+  const snap=!out && (hold || (g.width>=18 && Math.abs(f-cx)<=g.width*0.3));
+  if(out||!snap) fsSnapK=-1; else if(fsSnapK!==i){ fsSnapK=i; fsTick(); }
+  const bw=Math.max(16, g.width+6), x=snap ? cx : f, UP=snap ? 26 : 8, GAP=14, top=br.top-sr.top-UP;
+  if(!out){ bx.classList.toggle("nt",first); bx.classList.toggle("snap",snap);
+    bx.style.left=(x-bw/2)+"px"; bx.style.width=bw+"px"; bx.style.top=top+"px"; bx.style.height=(br.height+UP+(snap?3:2))+"px";
+    ln.style.left=(x-1)+"px"; ln.style.top=(top-GAP)+"px"; ln.style.height=GAP+"px"; if(first) void bx.offsetWidth; }
+  const w=b.offsetWidth, xx=Math.max(w/2+6, Math.min(sr.width-w/2-6, out ? e.clientX-sr.left : x));
+  b.style.left=xx+"px"; b.style.top=(top-GAP-b.offsetHeight)+"px"; }
+function fsScrubMove(e){ fsLastE={clientX:e.clientX, clientY:e.clientY}; fsBubAt(e,fsScrub,false);
+  clearTimeout(fsPauseT); fsPauseT=setTimeout(()=>{ if(fsScrub>=0 && fsLastE) fsBubAt(fsLastE,fsScrub,true); },120); }
+function fsScrubEnd(){ fsScrub=-1; fsSnapK=-1; clearTimeout(fsPauseT); scr.classList.remove("scrub"); $("fsBub").hidden=$("fsTgt").hidden=$("fsLine").hidden=true; }
+/* 虚线框吸到一分上时轻震一下（他回「可以」；11-22 二改：吸上才震，拖着走不震）：安卓 navigator.vibrate；iPhone 网页没有震动接口，借 iOS 18 开关控件的轻震（和现场打点同一招），iPhone 只在点、抬手那一刻认，滑动中多半不震 */
+function fsTick(){ try{ if(canVib) navigator.vibrate(8); else hapTick(); }catch(e){} }
+fsBarEl.addEventListener("pointerdown",e=>{ if(!fsOn||!cur||!cur.taps.length) return; e.preventDefault(); try{ fsBarEl.setPointerCapture(e.pointerId); }catch(er){} scr.classList.add("scrub"); fsScrub=fsBarAt(e); fsSnapK=-1; fsScrubMove(e); });
+fsBarEl.addEventListener("pointermove",e=>{ if(fsScrub<0) return; const i=fsBarAt(e); if(i!==fsScrub && !fsBarOut(e)) fsScrub=i; fsScrubMove(e); });
+fsBarEl.addEventListener("pointerup",e=>{ if(fsScrub<0) return; const out=fsBarOut(e), i=fsScrub; fsScrubEnd(); if(!out){ if(!canVib) hapTick(); fsJump(i); } fsPoke(); });   // iPhone 抬手那一刻震得了：松手跳过去时震一下
+fsBarEl.addEventListener("pointercancel",fsScrubEnd);
+/* 全屏里加改备注：已有备注点字幕，没有点「＋ 备注」。视频先停（手机横屏键盘占大半屏），输入条贴在键盘上方，带着原来的备注、光标在末尾；
+   「完成」存下、字幕马上换、接着放；「取消」或点空白不存、接着放；清空再「完成」= 删掉这一分的备注。备注跟的是「这一分」，不是视频的某个时刻 */
+function fsNoteOpen(){ const k=fsCur(); if(k<0||!cur) return; fsNoteI=k; fsNoteResume=!video.paused; if(fsNoteResume) video.pause();
+  const s=cur, r=scored(s).rallies[k], t=$("fsNtxt");
+  const lab=$("fsNlab"); lab.dataset.full=`第 ${k+1} 分 · ${r.after?`${r.after.A}:${r.after.B}`:`${r.before.A}:${r.before.B}`} · ${r.winner?nm(s,r.winner)+" 得分":"谁得分还没定"}`; lab.dataset.short=`第 ${k+1} 分`; lab.textContent=lab.dataset.full;
+  t.value=s.taps[k].note||""; t.placeholder=NOTE_PH; scr.classList.add("noting"); $("fsNote").hidden=false; $("fsNbg").hidden=false; clearTimeout(fsTimer); scr.classList.remove("ui-off");
+  // 快速备注（v1.8.0）：标签先暂存在 fsNoteTags，「完成」和手写的一起存、「取消」都不动；手机上先不弹键盘，点标签不用收键盘，要打字再点输入框
+  fsNoteTags=new Set(tagsOf(s.taps[k])); const tg=$("fsTags"); tg._top=null; tg._open=false;
+  tagPicker(tg, ()=>fsNoteTags, (w,on)=>{ if(on) fsNoteTags.add(w); else fsNoteTags.delete(w); fsKb(); });
+  const touch=window.matchMedia && matchMedia("(pointer:coarse)").matches;
+  if(!touch){ t.focus(); const L=t.value.length; try{ t.setSelectionRange(L,L); }catch(e){} } fsKb(); fsDraw(); }
+function fsNoteClose(save){ if(fsNoteI<0) return; const i=fsNoteI, x=cur&&cur.taps[i];
+  if(save && x){ const v=$("fsNtxt").value.slice(0,NOTE_MAX); if(v.trim()) x.note=v; else delete x.note; setTags(x, [...fsNoteTags]); persist(); fsBarSig=""; }
+  fsNoteI=-1; scr.classList.remove("noting"); $("fsNote").hidden=true; $("fsNbg").hidden=true; $("fsNote").style.bottom=""; try{ $("fsNtxt").blur(); }catch(e){}
+  const go=fsNoteResume; fsNoteResume=false; if(save) render(); else fsDraw(); if(go && fsOn) video.play().catch(()=>{}); }
+/* 键盘弹出来时输入条跟着往上挪：布局视口不缩、可视视口缩，差的就是键盘高 */
+/* 键盘上面剩的高度放不下三行（标题、输入框、按钮）就收成一行；输入框最高不超过剩下的地方，写的字总在看得见的地方 */
+function fsKb(){ const vv=window.visualViewport, n=$("fsNote"), t=$("fsNtxt"), lab=$("fsNlab"); if(n.hidden) return;
+  const H=document.documentElement.clientHeight||innerHeight, vh=vv?vv.height:innerHeight;
+  const tight=vh<300; n.classList.toggle("tight",tight); lab.textContent=(tight?lab.dataset.short:lab.dataset.full)||""; t.placeholder=tight?NOTE_PH_S:NOTE_PH;
+  const tgH=tight ? 0 : ($("fsTags").offsetHeight||0); t.style.maxHeight=tight?"":Math.max(48, Math.min(H*0.3, vh-130-tgH))+"px";
+  if(vv){ n.style.bottom=Math.max(0, H-vh-vv.offsetTop)+"px";
+    // 再量一次对准：Safari 横屏多一排标签栏、键盘上带辅助条时，算出来的会差 20 像素左右（R-121 2026-11-21 IMG_4767：输入条离键盘空一截、上边被标签栏挡住）。
+    // 量到的位置（getBoundingClientRect）在 iPhone Safari 上从看得见的区域顶上算，别的浏览器从页面顶上算；放一个贴页面顶的探针，换算到同一套坐标再对（只按页面坐标对的那一版把输入条推到了键盘底下，截图 20）
+    const pr=$("fsKbProbe"), p0=pr ? pr.getBoundingClientRect().top : 0, want=vv.offsetTop+vh+p0, d=n.getBoundingClientRect().bottom-want;
+    if(Math.abs(d)>1 && Math.abs(d)<vh) n.style.bottom=(parseFloat(n.style.bottom)||0)+d+"px"; }
+  if(tight && t.selectionEnd===t.value.length) t.scrollTop=t.scrollHeight; }
+if(window.visualViewport){ visualViewport.addEventListener("resize",fsKb); visualViewport.addEventListener("scroll",fsKb); }
+$("fsSub").addEventListener("click",e=>{ e.stopPropagation(); fsNoteOpen(); });
+$("fsAddN").addEventListener("click",()=>fsNoteOpen());
+$("fsNok").addEventListener("click",()=>fsNoteClose(true));
+$("fsNno").addEventListener("click",()=>fsNoteClose(false));
+$("fsNbg").addEventListener("click",()=>$("fsNtxt").focus());   // 点空白不丢字（11-22：键盘弹着时容易误点），退出用「取消」
+$("fsNclr").addEventListener("click",()=>{ const t=$("fsNtxt"); t.value=""; t.focus(); });   // × 只清自己写的字
+$("fsNall").addEventListener("click",()=>{ $("fsNtxt").value=""; fsNoteTags=new Set(); const tg=$("fsTags"); tagPicker(tg, ()=>fsNoteTags, (w,on)=>{ if(on) fsNoteTags.add(w); else fsNoteTags.delete(w); fsKb(); }); });   // 标签和手写一起清，「完成」才生效
+/* 控件栏里直接放 2–3 颗最常用的标签（他 11-22 提的，细节 trishot 按默认定、待他看）：点一下给正在放的这一分加上、不暂停、不弹输入条；有了再点去掉。
+   哪几颗进全屏时定住（这台手机上点得最多的，没点过用「下网」「出界」「好球」），放几颗看这一行的空位：放不下就少放，不换行、不挤掉原来的按钮；横屏开着列表时不放 */
+let fsNoteTags=new Set();
+function fsQtBuild(){ const box=$("fsQts"); box.innerHTML=tagBar().map(t=>`<button class="fsb fsqt" type="button" data-t="${esc(t)}" title="给正在放的这一分加上 / 去掉「${esc(t)}」">${esc(t)}</button>`).join(""); fsQtFit(); }
+function fsQtFit(){ const box=$("fsQts"), bs=[...box.children]; bs.forEach(b=>b.hidden=false); if(!fsOn || scr.classList.contains("lst")) { bs.forEach(b=>b.hidden=true); return; }
+  const ref=$("fsRate"), last=()=>{ const L=[$("fsAddN"), $("fsListB")].filter(e=>e.offsetParent); return L[L.length-1]; };
+  for(let i=bs.length-1;i>=0;i--){ const l=last(); if(!l || l.offsetTop<=ref.offsetTop+2) break; bs[i].hidden=true; } }
+$("fsQts").addEventListener("click",e=>{ const b=e.target.closest("[data-t]"); if(!b||!cur) return; e.stopPropagation(); const k=fsCur(), x=cur.taps[k]; if(!x) return;
+  const t=b.dataset.t, on=!tagsOf(x).includes(t); toggleTag(x,t,on); if(on) tagBump(t); persist(); fsBarSig=""; fsTick(); fsPoke(); fsDraw(); fsUndoShow(k,t,on); });
+let fsUndoT=0, fsUndoAct=null;
+function fsUndoShow(k,t,on){ const u=$("fsUndo"); u.innerHTML=`第 ${k+1} 分${on?"加上":"去掉"}了「${esc(t)}」<b>撤销</b>`; u.hidden=false; fsUndoAct={k,t,on};
+  clearTimeout(fsUndoT); fsUndoT=setTimeout(()=>{ u.hidden=true; fsUndoAct=null; },3000); }
+$("fsUndo").addEventListener("click",e=>{ e.stopPropagation(); const a=fsUndoAct, u=$("fsUndo"); u.hidden=true; clearTimeout(fsUndoT); fsUndoAct=null; if(!a||!cur||!cur.taps[a.k]) return;
+  toggleTag(cur.taps[a.k], a.t, !a.on); persist(); fsBarSig=""; fsDraw(); });
+$("fsNtxt").addEventListener("keydown",e=>{ e.stopPropagation(); if(e.key==="Escape"){ e.preventDefault(); fsNoteClose(false); } else if(e.key==="Enter" && (e.metaKey||e.ctrlKey) && !e.isComposing){ e.preventDefault(); fsNoteClose(true); } });
+/* 电脑上：空格播放暂停，← → 退进 2 秒，↑ ↓ 上一分下一分，Esc 退出（系统全屏时 Esc 先由浏览器退系统全屏，跟着退出全屏回看） */
+function fsKey(e){ if(e.target.closest("input,textarea,select")) return; const k=e.key;
+  if(k===" "){ e.preventDefault(); fsPlayToggle(); }
+  else if(k==="ArrowLeft"){ e.preventDefault(); fsSeek(-2); }
+  else if(k==="ArrowRight"){ e.preventDefault(); fsSeek(2); }
+  else if(k==="ArrowUp"){ e.preventDefault(); fsJump(fsNeighbor(fsCur(),-1), true); }
+  else if(k==="ArrowDown"){ e.preventDefault(); fsJump(fsNeighbor(fsCur(),1), true); }
+  else if(k==="Escape"){ e.preventDefault(); fsExit(); return; }
+  else return;
+  fsPoke(); }
+/* ===== 锁屏「正在播放」（产品负责人 2026-11-21「当锁屏时，图标显示不太友好。请该进。」，R-121）=====
+   原来页面没给系统任何播放信息，iPhone 锁屏就拿网页小图标（192 像素、圆角外透明）放大当封面：发糊、四角露白，标题只有网页名。
+   这里用 Media Session 告诉系统：封面 = 一张 1024 方形、铺满不透明的图（MEDIA_ART，make_courtside 填，原样页留空不给图），
+   标题 = 「小明 vs 对手 · 第 13 分 12:9」（和画面上的比分牌同一个数），副标题 = 场边打点，第三行 = 第几局。
+   锁屏 ⏮ ⏭ = 上一分 / 下一分（和全屏回看的上一分 / 下一分一样按列表走、接着放）；耳机、车机的快退快进 = ±2 秒，拖进度条 = 跳到那里 */
+const MEDIA_ART = "media-art.png";
+const MS=("mediaSession" in navigator) ? navigator.mediaSession : null;
+let msSig="";
+function msUpdate(){ if(!MS) return;
+  if(view!=="review" || !cur || !canPlay()){ if(msSig){ msSig=""; try{ MS.metadata=null; }catch(e){} } return; }
+  const x=scoreAt(video.currentTime), no=x&&x.no ? x.no : 0, sc=x ? `${x.sc.A}:${x.sc.B}` : "";
+  const title=`${nm(cur,"A")} vs ${nm(cur,"B")}`+(no?` · 第 ${no} 分 ${sc}`:sc?` · ${sc}`:"");
+  const sig=title+"|"+cur.setNo; if(sig===msSig) return; msSig=sig;
+  try{ MS.metadata=new MediaMetadata({title, artist:"场边打点", album:`第 ${cur.setNo||1} 局`,
+    artwork: MEDIA_ART ? [{src:new URL(MEDIA_ART, location.href).href, sizes:"1024x1024", type:"image/png"}] : []}); }catch(e){}
+  msPos(); }
+function msPos(){ if(!MS || !MS.setPositionState || !canPlay()) return; const d=video.duration;
+  if(!(d>0) || !isFinite(d)) return; try{ MS.setPositionState({duration:d, playbackRate:video.playbackRate||1, position:Math.min(d, Math.max(0, video.currentTime))}); }catch(e){} }
+function msAct(a,f){ try{ MS.setActionHandler(a,f); }catch(e){} }
+/* 播放卡住自救（v1.8.0，产品负责人 2026-11-22 iPad Pro「视频播放卡顿频发……突然停顿，但是播放按钮仍然播放状态」「卡住后要快进或者快退恢复」）：
+   正在放时每 0.7 秒看一次：连着两次时间不走，或者时间在走却一帧都没画（requestVideoFrameCallback 没回调），就原地跳 0.01 秒——等于替他点了一下 ±2 秒。
+   暂停、正在跳、还在缓冲（readyState < 3）、在导出时不管。根本原因还在查，这一条先兜底；wdN 记救了几次（审查副本里显示） */
+/* 11-22 二改（产品负责人在 beta 上「iPad上播放时还是有卡顿，但是没有停的了」）：每 0.35 秒看一次、连着两次 ≈ 0.7 秒就救（原来 0.7 秒一次 ≈ 1.4 秒）；
+   刚跳完、刚开始放的 0.8 秒里时间本来就可能不走，这段不判 */
+let wdLast=-1, wdHit=0, wdFrames=0, wdN=0, wdHook=false, wdQuiet=0;
+for(const ev of ["seeked","play","playing","ratechange"]) video.addEventListener(ev,()=>{ wdQuiet=performance.now()+800; wdLast=-1; wdHit=0; });
+function wdFrame(){ wdFrames++; try{ video.requestVideoFrameCallback(wdFrame); }catch(e){} }
+setInterval(()=>{ if(video.paused || video.seeking || video.ended || video.readyState<3 || exporting || !video.currentSrc || performance.now()<wdQuiet){ wdLast=-1; wdHit=0; wdFrames=0; return; }
+  if(!wdHook && typeof video.requestVideoFrameCallback==="function"){ wdHook=true; wdFrames=1; try{ video.requestVideoFrameCallback(wdFrame); }catch(e){ wdHook=false; } }
+  const t=video.currentTime, adv=wdLast<0 ? 1 : t-wdLast; wdLast=t;
+  const r=video.getBoundingClientRect(), seen=document.visibilityState==="visible" && r.width>0 && r.bottom>0 && r.top<innerHeight;   // 滚出屏幕时浏览器可以不画帧，不算卡
+  const stuck=adv<0.03 || (seen && wdHook && wdFrames===0 && adv>0.2); wdFrames=0;
+  if(!stuck){ wdHit=0; return; }
+  if(++wdHit<2) return; wdHit=0; wdN++; wdLast=-1;
+  try{ video.currentTime=Math.min((video.duration||t+1)-0.05, t+0.01); }catch(e){}
+  if(wdHook){ try{ video.requestVideoFrameCallback(wdFrame); }catch(e){} } }, 350);
+if(MS){
+  msAct("previoustrack",()=>{ if(!canPlay()) return; const i=fsNeighbor(fsCur(),-1); if(i>=0) fsJump(i,true); });
+  msAct("nexttrack",()=>{ if(!canPlay()) return; const i=fsNeighbor(fsCur(),1); if(i>=0) fsJump(i,true); });
+  msAct("seekbackward",d=>{ if(canPlay()) fsSeek(-((d&&d.seekOffset)||2)); msPos(); });
+  msAct("seekforward",d=>{ if(canPlay()) fsSeek((d&&d.seekOffset)||2); msPos(); });
+  msAct("seekto",d=>{ if(!canPlay()||!d||d.seekTime==null) return; video.currentTime=d.seekTime; fsDraw(); msPos(); });
+  for(const ev of ["play","pause","seeked","ratechange","loadedmetadata"]) video.addEventListener(ev,()=>{ msUpdate(); msPos(); });
+  video.addEventListener("timeupdate",msUpdate);
+}
 $("sndLive").checked=sndOn(); $("sndLive").addEventListener("change",e=>lset(SND, e.target.checked?"1":"0"));
 $("hapLive").checked=hapOn(); 
    
@@ -3749,7 +4334,7 @@ function hapTick(){ if(!hapOn()) return;
 /* 轻震改在抬手时触发（试用者 2026-11-10：开了没感觉到震）：iPhone 只认抬手 / 点击那一刻算「用户操作」，按下的一刻不算 */
 let hapPend=false;
 for(const ev of ["touchend","pointerup","click"]) document.addEventListener(ev,()=>{ if(hapPend){ hapPend=false; hapTick(); } });
-const HITS="courtside-hits"; let hits=[], lastUndo=0, undoArmed=true;   // 最近 400 下记上的打点按在打点区的哪里：[横向 0–1, 纵向 0–1, 谁, 分法]，只存在这台设备
+const HITS=STORE_NS+"courtside-hits"; let hits=[], lastUndo=0, undoArmed=true;   // 最近 400 下记上的打点按在打点区的哪里：[横向 0–1, 纵向 0–1, 谁, 分法]，只存在这台设备
 try{ hits=JSON.parse(lget(HITS,"[]")); if(!Array.isArray(hits)) hits=[]; }catch(e){ hits=[]; }
 const FB={A:{v:[40],s:[[440,.1]],c:"var(--a)"}, B:{v:[40,70,40],s:[[880,.07],[880,.07]],c:"var(--b)"}, fin:{v:[220],s:[[660,.08],[990,.14]],c:"#3a3f3c"},
   undo:{v:[30,50,30,50,30],s:[[660,.08],[494,.08],[330,.14]],c:"#c0392b"}, sw:{v:[25],s:[[1200,.04]],c:""}};
@@ -3883,7 +4468,7 @@ for(const id of ["bLive","bReplay"]) $(id).addEventListener("click",()=>{ if(!pe
 /* 新版提示（试用者 2026-11-10：posecap.com 已经更新，桌面 App 里还是旧页面——App 切回前台不会重新载入，场边打点页也没有刷新键）：
    posecap.com 版的 BUILD 是 make_courtside 填的这一版指纹；回到前台、回到首页时去网站上取一下这一页（不走缓存），指纹不一样就在顶上提示「有新版本」。
    正在现场打点、这局没打完时不提示，回到首页或打完再提示。claude.ai 版 BUILD 为空，不查（发布新版时 claude.ai 自己会重新载入） */
-const BUILD = "8c0119633e29";
+const BUILD = "ec6afee3f4b6";
 let newBuild="", lastCheck=0;
 function freshReload(tag){ location.replace(location.pathname+"?v="+encodeURIComponent(tag||Date.now())); }   // 换个地址参数，绕开手机缓存
 async function checkUpdate(force){ if(!BUILD || newBuild) return; const now=Date.now(); if(!force && now-lastCheck<60000) return; lastCheck=now;
