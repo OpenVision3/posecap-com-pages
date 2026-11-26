@@ -653,7 +653,7 @@ try{ if(JSON.parse(localStorage.getItem(STORE_NS+"courtside-taps-v1")||"[]").som
   </div>
 </section>
 <p class="msg" id="msg" hidden></p>
-<footer class="hint" style="text-align:center;margin-top:auto;padding-top:12px">由 PoseCap 出品<br>beta 测试版：这里的记录和正式版分开存</footer>
+<footer class="hint" style="text-align:center;margin-top:auto;padding-top:12px"><a id="xsBook" href="https://posecap.com/book/beta/" style="color:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px">想三拍 · 羽毛球单打球路小手册 →</a><br>由 PoseCap 出品<br>beta 测试版：这里的记录和正式版分开存</footer>
 <input type="file" id="fVideo" accept="video/*" hidden>
 </div>
 
@@ -4469,7 +4469,7 @@ for(const id of ["bLive","bReplay"]) $(id).addEventListener("click",()=>{ if(!pe
 /* 新版提示（试用者 2026-11-10：posecap.com 已经更新，桌面 App 里还是旧页面——App 切回前台不会重新载入，场边打点页也没有刷新键）：
    posecap.com 版的 BUILD 是 make_courtside 填的这一版指纹；回到前台、回到首页时去网站上取一下这一页（不走缓存），指纹不一样就在顶上提示「有新版本」。
    正在现场打点、这局没打完时不提示，回到首页或打完再提示。claude.ai 版 BUILD 为空，不查（发布新版时 claude.ai 自己会重新载入） */
-const BUILD = "0bc4b9dc1e04";
+const BUILD = "3d02441279e9";
 let newBuild="", lastCheck=0;
 function freshReload(tag){ location.replace(location.pathname+"?v="+encodeURIComponent(tag||Date.now())); }   // 换个地址参数，绕开手机缓存
 async function checkUpdate(force){ if(!BUILD || newBuild) return; const now=Date.now(); if(!force && now-lastCheck<60000) return; lastCheck=now;
